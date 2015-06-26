@@ -5,6 +5,7 @@
 var Critters = {red: [], green: [], blue:[]};
 var critterGroup = new THREE.Object3D();
 var scene, camera, renderer, container;
+var hasStarted = false;
 
 function Start() {
     onCreate();
@@ -33,8 +34,8 @@ function render() {
         for (var i = 0; i < Critters[bug].length; i++) {
             var critter = Critters[bug][i];
             critter.translateX((Math.random() * 10 - 5));
-            critter.translateY((Math.random() * 10   - 5));
-            //critter.translateZ((Math.random() * 10 - 5));
+            critter.translateY((Math.random() * 10 - 5));
+            critter.translateZ((Math.random() * 10 - 5));
         }
     }
     renderer.render( scene, camera );
@@ -51,7 +52,7 @@ function initVisComponents(){
     renderer = new THREE.WebGLRenderer();
 
     renderer.setSize( window.innerWidth, window.innerHeight );
-    renderer.setClearColor(rgbToHex(255,255,255))
+    renderer.setClearColor(rgbToHex(255,255,255));
     container = document.getElementById("wallcology");
     container.appendChild( renderer.domElement );
 
@@ -77,35 +78,39 @@ function initNutellaComponents() {
 
     var isRunning = false;
 
-    var timers = setInterval(function () {
+    setInterval(function () {
         console.log("fired");
-        var bugs = ['red', 'green', 'blue'];
-        var choices = ['add', 'destroy'];
-        var bug = bugs[Math.floor(Math.random() * 3)];
-        var choice = choices[Math.floor(Math.random() * 2)];
-        var tribute = Math.floor(Math.random() * 10);
-        switch (choice) {
-            case 'add':
-                console.log('add', tribute, bug)
-                for (var i = 0; i < tribute; i++) {
-                    createCritter(bug, i);
-                }
-
-                break;
-            case 'destroy':
-                console.log('destroy', tribute, bug);
-                for (var i = 0; i < tribute; i++) {
-                    if (Critters[bug].length < 1) {
-                        Critters[bug] = [];
-                        break;
+        if (hasStarted) {
+            var bugs = ['red', 'green', 'blue'];
+            var choices = ['add', 'destroy'];
+            var bug = bugs[Math.floor(Math.random() * 3)];
+            var choice = choices[Math.floor(Math.random() * 2)];
+            var tribute = Math.floor(Math.random() * 10)+1;
+            switch (choice) {
+                case 'add':
+                    console.log('add', tribute, bug)
+                    for (var i = 0; i < tribute; i++) {
+                        createCritter(bug, i);
                     }
-                    var critter = Critters[bug].pop();
-                    critterGroup.remove(critter);
-                    scene.remove(critter);
-                    critter.material.dispose();
-                    critter.geometry.dispose();
-                }
-                break;
+
+                    break;
+                case 'destroy':
+                    console.log('destroy', tribute, bug);
+                    for (var i = 0; i < tribute; i++) {
+                        if (Critters[bug].length < 1) {
+                            Critters[bug] = [];
+                            break;
+                        }
+                        var critter = Critters[bug].pop();
+                        critterGroup.remove(critter);
+                        scene.remove(critter);
+                        critter.material.dispose();
+                        critter.geometry.dispose();
+                    }
+                    break;
+            }
+        } else {
+            console.log("wating for start event");
         }
     }, 5000);
 
@@ -115,10 +120,15 @@ function initNutellaComponents() {
         console.log("subscribe to message", message);
         switch (message.event) {
             case "start":
-                console.log("subscribe to message", message)
-                for (bug in message.Critters) {
-                    for (var i = 0; i < message[bug]; i++) {
-                        createCritter(bug, i);
+                console.log("Start subscribe to message", message);
+                hasStarted = true;
+                for (bug in message) {
+                    console.log("adding bug", bug, message[bug])
+                    if (bug !== "event"){
+
+                        for (var i = 0; i < parseInt(message[bug]); i++) {
+                            createCritter(bug, i);
+                        }
                     }
                 }
                 break;
@@ -129,13 +139,16 @@ function initNutellaComponents() {
 
             case "stop":
                 console.log("stop");
+                hasStarted = false;
                 for (var bug in Critters) {
-                    for (var i = 0; i < Critters[bug].length; i++) {
+                    while (Critters[bug].length > 0){
+                        console.log(bug,Critters[bug].length);
                         var critter = Critters[bug].pop();
                         critterGroup.remove(critter);
                         scene.remove(critter);
                         critter.material.dispose();
                         critter.geometry.dispose();
+
                     }
                 }
                 break;
@@ -159,7 +172,7 @@ function createCritter(bug, i) {
     var vec3 = new THREE.Vector3();
     vec3.x = Math.random() * 2 - 1;
     vec3.y = Math.random() * 2 - 1;
-    //vec3.z = Math.random() * 2 - 1;
+    vec3.z = Math.random() * 2 - 1;
 
     vec3.multiplyScalar(200);
 
