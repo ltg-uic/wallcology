@@ -82,7 +82,7 @@
 		nutella.net.publish('wallscope_channel', {
 			event: 'start',
 			red: this.$.red_input.value,
-			yellow: this.$.yellow_input.value,
+			green: this.$.yellow_input.value,
 			blue: this.$.blue_input.value
 		});
 
@@ -91,7 +91,7 @@
 		nutella.net.publish('wallscope_channel', {
 			event: 'stop',
 			red: this.$.red_input.value,
-			yellow: this.$.yellow_input.value,
+			green: this.$.yellow_input.value,
 			blue: this.$.blue_input.value
 		});
 		console.log("STOP YOU");
@@ -111,7 +111,7 @@
 </div>
 <div>
 	Yellow Critters:&nbsp&nbsp
-	<paper-input id="yellow_input" label="YELLOW CRITTERS" value="10"></paper-input>
+	<paper-input id="yellow_input" label="GREEN CRITTERS" value="10"></paper-input>
 </div>
 
 
