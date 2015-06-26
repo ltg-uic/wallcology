@@ -34,7 +34,7 @@ function render() {
             var critter = Critters[bug][i];
             critter.translateX((Math.random() * 10 - 5));
             critter.translateY((Math.random() * 10   - 5));
-            critter.translateZ((Math.random() * 10 - 5));
+            //critter.translateZ((Math.random() * 10 - 5));
         }
     }
     renderer.render( scene, camera );
@@ -77,23 +77,23 @@ function initNutellaComponents() {
 
     var isRunning = false;
 
-    var timers = setInterval(function(){
+    var timers = setInterval(function () {
         console.log("fired");
-        var bugs = ['red', 'yellow', 'blue'];
+        var bugs = ['red', 'green', 'blue'];
         var choices = ['add', 'destroy'];
-        var bug = bugs[Math.floor(Math.random()*3)];
-        var choice = choices[Math.floor(Math.random()*2)];
-        var tribute = Math.floor(Math.random()*10);
-        switch(choice) {
+        var bug = bugs[Math.floor(Math.random() * 3)];
+        var choice = choices[Math.floor(Math.random() * 2)];
+        var tribute = Math.floor(Math.random() * 10);
+        switch (choice) {
             case 'add':
-                console.log( 'add')
+                console.log('add', tribute, bug)
                 for (var i = 0; i < tribute; i++) {
                     createCritter(bug, i);
                 }
 
                 break;
             case 'destroy':
-                console.log( 'destroy')
+                console.log('destroy', tribute, bug);
                 for (var i = 0; i < tribute; i++) {
                     if (Critters[bug].length < 1) {
                         Critters[bug] = [];
@@ -111,67 +111,38 @@ function initNutellaComponents() {
 
 
     // 1. Subscribing to a channel
-    nutella.net.subscribe('wallscope_channel', function(message, from) {
-        switch(message.eventType) {
-            case "Start":
+    nutella.net.subscribe('wallscope_channel', function (message, from) {
+        console.log("subscribe to message", message);
+        switch (message.event) {
+            case "start":
                 console.log("subscribe to message", message)
                 for (bug in message.Critters) {
-                    for (var i = 0; i < message[bug]; i++){
+                    for (var i = 0; i < message[bug]; i++) {
                         createCritter(bug, i);
                     }
                 }
                 break;
 
-            case "Update":
+            case "update":
                 console.log("");
                 break;
 
-            case "End":
-                console.log("");
+            case "stop":
+                console.log("stop");
+                for (var bug in Critters) {
+                    for (var i = 0; i < Critters[bug].length; i++) {
+                        var critter = Critters[bug].pop();
+                        critterGroup.remove(critter);
+                        scene.remove(critter);
+                        critter.material.dispose();
+                        critter.geometry.dispose();
+                    }
+                }
                 break;
             default:
                 return;
         }
     });
-
-
-    // 2. Publish a message to a channel
-    nutella.net.publish('wallscope_channel', 'demo_message');
-
-
-    // 2a. The cool thing is that the message can be any object
-    nutella.net.publish('wallscope_channel', {a: 'proper', key: 'value'});
-
-
-    // 3. Make asynchronous requests on a certain channel
-    nutella.net.request( 'demo_channel', 'my_request', function(response){
-        // Your code to handle the response to this request goes here
-    });
-
-
-    // 4. Handle requests from other components
-    nutella.net.handle_requests( 'demo_channel', function(message, from) {
-        // Your code to handle each request here
-        // Anything this function returns (String, Integer, Object...) is going to be sent as the response
-        var response = 'a simple string'
-        // response = 12345
-        // response = {}
-        // response = {my:'json'}
-        return response;
-    });
-
-    // 6. Access the variables that uniquely identify this instance of this component
-    console.log(
-        nutella,
-        nutella.runId, '\n',
-        nutella.componentId, '\n',
-        nutella.resourceId);
-
-
-    // 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-    // var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-
-    // HAVE FUN WITH nutella!
 }
 
 
@@ -188,13 +159,13 @@ function createCritter(bug, i) {
     var vec3 = new THREE.Vector3();
     vec3.x = Math.random() * 2 - 1;
     vec3.y = Math.random() * 2 - 1;
-    vec3.z = Math.random() * 2 - 1;
+    //vec3.z = Math.random() * 2 - 1;
 
     vec3.multiplyScalar(200);
 
-    mesh.position.set( vec3.x, vec3.y, vec3.z);
+    mesh.position.set( vec3.x, vec3.y, 0);
     mesh.updateMatrix();
-    console.log(Critters[bug])
+    console.log(bug)
     Critters[bug].push(mesh);
     critterGroup.add(mesh);
 }
