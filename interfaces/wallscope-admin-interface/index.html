@@ -6,64 +6,167 @@
 	<title></title>
 	<!-- The description of this interfaces here -->
 	<meta name="description" content="">
+
 	<!-- Your CSS here -->
+	<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+
+	<!--<link rel="stylesheet" href="css/style.css">-->
+
+	<link rel="import" href="bower_components/paper-button/paper-button.html">
+	<link rel="import" href="bower_components/paper-input/paper-input.html">
+
+
+	<style shim-shadowdom>
+		body {
+			font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
+			font-size: 14px;
+			margin: 0;
+			padding: 24px;
+			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+			-webkit-touch-callout: none;
+		}
+
+		section {
+			padding: 20px 0;
+		}
+
+		section > div {
+			padding: 14px;
+			font-size: 16px;
+		}
+
+		paper-button[raised].start {
+			background: #4285f4;
+			color: #fff;
+		}
+
+		paper-button[raised].stop {
+			background: #b8002e;
+			color: #fff;
+		}
+
+		paper-input {
+			width: 40px;
+		}
+
+		/*#paper-button.stop {*/
+		/*color: #b8002e;*/
+		/*}*/
+
+
+	</style>
 </head>
 <body>
+
+<script src="nutella_lib.js" type="text/javascript"></script>
 	<!-- Your markup here -->
+
 	<p>Hello world! This is a nutella basic web interface</p>
-				
-	<!-- Scripts -->
-	<script src="nutella_lib.js" type="text/javascript"></script>
-	<!-- Your scripts here -->
-				
-	<script type="text/javascript">
-	
+
+<!--<paper-button raised class="colored">START</paper-button>-->
+
+<template id="bind" is="auto-binding">
+	<paper-button raised class="start" on-click="{{ goStart }}">START</paper-button>
+	<paper-button raised class="stop" on-click="{{ goStop }}">STOP</paper-button>
+
+</template>
+
+<script>
+	var bind = document.querySelector('#bind');
+	bind.goStart = function (e) {
+		console.log("START YOU");
+		console.log("YELLOW INPUT" + this.$.yellow_input.value);
+		console.log("RED INPUT" + this.$.red_input.value);
+		console.log("BLUE INPUT" + this.$.blue_input.value);
+
+		nutella.net.publish('wallscope_channel', {
+			event: 'start',
+			red: this.$.red_input.value,
+			yellow: this.$.yellow_input.value,
+			blue: this.$.blue_input.value
+		});
+
+	};
+	bind.goStop = function (e) {
+		nutella.net.publish('wallscope_channel', {
+			event: 'stop',
+			red: this.$.red_input.value,
+			yellow: this.$.yellow_input.value,
+			blue: this.$.blue_input.value
+		});
+		console.log("STOP YOU");
+	}
+</script>
+
+
+<br><br>
+
+<div>
+	Red Critters:&nbsp&nbsp
+	<paper-input id="red_input" label="RED CRITTERS" value="10" center></paper-input>
+</div>
+<div>
+	Blue Critters:&nbsp&nbsp
+	<paper-input id="blue_input" label="BLUE CRITTERS" value="10"></paper-input>
+</div>
+<div>
+	Yellow Critters:&nbsp&nbsp
+	<paper-input id="yellow_input" label="YELLOW CRITTERS" value="10"></paper-input>
+</div>
+
+
+<!-- Scripts -->
+
+<!-- Your scripts here -->
+
+<script type="text/javascript">
+
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
 
-	// Get an instance of nutella. 
+	// Get an instance of nutella.
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-	
+
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
-	
-	
+
+
 	// Your code that uses the nutella instance here
-	
-	
+
+
 	// EXAMPLES
 	// You can do stuff like:
-	
+
 	// 1. Subscribing to a channel
-	nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
+	nutella.net.subscribe('demo_channel', function (message, from_component_id, from_resource_id) {
 		// Your code to handle messages received on this here
 	});
-	
+
 	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
 	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
+	nutella.net.subscribe('demo_channel/#', function (message, channel, from_component_id, from_resource_id) {
 		// Your code to handle messages received by this channel here
 	});
-	
+
 	// 3. Publish a message to a channel
 	nutella.net.publish('demo_channel', 'demo_message');
-	
+
 	// 3a The cool thing is that the message can be any Javascript variable or object
 	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-	
+
 	// 4. Make requests on a certain channel...
-	nutella.net.request('demo_channel', 'my_request', function(response) {
+	nutella.net.request('demo_channel', 'my_request', function (response) {
 		// Your code to handle the response here
 	});
-	
+
 	// 4a ... and, guess what, we can send anything in a request, like in publish!
 	// Requests can even be empty, kind of like a GET
-	nutella.net.request('demo_channel', function(response) {
+	nutella.net.request('demo_channel', function (response) {
 		// Your code to handle the response here
 	});
-	
+
 	// 5. Handle requests from other components
-	nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
+	nutella.net.handle_requests('my_channel', function (request, component_id, resource_id) {
 		/// Your code to handle each request here
 		// Anything this function returns (string, integer, object,...) is going to be sent as the response
 		var response = 'this is my response';
@@ -73,18 +176,44 @@
 		// var response = {a: 'proper', key: 'value'};
 		return response;
 	});
-	
+
 	// 6. Access the variables that uniquely identify this instance of this component
 	nutella.runId;
 	nutella.componentId;
 	nutella.resourceId;
-	
+
 	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
 	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-	
+
 	// HAVE FUN WITH nutella!
-	
+
 	</script>
-				
+<!--<section>-->
+<!--<div class="button raised blue">-->
+<!--<div class="center" fit>START</div>-->
+<!--<paper-ripple fit></paper-ripple>-->
+<!--</div>-->
+
+<!--<div class="button raised green">-->
+<!--<div class="center" fit>STOP</div>-->
+<!--<paper-ripple fit></paper-ripple>-->
+<!--</div>-->
+<!--</section>-->
+
+
+<!--<section>-->
+<!--<div>-->
+<!--RED BUGS:<paper-input label="label">45</paper-input>-->
+<!--</div>-->
+<!--<div>-->
+<!--BLUE BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
+<!--</div>-->
+<!--<div>-->
+<!--YELLOW BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
+<!--</div>-->
+<!--</section>-->
+
+
+
 </body>
 </html>

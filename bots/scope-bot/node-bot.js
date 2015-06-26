@@ -19,6 +19,8 @@ var timers = setInterval(function(){
 
 // 1. Subscribing to a channel
 nutella.net.subscribe('wallscope_channel', function(message, from) {
+
+
     // Your code to handle messages received on this channel goes here
 });
 
@@ -41,7 +43,7 @@ nutella.net.request( 'demo_channel', 'my_request', function(response){
 nutella.net.handle_requests( 'demo_channel', function(message, from) {
     // Your code to handle each request here
     // Anything this function returns (String, Integer, Object...) is going to be sent as the response
-    var response = 'a simple string'
+    var response = 'a simple string';
     // response = 12345
     // response = {}
     // response = {my:'json'}
