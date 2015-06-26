@@ -32,9 +32,9 @@ function render() {
     for (var bug in Critters) {
         for (var i = 0; i < Critters[bug].length; i++) {
             var critter = Critters[bug][i];
-            critter.translateX((Math.random() * 25 - 12.5));
-            critter.translateY((Math.random() * 25 - 12.5));
-            critter.translateZ((Math.random() * 25 - 12.5));
+            critter.translateX((Math.random() * 10 - 5));
+            critter.translateY((Math.random() * 10   - 5));
+            critter.translateZ((Math.random() * 10 - 5));
         }
     }
     renderer.render( scene, camera );
@@ -54,12 +54,6 @@ function initVisComponents(){
     renderer.setClearColor(rgbToHex(255,255,255))
     container = document.getElementById("wallcology");
     container.appendChild( renderer.domElement );
-
-    for (var bug in {"red":10, "green":10, "blue":10}) {
-        for (var i = 0; i < 10; i++){
-            createCritter(bug, i);
-        }
-    }
 
     window.addEventListener( 'resize', onReshape, false );
 
@@ -120,6 +114,7 @@ function initNutellaComponents() {
     nutella.net.subscribe('wallscope_channel', function(message, from) {
         switch(message.eventType) {
             case "Start":
+                console.log("subscribe to message", message)
                 for (bug in message.Critters) {
                     for (var i = 0; i < message[bug]; i++){
                         createCritter(bug, i);
