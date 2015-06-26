@@ -1,0 +1,20 @@
+{
+  "name": "wallscope-admin-interface",
+  "version": "0.0.1",
+  "homepage": "https://github.com/ltg-uic/Wallcology",
+  "authors": [
+    "Anthony Perritano <aperritano@gmail.com>"
+  ],
+  "description": "admin interface for the wallscopes",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "paper-input": "Polymer/paper-input#^0.5"
+  }
+}
