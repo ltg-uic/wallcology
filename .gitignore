@@ -7,7 +7,9 @@ release.properties
 dependency-reduced-pom.xml
 
 # IntelliJ
+.DS_Store
 .idea/
 *.iml
 **/bower_components
 bots/node_modules
+interfaces/wallscope-interface/.DS_Store

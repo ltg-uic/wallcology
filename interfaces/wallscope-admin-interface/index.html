@@ -80,6 +80,7 @@
 
 <script>
 
+
 	var start_sim = function () {
 		var blue_input = document.getElementById("blue_input");
 		var yellow_input = document.getElementById("yellow_input");
@@ -90,9 +91,9 @@
 
 		nutella.net.publish('wallscope_channel', {
 			event: 'start',
-			red: this.$.red_input.value,
-			green: this.$.yellow_input.value,
-			blue: this.$.blue_input.value
+			red: red_input.value,
+			green: yellow_input.value,
+			blue: blue_input.value
 		});
 	};
 
@@ -108,9 +109,9 @@
 
 		nutella.net.publish('wallscope_channel', {
 			event: 'stop',
-			red: this.$.red_input.value,
-			green: this.$.yellow_input.value,
-			blue: this.$.blue_input.value
+			red: red_input.value,
+			green: yellow_input.value,
+			blue: blue_input.value
 		});
 	};
 
@@ -135,51 +136,51 @@
 
 	// EXAMPLES
 	// You can do stuff like:
-
-	// 1. Subscribing to a channel
-	nutella.net.subscribe('demo_channel', function (message, from_component_id, from_resource_id) {
-		// Your code to handle messages received on this here
-	});
-
-	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	nutella.net.subscribe('demo_channel/#', function (message, channel, from_component_id, from_resource_id) {
-		// Your code to handle messages received by this channel here
-	});
-
-	// 3. Publish a message to a channel
-	nutella.net.publish('demo_channel', 'demo_message');
-
-	// 3a The cool thing is that the message can be any Javascript variable or object
-	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-
-	// 4. Make requests on a certain channel...
-	nutella.net.request('demo_channel', 'my_request', function (response) {
-		// Your code to handle the response here
-	});
-
-	// 4a ... and, guess what, we can send anything in a request, like in publish!
-	// Requests can even be empty, kind of like a GET
-	nutella.net.request('demo_channel', function (response) {
-		// Your code to handle the response here
-	});
-
-	// 5. Handle requests from other components
-	nutella.net.handle_requests('my_channel', function (request, component_id, resource_id) {
-		/// Your code to handle each request here
-		// Anything this function returns (string, integer, object,...) is going to be sent as the response
-		var response = 'this is my response';
-		// Or...
-		// var response = {};
-		// var response = 12345;
-		// var response = {a: 'proper', key: 'value'};
-		return response;
-	});
-
-	// 6. Access the variables that uniquely identify this instance of this component
-	nutella.runId;
-	nutella.componentId;
-	nutella.resourceId;
+//
+//	// 1. Subscribing to a channel
+//	nutella.net.subscribe('demo_channel', function (message, from_component_id, from_resource_id) {
+//		// Your code to handle messages received on this here
+//	});
+//
+//	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
+//	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
+//	nutella.net.subscribe('demo_channel/#', function (message, channel, from_component_id, from_resource_id) {
+//		// Your code to handle messages received by this channel here
+//	});
+//
+//	// 3. Publish a message to a channel
+//	nutella.net.publish('demo_channel', 'demo_message');
+//
+//	// 3a The cool thing is that the message can be any Javascript variable or object
+//	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
+//
+//	// 4. Make requests on a certain channel...
+//	nutella.net.request('demo_channel', 'my_request', function (response) {
+//		// Your code to handle the response here
+//	});
+//
+//	// 4a ... and, guess what, we can send anything in a request, like in publish!
+//	// Requests can even be empty, kind of like a GET
+//	nutella.net.request('demo_channel', function (response) {
+//		// Your code to handle the response here
+//	});
+//
+//	// 5. Handle requests from other components
+//	nutella.net.handle_requests('my_channel', function (request, component_id, resource_id) {
+//		/// Your code to handle each request here
+//		// Anything this function returns (string, integer, object,...) is going to be sent as the response
+//		var response = 'this is my response';
+//		// Or...
+//		// var response = {};
+//		// var response = 12345;
+//		// var response = {a: 'proper', key: 'value'};
+//		return response;
+//	});
+//
+//	// 6. Access the variables that uniquely identify this instance of this component
+//	nutella.runId;
+//	nutella.componentId;
+//	nutella.resourceId;
 
 	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
 	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
@@ -187,81 +188,6 @@
 	// HAVE FUN WITH nutella!
 
 </script>
-<!--<script>-->
-<!--var bind = document.querySelector('#bind');-->
-<!--bind.goStart = function (e) {-->
-<!--console.log("START YOU");-->
-<!--console.log("YELLOW INPUT" + this.$.yellow_input.value);-->
-<!--console.log("RED INPUT" + this.$.red_input.value);-->
-<!--console.log("BLUE INPUT" + this.$.blue_input.value);-->
-
-<!--nutella.net.publish('wallscope_channel', {-->
-<!--event: 'start',-->
-<!--red: this.$.red_input.value,-->
-<!--green: this.$.yellow_input.value,-->
-<!--blue: this.$.blue_input.value-->
-<!--});-->
-
-<!--};-->
-<!--bind.goStop = function (e) {-->
-<!--nutella.net.publish('wallscope_channel', {-->
-<!--event: 'stop',-->
-<!--red: this.$.red_input.value,-->
-<!--green: this.$.yellow_input.value,-->
-<!--blue: this.$.blue_input.value-->
-<!--});-->
-<!--console.log("STOP YOU");-->
-<!--}-->
-<!--</script>-->
-<!-- Your markup here -->
-
-
-<!--<br><br>-->
-
-<!--<div>-->
-<!--Red Critters:&nbsp&nbsp-->
-<!--<paper-input id="red_input" label="RED CRITTERS" value="10" center></paper-input>-->
-<!--</div>-->
-<!--<div>-->
-<!--Blue Critters: <paper-input id="blue_input" label="BLUE CRITTERS" value="10"></paper-input>-->
-<!--</div>-->
-<!--<div>-->
-<!--Yellow Critters:&nbsp&nbsp-->
-<!--<paper-input id="yellow_input" label="GREEN CRITTERS" value="10"></paper-input>-->
-<!--</div>-->
-
-
-<!-- Scripts -->
-
-<!-- Your scripts here -->
-
-
-<!--<section>-->
-<!--<div class="button raised blue">-->
-<!--<div class="center" fit>START</div>-->
-<!--<paper-ripple fit></paper-ripple>-->
-<!--</div>-->
-
-<!--<div class="button raised green">-->
-<!--<div class="center" fit>STOP</div>-->
-<!--<paper-ripple fit></paper-ripple>-->
-<!--</div>-->
-<!--</section>-->
-
-
-<!--<section>-->
-<!--<div>-->
-<!--RED BUGS:<paper-input label="label">45</paper-input>-->
-<!--</div>-->
-<!--<div>-->
-<!--BLUE BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
-<!--</div>-->
-<!--<div>-->
-<!--YELLOW BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
-<!--</div>-->
-<!--</section>-->
-
-
 
 </body>
 </html>
