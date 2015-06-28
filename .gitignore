@@ -9,3 +9,5 @@ dependency-reduced-pom.xml
 # IntelliJ
 .idea/
 *.iml
+**/bower_components
+bots/node_modules
