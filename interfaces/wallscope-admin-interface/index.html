@@ -8,15 +8,20 @@
 	<meta name="description" content="">
 
 	<!-- Your CSS here -->
-	<script src="bower_components/webcomponentsjs/webcomponents.js"></script>
+	<!--<link rel="import" href="bower_components/polymer/polymer.html">-->
+	<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js">
+	</script>
 
 	<!--<link rel="stylesheet" href="css/style.css">-->
 
+	<link rel="import" href="bower_components/paper-styles/paper-styles.html">
 	<link rel="import" href="bower_components/paper-button/paper-button.html">
 	<link rel="import" href="bower_components/paper-input/paper-input.html">
 
 
-	<style shim-shadowdom>
+	<style is="custom-style">
+
+
 		body {
 			font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
 			font-size: 14px;
@@ -24,15 +29,6 @@
 			padding: 24px;
 			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 			-webkit-touch-callout: none;
-		}
-
-		section {
-			padding: 20px 0;
-		}
-
-		section > div {
-			padding: 14px;
-			font-size: 16px;
 		}
 
 		paper-button[raised].start {
@@ -46,7 +42,7 @@
 		}
 
 		paper-input {
-			width: 40px;
+			width: 200px;
 		}
 
 		/*#paper-button.stop {*/
@@ -58,67 +54,71 @@
 </head>
 <body>
 
-<script src="nutella_lib.js" type="text/javascript"></script>
-	<!-- Your markup here -->
-
-	<p>Hello world! This is a nutella basic web interface</p>
+<p>WALLSCOPE ADMIN</p>
 
 <!--<paper-button raised class="colored">START</paper-button>-->
 
-<template id="bind" is="auto-binding">
-	<paper-button raised class="start" on-click="{{ goStart }}">START</paper-button>
-	<paper-button raised class="stop" on-click="{{ goStop }}">STOP</paper-button>
-
-</template>
-
-<script>
-	var bind = document.querySelector('#bind');
-	bind.goStart = function (e) {
-		console.log("START YOU");
-		console.log("GREEN INPUT" + this.$.yellow_input.value);
-		console.log("RED INPUT" + this.$.red_input.value);
-		console.log("BLUE INPUT" + this.$.blue_input.value);
-
-		nutella.net.publish('wallscope_channel', {
-			event: 'start',
-			red: this.$.red_input.value,
-			green: this.$.yellow_input.value,
-			blue: this.$.blue_input.value
-		});
-
-	};
-	bind.goStop = function (e) {
-		nutella.net.publish('wallscope_channel', {
-			event: 'stop',
-			red: this.$.red_input.value,
-			green: this.$.yellow_input.value,
-			blue: this.$.blue_input.value
-		});
-		console.log("STOP YOU");
-	}
-</script>
-
-
-<br><br>
 
 <div>
-	Red Critters:&nbsp&nbsp
+
 	<paper-input id="red_input" label="RED CRITTERS" value="10" center></paper-input>
 </div>
 <div>
-	Blue Critters:&nbsp&nbsp
 	<paper-input id="blue_input" label="BLUE CRITTERS" value="10"></paper-input>
 </div>
 <div>
-	Yellow Critters:&nbsp&nbsp
 	<paper-input id="yellow_input" label="GREEN CRITTERS" value="10"></paper-input>
 </div>
 
+<br><br><br>
 
-<!-- Scripts -->
+<div>
+	<paper-button raised class="start" id="start_button">START</paper-button>
+	<paper-button raised class="stop" id="stop_button">STOP</paper-button>
+</div>
 
-<!-- Your scripts here -->
 
+<script>
+
+
+	var start_sim = function () {
+		var blue_input = document.getElementById("blue_input");
+		var yellow_input = document.getElementById("yellow_input");
+		var red_input = document.getElementById("red_input");
+
+
+		console.log('start, ' + blue_input.value + " " + yellow_input.value + " " + red_input.value);
+
+		nutella.net.publish('wallscope_channel', {
+			event: 'start',
+			red: red_input.value,
+			green: yellow_input.value,
+			blue: blue_input.value
+		});
+	};
+
+	document.getElementById('start_button').onclick = start_sim;
+
+	var stop_sim = function () {
+		var blue_input = document.getElementById("blue_input");
+		var yellow_input = document.getElementById("yellow_input");
+		var red_input = document.getElementById("red_input");
+
+
+		console.log('stop, ' + blue_input.value + " " + yellow_input.value + " " + red_input.value);
+
+		nutella.net.publish('wallscope_channel', {
+			event: 'stop',
+			red: red_input.value,
+			green: yellow_input.value,
+			blue: blue_input.value
+		});
+	};
+
+	document.getElementById('stop_button').onclick = stop_sim;
+
+</script>
+<script src="nutella_lib.js" type="text/javascript"></script>
 <script type="text/javascript">
 
 	// Parse the query parameters
@@ -187,33 +187,7 @@
 
 	// HAVE FUN WITH nutella!
 
-	</script>
-<!--<section>-->
-<!--<div class="button raised blue">-->
-<!--<div class="center" fit>START</div>-->
-<!--<paper-ripple fit></paper-ripple>-->
-<!--</div>-->
-
-<!--<div class="button raised green">-->
-<!--<div class="center" fit>STOP</div>-->
-<!--<paper-ripple fit></paper-ripple>-->
-<!--</div>-->
-<!--</section>-->
-
-
-<!--<section>-->
-<!--<div>-->
-<!--RED BUGS:<paper-input label="label">45</paper-input>-->
-<!--</div>-->
-<!--<div>-->
-<!--BLUE BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
-<!--</div>-->
-<!--<div>-->
-<!--YELLOW BUGS:<paper-input-decorator label="with core-input"><input is="core-input"></paper-input-decorator>-->
-<!--</div>-->
-<!--</section>-->
-
-
+</script>
 
 </body>
 </html>

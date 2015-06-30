@@ -2384,8 +2384,7 @@ function generateRandomClientId() {
         result += chars[Math.round(Math.random() * (chars.length - 1))];
     }
     return result;
-};
-
+}
 //
 // Helper function that connects the MQTT client in the browser
 //
@@ -2547,7 +2546,7 @@ var publishBrowser = function (client, backlog, channel, message) {
  */
 SimpleMQTTClient.prototype.getHost = function() {
     return this.client._getHost();
-}
+};
 
 
 
@@ -2559,7 +2558,7 @@ SimpleMQTTClient.prototype.getHost = function() {
  */
 SimpleMQTTClient.prototype.isChannelWildcard = function(channel) {
     return channel.indexOf('#')>-1 || channel.indexOf('+')>-1 ;
-}
+};
 
 
 
@@ -2580,9 +2579,7 @@ function findCallbacks (subscriptions, channel) {
     }
     // If there's no exact match or wildcard we have to return undefined
     return undefined;
-};
-
-
+}
 //
 // Helper function that tries to match a channel with each subscription
 // it returns undefined if no match is found
@@ -2596,9 +2593,7 @@ function matchesWildcard (subscriptions, channel) {
         }
     }
     return undefined;
-};
-
-
+}
 //
 // Helper function that checks a certain channel and see if it matches a wildcard pattern
 // Returns true if the channel matches a pattern (including the exact pattern)
@@ -2619,9 +2614,7 @@ function matchesFilter (pattern, channel) {
     // FROM SPEC: The single-level wildcard can be used at any level in the Topic Filter, including first and last levels. Where it is used it MUST occupy an entire level of the filter [MQTT-4.7.1-3]. It can be used at more than one level in the Topic Filter and can be used in conjunction with the multilevel wildcard.
     // http://docs.oasis-open.org/mqtt/mqtt/v3.1.1/os/mqtt-v3.1.1-os.html#_Toc398718107
     return false;
-};
-
-
+}
 //
 // Helper method that queues operations into the backlog.
 // This method is used to make `connect` "synchronous" by
@@ -2640,11 +2633,7 @@ function addToBacklog (client, backlog, method, parameters) {
         return true;
     }
     return false;
-};
-
-
-
-
+}
 //
 // Exports SimpleMQTTClient class for other modules
 //
@@ -2919,7 +2908,7 @@ Paho.MQTT = (function (global) {
 		 */
 
 		var remLength = 0;
-		var topicStrLength = new Array();
+        var topicStrLength = [];
 		var destinationNameLength = 0;
 		
 		// if the message contains a messageIdentifier then we need two bytes for that
@@ -2994,8 +2983,7 @@ Paho.MQTT = (function (global) {
 				break;
 
 			default:
-				;
-		}
+        }
 
 		// Now we can allocate a buffer for the message
 
@@ -3092,7 +3080,7 @@ Paho.MQTT = (function (global) {
 		}
 
 		return buffer;
-	}	
+    };
 
 	function decodeMessage(input,pos) {
 	    var startingPos = pos;
@@ -3168,8 +3156,7 @@ Paho.MQTT = (function (global) {
 				break;
 		
 			default:
-				;
-		}
+        }
 				
 		return [wireMessage,endPos];	
 	}
@@ -3270,8 +3257,8 @@ Paho.MQTT = (function (global) {
 				output[pos++] = charCode>>12 & 0x3F | 0x80;
 				output[pos++] = charCode>>6  & 0x3F | 0x80;
 				output[pos++] = charCode     & 0x3F | 0x80;
-			};
-		} 
+            }
+        }
 		return output;
 	}
 	
@@ -3352,14 +3339,14 @@ Paho.MQTT = (function (global) {
 				this._client.socket.send(pingReq); 
 				this.timeout = this._window.setTimeout(doTimeout(this), this._keepAliveInterval);
 			}
-		}
+        };
 
 		this.reset = function() {
 			this.isReset = true;
 			this._window.clearTimeout(this.timeout);
 			if (this._keepAliveInterval > 0)
 				this.timeout = setTimeout(doTimeout(this), this._keepAliveInterval);
-		}
+        };
 
 		this.cancel = function() {
 			this._window.clearTimeout(this.timeout);
@@ -3803,7 +3790,7 @@ Paho.MQTT = (function (global) {
 		for (var i = 0; i < messages.length; i+=1) {
 		    this._handleMessage(messages[i]);
 		}
-	}
+    };
 	
 	ClientImpl.prototype._deframeMessages = function(data) {
 		var byteArray = new Uint8Array(data);
@@ -3835,7 +3822,7 @@ Paho.MQTT = (function (global) {
 			return;
 		}
 		return messages;
-	}
+    };
 	
 	ClientImpl.prototype._handleMessage = function(wireMessage) {
 		
@@ -3872,7 +3859,7 @@ Paho.MQTT = (function (global) {
 				}
 				
 				// Resend messages.
-				var sequencedMessages = new Array();
+                var sequencedMessages = [];
 				for (var msgId in this._sentMessages) {
 					if (this._sentMessages.hasOwnProperty(msgId))
 						sequencedMessages.push(this._sentMessages[msgId]);
@@ -3887,8 +3874,8 @@ Paho.MQTT = (function (global) {
 						this._schedule_message(pubRelMessage);
 					} else {
 						this._schedule_message(sentMessage);
-					};
-				}
+                    }
+                }
 
 				// Execute the connectOptions.onSuccess callback if there is one.
 				if (this.connectOptions.onSuccess) {
@@ -3988,10 +3975,10 @@ Paho.MQTT = (function (global) {
 
 			default:
 				this._disconnected(ERROR.INVALID_MQTT_MESSAGE_TYPE.code , format(ERROR.INVALID_MQTT_MESSAGE_TYPE, [wireMessage.type]));
-			};
-		} catch (error) {
+            }
+        } catch (error) {
 			this._disconnected(ERROR.INTERNAL_ERROR.code , format(ERROR.INTERNAL_ERROR, [error.message,error.stack.toString()]));
-			return;
+
 		}
 	};
 	
@@ -4043,8 +4030,8 @@ Paho.MQTT = (function (global) {
 
 			default:
 				throw Error("Invaild qos="+wireMmessage.payloadMessage.qos);
-		};
-	};
+        }
+    };
 
 	/** @ignore */
 	ClientImpl.prototype._receiveMessage = function (wireMessage) {
@@ -4103,7 +4090,7 @@ Paho.MQTT = (function (global) {
 			} else {
 				// Otherwise we never had a connection, so indicate that the connect has failed.
 				if (this.connectOptions.mqttVersion === 4 && this.connectOptions.mqttVersionExplicit === false) {
-					this._trace("Failed to connect V4, dropping back to V3")
+                    this._trace("Failed to connect V4, dropping back to V3");
 					this.connectOptions.mqttVersion = 3;
 					if (this.connectOptions.uris) {
 						this.hostIndex = 0;
@@ -4140,9 +4127,9 @@ Paho.MQTT = (function (global) {
 				if (i === 0) this._traceBuffer.push(arguments[i]);
 				else if (typeof arguments[i] === "undefined" ) this._traceBuffer.push(arguments[i]);
 				else this._traceBuffer.push("  "+JSON.stringify(arguments[i]));
-		   };
-		};
-	};
+            }
+        }
+    };
 	
 	/** @ignore */
 	ClientImpl.prototype._traceMask = function (traceObject, masked) {
@@ -4388,7 +4375,7 @@ Paho.MQTT = (function (global) {
 
 			//Check that if password is set, so is username
 			if (connectOptions.password === undefined && connectOptions.userName !== undefined)
-				throw new Error(format(ERROR.INVALID_ARGUMENT, [connectOptions.password, "connectOptions.password"]))
+                throw new Error(format(ERROR.INVALID_ARGUMENT, [connectOptions.password, "connectOptions.password"]));
 
 			if (connectOptions.willMessage) {
 				if (!(connectOptions.willMessage instanceof Message))
@@ -4614,7 +4601,7 @@ Paho.MQTT = (function (global) {
 		 */
 		this.getTraceLog = function () {
 			return client.getTraceLog();
-		}
+        };
 		
 		/** 
 		 * Start tracing.
@@ -4736,8 +4723,8 @@ Paho.MQTT = (function (global) {
 				return byteStream;
 			} else {
 				return payload;
-			};
-		};
+            }
+        };
 
 		var destinationName = undefined;
 		this._getDestinationName = function() { return destinationName; };
