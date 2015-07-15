@@ -1,0 +1,158 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<dom-module id="wall-addscope">
+  <style is="custom-style">
+
+    :root {
+
+      --dark-primary-color: #303f9f;
+
+      --default-primary-color: #3f51b5;
+
+      --light-primary-color: #c5cae9;
+
+      --text-primary-color: #ffffff;
+
+      --accent-color: #ff4081;
+
+      --primary-background-color: #ffffff;
+
+      --primary-text-color: #212121;
+
+      --secondary-text-color: #757575;
+
+      --disabled-text-color: #bdbdbd;
+
+      --divider-color: #e0e0e0;
+
+    }
+
+    section {
+      padding: 20px 0;
+    }
+
+    section > div {
+      padding: 14px;
+      font-size: 16px;
+    }
+
+    section > paper-button {
+      background-color: var(--google-grey-300);
+      padding: 5px;
+    }
+
+    section > paper-button:hover {
+      background-color: var(--paper-light-blue-200);
+      padding: 5px;
+    }
+
+    paper-toast {
+      z-index: 1000;
+    }
+
+    paper-dialog.size-position {
+    width: 200px;
+    height: 300px;
+    }
+
+  </style>
+  <template>
+    <paper-icon-button id="wallAdd" data-dialog="dialog" icon="add"></paper-icon-button>
+    <paper-dialog id="dialog" entry-animation="scale-up-animation" exit-animation="fade-out-animation">
+      <h2>Create a New Wallscope</h2>
+
+      <!-- Listens for "input" event and sets greeting to <input>.value -->
+        <paper-input id="scopeName" label="NAME" value="{{scopeName::input}}" maxlength="16" size="16"></paper-input>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button id="addButton" dialog-confirm autofocus>ADD</paper-button>
+      </div>
+    </paper-dialog>
+    <paper-toast id="toast1" class="capsule" text=""></paper-toast>
+  </template>
+</dom-module>
+<script>
+  (function() {
+    Polymer({
+      is: 'wall-addscope',
+      properties: {
+        scopeName: {
+          type: String,
+          value: 'WALLSCOPE-',
+          notify: true
+        }
+      },
+      factoryImpl: function() {
+        console.log('CONSTRUCTOR');
+      },
+
+      listeners: {
+        'wallAdd.tap': 'wallAddTap',
+        'addButton.tap': 'addButtonTap'
+      },
+
+      addButtonTap: function() {
+        var app = document.querySelector('#app');
+
+        app.createScope(this.$.scopeName.value);
+
+        var t = document.querySelector('#toast1');
+        t.text = 'Wallscope named: ' + this.scopeName + ' has been added.';
+        t.show();
+      },
+
+      wallAddTap: function(e) {
+        var button = e.target;
+
+        while (!button.hasAttribute('data-dialog') && button !== document.body) {
+          button = button.parentElement;
+        }
+
+        if (!button.hasAttribute('data-dialog')) {
+          return;
+        }
+
+
+        var id = button.getAttribute('data-dialog');
+        var dialog = document.getElementById(id);
+        if (dialog) {
+          this.computeScopeName();
+          dialog.open();
+        }
+      },
+
+      computeScopeName: function() {
+        var app = document.querySelector('#app');
+        this.scopeName = this.scopeName + app.scopes.length;
+      },
+      ready: function() {
+      },
+      created: function() {
+
+//        console.log(this.localName + '#' + this.id + ' was created');
+      },
+
+      attached: function() {
+//        console.log(this.localName + '#' + this.id + ' was attached');
+      },
+
+      detached: function() {
+//        console.log(this.localName + '#' + this.id + ' was detached');
+      },
+
+      attributeChanged: function(name, type) {
+        console.log(this.localName + '#' + this.id + ' attribute ' + name +
+          ' was changed to ' + this.getAttribute(name) + type);
+      }
+    });
+  })();
+</script>
+

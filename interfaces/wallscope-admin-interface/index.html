@@ -1,188 +1,38 @@
-<!doctype html>
-<html>
-<head>
-	<meta charset="utf-8">
-	<!-- Your interface name here-->
-	<title></title>
-	<!-- The description of this interfaces here -->
-	<meta name="description" content="">
-
-	<!-- Your CSS here -->
-	<!--<link rel="import" href="bower_components/polymer/polymer.html">-->
-	<script src="bower_components/webcomponentsjs/webcomponents-lite.min.js">
-	</script>
-
-	<!--<link rel="stylesheet" href="css/style.css">-->
-
-	<link rel="import" href="bower_components/paper-styles/paper-styles.html">
-	<link rel="import" href="bower_components/paper-button/paper-button.html">
-	<link rel="import" href="bower_components/paper-input/paper-input.html">
+<!doctype html><html lang=""><head><meta charset="utf-8"><meta name="description" content=""><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="generator" content="Wallcology Admin"><title>Wallcology Admin</title><meta name="theme-color" content="#303F9F"><link rel="manifest" href="manifest.json"><meta name="msapplication-TileColor" content="#3372DF"><meta name="mobile-web-app-capable" content="yes"><meta name="application-name" content="Wallcology Admin"><link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black"><meta name="apple-mobile-web-app-title" content="Wallcology Admin"><link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png"><meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png"><link rel="stylesheet" href="styles/main.css"><script src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script><link rel="import" href="elements/elements.vulcanized.html"><style is="custom-style">
+    .line {
+      margin-right: 40px;
+    }
 
 
-	<style is="custom-style">
+
+    /*.line span {*/
+      /*margin-left: 24px;*/
+    /*}*/
+
+    </style></head><body unresolved="" class="fullbleed layout vertical"><span id="browser-sync-binding"></span><template is="dom-bind" id="app"><iron-ajax id="elemAjax" auto="" url="http://beta.json-generator.com/api/json/get/4JWVllOd" handle-as="json" last-response="{{ajaxResponse}}"></iron-ajax><paper-header-panel main="" mode="medium-tall" class="cyan"><paper-toolbar id="mainToolbar"><span class="flex"></span><div class="middle title">WALLCOLOGY ADMIN<div>{{className}}</div></div><div class="line"><paper-toggle-button on-change="toggleWallscopes"></paper-toggle-button><span></span></div><wall-addscope></wall-addscope></paper-toolbar><div class="content"><wall-scopelist id="lister"></wall-scopelist></div></paper-header-panel><paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline."></paper-toast><platinum-sw-register auto-register="" clients-claim="" skip-waiting="" on-service-worker-installed="displayInstalledToast"><platinum-sw-cache default-cache-strategy="networkFirst" precache-file="precache.json"></platinum-sw-cache></platinum-sw-register></template><script>
+    var app = document.querySelector('#app');
+    app.className = 'BZEADS-BETH';
 
 
-		body {
-			font-family: RobotoDraft, 'Helvetica Neue', Helvetica, Arial;
-			font-size: 14px;
-			margin: 0;
-			padding: 24px;
-			-webkit-tap-highlight-color: rgba(0, 0, 0, 0);
-			-webkit-touch-callout: none;
-		}
 
-		paper-button[raised].start {
-			background: #4285f4;
-			color: #fff;
-		}
-
-		paper-button[raised].stop {
-			background: #b8002e;
-			color: #fff;
-		}
-
-		paper-input {
-			width: 200px;
-		}
-
-		/*#paper-button.stop {*/
-		/*color: #b8002e;*/
-		/*}*/
+//    var toggle = document.querySelector("#paper-toggle-button");
+//    toggle.addEventListener('change', function () {
+//      if (this.checked) {
+//        // do something if when checked
+//      } else {
+//        // do something if not checked
+//      }
+//    });
 
 
-	</style>
-</head>
-<body>
 
-<p>WALLSCOPE ADMIN</p>
+    //    var ironAjax = document.querySelector('iron-ajax');
+//    ironAjax.addEventListener('response', function() {
+//      console.log(ironAjax.lastResponse[0].id);
+//    });
 
-<!--<paper-button raised class="colored">START</paper-button>-->
-
-
-<div>
-
-	<paper-input id="red_input" label="RED CRITTERS" value="10" center></paper-input>
-</div>
-<div>
-	<paper-input id="blue_input" label="BLUE CRITTERS" value="10"></paper-input>
-</div>
-<div>
-	<paper-input id="yellow_input" label="GREEN CRITTERS" value="10"></paper-input>
-</div>
-
-<br><br><br>
-
-<div>
-	<paper-button raised class="start" id="start_button">START</paper-button>
-	<paper-button raised class="stop" id="stop_button">STOP</paper-button>
-</div>
-
-
-<script>
-
-	document.getElementById('start_button').onclick = function () {
-		var blue_input = document.getElementById("blue_input");
-		var yellow_input = document.getElementById("yellow_input");
-		var red_input = document.getElementById("red_input");
-
-
-		console.log('start, ' + blue_input.value + " " + yellow_input.value + " " + red_input.value);
-
-		nutella.net.publish('wallscope_channel', {
-			event: 'start',
-			red: red_input.value,
-			green: yellow_input.value,
-			blue: blue_input.value
-		});
-	};
-
-	document.getElementById('stop_button').onclick = function () {
-		var blue_input = document.getElementById("blue_input");
-		var yellow_input = document.getElementById("yellow_input");
-		var red_input = document.getElementById("red_input");
-
-
-		console.log('stop, ' + blue_input.value + " " + yellow_input.value + " " + red_input.value);
-
-		nutella.net.publish('wallscope_channel', {
-			event: 'stop',
-			red: red_input.value,
-			green: yellow_input.value,
-			blue: blue_input.value
-		});
-	};
-
-</script>
-<script src="nutella_lib.js" type="text/javascript"></script>
-<script type="text/javascript">
-
-	// Parse the query parameters
-	var query_parameters = NUTELLA.parseURLParameters();
-
-	// Get an instance of nutella.
-	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-
-	// (Optional) Set the resourceId
-	// nutella.setResourceId('my_resource_id');
-
-
-	// Your code that uses the nutella instance here
-
-
-	// EXAMPLES
-	// You can do stuff like:
-//
-//	// 1. Subscribing to a channel
-//	nutella.net.subscribe('demo_channel', function (message, from_component_id, from_resource_id) {
-//		// Your code to handle messages received on this here
-//	});
-//
-//	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-//	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-//	nutella.net.subscribe('demo_channel/#', function (message, channel, from_component_id, from_resource_id) {
-//		// Your code to handle messages received by this channel here
-//	});
-//
-//	// 3. Publish a message to a channel
-//	nutella.net.publish('demo_channel', 'demo_message');
-//
-//	// 3a The cool thing is that the message can be any Javascript variable or object
-//	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-//
-//	// 4. Make requests on a certain channel...
-//	nutella.net.request('demo_channel', 'my_request', function (response) {
-//		// Your code to handle the response here
-//	});
-//
-//	// 4a ... and, guess what, we can send anything in a request, like in publish!
-//	// Requests can even be empty, kind of like a GET
-//	nutella.net.request('demo_channel', function (response) {
-//		// Your code to handle the response here
-//	});
-//
-//	// 5. Handle requests from other components
-//	nutella.net.handle_requests('my_channel', function (request, component_id, resource_id) {
-//		/// Your code to handle each request here
-//		// Anything this function returns (string, integer, object,...) is going to be sent as the response
-//		var response = 'this is my response';
-//		// Or...
-//		// var response = {};
-//		// var response = 12345;
-//		// var response = {a: 'proper', key: 'value'};
-//		return response;
-//	});
-//
-//	// 6. Access the variables that uniquely identify this instance of this component
-//	nutella.runId;
-//	nutella.componentId;
-//	nutella.resourceId;
-
-	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-
-	// HAVE FUN WITH nutella!
-
-</script>
-
-</body>
-</html>
+//    console.log('states ' + this.$.);
+//    console.log('states ' + app.statesLoaded);
+    app.scopes = [
+    ];
+  </script><script src="scripts/app.js"></script></body></html>
