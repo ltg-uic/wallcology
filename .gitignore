@@ -10,6 +10,4 @@ dependency-reduced-pom.xml
 .DS_Store
 .idea/
 *.iml
-**/bower_components
-**/node_modules
 interfaces/wallscope-interface/.DS_Store
