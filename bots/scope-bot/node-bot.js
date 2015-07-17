@@ -38,6 +38,9 @@ nutella.net.subscribe('wallcology_admin_channel', function(message, from) {
         } else if( message.event === 'stop') {
             console.log('from Admin: viz start has been stopped');
             nutella.net.publish('wallscope_channel',{event:'stop'});
+        } else if( message.event === 'update_scope') {
+            console.log('from Admin: sending update to scopes');
+            nutella.net.publish('wallscope_channel',message);
         }
     }
 });
