@@ -45,9 +45,9 @@ nutella.net.subscribe('wallcology_admin_channel', function(message, from) {
     }
 });
 
-nutella.net.subscribe('wallscope_channel', function(message, from) {
-    // Your code to handle messages received on this channel goes here
-});
+//nutella.net.subscribe('wallscope_channel', function(message, from) {
+//    // Your code to handle messages received on this channel goes here
+//});
 
 
 //// 2. Publish a message to a channel
