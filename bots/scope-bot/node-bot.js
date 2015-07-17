@@ -33,11 +33,11 @@ nutella.net.subscribe('wallcology_admin_channel', function(message, from) {
         if( message.event == 'start') {
             console.log('from Admin: viz  has been started');
             configuration = message.scopeConfiguration;
-            nutella.net.publish('wallscope_channel',{event:'start'});
             console.log('from Admin: viz  has been started');
+            nutella.net.publish('wallscope_channel',{event:'start', configuration: configuration});
         } else if( message.event === 'stop') {
-            nutella.net.publish('wallscope_channel',{event:'stop'});
             console.log('from Admin: viz start has been stopped');
+            nutella.net.publish('wallscope_channel',{event:'stop'});
         }
     }
 });
@@ -47,18 +47,18 @@ nutella.net.subscribe('wallscope_channel', function(message, from) {
 });
 
 
-// 2. Publish a message to a channel
-nutella.net.publish('wallscope_channel', 'demo_message');
-
-	
-// 2a. The cool thing is that the message can be any object
-nutella.net.publish('wallscope_channel', {a: 'proper', key: 'value'});
+//// 2. Publish a message to a channel
+//nutella.net.publish('wallscope_channel', 'demo_message');
+//
+//
+//// 2a. The cool thing is that the message can be any object
+//nutella.net.publish('wallscope_channel', {a: 'proper', key: 'value'});
 
 
 // 3. Make asynchronous requests on a certain channel
-nutella.net.request( 'demo_channel', 'my_request', function(response){
-    // Your code to handle the response to this request goes here
-});
+//nutella.net.request( 'demo_channel', 'my_request', function(response){
+//    // Your code to handle the response to this request goes here
+//});
 
 
 // 4. Handle requests from other components
