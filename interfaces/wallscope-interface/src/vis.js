@@ -2,10 +2,12 @@
  * Created by krbalmryde on 6/25/15.
  *
  */
-var Critters = {red: [], green: [], blue:[]};
-var critterGroup = new THREE.Object3D();
+
+var CritterGroups = {};
 var scene, camera, renderer, container;
 var hasStarted = false;
+
+
 
 function Start() {
     onCreate();
@@ -30,12 +32,12 @@ function onFrame() {
  *  the scene and its associated objects
  * ================================== */
 function render() {
-    for (var bug in Critters) {
-        for (var i = 0; i < Critters[bug].length; i++) {
-            var critter = Critters[bug][i];
+    for (var bug in CritterGroups) {
+        for (var i = 0; i < CritterGroups[bug].children.length; i++) {
+            var critter = CritterGroups[bug].children[i];
             critter.translateX((Math.random() * 10 - 5));
             critter.translateY((Math.random() * 10 - 5));
-            critter.translateZ((Math.random() * 10 - 5));
+//            critter.translateZ((Math.random() * 10 - 5));
         }
     }
     renderer.render( scene, camera );
@@ -44,22 +46,29 @@ function render() {
 
 function initVisComponents(){
     console.log("initVisComponents");
+    
     scene = new THREE.Scene();
-    scene.add(critterGroup);
+    CritterGroups['red'] = new THREE.Object3D();
+    CritterGroups['green'] = new THREE.Object3D();
+    CritterGroups['blue'] = new THREE.Object3D();
+    
+    scene.add(CritterGroups['red']);
+    scene.add(CritterGroups['green']);
+    scene.add(CritterGroups['blue']);
+    
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 1000 );
     camera.position.z = 900;
 
     renderer = new THREE.WebGLRenderer();
-
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor(rgbToHex(255,255,255));
+    
     container = document.getElementById("wallcology");
     container.appendChild( renderer.domElement );
 
     window.addEventListener( 'resize', onReshape, false );
 
 }
-
 
 function initNutellaComponents() {
     // Parse the query parameters
@@ -77,6 +86,10 @@ function initNutellaComponents() {
     console.log("Hi, I'm a wallscope-bot");
 
     var isRunning = false;
+    var sphereGeometry = new THREE.SphereGeometry(35, 15, 15);
+    
+    var bugGeometry = {}
+    var bugMaterials = {}
 
     setInterval(function () {
         console.log("fired");
@@ -86,26 +99,38 @@ function initNutellaComponents() {
             var bug = bugs[Math.floor(Math.random() * 3)];
             var choice = choices[Math.floor(Math.random() * 2)];
             var tribute = Math.floor(Math.random() * 10)+1;
+            
+            if (!bugMaterials.hasOwnProperty(bug)){
+                var material = new THREE.MeshBasicMaterial({
+                    color: getBugColor(bug)
+//                    vertexColors: THREE.VertexColors
+                });
+                
+                bugMaterials[bug] = material;
+            }
+                        
+            
             switch (choice) {
                 case 'add':
                     console.log('add', tribute, bug)
                     for (var i = 0; i < tribute; i++) {
-                        createCritter(bug, i);
+                        createCritter(bug, sphereGeometry, bugMaterials[bug]);
                     }
-
                     break;
                 case 'destroy':
                     console.log('destroy', tribute, bug);
                     for (var i = 0; i < tribute; i++) {
-                        if (Critters[bug].length < 1) {
-                            Critters[bug] = [];
+                        console.log('\t', bug, CritterGroups[bug].children.length);
+                        if (CritterGroups[bug].children.length < 1) {
+                            console.log("break", bug, CritterGroups[bug].children.length)
                             break;
                         }
-                        var critter = Critters[bug].pop();
-                        critterGroup.remove(critter);
-                        scene.remove(critter);
-                        critter.material.dispose();
-                        critter.geometry.dispose();
+                        
+                        var critter = CritterGroups[bug].children[0];
+                        console.log("\tcritter..", bug, critter);
+                        CritterGroups[bug].remove(critter);
+//                        critter.material.dispose();
+//                        critter.geometry.dispose();
                     }
                     break;
             }
@@ -125,9 +150,17 @@ function initNutellaComponents() {
                 for (bug in message) {
                     console.log("adding bug", bug, message[bug])
                     if (bug !== "event"){
+                        if (!bugMaterials.hasOwnProperty(bug)){
+                            var material = new THREE.MeshBasicMaterial({
+                                color: getBugColor(bug)
+            //                    vertexColors: THREE.VertexColors
+                            });
+
+                            bugMaterials[bug] = material;
+                        }
 
                         for (var i = 0; i < parseInt(message[bug]); i++) {
-                            createCritter(bug, i);
+                            createCritter(bug, sphereGeometry, bugMaterials[bug]);
                         }
                     }
                 }
@@ -140,15 +173,14 @@ function initNutellaComponents() {
             case "stop":
                 console.log("stop");
                 hasStarted = false;
-                for (var bug in Critters) {
-                    while (Critters[bug].length > 0){
-                        console.log(bug,Critters[bug].length);
-                        var critter = Critters[bug].pop();
-                        critterGroup.remove(critter);
+                for (var bug in CritterGroups) {
+                    while (CritterGroups[bug].children.length > 0){
+                        console.log("stop", bug, CritterGroups[bug].children, length);
+                        var critter = CritterGroups[bug].children[0];
+                        CritterGroups[bug].remove(critter);
                         scene.remove(critter);
                         critter.material.dispose();
                         critter.geometry.dispose();
-
                     }
                 }
                 break;
@@ -159,15 +191,9 @@ function initNutellaComponents() {
 }
 
 
-function createCritter(bug, i) {
+function createCritter(bug, sphereGeometry, sphereMaterial) {
 
-    var mesh = new THREE.Mesh(
-        new THREE.SphereGeometry(35, 15, 15),
-        new THREE.MeshBasicMaterial({
-            color: getBugColor(bug),
-            vertexColors: THREE.VertexColors
-        })
-    );
+    var mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
     var vec3 = new THREE.Vector3();
     vec3.x = Math.random() * 2 - 1;
@@ -179,8 +205,7 @@ function createCritter(bug, i) {
     mesh.position.set( vec3.x, vec3.y, 0);
     mesh.updateMatrix();
     console.log(bug)
-    Critters[bug].push(mesh);
-    critterGroup.add(mesh);
+    CritterGroups[bug].add(mesh);
 }
 
 
@@ -192,11 +217,12 @@ function onReshape() {
 
 
 function getBugColor(bug) {
+    console.log("getBugColor(", bug, ")");
     switch (bug) {
-        case 'red': return rgbToHex(255,0,0);
-        case 'green': return rgbToHex(0,255,0);
-        case 'blue': return rgbToHex(0,0,255);
-        default: return rgbToHex(255,255,255);
+        case 'red': return 'rgb(255,0,0)';
+        case 'green': return 'rgb(0,255,0)';
+        case 'blue': return 'rgb(0,0,255)';
+        default: return 'rgb(255,255,0)';
     }
 }
 
