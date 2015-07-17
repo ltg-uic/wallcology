@@ -121,12 +121,12 @@ function initNutellaComponents() {
     var isRunning = false;
     var sphereGeometry = new THREE.SphereGeometry(35, 15, 15);
 
-    subscribeToChannel('wallcology_admin_channel', adminMessageCallBack);
+    subscribeToChannel('wallscope_channel', adminMessageCallBack);
     // subscribeToChannel("wallscope_channel", adminMessageCallBack);
 
 
     // 3. Make asynchronous requests on a certain channel
-    nutella.net.request( 'wallcology_admin_channel', 'start', function(response){
+    nutella.net.request( 'wallscope_channel', 'start', function(response){
         console.log("Help me 'wallcology_admin_channel', youre my only hope", response)
     });
 }
