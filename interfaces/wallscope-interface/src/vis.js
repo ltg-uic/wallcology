@@ -3,10 +3,13 @@
  *
  */
 
+"use strict";
+
 var CritterGroups = {};
 var scene, camera, renderer, container;
 var hasStarted = false;
-
+var nutella;
+var loader = new THREE.OBJMTLLoader();
 
 
 function Start() {
@@ -46,23 +49,25 @@ function render() {
 
 function initVisComponents(){
     console.log("initVisComponents");
-    
+
     scene = new THREE.Scene();
-    CritterGroups['red'] = new THREE.Object3D();
-    CritterGroups['green'] = new THREE.Object3D();
-    CritterGroups['blue'] = new THREE.Object3D();
-    
-    scene.add(CritterGroups['red']);
-    scene.add(CritterGroups['green']);
-    scene.add(CritterGroups['blue']);
-    
+    CritterGroups['Fang Bug'] = new THREE.Object3D();
+    CritterGroups['Big Bug'] = new THREE.Object3D();
+    CritterGroups['Small Bug'] = new THREE.Object3D();
+    CritterGroups['Spikey Bug'] = new THREE.Object3D();
+
+    scene.add(CritterGroups['Fang Bug']);
+    scene.add(CritterGroups['Big Bug']);
+    scene.add(CritterGroups['Small Bug']);
+    scene.add(CritterGroups['Spikey Bug']);
+
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 1000 );
     camera.position.z = 900;
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     renderer.setClearColor(rgbToHex(255,255,255));
-    
+
     container = document.getElementById("wallcology");
     container.appendChild( renderer.domElement );
 
@@ -75,123 +80,107 @@ function initNutellaComponents() {
     var query_parameters = NUTELLA.parseURLParameters();
 
     // Get an instance of nutella.
-    var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-
+    nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
     // (Optional) Set the resourceId
-    nutella.setResourceId('wallscope_bot');
-
-    // EXAMPLES
-    // You can do stuff like:
-    console.log("Hi, I'm a wallscope-bot");
+    nutella.setResourceId('wallscope_vis');
 
     var isRunning = false;
     var sphereGeometry = new THREE.SphereGeometry(35, 15, 15);
-    
-    var bugGeometry = {}
-    var bugMaterials = {}
 
-    setInterval(function () {
-        console.log("fired");
-        if (hasStarted) {
-            var bugs = ['red', 'green', 'blue'];
-            var choices = ['add', 'destroy'];
-            var bug = bugs[Math.floor(Math.random() * 3)];
-            var choice = choices[Math.floor(Math.random() * 2)];
-            var tribute = Math.floor(Math.random() * 10)+1;
-            
-            if (!bugMaterials.hasOwnProperty(bug)){
-                var material = new THREE.MeshBasicMaterial({
-                    color: getBugColor(bug)
-//                    vertexColors: THREE.VertexColors
-                });
-                
-                bugMaterials[bug] = material;
-            }
-                        
-            
-            switch (choice) {
-                case 'add':
-                    console.log('add', tribute, bug)
-                    for (var i = 0; i < tribute; i++) {
-                        createCritter(bug, sphereGeometry, bugMaterials[bug]);
-                    }
-                    break;
-                case 'destroy':
-                    console.log('destroy', tribute, bug);
-                    for (var i = 0; i < tribute; i++) {
-                        console.log('\t', bug, CritterGroups[bug].children.length);
-                        if (CritterGroups[bug].children.length < 1) {
-                            console.log("break", bug, CritterGroups[bug].children.length)
-                            break;
-                        }
-                        
-                        var critter = CritterGroups[bug].children[0];
-                        console.log("\tcritter..", bug, critter);
-                        CritterGroups[bug].remove(critter);
-//                        critter.material.dispose();
-//                        critter.geometry.dispose();
-                    }
-                    break;
-            }
-        } else {
-            console.log("wating for start event");
-        }
-    }, 5000);
+    subscribeToChannel('wallcology_admin_channel', adminMessageCallBack);
+    // subscribeToChannel("wallscope_channel", adminMessageCallBack);
 
 
-    // 1. Subscribing to a channel
-    nutella.net.subscribe('wallscope_channel', function (message, from) {
-        console.log("subscribe to message", message);
-        switch (message.event) {
-            case "start":
-                console.log("Start subscribe to message", message);
-                hasStarted = true;
-                for (bug in message) {
-                    console.log("adding bug", bug, message[bug])
-                    if (bug !== "event"){
-                        if (!bugMaterials.hasOwnProperty(bug)){
-                            var material = new THREE.MeshBasicMaterial({
-                                color: getBugColor(bug)
-            //                    vertexColors: THREE.VertexColors
-                            });
-
-                            bugMaterials[bug] = material;
-                        }
-
-                        for (var i = 0; i < parseInt(message[bug]); i++) {
-                            createCritter(bug, sphereGeometry, bugMaterials[bug]);
-                        }
-                    }
-                }
-                break;
-
-            case "update":
-                console.log("");
-                break;
-
-            case "stop":
-                console.log("stop");
-                hasStarted = false;
-                for (var bug in CritterGroups) {
-                    while (CritterGroups[bug].children.length > 0){
-                        console.log("stop", bug, CritterGroups[bug].children, length);
-                        var critter = CritterGroups[bug].children[0];
-                        CritterGroups[bug].remove(critter);
-                        scene.remove(critter);
-                        critter.material.dispose();
-                        critter.geometry.dispose();
-                    }
-                }
-                break;
-            default:
-                return;
-        }
+    // 3. Make asynchronous requests on a certain channel
+    nutella.net.request( 'wallcology_admin_channel', 'start', function(response){
+        console.log("Help me 'wallcology_admin_channel', youre my only hope", response)
     });
 }
 
+function subscribeToChannel(channelName, messageHandler) {
+    console.log("subscribing to channel:", channelName);
+    nutella.net.subscribe(channelName, messageHandler);
+}
+
+
+
+function adminMessageCallBack(message, from) {
+    // 1. Subscribing to a channel
+    console.log("Message from", from.component_id, ":", message);
+    switch (message.event) {
+        case "start":
+            handleStartEvent(message);
+            break;
+
+        case "update_scope":
+            console.log("Message received", message);
+            handleUpdateScopeMessage(message);
+            break;
+
+        case "stop":
+            console.log("stop");
+            hasStarted = false;
+            for (var bug in CritterGroups) {
+                while (CritterGroups[bug].children.length > 0){
+                    console.log("stop", bug, CritterGroups[bug].children, length);
+                    var critter = CritterGroups[bug].children[0];
+                    CritterGroups[bug].remove(critter);
+                    scene.remove(critter);
+                    critter.material.dispose();
+                    critter.geometry.dispose();
+                }
+            }
+            break;
+        default:
+            return;
+    }
+}
+
+function handleStartEvent(m) {
+    console.log("It Has Begun!!", m);
+
+    hasStarted = true;
+
+    var bugMaterials = {}
+    var bugGeometry = new THREE.SphereGeometry(35, 15, 15)
+
+    m.scopeConfiguration.forEach(function(config) {
+        config.bugs.forEach(function(bug){
+            console.log(bug);
+            if (!bugMaterials.hasOwnProperty(bug.name)){
+                console.log("missing")
+                bugMaterials[bug.name] = new THREE.MeshBasicMaterial({
+                    color: bug.color
+                });
+
+            } else {
+                console.log("its there")
+            }
+
+            for (var i = 0; i < bug.population; i++) {
+                createCritter(bug, bugGeometry, bugMaterials[bug.name]);
+            }
+
+        })
+    })
+}
+
+
+function handleUpdateScopeMessage(m) {
+    console.log("Dealing with message...");
+    m.scopeConfigurations.bugs.forEach(function(bug) {
+        console.log(bug);
+    })
+}
 
 function createCritter(bug, sphereGeometry, sphereMaterial) {
+    console.log("createCritter(",bug,")");
+
+    if (bug.name === "Spikey Bug") {
+        createDinoCritter(bug);
+        return;
+    }
 
     var mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
 
@@ -204,9 +193,43 @@ function createCritter(bug, sphereGeometry, sphereMaterial) {
 
     mesh.position.set( vec3.x, vec3.y, 0);
     mesh.updateMatrix();
-    console.log(bug)
-    CritterGroups[bug].add(mesh);
+
+    CritterGroups[bug.name].add(mesh);
 }
+
+
+function createDinoCritter(bug) {
+    console.log("createDinoCritter");
+
+    // load an obj / mtl resource pair
+    loader.load(
+        // OBJ resource URL
+        'assets/Dino.obj',
+        // MTL resource URL
+        'assets/Dino.mtl',
+        // Function when both resources are loaded
+        function ( object ) {
+            console.log(object)
+            object.children.forEach(function(mesh) {
+                console.log("\t",mesh);
+                mesh.material.vertexColors = THREE.VertexColors;
+                mesh.material.color.setRGB(255,0,155);
+                mesh.scale.set(10,10,10);
+            })
+            CritterGroups[bug.name].add(object);
+        },
+        // Function called when downloads progress
+        function ( xhr ) {
+            console.log( (xhr.loaded / xhr.total * 100) + '% loaded' );
+        },
+        // Function called when downloads error
+        function ( xhr ) {
+            console.log( 'An error happened' );
+        }
+    );
+
+}
+
 
 
 function onReshape() {
@@ -219,9 +242,9 @@ function onReshape() {
 function getBugColor(bug) {
     console.log("getBugColor(", bug, ")");
     switch (bug) {
-        case 'red': return 'rgb(255,0,0)';
-        case 'green': return 'rgb(0,255,0)';
-        case 'blue': return 'rgb(0,0,255)';
+        case 'Fang Bug': return 'rgb(255,0,0)';
+        case 'Big Bug': return 'rgb(0,255,0)';
+        case 'Small Bug': return 'rgb(0,0,255)';
         default: return 'rgb(255,255,0)';
     }
 }
