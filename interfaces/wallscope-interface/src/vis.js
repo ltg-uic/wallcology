@@ -38,8 +38,8 @@ function render() {
     for (var bug in CritterGroups) {
         for (var i = 0; i < CritterGroups[bug].children.length; i++) {
             var critter = CritterGroups[bug].children[i];
-            critter.translateX((Math.random() * 10 - 5));
-            critter.translateY((Math.random() * 10 - 5));
+            // critter.translateX((Math.random() * 10 - 5));
+            // critter.translateY((Math.random() * 10 - 5));
 //            critter.translateZ((Math.random() * 10 - 5));
         }
     }
@@ -51,15 +51,17 @@ function initVisComponents(){
     console.log("initVisComponents");
 
     scene = new THREE.Scene();
-    CritterGroups['Fang Bug'] = new THREE.Object3D();
-    CritterGroups['Big Bug'] = new THREE.Object3D();
-    CritterGroups['Small Bug'] = new THREE.Object3D();
-    CritterGroups['Spikey Bug'] = new THREE.Object3D();
+    CritterGroups = new THREE.Object3D();
+    // CritterGroups['fang bug'] = new THREE.Object3D();
+    // CritterGroups['big bug'] = new THREE.Object3D();
+    // CritterGroups['small bug'] = new THREE.Object3D();
+    // CritterGroups['spikey bug'] = new THREE.Object3D();
 
-    scene.add(CritterGroups['Fang Bug']);
-    scene.add(CritterGroups['Big Bug']);
-    scene.add(CritterGroups['Small Bug']);
-    scene.add(CritterGroups['Spikey Bug']);
+    scene.add(CritterGroups);
+    // scene.add(CritterGroups['fang bug']);
+    // scene.add(CritterGroups['big bug']);
+    // scene.add(CritterGroups['small bug']);
+    // scene.add(CritterGroups['spikey bug']);
 
     camera = new THREE.PerspectiveCamera( 45, window.innerWidth/window.innerHeight, 1, 1000 );
     camera.position.z = 900;
@@ -169,10 +171,13 @@ function handleStartEvent(m) {
 
 function handleUpdateScopeMessage(m) {
     console.log("Dealing with message...");
-    m.scopeConfigurations.bugs.forEach(function(bug) {
+    m.scopeConfiguration.bugs.forEach(function(bug) {
         console.log(bug);
     })
 }
+
+
+
 
 function createCritter(bug, sphereGeometry, sphereMaterial) {
     console.log("createCritter(",bug,")");
@@ -199,7 +204,7 @@ function createCritter(bug, sphereGeometry, sphereMaterial) {
 
 
 function createDinoCritter(bug) {
-    console.log("createDinoCritter");
+    console.log("createDinoCritter", bug);
 
     // load an obj / mtl resource pair
     loader.load(
