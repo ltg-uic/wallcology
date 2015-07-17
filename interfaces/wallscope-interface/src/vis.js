@@ -12,6 +12,9 @@ var hasStarted = false;
 var nutella, mouse;
 var loader = new THREE.OBJLoader();  // THREE.OBJMTLLoader();
 var texture = new THREE.Texture();
+var wallscopeId;
+var configuration;
+var currentWallscope;
 
 function Start() {
     onCreate();
@@ -107,6 +110,10 @@ function initNutellaComponents() {
     // Parse the query parameters
     var query_parameters = NUTELLA.parseURLParameters();
 
+    wallscopeId = query_parameters.wallscope;
+
+    console.log('wallscope: ' + wallscopeId)
+
     // Get an instance of nutella.
     nutella = NUTELLA.init(
         query_parameters.broker,
@@ -127,7 +134,7 @@ function initNutellaComponents() {
 
     // 3. Make asynchronous requests on a certain channel
     nutella.net.request( 'wallscope_channel', 'start', function(response){
-        console.log("Help me 'wallcology_admin_channel', youre my only hope", response)
+        console.log("Help me 'wallcology_channel', youre my only hope", response)
     });
 }
 
@@ -138,6 +145,10 @@ function subscribeToChannel(channelName, messageHandler) {
 
 
 function adminMessageCallBack(message, from) {
+
+    console.log('THE MESSAGE' + message);
+
+
     // 1. Subscribing to a channel
     console.log("Message from", from.component_id, ":", message);
     switch (message.event) {

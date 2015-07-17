@@ -3,12 +3,16 @@ function handleStartEvent(m) {
 
     hasStarted = true;
 
+    configuration = m.configuration;
+    currentWallscope = m.configuration[wallscopeId];
+
+
     var bugMaterials = {}
     var bugGeometry = new THREE.SphereGeometry(35, 15, 15)
-
-    m.scopeConfiguration.forEach(function(config) {
-        // console.log("\tconfig: ",config);
-        config.bugs.forEach(function(bug){
+    //
+    //m.scopeConfiguration.forEach(function(config) {
+    //    // console.log("\tconfig: ",config);
+        currentWallscope.bugs.forEach(function(bug){
             // console.log("\tbug: ",bug.name);
             if (!CritterGroups.getObjectByName(bug.name)) {
                 var critters = new THREE.Object3D();
@@ -27,7 +31,7 @@ function handleStartEvent(m) {
                 createCritter(bug, bugGeometry, bugMaterials[bug.name]);
             }
         })
-    })
+    //})
 }
 
 
@@ -36,6 +40,7 @@ function handleUpdateScopeEvent(m) {
     var bugMaterials = {}
     var bugGeometry = new THREE.SphereGeometry(35, 15, 15)
 
+    
     m.scopeConfiguration.bugs.forEach(function(bug) {
         if (!CritterGroups.getObjectByName(bug.name)) {
             var _c = new THREE.Object3D();
