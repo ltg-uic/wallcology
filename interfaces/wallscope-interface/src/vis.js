@@ -35,14 +35,14 @@ function onFrame() {
  *  the scene and its associated objects
  * ================================== */
 function render() {
-    for (var bug in CritterGroups) {
-        for (var i = 0; i < CritterGroups[bug].children.length; i++) {
-            var critter = CritterGroups[bug].children[i];
-            // critter.translateX((Math.random() * 10 - 5));
-            // critter.translateY((Math.random() * 10 - 5));
-//            critter.translateZ((Math.random() * 10 - 5));
-        }
-    }
+//     for (var bug in CritterGroups) {
+//         for (var i = 0; i < CritterGroups[bug].children.length; i++) {
+//             var critter = CritterGroups[bug].children[i];
+//             // critter.translateX((Math.random() * 10 - 5));
+//             // critter.translateY((Math.random() * 10 - 5));
+// //            critter.translateZ((Math.random() * 10 - 5));
+//         }
+//     }
     renderer.render( scene, camera );
 }
 
@@ -123,16 +123,17 @@ function adminMessageCallBack(message, from) {
         case "stop":
             console.log("stop");
             hasStarted = false;
-            for (var bug in CritterGroups) {
-                while (CritterGroups[bug].children.length > 0){
-                    console.log("stop", bug, CritterGroups[bug].children, length);
-                    var critter = CritterGroups[bug].children[0];
-                    CritterGroups[bug].remove(critter);
+            CritterGroups.children.forEach(function(critters) {
+                while (critters.children.length > 0){
+                    console.log("stop", bug, critters.children, length);
+                    var critter = critters.children[0];
+                    critters.remove(critter);
                     scene.remove(critter);
                     critter.material.dispose();
                     critter.geometry.dispose();
                 }
-            }
+
+            })
             break;
         default:
             return;
@@ -148,8 +149,14 @@ function handleStartEvent(m) {
     var bugGeometry = new THREE.SphereGeometry(35, 15, 15)
 
     m.scopeConfiguration.forEach(function(config) {
+        console.log("\tconfig: ",config);
         config.bugs.forEach(function(bug){
-            console.log(bug);
+            console.log("\tbug: ",bug.name);
+            if (!CritterGroups.getObjectByName(bug.name)) {
+                var critters = new THREE.Object3D();
+                critters.name = bug.name
+                CritterGroups.add(critters);
+            }
             if (!bugMaterials.hasOwnProperty(bug.name)){
                 console.log("missing")
                 bugMaterials[bug.name] = new THREE.MeshBasicMaterial({
@@ -169,18 +176,10 @@ function handleStartEvent(m) {
 }
 
 
-function handleUpdateScopeMessage(m) {
-    console.log("Dealing with message...");
-    m.scopeConfiguration.bugs.forEach(function(bug) {
-        console.log(bug);
-    })
-}
-
-
 
 
 function createCritter(bug, sphereGeometry, sphereMaterial) {
-    console.log("createCritter(",bug,")");
+    console.log("createCritter(",bug, sphereGeometry, sphereMaterial,")");
 
     if (bug.name === "Spikey Bug") {
         createDinoCritter(bug);
@@ -199,7 +198,8 @@ function createCritter(bug, sphereGeometry, sphereMaterial) {
     mesh.position.set( vec3.x, vec3.y, 0);
     mesh.updateMatrix();
 
-    CritterGroups[bug.name].add(mesh);
+    console.log("\t",bug.name,CritterGroups.getObjectByName(bug.name));
+    CritterGroups.getObjectByName(bug.name).add(mesh);
 }
 
 
@@ -221,7 +221,7 @@ function createDinoCritter(bug) {
                 mesh.material.color.setRGB(255,0,155);
                 mesh.scale.set(10,10,10);
             })
-            CritterGroups[bug.name].add(object);
+            CritterGroups.getObjectByName(bug.name).add(object);
         },
         // Function called when downloads progress
         function ( xhr ) {
@@ -233,6 +233,13 @@ function createDinoCritter(bug) {
         }
     );
 
+}
+
+function handleUpdateScopeMessage(m) {
+    console.log("Dealing with message...");
+    m.scopeConfiguration.bugs.forEach(function(bug) {
+        console.log(bug);
+    })
 }
 
 
