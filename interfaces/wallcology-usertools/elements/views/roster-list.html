@@ -1,0 +1,87 @@
+<dom-module id="roster-list">
+  <style>
+    /*:host {*/
+    /*display: block;*/
+    /*}*/
+
+
+    paper-material.roster {
+      /*width: calc(97.33% - 32px);*/
+
+      /*height: 100%;*/
+      /*width: 100%;*/
+
+      margin: 0px 0px 0px 0px;
+      /*// width: calc(98.66% - 16px);*/
+      /*background: #ff7158;*/
+      /*border-color: #640421;*/
+    }
+
+    .avatar {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      overflow: hidden;
+    }
+
+    paper-button[raised].colorful {
+      background: #D84315;
+      color: #fff;
+    }
+
+
+  </style>
+  <template>
+
+        <paper-material elevation="0" class="roster">
+          <div id="users">
+            <template is="dom-if" if="{{!users.length}}">
+              <paper-material class="task-empty">
+                <paper-item elevation="2">No Tasks remain. Updates are Real-Time so stay tuned!</paper-item>
+              </paper-material>
+            </template>
+            <template id="users" is="dom-repeat" items="{{users}}">
+              <roster-item user="{{item}}"></roster-item>
+            </template>
+          </div>
+        </paper-material>
+
+    <paper-toast id="wall-toast" class="capsule" text=""></paper-toast>
+  </template>
+</dom-module>
+<script>
+  (function () {
+    Polymer({
+      is: 'roster-list',
+      properties: {
+        users: {
+          type: Array,
+          value: [{name:'PIPER',userId:0, runId:1}, {name:'JOHN',userId:1,runId:1}, {name:'DEREK',userId:2,runId:1}],
+          notify: true
+        }
+      },
+      createEmptyUser: function () {
+        this.push('users', {name:'NEW USER',userId:0, runId:1});
+      },
+      deleteUser: function(user) {
+        var index = this.users.indexOf(user);
+        this.splice('users', index, 1);
+      },
+      observers: [
+        'usersAddedOrRemoved(users.*)'
+      ],
+      ready: function () {
+
+      },
+      created: function () {
+        console.log(this.localName + '#' + this.id + ' was created');
+      },
+      usersAddedOrRemoved: function (changeRecord) {
+        console.log('SCOPES changes added or removed USERS:');
+        console.log(JSON.stringify(changeRecord, null, '\t'));
+      },
+  });
+  })();
+</script>
+

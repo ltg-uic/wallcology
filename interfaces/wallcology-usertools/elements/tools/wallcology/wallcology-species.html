@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="wallcology-species">
+  <style>
+
+    :host {
+
+    }
+
+    simple-dialog {
+      background-color: white;
+    }
+
+
+    #cards {
+      @apply(--layout-vertical);
+      @apply(--center-justified);
+      /*max-width: 400px;*/
+      margin: 5px 3px 5px 3px;
+    }
+
+    .pink {
+      --paper-card-header-color: var(--paper-pink-500);
+    }
+
+  </style>
+  <template>
+    <div id="cards">
+    <paper-card id="mainCard" heading="" class="pink" el>
+
+      <div class="card-content horizontal layout">
+
+
+        <!--<div class="title">Species for <span>{{currentHabitat.name}}</span></div>-->
+        <!--<br><br>-->
+        <wallcology-bugselect current-habitat="{{currentHabitat}}"></wallcology-bugselect>
+
+
+      </div>
+      <div class="card-content horizontal layout">
+
+
+
+
+
+
+      </div>
+      <div class="card-actions horizontal layout center-center">
+
+        <iron-icon icon="update"></iron-icon>
+      </div>
+    </paper-card>
+
+      </div>
+  </template>
+</dom-module>
+
+<script>
+  // element registration
+  Polymer({
+    is: 'wallcology-species',
+
+    // add properties and methods on the element's prototype
+    properties: {
+      // declare properties for the element's public API
+
+      currentHabitat: {
+        type: Object,
+        notify: true,
+        observer: 'currentHabitatChanged'
+      },
+
+    },
+    currentHabitatChanged: function(newValue, oldValue) {
+      this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+      console.log('species is ready');
+    },
+    computeHeading: function() {
+      if( this.currentHabitat != null )
+        return 'Species for ' + this.currentHabitat.name;
+      else
+        return "";
+    },
+    ready: function () {
+      this.currentHabitat = {};
+      console.log('species is ready');
+    },
+  });
+</script>

@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="wallcology-scope">
+  <style>
+
+    :host {
+      --paper-input-container-color: white;
+      --paper-input-container-focus-color: white;
+      --paper-input-container-input-color: white;
+    }
+
+    simple-dialog {
+      background-color: white;
+    }
+
+    paper-tabs, paper-toolbar {
+      /*background-color: var(--paper-light-blue-400);*/
+      color: #fff;
+      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    paper-toolbar paper-tabs {
+      box-shadow: none;
+    }
+
+    paper-tabs[noink][no-bar] paper-tab.iron-selected {
+      color: #ffff8d;
+    }
+
+    paper-tabs[align-bottom] {
+      box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .tab-tweak {
+      width: 100%;
+      font-size: 15px;
+    }
+
+    h3 {
+      font-size: 16px;
+      font-weight: 400;
+      padding-top: 20px;
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    .yellow {
+      background-color: yellow;
+    }
+
+    .title {
+      left-margin: 10px;
+      font-size: 35px;
+    }
+
+
+    paper-menu {
+      display: block;
+    }
+
+    paper-dropdown-menu {
+      text-align: left;
+      margin: auto;
+      width: 125px;
+    }
+
+
+
+
+
+
+  </style>
+  <template>
+    <iron-ajax id="configAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/4JmNhZts"
+               params=""
+               handle-as="json"
+               on-response="handleConfigurationResponse" loading="{{loading}}" method="GET" auto verbose>
+    </iron-ajax>
+    <iron-ajax id="habitatAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/NkcQCTno"
+               params=""
+               handle-as="json"
+               on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
+    </iron-ajax>
+    <div>I'm scope hello</div>
+  </template>
+</dom-module>
+
+<script>
+  // element registration
+  Polymer({
+    is: 'wallcology-scope',
+
+    // add properties and methods on the element's prototype
+    properties: {
+      // declare properties for the element's public API
+      loading: {
+        type: Boolean,
+        readOnly: true,
+        notify: true,
+      },
+      users: {
+        type: Array,
+        notify: true
+      },
+      choices: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      some: {
+        type: String,
+        notify: true,
+        observer: 'someChanged'
+      },
+      displayApps: {
+        type: Array,
+        notify: true
+      },
+      configurations: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      currentUserConfiguration: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      habitats: {
+        type: Array,
+        notify: true,
+      },
+      currentHabitat: {
+        type: Object,
+        notify: true,
+      },
+      enabled: {
+        type: Boolean,
+        notify: true
+      },
+      selectedHabitatId: {
+        type: String,
+        notify: true,
+        value: '0',
+        observer: 'habitatSelectionChanged'
+      }
+    },
+    observers: [
+      'choicesChanged(choices.*)'
+    ],
+
+    someChanged: function (newValue, oldValue) {
+//      console.log('FUCL BACK' + newValue + 'old' + oldValue);
+    },
+    choicesChanged: function (changeRecord) {
+
+      if (changeRecord.value != null && this.choices[0] != null) {
+
+        var choosenUser = this.choices[0];
+
+        for (var i = 0; i < this.configurations.length; i++) {
+          if (this.configurations[i]['name'] === choosenUser.name) {
+            this.currentUserConfiguration = this.configurations[i];
+          }
+        }
+        this.enabled = true;
+        console.log('the current user config' + this.currentUserConfiguration.apps);
+
+      }
+    },
+    generateBGColor: function() {
+
+      if( this.currentHabitat != null ) {
+        var colorString = this.generateHabitatColor(this.currentHabitat.id);
+        return colorString;
+      } else {
+        return null;
+      }
+
+    },
+    habitatSelectionChanged: function (newValue, oldValue) {
+      console.log('H: NEW' + newValue + 'old' + oldValue);
+
+      console.log(this.generateHabitatColor(newValue));
+
+    },
+
+
+    generateHabitatColor: function(hIndex) {
+
+      var color;
+
+      switch(hIndex) {
+        case '0': color = '#42a5f5'; //blue 400
+          break;
+        case '1': color = '#ff6f43'; //orange
+          break;
+        case '2': color = '#26a79a'; //teal
+          break;
+        case '3': color = '#8D6E63'; //brown
+          break;
+        default:
+          color = 'white';
+      }
+
+      return 'background-color: ' + color;
+
+
+    },
+    handleHabitatResponse: function (e) {
+      console.log(this.$.habitatAjax.lastResponse);
+      this.habitats = this.$.habitatAjax.lastResponse;
+      for (var i = 0; i < this.habitats.length; i++) {
+        console.log(this.habitats[i]);
+      }
+    },
+    handleConfigurationResponse: function (e) {
+      console.log(this.$.configAjax.lastResponse);
+      this.configurations = this.$.configAjax.lastResponse;
+      for (var i = 0; i < this.configurations.length; i++) {
+        console.log(this.configurations[i]);
+
+      }
+    },
+    showCamera: function(e) {
+      this.$.alert.toggle();
+    },
+    toCompleteHeading: function(userString){
+      if( userString != null ) {
+        return userString.toUpperCase() + ' : BZEDS-1';
+      }
+      return null;
+    },
+    toUpperCase: function(someString) {
+      if( someString != null )
+        return someString.toUpperCase();
+
+      return null;
+    },
+    ready: function () {
+      this.some = 'hello bitch';
+      this.displayApps = [];
+      this.choices = [];
+      this.currentUserConfiguration = {};
+      this.configurations = [];
+      this.selected = 0;
+      //this.newSelections = ["hello"];
+      //var userDialog = document.getElementById('user-d');
+      //this.$.groupDialog.openDialog();
+
+    },
+    attributeChanged: function (name, type) {
+      console.log(this.localName + '#' + this.id + ' attribute ' + name +
+        ' was changed to ' + this.getAttribute(name) + type);
+    }
+  });
+</script>

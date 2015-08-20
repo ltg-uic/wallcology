@@ -40,7 +40,7 @@ function handleUpdateScopeEvent(m) {
     var bugMaterials = {}
     var bugGeometry = new THREE.SphereGeometry(35, 15, 15)
 
-    
+
     m.scopeConfiguration.bugs.forEach(function(bug) {
         if (!CritterGroups.getObjectByName(bug.name)) {
             var _c = new THREE.Object3D();
