@@ -21,20 +21,15 @@
     paper-tabs, paper-toolbar {
       /*background-color: var(--paper-light-blue-400);*/
       color: #fff;
-      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0px 3px 1px rgba(0, 0, 0, 0.2);
     }
 
     paper-toolbar paper-tabs {
       box-shadow: none;
+      margin: 0px;
     }
 
-    paper-tabs[noink][no-bar] paper-tab.iron-selected {
-      color: #ffff8d;
-    }
 
-    paper-tabs[align-bottom] {
-      box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
-    }
 
     .tab-tweak {
       width: 100%;
@@ -71,8 +66,16 @@
       width: 125px;
     }
 
+    iron-pages {
+      margin: 2px;
+      padding: 2px;
+      height: 100%;
+      background-color: white;
+    }
+
   </style>
   <template>
+
     <iron-ajax id="configAjax"
                contentType="application/json"
                url="http://beta.json-generator.com/api/json/get/4JmNhZts"
@@ -104,6 +107,7 @@
       <paper-icon-button icon="image:camera-alt" on-tap="showCamera"></paper-icon-button>
 
 
+
       <paper-tabs selected="{{selected}}" class="bottom self-end tab-tweak">
         <template id="tab-title" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
 
@@ -116,15 +120,17 @@
     </paper-toolbar>
 
 
+
     <iron-pages selected="{{selected}}">
+
       <template id="tab-body" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
 
         <template is="dom-if" if="{{testMe(item,'species')}}">
-          <div><wallcology-species current-habitat="{{currentHabitat}}"></wallcology-species></div>
+          <div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>
         </template>
 
         <template is="dom-if" if="{{testMe(item,'population')}}">
-          <div><wallcology-population></wallcology-population></div>
+          <div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>
         </template>
 
         <template is="dom-if" if="{{testMe(item,'relationship')}}">
@@ -140,8 +146,8 @@
         </template>
 
       </template>
-    </iron-pages>
 
+    </iron-pages>
 
     <user-dialog id="groupDialog" some="{{some}}" choices="{{choices}}"></user-dialog>
     <simple-dialog id="alert" modal role="alertdialog">
@@ -169,7 +175,8 @@
       },
       users: {
         type: Array,
-        notify: true
+        notify: true,
+        value: []
       },
       choices: {
         type: Array,
@@ -322,6 +329,7 @@
       this.displayApps = [];
       this.choices = [];
       this.currentUserConfiguration = {};
+      this.users = [];
       this.configurations = [];
       this.selected = 0;
     },

@@ -5,7 +5,7 @@
   <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
 </head>
 
-<dom-module id="wallcology-species">
+<dom-module id="wallcology-species" attributes="tags">
   <style>
 
     :host {
@@ -17,46 +17,59 @@
     }
 
 
-    #cards {
-      @apply(--layout-vertical);
-      @apply(--center-justified);
-      /*max-width: 400px;*/
-      margin: 5px 3px 5px 3px;
+    .title {
+      color: var(--paper-pink-500);;
     }
 
     .pink {
       --paper-card-header-color: var(--paper-pink-500);
+      margin: 5px;
+      padding: 5px;
+      @apply(--layout-center-justified);
+    }
+
+    .vcontainer {
+      @apply(--layout-vertical);
+    }
+
+    .hcontainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+    }
+
+
+    @apply(--layout-vertical);
+
+    paper-material {
+      /*background-color: orange;*/
+      height: 100%;
+      margin-top: 2px;
+      padding: 6px;
     }
 
   </style>
   <template>
-    <div id="cards">
-    <paper-card id="mainCard" heading="" class="pink" el>
-
-      <div class="card-content horizontal layout">
-
-
-        <!--<div class="title">Species for <span>{{currentHabitat.name}}</span></div>-->
-        <!--<br><br>-->
-        <wallcology-bugselect current-habitat="{{currentHabitat}}"></wallcology-bugselect>
-
-
+    <paper-material elevation="0" class="vcontainer">
+      <h2 class="title">Species for <span>{{currentHabitat.name}}</span></h2>
+      <!--<div class="container">-->
+      <div class="pink horizontal layout">
+      <wallcology-bugselector selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-bugselector>
       </div>
-      <div class="card-content horizontal layout">
 
-
-
-
-
-
+      <div>tags<span>{{tags}}</span></div>
+      <div class="horizontal layout">
+        <tag-filter></tag-filter>
+        <div>selected bugs:
+          <template is="dom-repeat" items="{{selectedBugs}}">
+            <span>{{item}}</span>
+          </template>
+        </div>
       </div>
-      <div class="card-actions horizontal layout center-center">
 
-        <iron-icon icon="update"></iron-icon>
-      </div>
-    </paper-card>
 
-      </div>
+
+
+    </paper-material>
   </template>
 </dom-module>
 
@@ -74,10 +87,22 @@
         notify: true,
         observer: 'currentHabitatChanged'
       },
+      selectedBugs: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+
+      tags: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+
 
     },
     currentHabitatChanged: function(newValue, oldValue) {
-      this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+    //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
       console.log('species is ready');
     },
     computeHeading: function() {
@@ -88,6 +113,8 @@
     },
     ready: function () {
       this.currentHabitat = {};
+      this.selectedBugs = [];
+      this.tags = [];
       console.log('species is ready');
     },
   });

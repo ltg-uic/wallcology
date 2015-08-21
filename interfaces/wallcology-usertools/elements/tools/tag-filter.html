@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="tag-filter">
+  <style>
+
+    :host {
+      --grid-gutter: 0px;
+      --paper-button: {
+        margin: 0px;
+        padding: 0px;
+      };
+    }
+
+    .pink {
+      background-color: var(--paper-pink-500);
+    }
+
+  </style>
+  <template>
+    <iron-ajax id="habitatAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/NkcQCTno"
+               params=""
+               handle-as="json"
+               on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
+    </iron-ajax>
+
+    <div class="horizontal layout">
+
+      <paper-menu multi>
+        <paper-item>tanaka</paper-item>
+        <paper-item>derek</paper-item>
+        <paper-item>sally</paper-item>
+      </paper-menu>
+
+
+
+    </div>
+
+
+  </template>
+</dom-module>
+
+<script>
+  // element registration
+  Polymer({
+    is: 'tag-filter',
+
+    // add properties and methods on the element's prototype
+    properties: {
+      // declare properties for the element's public API
+      allTags: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      selectedTags: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+    },
+    observers: [
+      'selectedTagsChanged(selectedTags.*)',
+      'allTagsChanged(allTags.*)',
+    ],
+    selectedTagsChanged: function (changeRecord) {
+      if (changeRecord.value !== null && this.selectedTags[0] != null) {
+        console.log('NEW Tag SET' + this.selectedTags);
+      }
+    },
+    allTagsChanged: function (changeRecord) {
+      if (changeRecord.value !== null && this.allTags[0] != null) {
+        console.log('NEW Tag SET' + this.allTags);
+      }
+    },
+    ready: function () {
+      this.allTags = [];
+      this.selectedTags = [];
+    }
+  });
+</script>

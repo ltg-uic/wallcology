@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="wallcology-bugselector">
+  <style>
+
+    :host {
+      --grid-gutter: 0px;
+      --paper-button: {
+        margin: 0px;
+        padding: 0px;
+      };
+    }
+
+    .pink {
+      background-color: var(--paper-pink-500);
+    }
+
+    .yellow {
+      background-color: var(--paper-yellow-500);
+    }
+
+
+    .bug {
+      --iron-icon-height: 75px;
+      --iron-icon-width: 75px;
+    }
+
+    paper-button[toggles] {
+      transition: background-color 0.3s;
+    }
+
+    paper-button[toggles][active] {
+      background-color: rgba(0, 0, 0, 0.25);
+    }
+
+
+
+
+  </style>
+  <template>
+    <iron-ajax id="habitatAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/NkcQCTno"
+               params=""
+               handle-as="json"
+               on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
+    </iron-ajax>
+
+<div class="horizontal layout">
+  <grid-element gs="0px"  s="1">
+    <template is="dom-repeat" items="{{currentHabitat.bugs}}">
+    <grid-col><paper-button toggles on-active-changed="toggleTapped" id="{{item}}"><iron-icon class="bug" icon="{{iconColor(item)}}"></iron-icon></paper-button></grid-col>
+    </template>
+  </grid-element>
+</div>
+
+
+  </template>
+</dom-module>
+
+<script>
+  // element registration
+  Polymer({
+    is: 'wallcology-bugselector',
+
+    // add properties and methods on the element's prototype
+    properties: {
+      // declare properties for the element's public API
+      habitats: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      selectedBugs: {
+        type: Array,
+        notify: true,
+        value: []
+      },
+      currentHabitat: {
+        type: Object,
+        notify: true,
+        value: {},
+        observer: 'currentHabitatChanged'
+      },
+      selectedBugs: {
+        type: Array,
+        notify: true,
+        value: [],
+      }
+    },
+    observers: [
+      'selectedBugsChanged(selectedBugs.*)'
+    ],
+    toggleTapped: function (e) {
+      console.log('TOGGLED')
+
+      var bugColor = e.currentTarget.id;
+
+      if(e.currentTarget.active ) {
+        this.push('selectedBugs', bugColor);
+      } else {
+        var bugColorIndex = this.selectedBugs.indexOf(bugColor);
+        if( bugColorIndex != -1 ) {
+          this.splice('selectedBugs',bugColorIndex,1);
+        }
+      }
+
+    },
+    selectedBugsChanged: function (changeRecord) {
+
+      if (changeRecord.value != null && this.selectedBugs[0] != null) {
+        console.log('NEW BUG SET' + this.selectedBugs);
+//        for (var i = 0; i < this.selectedBugs.length; i++) {
+//            console.log('NEW BUG SET' + this.selectedBugs[i]);
+//          }
+      }
+    },
+    iconColor: function(color) {
+      return 'wallcology-icons:'+color;
+    },
+    currentHabitatChanged: function (newValue, oldValue) {
+      console.log('H: NEW' + newValue + 'old' + oldValue);
+      if( this.habitats != null ) {
+        console.log('current habitat ' + this.currentHabitat.name);
+        console.log('current bugs ' + this.currentHabitat.bugs);
+      }
+    },
+    handleHabitatResponse: function (e) {
+      console.log(this.$.habitatAjax.lastResponse);
+      this.habitats = this.$.habitatAjax.lastResponse;
+      this.currentHabitat = this.habitats[0];
+      for (var i = 0; i < this.habitats.length; i++) {
+        console.log(this.habitats[i]);
+      }
+    },
+    toCompleteHeading: function(userString){
+      if( userString != null ) {
+        return userString.toUpperCase() + ' : BZEDS-1';
+      }
+      return null;
+    },
+    toUpperCase: function(someString) {
+      if( someString != null )
+        return someString.toUpperCase();
+
+      return null;
+    },
+    ready: function () {
+      this.currentHabitat = {};
+      this.selectedBugs = [];
+    },
+    attributeChanged: function (name, type) {
+      console.log(this.localName + '#' + this.id + ' attribute ' + name +
+        ' was changed to ' + this.getAttribute(name) + type);
+    }
+  });
+</script>
