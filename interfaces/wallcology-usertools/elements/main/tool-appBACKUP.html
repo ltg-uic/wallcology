@@ -5,7 +5,7 @@
   <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
 </head>
 
-<dom-module id="wallcology-scope">
+<dom-module id="tool-app">
   <style>
 
     :host {
@@ -21,20 +21,15 @@
     paper-tabs, paper-toolbar {
       /*background-color: var(--paper-light-blue-400);*/
       color: #fff;
-      box-shadow: 0px 3px 6px rgba(0, 0, 0, 0.2);
+      box-shadow: 0px 3px 1px rgba(0, 0, 0, 0.2);
     }
 
     paper-toolbar paper-tabs {
       box-shadow: none;
+      margin: 0px;
     }
 
-    paper-tabs[noink][no-bar] paper-tab.iron-selected {
-      color: #ffff8d;
-    }
 
-    paper-tabs[align-bottom] {
-      box-shadow: 0px -2px 6px rgba(0, 0, 0, 0.15);
-    }
 
     .tab-tweak {
       width: 100%;
@@ -71,13 +66,16 @@
       width: 125px;
     }
 
-
-
-
-
+    iron-pages {
+      margin: 2px;
+      padding: 2px;
+      height: 100%;
+      background-color: white;
+    }
 
   </style>
   <template>
+
     <iron-ajax id="configAjax"
                contentType="application/json"
                url="http://beta.json-generator.com/api/json/get/4JmNhZts"
@@ -92,14 +90,84 @@
                handle-as="json"
                on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
     </iron-ajax>
-    <div>I'm scope hello</div>
+
+
+
+    <paper-toolbar hidden="{{!enabled}}" class="medium-tall" style$="{{generateHabitatColor(selectedHabitatId)}}">
+      <span class="title-heading flex">{{toCompleteHeading(currentUserConfiguration.name)}}</span>
+
+      <paper-dropdown-menu label="All Habitats">
+        <paper-menu id="menu" class="dropdown-content" selected="{{selectedHabitatId}}" attr-for-selected="id">
+          <template is="dom-repeat" items="[[habitats]]" as="habitat">
+            <paper-item id="{{index}}">[[habitat.name]]</paper-item>
+          </template>
+        </paper-menu>
+      </paper-dropdown-menu>
+
+      <paper-icon-button icon="image:camera-alt" on-tap="showCamera"></paper-icon-button>
+
+
+
+      <paper-tabs selected="{{selected}}" class="bottom self-end tab-tweak">
+        <template id="tab-title" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
+
+            <paper-tab><span>{{toUpperCase(item)}}</span></paper-tab>
+
+
+        </template>
+      </paper-tabs>
+
+    </paper-toolbar>
+
+
+
+    <iron-pages selected="{{selected}}">
+
+      <template id="tab-body" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
+
+
+        <template is="dom-if" if="{{checkTab(item,'trophics')}}">
+          <div><wallcology-trophics current-habitat="{{currentHabitat}}"></wallcology-trophics></div>
+        </template>
+
+        <template is="dom-if" if="{{checkTab(item,'species')}}">
+          <div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>
+        </template>
+
+        <template is="dom-if" if="{{checkTab(item,'population')}}">
+          <div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>
+        </template>
+
+        <template is="dom-if" if="{{checkTab(item,'relationships')}}">
+          <div><wallcology-relationships></wallcology-relationships></div>
+        </template>
+
+        <template is="dom-if" if="{{checkTab(item,'wallscope')}}">
+          <div><wallcology-scope></wallcology-scope></div>
+        </template>
+
+        <template  is="dom-if" if="{{checkTab(item,'controls')}}">
+          <div><wallcology-control></wallcology-control></div>
+        </template>
+
+      </template>
+
+    </iron-pages>
+
+    <user-dialog id="groupDialog" some="{{some}}" choices="{{choices}}"></user-dialog>
+    <simple-dialog id="alert" modal role="alertdialog">
+      <h2>Hey You!</h2>
+      <p>Someday, this will launch the camera.</p>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
+    </simple-dialog>
   </template>
-</dom-module>
 
 <script>
   // element registration
   Polymer({
-    is: 'wallcology-scope',
+    is: 'tool-app',
 
     // add properties and methods on the element's prototype
     properties: {
@@ -111,17 +179,13 @@
       },
       users: {
         type: Array,
-        notify: true
+        notify: true,
+        value: []
       },
       choices: {
         type: Array,
         notify: true,
         value: []
-      },
-      some: {
-        type: String,
-        notify: true,
-        observer: 'someChanged'
       },
       displayApps: {
         type: Array,
@@ -144,10 +208,12 @@
       currentHabitat: {
         type: Object,
         notify: true,
+        value: {}
       },
       enabled: {
         type: Boolean,
-        notify: true
+        notify: true,
+        value: false
       },
       selectedHabitatId: {
         type: String,
@@ -159,18 +225,34 @@
     observers: [
       'choicesChanged(choices.*)'
     ],
+    checkTab: function(someItem, someValue) {
 
-    someChanged: function (newValue, oldValue) {
-//      console.log('FUCL BACK' + newValue + 'old' + oldValue);
+        if(someItem === 'species' && someValue === 'species') {
+            return true;
+        } else if(someItem === 'population' && someValue === 'population') {
+            return true;
+        } else if(someItem === 'relationships' && someValue === 'relationships') {
+            return true;
+        }else if(someItem === 'wallscope' && someValue === 'wallscope') {
+            return true;
+        }else if(someItem === 'controls' && someValue === 'controls') {
+          return true;
+        }else if(someItem === 'trophics' && someValue === 'trophics') {
+          return true;
+        } else {
+            return false;
+        }
+
+      console.log( 'someItem ' + someItem + ' someValue ' + someValue);
     },
     choicesChanged: function (changeRecord) {
 
-      if (changeRecord.value != null && this.choices[0] != null) {
+      if (changeRecord.value !== null && this.choices[0] !== undefined ) {
 
         var choosenUser = this.choices[0];
 
         for (var i = 0; i < this.configurations.length; i++) {
-          if (this.configurations[i]['name'] === choosenUser.name) {
+          if (this.configurations[i].name === choosenUser.name) {
             this.currentUserConfiguration = this.configurations[i];
           }
         }
@@ -179,26 +261,16 @@
 
       }
     },
-    generateBGColor: function() {
-
-      if( this.currentHabitat != null ) {
-        var colorString = this.generateHabitatColor(this.currentHabitat.id);
-        return colorString;
-      } else {
-        return null;
-      }
-
-    },
     habitatSelectionChanged: function (newValue, oldValue) {
       console.log('H: NEW' + newValue + 'old' + oldValue);
-
-      console.log(this.generateHabitatColor(newValue));
-
+      if( this.habitats !== undefined ) {
+        this.currentHabitat = this.habitats[newValue];
+        console.log('current habitat ' + this.currentHabitat.name);
+      }
     },
 
 
     generateHabitatColor: function(hIndex) {
-
       var color;
 
       switch(hIndex) {
@@ -219,14 +291,15 @@
 
     },
     handleHabitatResponse: function (e) {
-      console.log(this.$.habitatAjax.lastResponse);
+      console.log(this.$.habitatAjax.lastResponse + e);
       this.habitats = this.$.habitatAjax.lastResponse;
+      this.currentHabitat = this.habitats[0];
       for (var i = 0; i < this.habitats.length; i++) {
         console.log(this.habitats[i]);
       }
     },
     handleConfigurationResponse: function (e) {
-      console.log(this.$.configAjax.lastResponse);
+      console.log(this.$.configAjax.lastResponse + e);
       this.configurations = this.$.configAjax.lastResponse;
       for (var i = 0; i < this.configurations.length; i++) {
         console.log(this.configurations[i]);
@@ -234,31 +307,28 @@
       }
     },
     showCamera: function(e) {
+      console.log('toggle camera: ' + e);
       this.$.alert.toggle();
     },
     toCompleteHeading: function(userString){
-      if( userString != null ) {
+      if( userString !== undefined ) {
         return userString.toUpperCase() + ' : BZEDS-1';
       }
       return null;
     },
     toUpperCase: function(someString) {
-      if( someString != null )
+      if( someString !== null ) {
         return someString.toUpperCase();
-
+      }
       return null;
     },
     ready: function () {
-      this.some = 'hello bitch';
       this.displayApps = [];
       this.choices = [];
       this.currentUserConfiguration = {};
+      this.users = [];
       this.configurations = [];
       this.selected = 0;
-      //this.newSelections = ["hello"];
-      //var userDialog = document.getElementById('user-d');
-      //this.$.groupDialog.openDialog();
-
     },
     attributeChanged: function (name, type) {
       console.log(this.localName + '#' + this.id + ' attribute ' + name +
@@ -266,3 +336,4 @@
     }
   });
 </script>
+</dom-module>

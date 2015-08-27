@@ -22,14 +22,6 @@
 
   </style>
   <template>
-    <iron-ajax id="habitatAjax"
-               contentType="application/json"
-               url="http://beta.json-generator.com/api/json/get/NkcQCTno"
-               params=""
-               handle-as="json"
-               on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
-    </iron-ajax>
-
     <div class="horizontal layout">
 
       <paper-menu multi>
@@ -44,7 +36,6 @@
 
 
   </template>
-</dom-module>
 
 <script>
   // element registration
@@ -70,12 +61,12 @@
       'allTagsChanged(allTags.*)',
     ],
     selectedTagsChanged: function (changeRecord) {
-      if (changeRecord.value !== null && this.selectedTags[0] != null) {
+      if (changeRecord.value !== null && this.selectedTags[0] !== null) {
         console.log('NEW Tag SET' + this.selectedTags);
       }
     },
     allTagsChanged: function (changeRecord) {
-      if (changeRecord.value !== null && this.allTags[0] != null) {
+      if (changeRecord.value !== null && this.allTags[0] !== null) {
         console.log('NEW Tag SET' + this.allTags);
       }
     },
@@ -85,3 +76,4 @@
     }
   });
 </script>
+</dom-module>

@@ -93,7 +93,7 @@
 
 
 
-    <paper-toolbar hidden="{{!enabled}}" class="medium-tall" style$="{{generateHabitatColor(selectedHabitatId)}}">
+    <paper-toolbar class="medium-tall" style$="{{generateHabitatColor(selectedHabitatId)}}">
       <span class="title-heading flex">{{toCompleteHeading(currentUserConfiguration.name)}}</span>
 
       <paper-dropdown-menu label="All Habitats">
@@ -108,57 +108,20 @@
 
 
 
-      <paper-tabs selected="{{selected}}" class="bottom self-end tab-tweak">
-        <template id="tab-title" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
+      <paper-tabs selected="0" class="bottom self-end tab-tweak">
 
-            <paper-tab><span>{{toUpperCase(item)}}</span></paper-tab>
+            <paper-tab><span>TROPHIC</span></paper-tab>
 
-
-        </template>
       </paper-tabs>
 
     </paper-toolbar>
 
 
 
-    <iron-pages selected="{{selected}}">
-
-      <template id="tab-body" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
-
-        <template is="dom-if" if="{{testMe(item,'species')}}">
-          <div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>
-        </template>
-
-        <template is="dom-if" if="{{testMe(item,'population')}}">
-          <div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>
-        </template>
-
-        <template is="dom-if" if="{{testMe(item,'relationship')}}">
-          <div><wallcology-relationship></wallcology-relationship></div>
-        </template>
-
-        <template is="dom-if" if="{{testMe(item,'wallscope')}}">
-          <div><wallcology-scope></wallcology-scope></div>
-        </template>
-
-        <template  is="dom-if" if="{{testMe(item,'controls')}}">
-          <div><wallcology-control></wallcology-control></div>
-        </template>
-
-      </template>
-
+    <iron-pages selected="0">
+          <div><wallcology-trophics current-habitat="{{currentHabitat}}"></wallcology-trophics></div>
     </iron-pages>
-
-    <user-dialog id="groupDialog" some="{{some}}" choices="{{choices}}"></user-dialog>
-    <simple-dialog id="alert" modal role="alertdialog">
-      <h2>Hey You!</h2>
-      <p>Someday, this will launch the camera.</p>
-      <div class="buttons">
-        <paper-button dialog-confirm autofocus>OK</paper-button>
-      </div>
-    </simple-dialog>
   </template>
-</dom-module>
 
 <script>
   // element registration
@@ -182,11 +145,6 @@
         type: Array,
         notify: true,
         value: []
-      },
-      some: {
-        type: String,
-        notify: true,
-        observer: 'someChanged'
       },
       displayApps: {
         type: Array,
@@ -226,36 +184,34 @@
     observers: [
       'choicesChanged(choices.*)'
     ],
-    testMe: function(someItem, someValue) {
+    checkTab: function(someItem, someValue) {
 
         if(someItem === 'species' && someValue === 'species') {
             return true;
         } else if(someItem === 'population' && someValue === 'population') {
             return true;
-        } else if(someItem === 'relationship' && someValue === 'relationship') {
+        } else if(someItem === 'relationships' && someValue === 'relationships') {
             return true;
         }else if(someItem === 'wallscope' && someValue === 'wallscope') {
             return true;
         }else if(someItem === 'controls' && someValue === 'controls') {
-            return true;
+          return true;
+        }else if(someItem === 'trophics' && someValue === 'trophics') {
+          return true;
         } else {
             return false;
         }
 
       console.log( 'someItem ' + someItem + ' someValue ' + someValue);
     },
-
-    someChanged: function (newValue, oldValue) {
-//      console.logb  ('FUCL BACK' + newValue + 'old' + oldValue);
-    },
     choicesChanged: function (changeRecord) {
 
-      if (changeRecord.value != null && this.choices[0] != null) {
+      if (changeRecord.value !== null && this.choices[0] !== undefined ) {
 
         var choosenUser = this.choices[0];
 
         for (var i = 0; i < this.configurations.length; i++) {
-          if (this.configurations[i]['name'] === choosenUser.name) {
+          if (this.configurations[i].name === choosenUser.name) {
             this.currentUserConfiguration = this.configurations[i];
           }
         }
@@ -266,15 +222,12 @@
     },
     habitatSelectionChanged: function (newValue, oldValue) {
       console.log('H: NEW' + newValue + 'old' + oldValue);
-      if( this.habitats != null ) {
+      if( this.habitats !== undefined ) {
         this.currentHabitat = this.habitats[newValue];
         console.log('current habitat ' + this.currentHabitat.name);
       }
     },
-
-
     generateHabitatColor: function(hIndex) {
-
       var color;
 
       switch(hIndex) {
@@ -295,7 +248,7 @@
 
     },
     handleHabitatResponse: function (e) {
-      console.log(this.$.habitatAjax.lastResponse);
+      console.log(this.$.habitatAjax.lastResponse + e);
       this.habitats = this.$.habitatAjax.lastResponse;
       this.currentHabitat = this.habitats[0];
       for (var i = 0; i < this.habitats.length; i++) {
@@ -303,7 +256,7 @@
       }
     },
     handleConfigurationResponse: function (e) {
-      console.log(this.$.configAjax.lastResponse);
+      console.log(this.$.configAjax.lastResponse + e);
       this.configurations = this.$.configAjax.lastResponse;
       for (var i = 0; i < this.configurations.length; i++) {
         console.log(this.configurations[i]);
@@ -311,18 +264,19 @@
       }
     },
     showCamera: function(e) {
+      console.log('toggle camera: ' + e);
       this.$.alert.toggle();
     },
     toCompleteHeading: function(userString){
-      if( userString != null ) {
+      if( userString !== undefined ) {
         return userString.toUpperCase() + ' : BZEDS-1';
       }
       return null;
     },
     toUpperCase: function(someString) {
-      if( someString != null )
+      if( someString !== null ) {
         return someString.toUpperCase();
-
+      }
       return null;
     },
     ready: function () {
@@ -332,34 +286,7 @@
       this.users = [];
       this.configurations = [];
       this.selected = 0;
-    },
-    isPopulationTool: function(key) {
-      if(key === 'population')
-        return true;
-      else
-        return false;
-    },
-    isRelationshipTool: function(key) {
-      if(key === 'relationship')
-        return true;
-      else
-        return false;
-    },
-    isWallscopeViewTool: function(key) {
-      if(key === 'wallscope')
-        return true;
-      else
-        return false;
-    },
-    isWallscopeControlTool: function(key) {
-      if(key === 'controls')
-        return true;
-      else
-        return false;
-    },
-    attributeChanged: function (name, type) {
-      console.log(this.localName + '#' + this.id + ' attribute ' + name +
-        ' was changed to ' + this.getAttribute(name) + type);
     }
   });
 </script>
+</dom-module>

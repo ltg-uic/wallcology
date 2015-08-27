@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
-  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
 </head>
 
 <dom-module id="wallcology-population">
@@ -15,7 +13,6 @@
     simple-dialog {
       background-color: white;
     }
-
 
     #cards {
       @apply(--layout-vertical);
@@ -33,11 +30,16 @@
     }
 
     .pink {
-      --paper-card-header-color: var(--paper-pink-500);
+      background-color: var(--paper-pink-500);
     }
 
-    .container {
+    .hcontainer {
       @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+
+    .vcontainer {
+      @apply(--layout-vertical);
     }
 
     paper-material {
@@ -51,9 +53,13 @@
   <template>
     <paper-material elevation="0">
       <h2 class="title">Population for <span>{{currentHabitat.name}}</span></h2>
-      <!--<div class="container">-->
-      <wallcology-bugselector selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-bugselector>
 
+      <div class="hcontainer">
+        <wallcology-bugselector selected-bugs="{{selectedBugs}}"
+                                current-habitat="{{currentHabitat}}"></wallcology-bugselector>
+      </div>
+      <div class="vcontainer"></div>
+      <wallcology-d3 selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-d3>
       <div>selected bugs:
         <template is="dom-repeat" items="{{selectedBugs}}">
           <span>{{item}}</span>
@@ -62,7 +68,6 @@
 
     </paper-material>
   </template>
-</dom-module>
 
 <script>
   // element registration
@@ -83,22 +88,22 @@
         notify: true,
         value: []
       },
-
     },
-    currentHabitatChanged: function(newValue, oldValue) {
-      //  this.$.mainCard.heading = 'population for ' + this.currentHabitat.name;
-      console.log('population is ready');
+    currentHabitatChanged: function (newValue, oldValue) {
+      console.log('currentHabitatChanged oldValue: ' + oldValue + ' : ' + newValue);
     },
-    computeHeading: function() {
-      if( this.currentHabitat != null )
+    computeHeading: function () {
+      if (this.currentHabitat !== null) {
         return 'population for ' + this.currentHabitat.name;
-      else
-        return "";
+      } else {
+        return '';
+      }
     },
     ready: function () {
       this.currentHabitat = {};
       this.selectedBugs = [];
       console.log('population is ready');
-    },
+    }
   });
 </script>
+</dom-module>

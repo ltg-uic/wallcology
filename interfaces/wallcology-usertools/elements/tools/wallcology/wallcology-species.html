@@ -71,7 +71,6 @@
 
     </paper-material>
   </template>
-</dom-module>
 
 <script>
   // element registration
@@ -103,13 +102,14 @@
     },
     currentHabitatChanged: function(newValue, oldValue) {
     //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
-      console.log('species is ready');
+      console.log('species tab oldValue: ' + oldValue + ' newValue: ' + newValue);
     },
     computeHeading: function() {
-      if( this.currentHabitat != null )
+      if( this.currentHabitat !== null ) {
         return 'Species for ' + this.currentHabitat.name;
-      else
-        return "";
+      } else {
+        return '';
+      }
     },
     ready: function () {
       this.currentHabitat = {};
@@ -119,3 +119,4 @@
     },
   });
 </script>
+</dom-module>

@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="wallcology-trophics" attributes="tags">
+  <style>
+
+    :host {
+      --paper-input-container-color: black;
+      --paper-input-container-focus-color: black;
+      --paper-input-container-input-color: black;
+      --paper-menu-focused-item: {
+        font-weight: bold;
+      };
+    }
+
+    paper-item {
+      --paper-item: {
+        cursor: pointer;
+      };
+    }
+
+    paper-button.colorful {
+      background: var(--paper-light-blue-500);
+      color: #fff;
+      margin-top: 20px;
+    }
+
+    .red {
+      background-color: var(--paper-red-500);
+    }
+
+    .pink {
+      background-color: var(--paper-pink-500);
+    }
+
+    .orange {
+      background-color: var(--paper-orange-500);
+    }
+
+    .blue {
+      background-color: var(--paper-light-blue-200);
+    }
+
+    .purple {
+      background-color: var(--paper-purple-200);
+    }
+
+    .yellow {
+      background-color: var(--paper-yellow-200);
+    }
+    .white {
+      background-color: white;
+    }
+
+    .paper-title {
+      /*background-color: orange;*/
+      height: 100%;
+      margin-top: 2px;
+      padding: 6px;
+    }
+
+    .paper-text {
+      background-color: var(--paper-grey-50);
+      width: 450px;
+    }
+
+    .paper-border-inner {
+      background-color: var(--paper-grey-400);
+    }
+
+    .paper-border-outer {
+      background-color: var(--paper-grey-50);
+      padding: 2px 2px 2px 2px;
+    }
+
+    .filter-section {
+      height: 100%;
+      width: 100%;
+      padding: 5px 0px 0px 5px;
+      margin: 0px 0px 0px 5px;
+    }
+
+    .avatar {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ccc;
+
+    }
+
+    .list {
+      /*display: inline-block;*/
+      width: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .vcontainer {
+      @apply(--layout-vertical);
+    }
+
+    .hcontainer {
+      @apply(--layout-horizontal);
+    }
+
+    .hcentercontainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+
+    .zeroed {
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .container {
+      @apply(--layout-vertical);
+    }
+
+    .flexchild {
+      @apply(--layout-flex);
+    }
+
+    .paper-section {
+      height: 100%;
+      width: 100px;
+      padding: 5px;
+    }
+
+    .test {
+      padding: 0px;
+      margin: 0px;
+      height: 100%;
+    }
+
+    .s1 {
+      padding: 0px;
+    }
+
+    .trophic-section {
+      display: inline-block;
+      height: 100%;
+      /*width: 100%;*/
+      padding: 5px 10px 0px 10px;
+      /*margin: 0px 0px 5px 0px;*/
+      @apply(--layout-center-justified);
+    }
+
+    .bug {
+      --iron-icon-height: 75px;
+      --iron-icon-width: 75px;
+      margin: 5px;
+    }
+
+  </style>
+  <template>
+    <iron-ajax id="userAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/VJqMxIii"
+               params=""
+               handle-as="json"
+               on-response="handleUserResponse" loading="{{loading}}" method="GET" auto verbose>
+
+    </iron-ajax>
+    <iron-ajax id="trophicAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/V1jyL-w3"
+               params=""
+               handle-as="json"
+               on-response="handlePopulationsResponse" loading="{{loading}}" method="GET" auto verbose>
+
+    </iron-ajax>
+
+    <div class="horizontal layout center-justified">
+      <wallcology-bugselector selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-bugselector>
+    </div>
+
+    <iron-grid class="test">
+
+      <div class="s1 test">
+        <div class="hcentercontainer"><h2>Filter</h2></div>
+
+        <div class="white">
+          <paper-menu id="menu" class="list" selected="{{selectedIndex}}">
+            <template is="dom-repeat" id="filterList" items="{{users}}">
+              <paper-item id="{{item.name}}" class="zeroed hcentercontainer">
+                <div><span>{{toUpperCase(item.name)}}</span></div>
+              </paper-item>
+            </template>
+          </paper-menu>
+        </div>
+      </div>
+
+      <div class="s5 container ">
+        <div class="hcentercontainer"><h2>Trophic</h2></div>
+
+
+        <div class="hcentercontainer">
+
+          <div class="horizontal layout center red"><iron-icon class="bug" icon="{{iconColor('green')}}"></iron-icon></div>
+          <div class="yellow">
+            <div class="vcontainer center-justified">
+              <div class="horizontal layout center blue">
+                <div>
+              <paper-icon-button icon="remove"></paper-icon-button>
+                  </div>
+              </div>
+              <iron-image style="width:150px; height:70px;" sizing="contain"
+                          src="icons/face_left_arrow.jpg"></iron-image>
+              <iron-image style="width:150px; height:70px;" sizing="contain"
+                          src="icons/face_right_arrow.jpg"></iron-image>
+              <paper-icon-button icon="add" class="red" style="margin: 10px;"></paper-icon-button>
+            </div>
+           </div>
+            <div class="horizontal layout center blue"><iron-icon class="bug" style="margin: 10px;" icon="{{iconColor('blue')}}"></iron-icon></div>
+
+
+
+        </div>
+      </div>
+      <div class="s6 container ">
+        <div class="hcentercontainer blue"><h2>Justification</h2></div>
+
+
+        <div class="hcentercontainer center-justified">
+          <div class="paper-border-outer">
+            <div class="paper-border-inner">
+              <paper-textarea id="justification" class="paper-text" label="Your claim..." label="at most 10 letters"
+                              char-counter rows="8"></paper-textarea>
+            </div>
+          </div>
+        </div>
+
+        <div class="hcentercontainer center-justified">
+          <div class="vcontainer">
+              <div class="flex"><paper-button tabindex="0" class="colorful">SAVE</paper-button></div>
+          </div>
+        </div>
+
+      </div>
+      </div>
+    </iron-grid>
+
+    <div class="horizontal layout">
+      <div>selected bugs:
+        <template is="dom-repeat" items="{{selectedBugs}}">
+          <span>{{item}}</span>
+        </template>
+      </div>
+    </div>
+  </template>
+
+  <script>
+    // element registration
+    Polymer({
+      is: 'wallcology-trophics',
+
+      // add properties and methods on the element's prototype
+      properties: {
+        // declare properties for the element's public API
+
+        currentHabitat: {
+          type: Object,
+          notify: true,
+          observer: 'currentHabitatChanged'
+        },
+        selectedBugs: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        selectedIndex: {
+          type: Number,
+          value: 0,
+          observer: '_selectedIndexChanged'
+        },
+        users: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        currentTrophics: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        populations: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        tags: {
+          type: Array,
+          notify: true,
+          value: []
+        }
+      },
+      currentHabitatChanged: function (newValue, oldValue) {
+        //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+        //console.log('species tab oldValue: ' + oldValue + ' newValue: ' + newValue);
+      },
+      handleUserResponse: function (e) {
+        this.users = e.target.lastResponse;
+      },
+      handlePopulationsResponse: function (e) {
+        this.populations = e.target.lastResponse;
+      },
+      _selectedIndexChanged: function (newValue, oldValue) {
+        console.log('You selected item #' + newValue + '.');
+        console.log('Before, you had item #' + oldValue + ' selected.');
+
+        if (this.users !== undefined) {
+          this.currentTrophics = [];
+          var selectedUser = this.users[newValue];
+
+          for (var i = 0; i < this.populations.length; i++) {
+            var population = this.populations[i];
+            if (population.name === selectedUser.name) {
+              this.push('currentTrophics', population.trophics);
+              console.log(this.currentTrophics);
+            }
+          }
+          this.populations.forEach(function (entry) {
+            if (entry.name === selectedUser.name) {
+
+            }
+          });
+        }
+
+
+      },
+      iconColor: function(color) {
+        return 'wallcology-icons:'+color;
+      },
+      toUpperCase: function (someString) {
+        return someString.toUpperCase();
+      },
+      ready: function () {
+        this.currentHabitat = {};
+        this.selectedBugs = [];
+        this.tags = [];
+        this.users = [];
+        this.populations = [];
+        this.currentTrophics = [];
+        console.log('TROPICS is READY');
+      },
+    });
+  </script>
+</dom-module>
