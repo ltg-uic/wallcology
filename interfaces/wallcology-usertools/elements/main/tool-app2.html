@@ -93,7 +93,7 @@
 
 
 
-    <paper-toolbar hidden="{{!enabled}}" class="medium-tall" style$="{{generateHabitatColor(selectedHabitatId)}}">
+    <paper-toolbar class="medium-tall" style$="{{generateHabitatColor(selectedHabitatId)}}">
       <span class="title-heading flex">{{toCompleteHeading(currentUserConfiguration.name)}}</span>
 
       <paper-dropdown-menu label="All Habitats">
@@ -108,55 +108,19 @@
 
 
 
-      <paper-tabs selected="{{selected}}" class="bottom self-end tab-tweak">
-        <template id="tab-title" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
-            <paper-tab><span>{{toUpperCase(item)}}</span></paper-tab>
-        </template>
+      <paper-tabs selected="0" class="bottom self-end tab-tweak">
+
+            <paper-tab><span>TROPHIC</span></paper-tab>
+
       </paper-tabs>
 
     </paper-toolbar>
 
-    <iron-pages selected="{{selected}}">
-
-      <template id="tab-body" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
 
 
-        <template is="dom-if" if="{{checkTab(item,'trophics')}}">
+    <iron-pages selected="0">
           <div><wallcology-trophics current-habitat="{{currentHabitat}}"></wallcology-trophics></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'species')}}">
-          <div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'population')}}">
-          <div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'relationships')}}">
-          <div><wallcology-relationships></wallcology-relationships></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'wallscope')}}">
-          <div><wallcology-scope></wallcology-scope></div>
-        </template>
-
-        <template  is="dom-if" if="{{checkTab(item,'controls')}}">
-          <div><wallcology-control></wallcology-control></div>
-        </template>
-
-      </template>
-
     </iron-pages>
-
-    <user-dialog id="groupDialog" some="{{some}}" choices="{{choices}}"></user-dialog>
-    <simple-dialog id="alert" modal role="alertdialog">
-      <h2>Hey You!</h2>
-      <p>Someday, this will launch the camera.</p>
-      <div class="buttons">
-        <paper-button dialog-confirm autofocus>OK</paper-button>
-      </div>
-    </simple-dialog>
   </template>
 
 <script>
@@ -263,8 +227,6 @@
         console.log('current habitat ' + this.currentHabitat.name);
       }
     },
-
-
     generateHabitatColor: function(hIndex) {
       var color;
 
@@ -324,10 +286,6 @@
       this.users = [];
       this.configurations = [];
       this.selected = 0;
-    },
-    attributeChanged: function (name, type) {
-      console.log(this.localName + '#' + this.id + ' attribute ' + name +
-        ' was changed to ' + this.getAttribute(name) + type);
     }
   });
 </script>
