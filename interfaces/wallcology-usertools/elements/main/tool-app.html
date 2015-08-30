@@ -110,7 +110,12 @@
 
       <paper-tabs selected="{{selected}}" class="bottom self-end tab-tweak">
         <template id="tab-title" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
+
+          <template is="dom-if" if="{{checkTab(item,'relationships')}}">
             <paper-tab><span>{{toUpperCase(item)}}</span></paper-tab>
+          </template>
+
+
         </template>
       </paper-tabs>
 
@@ -121,29 +126,29 @@
       <template id="tab-body" is="dom-repeat" items="{{currentUserConfiguration.apps}}">
 
 
-        <template is="dom-if" if="{{checkTab(item,'trophics')}}">
-          <div><wallcology-trophics current-habitat="{{currentHabitat}}"></wallcology-trophics></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'species')}}">
-          <div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>
-        </template>
-
-        <template is="dom-if" if="{{checkTab(item,'population')}}">
-          <div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>
-        </template>
-
         <template is="dom-if" if="{{checkTab(item,'relationships')}}">
-          <div><wallcology-relationships></wallcology-relationships></div>
+          <div><wallcology-relationships current-habitat="{{currentHabitat}}"></wallcology-relationships></div>
         </template>
 
-        <template is="dom-if" if="{{checkTab(item,'wallscope')}}">
-          <div><wallcology-scope></wallcology-scope></div>
-        </template>
+        <!--<template is="dom-if" if="{{checkTab(item,'species')}}">-->
+          <!--<div><wallcology-species current-habitat="{{currentHabitat}}" tags="{{users}}"></wallcology-species></div>-->
+        <!--</template>-->
 
-        <template  is="dom-if" if="{{checkTab(item,'controls')}}">
-          <div><wallcology-control></wallcology-control></div>
-        </template>
+        <!--<template is="dom-if" if="{{checkTab(item,'population')}}">-->
+          <!--<div><wallcology-population current-habitat="{{currentHabitat}}"></wallcology-population></div>-->
+        <!--</template>-->
+
+        <!--<template is="dom-if" if="{{checkTab(item,'relationships')}}">-->
+          <!--<div><wallcology-relationships></wallcology-relationships></div>-->
+        <!--</template>-->
+
+        <!--<template is="dom-if" if="{{checkTab(item,'wallscope')}}">-->
+          <!--<div><wallcology-scope></wallcology-scope></div>-->
+        <!--</template>-->
+
+        <!--<template  is="dom-if" if="{{checkTab(item,'controls')}}">-->
+          <!--<div><wallcology-control></wallcology-control></div>-->
+        <!--</template>-->
 
       </template>
 
