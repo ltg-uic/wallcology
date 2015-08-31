@@ -5,7 +5,7 @@
   <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
 </head>
 
-<dom-module id="wallcology-relationships" attributes="tags">
+<dom-module id="wallcology-relationships">
   <style>
 
     :host {
@@ -52,6 +52,7 @@
     .yellow {
       background-color: var(--paper-yellow-200);
     }
+
     .white {
       background-color: white;
     }
@@ -160,103 +161,126 @@
 
   </style>
   <template>
-    <iron-ajax id="userAjax"
-               contentType="application/json"
-               url="http://beta.json-generator.com/api/json/get/VJqMxIii"
-               params=""
-               handle-as="json"
-               on-response="handleUserResponse" loading="{{loading}}" method="GET" auto verbose>
+    <iron-ajax id="relationshipAjax"
+    contentType="application/json"
+    url="http://beta.json-generator.com/api/json/get/V1jyL-w3"
+    params=""
+    handle-as="json"
+    on-response="handleRelationshipsResponse" loading="{{loading}}" method="GET" auto verbose>
 
     </iron-ajax>
-    <iron-ajax id="trophicAjax"
+    <iron-ajax id="dropDownAjax"
                contentType="application/json"
-               url="http://beta.json-generator.com/api/json/get/V1jyL-w3"
+               url="http://beta.json-generator.com/api/json/get/4Jd25_j2"
                params=""
                handle-as="json"
-               on-response="handlePopulationsResponse" loading="{{loading}}" method="GET" auto verbose>
+               on-response="handleDropDownConfigurationResponse" loading="{{loading}}" method="GET" auto verbose>
 
     </iron-ajax>
+
+    <span>{{currentHabitat.name}}</span>
 
     <div class="horizontal layout center-justified">
-      <wallcology-bugselector selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-bugselector>
+      <wallcology-bugselector selected-bugs="{{selectedBugs}}"
+                              current-habitat="{{currentHabitat}}"></wallcology-bugselector>
     </div>
 
     <iron-grid class="test">
 
-      <div class="s1 test">
-        <div class="hcentercontainer"><h2>Filter</h2></div>
+      <div hidden={{!enabledRelationshipsFlag}} class="s1 test">
+        <div class="hcentercontainer">
+          <div><h2>Filter</h2></div>
+          <div id="addButton" hidden="true" class="vertical layout center-justified">
+            <paper-icon-button icon="add" on-tap="doAddAction"></paper-icon-button>
+          </div>
+        </div>
 
         <div class="white">
-          <paper-menu id="menu" class="list" selected="{{selectedIndex}}">
-            <template is="dom-repeat" id="filterList" items="{{users}}">
-              <paper-item id="{{item.name}}" class="zeroed hcentercontainer">
-                <div><span>{{toUpperCase(item.name)}}</span></div>
+          <paper-menu id="userMenu" class="list" selected="{{selectedUserIndex}}">
+            <template is="dom-repeat" id="filterList" items="{{filteredRelationships}}">
+              <paper-item id="{{item.user}}" class="zeroed hcentercontainer">
+                <div><span>{{toUpperCase(item.user)}}</span></div>
               </paper-item>
             </template>
           </paper-menu>
         </div>
       </div>
 
-      <div class="s5 container ">
-        <div class="hcentercontainer"><h2>Trophic</h2></div>
+      <div hidden={{!enabledRelationshipsFlag}} class="s5 container">
+        <div class="hcentercontainer"><h2>Relationship</h2></div>
 
 
-        <div class="hcentercontainer">
+        <div id="bugContainer" hidden={{!enabledRelationshipsFlag}} class="hcentercontainer">
 
-          <div class="horizontal layout center red"><iron-icon class="bug" icon="{{iconColor('green')}}"></iron-icon></div>
-          <div class="yellow">
-            <div class="vcontainer center-justified">
-              <div class="horizontal layout center blue">
-                <div>
-              <paper-icon-button icon="remove"></paper-icon-button>
-                  </div>
-              </div>
-              <iron-image style="width:150px; height:70px;" sizing="contain"
-                          src="icons/face_left_arrow.jpg"></iron-image>
-              <iron-image style="width:150px; height:70px;" sizing="contain"
-                          src="icons/face_right_arrow.jpg"></iron-image>
-              <paper-icon-button icon="add" class="red" style="margin: 10px;"></paper-icon-button>
-            </div>
-           </div>
-            <div class="horizontal layout center blue"><iron-icon class="bug" style="margin: 10px;" icon="{{iconColor('blue')}}"></iron-icon></div>
+          <div class="horizontal layout center">
+            <iron-icon id="bugA" class="bug" icon="{{iconColor(bugA)}}"></iron-icon>
+          </div>
+          <div class="vertical layout center">
 
+
+            <iron-image class="center-justified" style="width:150px; height:70px;" sizing="contain"
+                        src="icons/face_right_arrow.jpg"></iron-image>
+
+
+            <paper-dropdown-menu id="relationshipMenu" hidden="true" class="center-justified"
+                                 label="Select Relationship">
+              <paper-menu id="relationshipSelector" class="dropdown-content" selected="{{selectedRelationshipValue}}"
+                          attr-for-selected="value">
+                <template is="dom-repeat" items="[[dropDownConfigurations]]" as="relationship">
+                  <paper-item value="{{relationship.value}}">[[relationship.label]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+
+
+          </div>
+          <div class="horizontal layout center">
+            <iron-icon id="bugB" class="bug" style="margin: 10px;" icon="{{iconColor('B')}}"></iron-icon>
+          </div>
 
 
         </div>
       </div>
-      <div class="s6 container ">
-        <div class="hcentercontainer blue"><h2>Justification</h2></div>
+
+      <div hidden={{!enabledRelationshipsFlag}} class="s6 container ">
+        <div class="hcentercontainer"><h2>Justification</h2></div>
 
 
         <div class="hcentercontainer center-justified">
           <div class="paper-border-outer">
             <div class="paper-border-inner">
-              <paper-textarea id="justification" class="paper-text" label="Your claim..." label="at most 10 letters"
+              <paper-textarea id="reason" class="paper-text" label="Your reason..."
                               char-counter rows="8"></paper-textarea>
             </div>
           </div>
         </div>
 
-        <div class="hcentercontainer center-justified">
-          <div class="vcontainer">
-              <div class="flex"><paper-button tabindex="0" class="colorful">SAVE</paper-button></div>
-          </div>
-        </div>
 
       </div>
       </div>
     </iron-grid>
 
-    <div class="horizontal layout">
-      <div>selected bugs:
-        <template is="dom-repeat" items="{{selectedBugs}}">
-          <span>{{item}}</span>
-        </template>
-      </div>
+    <div class="horizontal layout center-justified">
+      <paper-button id="saveButton" hidden="true" tabindex="0" class="colorful" on-tap="doSaveAction">SAVE
+      </paper-button>
+    </div>
+
+    <div hidden={{enabledRelationshipsFlag}} class="horizontal layout center-justified">
+      <h2>Make selections to start</h2>
+    </div>
+
     </div>
   </template>
 
   <script>
+
+    /* jshint undef: true, unused: true */
+    /* global NUTELLA */
+
+
+    //         nutella.net.subscribe('update_relationships', function (message, channel) {
+    //           console.info('message ' + message + ' on channel' + channel);
+    //         });
     // element registration
     Polymer({
       is: 'wallcology-relationships',
@@ -264,7 +288,26 @@
       // add properties and methods on the element's prototype
       properties: {
         // declare properties for the element's public API
-
+//        nutella: {
+//          type: Object,
+//          notify: true,
+//          value: {}
+//        },
+        dropDownConfigurations: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        relationships: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        filteredRelationships: {
+          type: Array,
+          notify: true,
+          value: []
+        },
         currentHabitat: {
           type: Object,
           notify: true,
@@ -275,80 +318,286 @@
           notify: true,
           value: []
         },
-        selectedIndex: {
+        enabledRelationshipsFlag: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+        selectedUserIndex: {
           type: Number,
           value: 0,
-          observer: '_selectedIndexChanged'
+          observer: 'selectedUserIndexChanged'
         },
-        users: {
+        selectedRelationshipValue: {
+          type: String,
+        },
+        currentUsers: {
           type: Array,
           notify: true,
           value: []
         },
-        currentTrophics: {
-          type: Array,
-          notify: true,
-          value: []
-        },
-        populations: {
-          type: Array,
-          notify: true,
-          value: []
-        },
-        tags: {
-          type: Array,
-          notify: true,
-          value: []
-        }
       },
+      observers: [
+        'selectedBugsChanged(selectedBugs.*)', 'currentUsersChanged(currentUsers.*)'
+      ],
       currentHabitatChanged: function (newValue, oldValue) {
+
         //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
-        //console.log('species tab oldValue: ' + oldValue + ' newValue: ' + newValue);
+        console.log('HABITAT CHANGED oldValue: ' + JSON.stringify(oldValue) + ' newValue: ' + JSON.stringify(newValue));
       },
-      handleUserResponse: function (e) {
-        this.users = e.target.lastResponse;
-      },
-      handlePopulationsResponse: function (e) {
-        this.populations = e.target.lastResponse;
-      },
-      _selectedIndexChanged: function (newValue, oldValue) {
-        console.log('You selected item #' + newValue + '.');
-        console.log('Before, you had item #' + oldValue + ' selected.');
+      currentUsersChanged: function (newValue, oldValue) {
 
-        if (this.users !== undefined) {
-          this.currentTrophics = [];
-          var selectedUser = this.users[newValue];
+        //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+        console.log('CURRENT USERS  RELATIONSHIP S CHANGED oldValue: ' + JSON.stringify(this.currentUsers) + ' newValue: ' + JSON.stringify(newValue));
+      },
+      selectedBugsChanged: function (changeRecord) {
 
-          for (var i = 0; i < this.populations.length; i++) {
-            var population = this.populations[i];
-            if (population.name === selectedUser.name) {
-              this.push('currentTrophics', population.trophics);
-              console.log(this.currentTrophics);
-            }
+
+        if (this.selectedBugs.length > 0) {
+          this.enabledRelationshipsFlag = true;
+        } else {
+          this.selectedUserIndex = undefined;
+          this.$.relationshipSelector.selected = undefined;
+          this.enabledRelationshipsFlag = false;
+          this.$.saveButton.hidden = true;
+        }
+
+        if (this.enabledRelationshipsFlag) {
+          if (this.selectedBugs[0] !== undefined) {
+            this.$.bugA.icon = 'wallcology-icons:' + this.selectedBugs[0];
+            this.clearSelections();
+            this.$.addButton.hidden = true;
+
+          } else {
+            this.$.bugA.icon = '';
           }
-          this.populations.forEach(function (entry) {
-            if (entry.name === selectedUser.name) {
+
+          if (this.selectedBugs[1] !== undefined) {
+            this.$.relationshipSelector.selected = undefined;
+            this.$.bugB.icon = 'wallcology-icons:' + this.selectedBugs[1];
+            this.$.relationshipMenu.hidden = false;
+            this.$.saveButton.hidden = false;
+            this.$.addButton.hidden = this.doesCurrentUserHaveValue();
+            this.$.saveButton.hidden = !this.doesCurrentUserHaveValue();
+          } else {
+            this.$.bugB.icon = '';
+            this.$.relationshipMenu.hidden = true;
+            this.$.saveButton.hidden = true;
+          }
+
+
+          if (this.selectedBugs[0] !== undefined && this.selectedBugs.length > 1 && this.currentHabitat !== undefined) {
+
+
+            var allRelationshipsCurrentHabitat = [];
+
+            for (var i = 0; i < this.relationships.length; i++) {
+              var rel = this.relationships[i];
+
+
+              if (this.currentHabitat !== undefined && rel.habitat_name === this.currentHabitat.name) {
+                allRelationshipsCurrentHabitat.push(rel);
+              }
+
 
             }
-          });
+
+            if (allRelationshipsCurrentHabitat.length > 0) {
+              this.users = [];
+              this.filteredRelationships = [];
+
+              for (var j = 0; j < allRelationshipsCurrentHabitat.length; j++) {
+                var someRel = allRelationshipsCurrentHabitat[j];
+                if (someRel.relationship[0].nodes[0].id === this.selectedBugs[0] && someRel.relationship[0].nodes[1].id === this.selectedBugs[1]) {
+                  this.push('filteredRelationships', someRel);
+                  //console.log('got here', JSON.stringify(someRel));
+                }
+
+              }
+
+              if (this.filteredRelationships[0] !== undefined) {
+                if (this.doesCurrentUserHaveValue()) {
+                  this.$.addButton.hidden = true;
+                } else {
+                  this.$.addButton.hidden = false;
+                }
+                this.selectedUserIndex = 0;
+                this.selectedUserIndexChanged(0, 0);
+              }
+            }
+
+
+          }
+        }
+      },
+      handleRelationshipsResponse: function (e) {
+        this.relationships = e.target.lastResponse.data;
+      },
+      handleDropDownConfigurationResponse: function (e) {
+        this.dropDownConfigurations = e.target.lastResponse;
+      },
+      selectedUserIndexChanged: function (newValue, oldValue) {
+        if (this.filteredRelationships[0] !== undefined) {
+
+          var selectedRelationship = this.filteredRelationships[newValue];
+          if (!this.$.relationshipMenu.hidden) {
+
+            var value = selectedRelationship.relationship[0].edges[0].value;
+            var reason = selectedRelationship.relationship[0].reasoning;
+
+            var disabled = true;
+            if (selectedRelationship.user !== undefined && this.currentUsers[0].name === selectedRelationship.user) {
+              disabled = false;
+            }
+
+            this.updateRelationshipMenu(value, disabled);
+            this.updateJusticicationMenu(reason, disabled);
+          }
+
         }
 
 
       },
-      iconColor: function(color) {
-        return 'wallcology-icons:'+color;
+      doesCurrentUserHaveValue: function () {
+
+        var hasValue = false;
+
+        for (var i = 0; i < this.filteredRelationships.length; i++) {
+          var filteredUser = this.filteredRelationships[i];
+          if (filteredUser.user === this.currentUsers[0].name) {
+            hasValue = true;
+            return hasValue;
+          }
+        }
+
+        return false;
+      },
+      doAddAction: function () {
+        var newEntry = new Object();
+        newEntry.user = this.currentUsers[0].name;
+        newEntry.run_id = 1;
+        newEntry.phase_id = 1;
+        newEntry.habitat_name = this.currentHabitat.name;
+        newEntry.timestamp = Math.round(new Date().getTime() / 1000.0);
+        newEntry.confidence = 4;
+        newEntry.relationship = [{}];
+
+        newEntry.relationship[0].reasoning = 'because...';
+
+        var nodeA = new Object();
+        nodeA.id = this.selectedBugs[0];
+
+        var nodeB = new Object();
+        nodeB.id = this.selectedBugs[1];
+
+        newEntry.relationship[0].nodes = [nodeA, nodeB];
+
+
+        var edge = new Object();
+        edge.source = this.selectedBugs[0];
+        edge.target = this.selectedBugs[1];
+        edge.value = this.$.relationshipSelector.selected;
+        newEntry.relationship[0].edges = [edge];
+
+        console.log('NEW ENTRY', newEntry);
+
+        this.push('relationships', newEntry);
+        this.push('filteredRelationships', newEntry);
+
+
+        this.selectedUserIndex = 0;
+        this.selectedUserIndexChanged(0, 0);
+
+        this.$.saveButton.hidden = false;
+        //SEND Nutella
+      },
+      doSaveAction: function () {
+        //find the current
+        for (var i = 0; i < this.filteredRelationships.length; i++) {
+          var filteredUser = this.filteredRelationships[i];
+          if (filteredUser.user === this.currentUsers[0].name) {
+            filteredUser.relationship[0].edges[0].value = this.$.relationshipSelector.selected;
+            var newTextInputValue = this.$.reason.value;
+            filteredUser.relationship[0].reasoning = newTextInputValue;
+
+            //NUTELLA GOES HERE
+          }
+        }
+
+        console.log('new filtered rels', this.filteredRelationships);
+
+      },
+      clearSelections: function () {
+        this.$.relationshipSelector.selected = undefined;
+        this.filteredRelationships = [];
+        this.$.reason.value = '';
+        this.$.reason.disabled = false;
+      },
+      updateRelationshipMenu: function (value, disabled) {
+        this.$.relationshipSelector.selected = value;
+        this.$.relationshipMenu.disabled = disabled;
+      },
+      updateJusticicationMenu: function (value, disabled) {
+        this.$.reason.value = value;
+        this.$.reason.disabled = disabled;
+      },
+      iconColor: function (bugTarget) {
+
+        if (bugTarget !== undefined && this.selectedBugs !== undefined) {
+          if (bugTarget === 'A' && this.selectedBugs.length > 0) {
+            return 'wallcology-icons:' + this.selectedBugs[0];
+          } else if (bugTarget === 'B' && this.selectedBugs.length > 1) {
+            return 'wallcology-icons:' + this.selectedBugs[1];
+          }
+        }
+
+        return '';
       },
       toUpperCase: function (someString) {
         return someString.toUpperCase();
       },
+      create: function () {
+
+      },
+      processRelationships: function () {
+                        console.info('process me');
+
+//        this.nutella.net.request('complete_relationships', function (response) {
+//                console.info('REQUEST IS IN', response);
+//                if (response.data !== undefined) {
+//
+//                  var d = response.data;
+//
+//                  processRelationships(d);
+//
+//
+//                }
+//
+//        });
+//         for (var i = 0; i < data.length; i++) {
+//           this.relationships.push(data[i]);
+//         }
+
+      },
       ready: function () {
-        this.currentHabitat = {};
         this.selectedBugs = [];
-        this.tags = [];
-        this.users = [];
-        this.populations = [];
-        this.currentTrophics = [];
-        console.log('TROPICS is READY');
+        this.currentUsers = [];
+        this.relationships = [];
+        this.filteredRelationships = [];
+//        this.nutella = {};
+//
+//        this.nutella = NUTELLA.init('ltg.evl.uic.edu', 'wallcology', 'default', 'wallcology-relationships',
+//          function (success) {
+//            if (success) {
+//              console.info('Successfully connected nutella!');
+//                this.processRelationships();
+//
+//            } else {
+//              console.info('Error connecting!');
+//            }
+//          });
+
+
       },
     });
   </script>

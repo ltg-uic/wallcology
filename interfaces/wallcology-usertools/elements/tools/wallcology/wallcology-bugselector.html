@@ -85,7 +85,6 @@
         type: Object,
         notify: true,
         value: {},
-        observer: 'currentHabitatChanged'
       }
     },
     observers: [
@@ -105,27 +104,20 @@
 
     },
     selectedBugsChanged: function (changeRecord) {
-      console.log('SELECTED BUGSELECTOR: NEW' + changeRecord);
+//      console.log('SELECTED BUGSELECTOR: NEW' + changeRecord);
       if (changeRecord.value !== null && this.selectedBugs[0] !== null) {
       }
     },
     iconColor: function(color) {
       return 'wallcology-icons:'+color;
     },
-    currentHabitatChanged: function (newValue, oldValue) {
-      console.log('H: NEW' + newValue + 'old' + oldValue);
-      if( this.habitats !== null ) {
-        console.log('current habitat ' + this.currentHabitat.name);
-        console.log('current bugs ' + this.currentHabitat.bugs);
-      }
-    },
     handleHabitatResponse: function (e) {
       console.log(this.$.habitatAjax.lastResponse + e);
       this.habitats = this.$.habitatAjax.lastResponse;
       this.currentHabitat = this.habitats[0];
-      for (var i = 0; i < this.habitats.length; i++) {
-        console.log(this.habitats[i]);
-      }
+//      for (var i = 0; i < this.habitats.length; i++) {
+//        console.log(this.habitats[i]);
+//      }
     },
     toCompleteHeading: function(userString){
       if( userString !== null ) {
@@ -142,10 +134,6 @@
     ready: function () {
       this.currentHabitat = {};
       this.selectedBugs = [];
-    },
-    attributeChanged: function (name, type) {
-      console.log(this.localName + '#' + this.id + ' attribute ' + name +
-        ' was changed to ' + this.getAttribute(name) + type);
     }
   });
 </script>

@@ -138,7 +138,9 @@
     doStartAction: function() {
       this.some = 'FUCK YOU';
       var temp = [];
-      for (var i = 0; i < this.$.menu.selectedValues.length; i++) {
+
+      if( this.$.menu.selectedValues[0] !== undefined ) {
+        for (var i = 0; i < this.$.menu.selectedValues.length; i++) {
         temp.push(this.users[this.$.menu.selectedValues[i]]);
       }
 
@@ -146,7 +148,10 @@
         console.log('choices: ' + k  + temp[k].name);
       }
 
-      this.set('choices', temp);
+      this.set('choices', temp);  
+      }
+
+      
 
     },
     openDialog: function() {
