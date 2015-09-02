@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+</head>
+
+<dom-module id="wallcology-population">
+  <style>
+
+    svg {
+    }
+
+    path {
+      stroke: steelblue;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    rect .plot {
+      fill: #ddd;
+      /*opacity: 0.5;*/
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+    }
+
+    .legend {
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+
+    .unselected {
+      border: 0px solid #021a40;
+    }
+
+    .selected {
+      border: 10px solid #021a40;
+    }
+
+    .pink {
+      background-color: var(--paper-pink-500);
+    }
+
+    .hcontainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+
+    paper-material {
+      background-color: white;;
+      height: 100%;
+      margin-top: 2px;
+      padding: 6px;
+    }
+
+  </style>
+  <template>
+    <paper-material elevation="0">
+      <h2 class="title">Population for <span>{{currentHabitat.name}}</span></h2>
+
+      <div class="hcontainer">
+        <wallcology-bugselector selected-bugs="{{selectedBugs}}"
+                                current-habitat="{{currentHabitat}}"></wallcology-bugselector>
+      </div>
+      <div class="vcontainer"></div>
+      <wallcology-d3 selected-bugs="{{selectedBugs}}" current-habitat="{{currentHabitat}}"></wallcology-d3>
+      <div>selected bugs:
+        <template is="dom-repeat" items="{{selectedBugs}}">
+          <span>{{item}}</span>
+        </template>
+      </div>
+
+    </paper-material>
+  </template>
+
+  <script>
+    // element registration
+    Polymer({
+      is: 'wallcology-population',
+
+      // add properties and methods on the element's prototype
+      properties: {
+        // declare properties for the element's public API
+
+        currentHabitat: {
+          type: Object,
+          notify: true,
+          observer: 'currentHabitatChanged'
+        },
+        selectedBugs: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+      },
+      currentHabitatChanged: function (newValue, oldValue) {
+        console.log('currentHabitatChanged oldValue: ' + oldValue + ' : ' + newValue);
+      },
+      computeHeading: function () {
+        if (this.currentHabitat !== null) {
+          return 'population for ' + this.currentHabitat.name;
+        } else {
+          return '';
+        }
+      },
+      ready: function () {
+        this.currentHabitat = {};
+        this.selectedBugs = [];
+        console.log('population is ready');
+      }
+    });
+  </script>
+</dom-module>

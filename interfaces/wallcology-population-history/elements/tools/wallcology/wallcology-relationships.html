@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!-- 	<link href="../bower_components/iron-input/iron-input.html" rel="import"> -->
+  <!-- 	<link href="../bower_components/paper-button/paper-button.html" rel="import"> -->
+</head>
+
+<dom-module id="wallcology-relationships">
+  <style>
+
+    :host {
+      --paper-input-container-color: black;
+      --paper-input-container-focus-color: black;
+      --paper-input-container-input-color: black;
+      --paper-menu-focused-item: {
+        font-weight: bold;
+      };
+    }
+
+    paper-item {
+      --paper-item: {
+        cursor: pointer;
+      };
+    }
+
+    paper-button.colorful {
+      background: var(--paper-light-blue-500);
+      color: #fff;
+      margin-top: 20px;
+    }
+
+    .red {
+      background-color: var(--paper-red-500);
+    }
+
+    .pink {
+      background-color: var(--paper-pink-500);
+    }
+
+    .orange {
+      background-color: var(--paper-orange-500);
+    }
+
+    .blue {
+      background-color: var(--paper-light-blue-200);
+    }
+
+    .purple {
+      background-color: var(--paper-purple-200);
+    }
+
+    .yellow {
+      background-color: var(--paper-yellow-200);
+    }
+
+    .white {
+      background-color: white;
+    }
+
+    .paper-title {
+      /*background-color: orange;*/
+      height: 100%;
+      margin-top: 2px;
+      padding: 6px;
+    }
+
+    .paper-text {
+      background-color: var(--paper-grey-50);
+      width: 450px;
+    }
+
+    .paper-border-inner {
+      background-color: var(--paper-grey-400);
+    }
+
+    .paper-border-outer {
+      background-color: var(--paper-grey-50);
+      padding: 2px 2px 2px 2px;
+    }
+
+    .filter-section {
+      height: 100%;
+      width: 100%;
+      padding: 5px 0px 0px 5px;
+      margin: 0px 0px 0px 5px;
+    }
+
+    .avatar {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      overflow: hidden;
+      background: #ccc;
+
+    }
+
+    .list {
+      /*display: inline-block;*/
+      width: 100%;
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .vcontainer {
+      @apply(--layout-vertical);
+    }
+
+    .hcontainer {
+      @apply(--layout-horizontal);
+    }
+
+    .hcentercontainer {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+    }
+
+    .zeroed {
+      margin: 0px;
+      padding: 0px;
+    }
+
+    .container {
+      @apply(--layout-vertical);
+    }
+
+    .flexchild {
+      @apply(--layout-flex);
+    }
+
+    .paper-section {
+      height: 100%;
+      width: 100px;
+      padding: 5px;
+    }
+
+    .test {
+      padding: 0px;
+      margin: 0px;
+      height: 100%;
+    }
+
+    .s1 {
+      padding: 0px;
+    }
+
+    .trophic-section {
+      display: inline-block;
+      height: 100%;
+      /*width: 100%;*/
+      padding: 5px 10px 0px 10px;
+      /*margin: 0px 0px 5px 0px;*/
+      @apply(--layout-center-justified);
+    }
+
+    .bug {
+      --iron-icon-height: 75px;
+      --iron-icon-width: 75px;
+      margin: 5px;
+    }
+
+  </style>
+  <template>
+    <iron-ajax id="dropDownAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/4Jd25_j2"
+               params=""
+               handle-as="json"
+               on-response="handleDropDownConfigurationResponse" loading="{{loading}}" method="GET" auto verbose>
+
+    </iron-ajax>
+    <iron-ajax id="relationshipAjax"
+               contentType="application/json"
+               url="http://beta.json-generator.com/api/json/get/V1jyL-w3"
+               params=""
+               handle-as="json"
+               on-response="handleRelationshipsResponse" loading="{{loading}}" method="GET" auto verbose>
+
+    </iron-ajax>
+    <div class="horizontal layout center-justified">
+      <wallcology-bugselector selected-bugs="{{selectedBugs}}"
+                              current-habitat="{{currentHabitat}}"></wallcology-bugselector>
+    </div>
+
+    <iron-grid class="test">
+
+      <div hidden={{!enabledRelationshipsFlag}} class="s1 test">
+        <div class="hcentercontainer">
+          <div><h2>Filter</h2></div>
+          <div id="addButton" hidden="true" class="vertical layout center-justified">
+            <paper-icon-button icon="add" on-tap="doAddAction"></paper-icon-button>
+          </div>
+        </div>
+
+        <div class="white">
+          <paper-menu id="userMenu" class="list" selected="{{selectedUserIndex}}">
+            <template is="dom-repeat" id="filterList" items="{{filteredRelationships}}">
+              <paper-item id="{{item.user}}" class="zeroed hcentercontainer">
+                <div><span>{{toUpperCase(item.user)}}</span></div>
+              </paper-item>
+            </template>
+          </paper-menu>
+        </div>
+      </div>
+
+      <div hidden={{!enabledRelationshipsFlag}} class="s5 container">
+        <div class="hcentercontainer"><h2>Relationship</h2></div>
+
+
+        <div id="bugContainer" hidden={{!enabledRelationshipsFlag}} class="hcentercontainer">
+
+          <div class="horizontal layout center">
+            <iron-icon id="bugA" class="bug" icon="{{iconColor(bugA)}}"></iron-icon>
+          </div>
+          <div class="vertical layout center">
+
+
+            <iron-image class="center-justified" style="width:150px; height:70px;" sizing="contain"
+                        src="icons/face_right_arrow.jpg"></iron-image>
+
+
+            <paper-dropdown-menu id="relationshipMenu" hidden="true" class="center-justified"
+                                 label="Select Relationship">
+              <paper-menu id="relationshipSelector" class="dropdown-content" selected="{{selectedRelationshipValue}}"
+                          attr-for-selected="value">
+                <template is="dom-repeat" items="[[dropDownConfigurations]]" as="relationship">
+                  <paper-item value="{{relationship.value}}">[[relationship.label]]</paper-item>
+                </template>
+              </paper-menu>
+            </paper-dropdown-menu>
+
+
+          </div>
+          <div class="horizontal layout center">
+            <iron-icon id="bugB" class="bug" style="margin: 10px;" icon="{{iconColor('B')}}"></iron-icon>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div hidden={{!enabledRelationshipsFlag}} class="s6 container ">
+        <div class="hcentercontainer"><h2>Justification</h2></div>
+
+
+        <div class="hcentercontainer center-justified">
+          <div class="paper-border-outer">
+            <div class="paper-border-inner">
+              <paper-textarea id="reason" class="paper-text" label="Your reason..."
+                              char-counter rows="8"></paper-textarea>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      </div>
+    </iron-grid>
+
+    <div class="horizontal layout center-justified">
+      <paper-button id="saveButton" hidden="true" tabindex="0" class="colorful" on-tap="doSaveAction">SAVE
+      </paper-button>
+    </div>
+
+    <div hidden={{enabledRelationshipsFlag}} class="horizontal layout center-justified">
+      <h2>Make selections to start</h2>
+    </div>
+
+    </div>
+  </template>
+
+  <script>
+    // element registration
+    Polymer({
+      is: 'wallcology-relationships',
+
+      // add properties and methods on the element's prototype
+      properties: {
+        // declare properties for the element's public API
+        app: {
+          type: Object,
+          notify: true
+        },
+        dropDownConfigurations: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        relationships: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        filteredRelationships: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        currentHabitat: {
+          type: Object,
+          notify: true,
+          observer: 'currentHabitatChanged'
+        },
+        selectedBugs: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        enabledRelationshipsFlag: {
+          type: Boolean,
+          notify: true,
+          value: false
+        },
+        selectedUserIndex: {
+          type: Number,
+          value: 0,
+          observer: 'selectedUserIndexChanged'
+        },
+        selectedRelationshipValue: {
+          type: String,
+        },
+        currentUsers: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+      },
+      observers: [
+        'selectedBugsChanged(selectedBugs.*)', 'currentUsersChanged(currentUsers.*)'
+      ],
+      currentHabitatChanged: function (newValue, oldValue) {
+
+        //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+        //console.log('HABITAT CHANGED oldValue: ' + JSON.stringify(oldValue) + ' newValue: ' + JSON.stringify(newValue));
+      },
+      currentUsersChanged: function (newValue, oldValue) {
+
+        //  this.$.mainCard.heading = 'Species for ' + this.currentHabitat.name;
+        //console.log('CURRENT USERS  RELATIONSHIP S CHANGED oldValue: ' + JSON.stringify(this.currentUsers) + ' newValue: ' + JSON.stringify(newValue));
+      },
+      selectedBugsChanged: function (changeRecord) {
+
+
+        if (this.selectedBugs.length > 0) {
+          this.enabledRelationshipsFlag = true;
+        } else {
+          this.selectedUserIndex = undefined;
+          this.$.relationshipSelector.selected = undefined;
+          this.enabledRelationshipsFlag = false;
+          this.$.saveButton.hidden = true;
+        }
+
+        if (this.enabledRelationshipsFlag) {
+          if (this.selectedBugs[0] !== undefined) {
+            this.$.bugA.icon = 'wallcology-icons:' + this.selectedBugs[0];
+            this.clearSelections();
+            this.$.addButton.hidden = true;
+
+          } else {
+            this.$.bugA.icon = '';
+          }
+
+          if (this.selectedBugs[1] !== undefined) {
+            this.$.relationshipSelector.selected = undefined;
+            this.$.bugB.icon = 'wallcology-icons:' + this.selectedBugs[1];
+            this.$.relationshipMenu.hidden = false;
+            this.$.saveButton.hidden = false;
+            this.$.addButton.hidden = this.doesCurrentUserHaveValue();
+            this.$.saveButton.hidden = !this.doesCurrentUserHaveValue();
+          } else {
+            this.$.bugB.icon = '';
+            this.$.relationshipMenu.hidden = true;
+            this.$.saveButton.hidden = true;
+          }
+
+
+          if (this.selectedBugs[0] !== undefined && this.selectedBugs.length > 1 && this.currentHabitat !== undefined) {
+
+
+            var allRelationshipsCurrentHabitat = [];
+
+            for (var i = 0; i < this.relationships.length; i++) {
+              var rel = this.relationships[i];
+
+
+              if (this.currentHabitat !== undefined && rel.habitat_name === this.currentHabitat.name) {
+                allRelationshipsCurrentHabitat.push(rel);
+              }
+
+
+            }
+
+            if (allRelationshipsCurrentHabitat.length > 0) {
+              this.users = [];
+              this.filteredRelationships = [];
+
+              for (var j = 0; j < allRelationshipsCurrentHabitat.length; j++) {
+                var someRel = allRelationshipsCurrentHabitat[j];
+                if (someRel.relationship[0].nodes[0].id === this.selectedBugs[0] && someRel.relationship[0].nodes[1].id === this.selectedBugs[1]) {
+                  this.push('filteredRelationships', someRel);
+                  //console.log('got here', JSON.stringify(someRel));
+                }
+
+              }
+
+              if (this.filteredRelationships[0] !== undefined) {
+                if (this.doesCurrentUserHaveValue()) {
+                  this.$.addButton.hidden = true;
+                } else {
+                  this.$.addButton.hidden = false;
+                }
+                this.selectedUserIndex = 0;
+                this.selectedUserIndexChanged(0, 0);
+              }
+            }
+
+
+          }
+        }
+      },
+      handleRelationshipsResponse: function (e) {
+        this.relationships = e.target.lastResponse.data;
+      },
+      handleDropDownConfigurationResponse: function (e) {
+        this.dropDownConfigurations = e.target.lastResponse;
+      },
+      selectedUserIndexChanged: function (newValue, oldValue) {
+        if (this.filteredRelationships[0] !== undefined) {
+
+          var selectedRelationship = this.filteredRelationships[newValue];
+          if (!this.$.relationshipMenu.hidden) {
+
+            var value = selectedRelationship.relationship[0].edges[0].value;
+            var reason = selectedRelationship.relationship[0].reasoning;
+
+            var disabled = true;
+            if (selectedRelationship.user !== undefined && this.currentUsers[0].name === selectedRelationship.user) {
+              disabled = false;
+            }
+
+            this.updateRelationshipMenu(value, disabled);
+            this.updateJusticicationMenu(reason, disabled);
+          }
+
+        }
+
+
+      },
+      doesCurrentUserHaveValue: function () {
+
+        var hasValue = false;
+
+        for (var i = 0; i < this.filteredRelationships.length; i++) {
+          var filteredUser = this.filteredRelationships[i];
+          if (filteredUser.user === this.currentUsers[0].name) {
+            hasValue = true;
+            return hasValue;
+          }
+        }
+
+        return false;
+      },
+      doAddAction: function () {
+        var newEntry = {};
+        newEntry.user = this.currentUsers[0].name;
+        newEntry.run_id = 1;
+        newEntry.phase_id = 1;
+        newEntry.habitat_name = this.currentHabitat.name;
+        newEntry.timestamp = Math.round(new Date().getTime() / 1000.0);
+        newEntry.confidence = 4;
+        newEntry.relationship = [{}];
+
+        newEntry.relationship[0].reasoning = 'because...';
+
+        var nodeA = {};
+        nodeA.id = this.selectedBugs[0];
+
+        var nodeB = {};
+        nodeB.id = this.selectedBugs[1];
+
+        newEntry.relationship[0].nodes = [nodeA, nodeB];
+
+
+        var edge = {};
+        edge.source = this.selectedBugs[0];
+        edge.target = this.selectedBugs[1];
+        edge.value = this.$.relationshipSelector.selected;
+        newEntry.relationship[0].edges = [edge];
+
+        console.log('NEW ENTRY', newEntry);
+
+        this.push('relationships', newEntry);
+        this.push('filteredRelationships', newEntry);
+
+
+        this.selectedUserIndex = 0;
+        this.selectedUserIndexChanged(0, 0);
+
+        this.$.saveButton.hidden = false;
+        //SEND Nutella
+      },
+      doSaveAction: function () {
+        //find the current
+        for (var i = 0; i < this.filteredRelationships.length; i++) {
+          var filteredUser = this.filteredRelationships[i];
+          if (filteredUser.user === this.currentUsers[0].name) {
+            filteredUser.relationship[0].edges[0].value = this.$.relationshipSelector.selected;
+            var newTextInputValue = this.$.reason.value;
+            filteredUser.relationship[0].reasoning = newTextInputValue;
+
+            //NUTELLA GOES HERE
+          }
+        }
+
+        console.log('new filtered rels', this.filteredRelationships);
+
+      },
+      clearSelections: function () {
+        this.$.relationshipSelector.selected = undefined;
+        this.filteredRelationships = [];
+        this.$.reason.value = '';
+        this.$.reason.disabled = false;
+      },
+      updateRelationshipMenu: function (value, disabled) {
+        this.$.relationshipSelector.selected = value;
+        this.$.relationshipMenu.disabled = disabled;
+      },
+      updateJusticicationMenu: function (value, disabled) {
+        this.$.reason.value = value;
+        this.$.reason.disabled = disabled;
+      },
+      iconColor: function (bugTarget) {
+
+        if (bugTarget !== undefined && this.selectedBugs !== undefined) {
+          if (bugTarget === 'A' && this.selectedBugs.length > 0) {
+            return 'wallcology-icons:' + this.selectedBugs[0];
+          } else if (bugTarget === 'B' && this.selectedBugs.length > 1) {
+            return 'wallcology-icons:' + this.selectedBugs[1];
+          }
+        }
+
+        return '';
+      },
+      toUpperCase: function (someString) {
+        return someString.toUpperCase();
+      },
+      create: function () {
+
+      },
+      processRelationships: function (response) {
+
+        var newEntry = {};
+        newEntry.user = response['user'];
+        newEntry.run_id = response.run_id;
+        newEntry.phase_id = response.phase_id;
+        newEntry.habitat_name = response.habitat_name;
+        newEntry.timestamp = Math.round(new Date().getTime() / 1000.0);
+        newEntry.confidence = 4;
+        newEntry.relationship = [{}];
+
+
+        try {
+          var temp = JSON.parse(response); // Produces a SyntaxError
+        } catch (error) {
+          // Handle the error
+          console.log(error.message);
+        }
+
+        //this.set('relationships', relationships);
+
+        for (var i = 0; i < response.length; i++) {
+          var r = response[i];
+          this.push('relationships', r['user']);
+
+
+        }
+        console.info('Done me', this.relationships);
+
+      },
+      ready: function () {
+        this.selectedBugs = [];
+        this.currentUsers = [];
+        this.relationships = [];
+        this.filteredRelationships = [];
+
+        var app = document.querySelector('#app');
+        this.app = app;
+
+        this.app.sendRequest('complete_relationships');
+
+      },
+    });
+  </script>
+</dom-module>
