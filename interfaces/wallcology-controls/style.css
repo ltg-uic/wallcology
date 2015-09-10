@@ -41,8 +41,22 @@ h1#title {
 }
 
 .control {
+    cursor: pointer;
 
+    -webkit-transition: background-color 0.5s;
+    transition: background-color 0.5s;
     background-color: rgba(0, 100, 26, 0.16);
+}
+
+.control:hover, .control.selected {
+    -webkit-transition: background-color 1s;
+    transition: background-color 1s;
+
+    background-color: rgb(0, 100, 26);
+}
+
+.control.locked {
+    background-color: rgb(94, 100, 90);
 }
 
 .control.specie {
