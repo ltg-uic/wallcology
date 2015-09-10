@@ -67,3 +67,22 @@ All the timestamps (milliseconds in UTC since 1-1-1970) are generated with the f
 If you want to go back to the standard date object:
 `var date = new Date(timestamp)`
 
+#### Communication protocol
+
+##### channel: control_specie_event
+	{timestamp: '2015-..', habitat: 0, species: 3, event: <event>} <event> := "kill" | "increase" | "harvest" | "colonize"
+
+##### channel: control_habitat_event	[DRAFT]
+	{timestamp: '2015-..', habitat: 0, event: <event>}  <event> := "warmer" | "colder" | "more_wall_space" | "less_wall_space"
+
+##### channel: update_population
+	{
+		timestamp: '2015--..',
+		population: [
+			[0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
+			[0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
+			[0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
+			[0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5]
+		]
+	}
+
