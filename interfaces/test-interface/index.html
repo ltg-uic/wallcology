@@ -1,0 +1,73 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here-->
+	<title></title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+	<!-- Your CSS here -->
+</head>
+<body>
+				
+	<!-- Scripts -->
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<!-- Your scripts here -->
+				
+	<script type="text/javascript">
+
+	// Parse the query parameters
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	// Get an instance of nutella. 
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+		
+	
+	</script>
+			<!-- Your markup here -->
+
+	Habitat: <input type=text id="habitat">	<br>
+	Species: <input type=text id="species">	<br>
+	From: <input type=text id="from">	<br>
+	To: <input type=text id="to">	<br>
+
+<!-- // channel: environment_history
+//
+//          message = {
+//                      environmental_variable: 0,
+//                      habitat: '2',  
+//                      from: '100',  // seconds since 1970 
+//                      to: '200'
+//                    }
+ -->
+
+
+<!-- 	<input type=button name='increase' value='increase' onClick="nutella.net.publish('species_event', {habitat: document.getElementById('habitat').value, species:document.getElementById('environmental_variable').value, action: 'increase'});">
+
+	<input type=button name='decrease' value='decrease' onClick="nutella.net.publish('species_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('environmental_variable').value, action: 'decrease'});">
+
+	<input type=button name='colonize' value='colonize' onClick="nutella.net.publish('species_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('environmental_variable').value, action: 'colonize'});">
+ -->
+
+	<input type=button name='history' value='history' onClick="
+
+	nutella.net.request('population_history', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, points: 7, from: document.getElementById('from').value, to: document.getElementById('to').value}, function(response) {
+		var r = response;
+		var s = '';
+		for (var i=0; i<r.length; i++) {
+			s = s + ' ' + r[i].timestamp + ' ' + r[i].population + '\n'
+		}
+		alert(s);
+		document.getElementById('result').value=s;
+	});">
+	
+
+ 	
+
+
+
+
+	<textarea id="result" rows="10" cols="80"></textarea> 
+		
+</body>
+</html>
