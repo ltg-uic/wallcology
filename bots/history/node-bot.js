@@ -29,7 +29,7 @@ history.load(function(){
 // on requests
 //
 
-var forceNewDB = true; // for debugging purposes. set true to wipe DB.
+var forceNewDB = false; // for debugging purposes. set true to wipe DB.
 
 // eventually this should migrate to the configuration bot
 
