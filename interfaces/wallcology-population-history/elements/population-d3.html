@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <!--D3-->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+</head>
+
+<dom-module id="population-d3"">
+  <style>
+
+    :host {
+
+    }
+
+    .red {
+      background-color: red;
+    }
+
+    .yellow {
+      background-color: yellow;
+    }
+
+    .title {
+      left-margin: 10px;
+      font-size: 35px;
+    }
+
+    paper-menu {
+      display: block;
+    }
+
+    paper-dropdown-menu {
+      text-align: left;
+      margin: auto;
+      width: 125px;
+    }
+
+    paper-material {
+      background-color: white;;
+      height: 100%;
+      margin: 0px;
+      padding: 10px;
+    }
+
+    .bar {
+      display: inline-block;
+      width: 100px;
+      height: 100px;
+      background-color: teal;
+      margin-right: 5px;
+    }
+
+    .vertical-section-container {
+      @apply(--layout-vertical);
+      @apply(--center-justified);
+    }
+
+    .horizontal-section-container {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-justified);
+      @apply(--layout-wrap);
+    }
+
+    .horizontal-section {
+      background-color: white;
+      padding: 0px;
+      margin-right: 24px;
+      min-width: 200px;
+
+      @apply(--shadow-elevation-2dp);
+    }
+
+    .vertical-section {
+      background-color: white;
+      padding: 0px;
+      margin: 0 0px 0px 0px;
+    }
+
+    path {
+      stroke: steelblue;
+      stroke-width: 2;
+      fill: none;
+    }
+
+    rect {
+      fill: #ddd;
+      /*opacity: 0.5;*/
+    }
+
+    .axis path,
+    .axis line {
+      fill: none;
+      stroke: grey;
+      stroke-width: 1;
+    }
+
+    .legend {
+      font-size: 16px;
+      font-weight: bold;
+      text-anchor: middle;
+    }
+
+  </style>
+  <template>
+
+
+    <div class="vertical-section-container">
+      <div class="vertical-section"><h3>Population : <span>{{toUpperCase(bug)}}</span></h3></div>
+      <div class="vertical-section">
+
+        <!--<svg id="viz" width="1000" height="500"></svg>-->
+      <div id="viz"></div>
+
+        <!--<svg class="chart"></svg>-->
+
+      </div>
+    </div>
+
+
+
+
+      <!--Shadow DOM-->
+
+
+</template>
+  <script>
+    // element registration
+    Polymer({
+      is: 'population-d3',
+
+      // add properties and methods on the element's prototype
+      properties: {
+        // declare properties for the element's public API
+        data: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        bug: {
+          type: String,
+          notify: true,
+          value: '',
+          observer: 'bugChanged'
+
+        }
+      },
+      bugChanged: function (newValue, oldValue) {
+        console.log('D3 BUG:', newValue, oldValue);
+      },
+      ready: function () {
+
+        this.createElements();
+        this.getData();
+
+      },
+      createElements: function () {
+        me = this;
+        var critters = [ "green", "brown", "orange", "grey", "cherry"];
+        var colorKey = d3.scale.ordinal()
+          .domain(critters)
+          .range(["#d62728", "#2ca02c", "#fdff00", "#9f5d30", "#2e6721"]);
+
+        var margin = {top: 40, right: 40, bottom: 40, left:0},
+          width = '100%',
+          height = (window.innerHeight * 0.5)*.6;
+        // height = (window.innerHeight * 0.5) * 0.33;
+
+        var x = d3.time.scale()
+          // .domain(d3.extent(data.values, function(d) { return d.date; }))
+          .rangeRound([0, width - margin.left - margin.right]);
+
+        var y = d3.scale.linear()
+          // .domain([0, data.maxPop])
+          .range([height - margin.top - margin.bottom, 0]);
+
+        var xAxis = d3.svg.axis()
+          .scale(x)
+          .ticks(10, 1)
+          .tickSize(-height + margin.top + margin.bottom)
+          .tickPadding(8);
+
+        var yAxis = d3.svg.axis()
+          .scale(y)
+          .orient('left')
+          .ticks(2)
+          .tickPadding(10)
+          .tickSize(-width);
+
+        // set up the svg
+        var svg = d3.select(this.$.viz).append('svg')
+          .attr('class', 'chart ' + me.bug) //  + data.key
+          .attr('width', width)
+          .attr('height', height)
+          .style('position','relative')
+          .style('display','block')
+          .style('left', 0)
+          .append('g')
+          .attr('transform', 'translate(' + margin.left + ', ' + margin.top + ')');
+        // .call(zoom);
+
+        svg.append('rect')
+          .attr('width', width)
+          .attr('height', height - margin.top - margin.bottom)
+          .attr('class', 'plot');
+
+
+        var clip = svg.append('clipPath')
+          .attr('id', 'clip')
+          .append('rect')
+          .attr('x', 0)
+          .attr('y', 0)
+          .attr('width', width)
+          .attr('height', height - margin.top - margin.bottom);
+      },
+      drawChart: function () {
+
+      },
+      getData: function () {
+
+      },
+      refreshChart: function () {
+
+      },
+
+      toUpperCase: function(someString) {
+        if (someString !== undefined) {
+          return someString.toUpperCase();
+        }
+        return null;
+      }
+    });
+  </script>
+</dom-module>

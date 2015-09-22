@@ -1,0 +1,31 @@
+{
+  "name": "wallcology-selector",
+  "version": "1.0.0",
+  "authors": [
+    "Anthony Perritano <aperritano@gmail.com>"
+  ],
+  "description": "An element providing a solution to no problem in particular.",
+  "keywords": [
+    "web-component",
+    "web-components",
+    "polymer",
+    "seed"
+  ],
+  "main": "wallcology-selector.html",
+  "license": "http://polymer.github.io/LICENSE.txt",
+  "homepage": "https://github.com/ltg-uic/wallcology-selector",
+  "ignore": [
+    "/.*",
+    "/test/",
+    "/demo/"
+  ],
+  "dependencies": {
+    "iron-elements": "PolymerElements/iron-elements#^1.0.3",
+    "paper-elements": "PolymerElements/paper-elements#^1.0.5",
+    "polymer": "Polymer/polymer#^1.1.3"
+  },
+  "devDependencies": {
+    "iron-component-page": "PolymerElements/iron-component-page#^1.0.0",
+    "web-component-tester": "*"
+  }
+}

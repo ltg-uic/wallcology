@@ -16,7 +16,7 @@ var warming_rate = [];
 
 var state;
 
-setTimeout(init,5000); // wait for history to get loaded
+setTimeout(init,10000); // wait for history to get loaded
 
 function init() {
 
@@ -46,13 +46,13 @@ function cycleState () {
     newState['timestamp'] = d.getTime();
     for (var i=0; i<state['populations'].length; i++) {
         for (var j=0; j<state['populations'][0].length; j++)
-            newState['populations'][i][j] = Math.random();
+            newState['populations'][i][j] = Math.floor(Math.random()*6);
         for (var k=0; k<state['environments'][0].length; k++)       
-            newState['environments'][i][k] = Math.random();
+            newState['environments'][i][k] = Math.floor(Math.random()*6);
     }
     nutella.net.publish ('state_update',newState);
     state=newState;
-    setTimeout(cycleState, 3000);
+    setTimeout(cycleState,  1000);
  }
 
 

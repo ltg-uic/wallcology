@@ -76,7 +76,6 @@ var forceNewDB = true; // for debugging purposes. set true to wipe DB.
   
   function interpolate(A,n,arg) {
 
- 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //

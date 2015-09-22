@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <link href="../bower_components/polymer/polymer.html" rel="import">
+    <link href="../styles/app-theme.html" rel="import">
+    <link href="../bower_components/paper-styles/paper-styles.html" rel="import">
+
+    <link href="../bower_components/paper-button/paper-button.html" rel="import">
+
+
+    <link href="../bower_components/iron-ajax/iron-ajax.html" rel="import">
+    <link href="../bower_components/iron-flex-layout/iron-flex-layout.html" rel="import">
+
+
+    <link href="../bower_components/iron-icons/iron-icons.html" rel="import">
+    <link href="../bower_components/iron-icon/iron-icon.html" rel="import">
+    <link href="../bower_components/iron-icons/communication-icons.html" rel="import">
+    <link href="../bower_components/iron-iconset-svg/iron-iconset-svg.html" rel="import">
+    <link href="../bower_components/iron-iconset/iron-iconset.html" rel="import">
+
+    <link href="../elements/icons/wallcology-icons.html" rel="import">
+</head>
+
+<dom-module id="wallcology-selector">
+    <style>
+
+        :host {
+
+        }
+
+        .pink {
+            background-color: var(--paper-pink-500);
+        }
+
+        .yellow {
+            background-color: var(--paper-yellow-500);
+        }
+
+        .bug {
+            --iron-icon-height: 45px;
+            --iron-icon-width: 45px;
+        }
+
+        paper-button.colorful {
+            color: white;
+            background: var(--paper-blue-500);
+        }
+
+        .vcontainer {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
+
+        paper-button[toggles].selector {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        paper-button[toggles] {
+            transition: background-color 0.3s;
+
+        }
+
+        paper-button[toggles][active] {
+            background-color: rgba(255, 233, 33, 0.25);
+        }
+
+    </style>
+    <template>
+        <iron-ajax id="habitatAjax"
+                   contentType="application/json"
+                   url="http://beta.json-generator.com/api/json/get/NkcQCTno"
+                   params=""
+                   handle-as="json"
+                   on-response="handleHabitatResponse" loading="{{loading}}" method="GET" auto verbose>
+        </iron-ajax>
+
+        <div class="horizontal layout">
+            <div class="vcontainer">
+                <paper-button active class="colorful" id="habitatButton" on-tap="habitatSelectionChanged">{{currentHabitat.name}}</paper-button>
+            </div>
+            <div id="key">
+            <template is="dom-repeat" items="{{currentHabitat.bugs}}">
+
+                    <paper-button toggles on-active-changed="toggleTapped" id="{{index}}" class="selector">
+                        <iron-icon class="bug" icon="{{iconColor(item)}}"></iron-icon>
+                    </paper-button>
+
+            </template>
+            </div>
+
+        </div>
+
+
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: 'wallcology-selector',
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                habitats: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                selectedBugs: {
+                    type: Array,
+                    notify: true,
+                },
+                currentHabitat: {
+                    type: Object,
+                    notify: true,
+                    value: {}
+                },
+                maxSelections: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                }
+            },
+            observers: [
+                'selectedBugsChanged(selectedBugs.*)'
+            ],
+            habitatSelectionChanged: function (e) {
+                if (this.habitats !== undefined) {
+
+                    var currentIndex = this.currentHabitat.index;
+                    if( currentIndex + 1 == this.habitats.length ) {
+                        currentIndex = 0;
+                        this.currentHabitat = this.habitats[0];
+                    } else {
+                        this.currentHabitat = this.habitats[++currentIndex];
+                    }
+                    this.selectedBugs = [];
+
+                    console.log('current habitat ' + this.currentHabitat.name);
+                }
+            },
+            selectedBugsChanged: function (changeRecord) {
+                if (changeRecord.value !== null && this.selectedBugs[0] !== null) {
+                    console.log('SELECTED BUGS:' + this.selectedBugs)
+                }
+            },
+            toggleTapped: function (e) {
+
+                if( !this.hasMaxSelections() ) {
+                    var bugIndex = e.currentTarget.id;
+
+                    if (e.currentTarget.active) {
+                        this.push('selectedBugs', bugIndex);
+                    } else {
+                        var bugColorIndex = this.selectedBugs.indexOf(bugIndex);
+                        if (bugColorIndex !== -1) {
+                            this.splice('selectedBugs', bugColorIndex, 1);
+                        }
+                    }
+                } else {
+                    console.log('TOO MANY SELECTIONS');
+                    e.currentTarget.active = false;
+                }
+
+            },
+            hasMaxSelections: function() {
+                var allToggles = this.$.key.querySelectorAll('paper-button');
+                var toggled = 0;
+                for(var i = 0; i < allToggles.length; i++ ){
+                    var b = allToggles[i];
+                    if(b.active) {
+                        toggled++;
+                    }
+                }
+                if( toggled > this.maxSelections ) {
+                    console.log('max selections' + this.maxSelections);
+                    return true;
+                }
+                return false;
+            },
+            handleHabitatResponse: function (e) {
+                this.habitats = this.$.habitatAjax.lastResponse;
+
+
+
+                for (var i = 0; i < this.habitats.length; i++) {
+                    console.log(this.habitats[i].index = i);
+                }
+
+                this.currentHabitat = this.habitats[0];
+                this.$.habitatButton.label = 'HABITAT ' + this.currentHabitat.index;
+            },
+            iconColor: function (color) {
+                return 'wallcology-icons:' + color;
+            },
+            generateHabitatColor: function (hIndex) {
+                var color;
+
+                switch (hIndex) {
+                    case '0':
+                        color = '#42a5f5'; //blue 400
+                        break;
+                    case '1':
+                        color = '#ff6f43'; //orange
+                        break;
+                    case '2':
+                        color = '#26a79a'; //teal
+                        break;
+                    case '3':
+                        color = '#8D6E63'; //brown
+                        break;
+                    default:
+                        color = 'white';
+                }
+
+                return 'background-color: ' + color;
+
+
+            },
+            toUpperCase: function (someString) {
+                if (someString !== null) {
+                    return someString.toUpperCase();
+                }
+                return null;
+            },
+            ready: function () {
+                this.currentHabitat = {};
+                this.selectedBugs = [];
+                this.habitats = [];
+            }
+        });
+    </script>
+</dom-module>

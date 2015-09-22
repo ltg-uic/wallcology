@@ -14,8 +14,11 @@ nutella.setResourceId('wallcology-relationships');
 console.log("Hi, I'm RELATIONSHIP BOT!");
 
 // Stores the relationships in the format {}
+
 var relationships = nutella.persist.getJsonObjectStore('relationships');
 relationship.load(function(){});
+
+
 
 console.log('RELATIONSHIP PREVIOUS DATA: ',typeof(relationships), relationships);
 

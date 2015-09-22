@@ -28,6 +28,7 @@
 
 	Habitat: <input type=text id="habitat">	<br>
 	Species: <input type=text id="species">	<br>
+	Points: <input type=text id="points">	<br>
 	From: <input type=text id="from">	<br>
 	To: <input type=text id="to">	<br>
 
@@ -51,13 +52,12 @@
 
 	<input type=button name='history' value='history' onClick="
 
-	nutella.net.request('population_history', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, points: 7, from: document.getElementById('from').value, to: document.getElementById('to').value}, function(response) {
+	nutella.net.request('population_history', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, points: document.getElementById('points').value, from: document.getElementById('from').value, to: document.getElementById('to').value}, function(response) {
 		var r = response;
 		var s = '';
 		for (var i=0; i<r.length; i++) {
-			s = s + ' ' + r[i].timestamp + ' ' + r[i].population + '\n'
+			s = s + ' ' + r[i].timestamp + ' ' + r[i].population + '\n';
 		}
-		alert(s);
 		document.getElementById('result').value=s;
 	});">
 	
