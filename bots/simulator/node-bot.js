@@ -52,6 +52,7 @@ function cycleState () {
     }
     nutella.net.publish ('state_update',newState);
     state=newState;
+    console.log('new state', state);
     setTimeout(cycleState,  1000);
  }
 
