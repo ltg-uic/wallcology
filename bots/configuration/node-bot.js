@@ -19,6 +19,6 @@ for (var i = 0; i < masterConfiguration.habitats.length; i++) {
 }
 
 nutella.net.handle_requests('master_configuration', function(message, from) {
-    console.log('masterConfiguration Requested');
+    console.log('MasterConfiguration Requested');
     return masterConfiguration;
 });
