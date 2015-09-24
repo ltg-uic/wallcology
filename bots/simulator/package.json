@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/nutella-framework/basic-node-bot#readme",
   "dependencies": {
-    "nutella_lib": "^0.6.1"
+    "nutella_lib": "^0.6.11"
   }
 }
