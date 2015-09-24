@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+
+    <link href="./bower_components/polymer/polymer.html" rel="import">
+    <link href="./styles/app-theme.html" rel="import">
+    <link href="./bower_components/paper-styles/paper-styles.html" rel="import">
+
+    <link href="./bower_components/paper-button/paper-button.html" rel="import">
+    <link href="./bower_components/paper-icon-button/paper-icon-button.html" rel="import">
+
+    <link href="./bower_components/iron-flex-layout/iron-flex-layout.html" rel="import">
+
+    <script type="text/javascript" src="./bower_components/predicates.js/browser/predicates.js"></script>
+
+
+</head>
+
+<dom-module id="wallcology-selector">
+    <style>
+
+        :host {
+
+        }
+
+        .pink {
+            background-color: var(--paper-pink-500);
+        }
+
+        .yellow {
+            background-color: var(--paper-yellow-500);
+        }
+
+        .bug {
+            --iron-icon-height: 45px;
+            --iron-icon-width: 45px;
+        }
+
+        paper-button.colorful {
+            color: white;
+            background: var(--paper-blue-500);
+        }
+
+        .vcontainer {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
+
+        paper-icon-button[toggles].selector {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        paper-icon-button[toggles] {
+            transition: background-color 0.3s;
+
+        }
+
+        paper-icon-button[toggles][active] {
+            background-color: rgba(255, 233, 33, 0.25);
+            border-radius: 25px;
+        }
+        paper-icon-button[toggles][disabled] {
+            opacity: 0.25;
+            border-radius: 25px;
+        }
+
+        .spacer {
+            margin: 5px;
+        }
+
+    </style>
+    <template id="layout">
+
+        <div class="horizontal layout">
+            <div class="vcontainer spacer">
+                <paper-button active class="colorful" on-tap="toggleTapped"><span>{{currentToggle.name}}</span></paper-button>
+            </div>
+            <div id="key" class="spacer">
+            <template id="buttonTemplate" is="dom-repeat" items="{{buttonSelectors}}">
+                    <paper-icon-button toggles disabled id="{{index}}"  on-tap="buttonTapped"  src="{{item.imgUrl}}" class="bug selector"></paper-icon-button>
+            </template>
+            </div>
+
+        </div>
+
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: 'wallcology-selector',
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                selectedItems: {
+                    type: Array,
+                    notify: true,
+                },
+                maxSelections: {
+                    type: Number,
+                    notify: true,
+                    value: 0
+                },
+                currentToggle: {
+                    type: Object,
+                    notify: true,
+                    value: {}
+                },
+                toggleSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                buttonSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                }
+            },
+            observers: [
+                'selectedItemsChanged(selectedItems.*)',
+                'toggleSelectorsChanged(toggleSelectors.*)',
+                'buttonSelectorsChanged(buttonSelectors.*)'
+            ],
+            selectedItemsChanged: function (changeRecord) {
+                if (changeRecord.value !== null && this.selectedItems[0] !== null) {
+                }
+            },
+            buttonSelectorsChanged: function (changeRecord) {
+                if (changeRecord.path == 'buttonSelectors.splices') {
+                    // a user was added or removed
+                } else {
+                    // an individual user or its sub-properties changed
+                    // check "changeRecord.path" to determine what changed
+                }
+            },
+            toggleSelectorsChanged: function(changeRecord){
+                console.log('toggle', changeRecord);
+                if( this.currentToggle.name === undefined && this.toggleSelectors[0] !== undefined  ) {
+                    for( var i =  0; i < this.toggleSelectors.length; i++) {
+                        if( this.toggleSelectors[i].index === -1 ) {
+                            this.currentToggle = this.toggleSelectors[i];
+                            this.disableButtons(undefined);
+                        }
+                    }
+                }
+            },
+            toggleTapped: function (e) {
+                console.log('toggle tapped');
+                if( this.currentToggle !== undefined ) {
+                    var previousIndex = this.currentToggle.index;
+                    var newIndex = previousIndex + 1;
+
+                    var nextToggle = this.findToggle(newIndex)
+
+                    if( nextToggle !== undefined ) {
+                        this.currentToggle = nextToggle;
+                        this.disableButtons(nextToggle.items);
+
+
+                    } else {
+                        this.currentToggle = this.findToggle(-1);
+                        this.disableButtons(undefined);
+                    }
+                }
+            },
+            disableButtons: function(buttonIndexes) {
+                if( buttonIndexes === undefined ) {
+                    //disable all array
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for( var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+
+
+                            b.disabled = true;
+
+
+                    }
+                } else {
+                    console.log('indexs to disable', buttonIndexes);
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for( var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        var doesContain = predicates.in(buttonIndexes);
+                        var bIndex = parseInt(b.id);
+                        var truth = doesContain(bIndex);
+                        if( truth ) {
+                            b.disabled = false;
+                        } else {
+                            b.disabled = true;
+                        }
+
+                    }
+                }
+            },
+            buttonTapped: function (e) {
+
+                if( !this.hasMaxSelections() ) {
+                    var selectedItem = e.model.item;
+
+                    if (e.currentTarget.active) {
+                        this.push('selectedItems', selectedItem);
+                    } else {
+
+                        this.splice('selectedItems', selectedItem, 1);
+
+                    }
+                } else {
+                    console.log('TOO MANY SELECTIONS');
+                    e.currentTarget.active = false;
+                }
+            },
+            hasMaxSelections: function() {
+
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                var active = 0;
+                for( var i = 0; i < buttons.length; i++) {
+                    var b = buttons[i];
+                    if(b.active) {
+                        active++;
+                    }
+                }
+
+                if( active > this.maxSelections ) {
+                    console.log('max selections' + this.maxSelections);
+                    return true;
+                }
+                return false;
+            },
+            findToggle: function(index) {
+                for(var i = 0; i < this.toggleSelectors.length; i++) {
+                    if( index === this.toggleSelectors[i].index ) {
+                        return this.toggleSelectors[i];
+                    }
+                }
+                return undefined;
+            },
+
+            toUpperCase: function (someString) {
+                if (someString !== null) {
+                    return someString.toUpperCase();
+                }
+                return null;
+            },
+            ready: function () {
+                this.selectedItems = [];
+                this.buttonSelectors = [];
+                this.toggleSelectors = [];
+            }
+        });
+    </script>
+</dom-module>

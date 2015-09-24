@@ -1,5 +1,0 @@
-#!/bin/sh
-
-npm install request
-npm install nutella_lib
-

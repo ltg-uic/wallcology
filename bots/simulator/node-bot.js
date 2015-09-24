@@ -102,7 +102,12 @@ function cycleState () {
             if (Math.random()<.1) newState['populations'][i][j] = Math.floor(Math.random()*6); // joel will give me the expression 
     }
     state=newState;
+<<<<<<< HEAD
     setTimeout(cycleState,  frequencyOfUpdate);
+=======
+    console.log('new state', state);
+    setTimeout(cycleState,  1000);
+>>>>>>> origin/master
  }
 
 
