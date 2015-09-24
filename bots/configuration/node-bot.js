@@ -1,7 +1,8 @@
 
 var NUTELLA = require('nutella_lib');
 var masterConfiguration = require('./master_configuration.json');
-var simulatorConfiguration = require('./simulator_configuration.json');
+var simulatorConfiguration;
+//var simulatorConfiguration = require('./simulator_configuration.json');
 
 // Get configuration parameters and init nutella
 var cliArgs = NUTELLA.parseArgs();
