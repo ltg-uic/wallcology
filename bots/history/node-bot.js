@@ -8,6 +8,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
+const forceNewDB = true; // for debugging purposes. set true to wipe DB.
+
 // Stores simulation history as an array of objects
 
 var history = nutella.persist.getMongoObjectStore('history');
@@ -23,33 +25,38 @@ history.load(function(){
 
 // if there is no history db, initialize it here. 
 // history.states[0] is the initial state of the simulation
-// history. history.species_event[0] and history.environmental_events[0]
-// are dummy records introduced to avoid the need to continually
-// recheck for an empty database. those two records are never returned
-// on requests
+// history. 
 //
-
-var forceNewDB = false; // for debugging purposes. set true to wipe DB.
-
-// eventually this should migrate to the configuration bot
 
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
-    history['states'] = [];
-    var d = new Date(); 
-    history['states'][0] = {timestamp:d.getTime(), populations:[], environments:[]};
-    //initial population values across specis (by habitat)
-    history['states'][0]['populations'] = [
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0]
-                  ];
-    //initial environmental values across variables (by habitat)
-    history['states'][0]['environments'] = [ [14,0.4],[21,0.2],[30,0.7],[8,0.3] ];
-    history['species_events'] = [];
-    history['environmental_events'] = [];
-    history.save();
+      history['states'] = [];
+      history['states'][0] = {timestamp:0, populations:[], environments:[]};
+      history['states'][0]['populations'] = [
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0]
+      ];
+      history['states'][0]['environments'] = [ [0,0,0],[0,0,0],[0,0,0],[0,0,0] ];
+      history['species_events'] = [];
+      history['environmental_events'] = [];
+//  when the configuration bot is ready, uncomment the following and nest everything inside of the
+//  function response
+      // nutella.net.request('initial_state', {}, function(response){
+
+      //   for (var i=0; i<response['habitats'].length; i++) {
+      //     for (var j=0; j<response['habitats'][i]['items'].length; j++)
+      //       history['states'][0]['populations'][i][response['habitats'][i]['items'][j]]=20; //check with Joel
+      //     history['states'][0]['environments'][i][0]=response['habitats'][i]['temperature'];
+      //     history['states'][0]['environments'][i][1]=response['habitats'][i]['pipelength'];
+      //     history['states'][0]['environments'][i][2]=response['habitats'][i]['brickarea'];
+      //   }
+      // })
+
+      var d = new Date(); 
+      history['states'][0]['timestamp'] = d.getTime();
+      history.save();
 
  }
 
@@ -164,7 +171,7 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
 // channel: environment_history
 //
 //          message = {
-//                      environmental_variable: 0, 0=temp 1=surfaces
+//                      environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
 //                      habitat: '2',  
 //                      points: '25', 
 //                      from: '100',  // seconds since 1970 
@@ -327,12 +334,12 @@ nutella.net.handle_requests('last_state', function(JSONmessage, from) {
 //          message = {
 //                      timestamp: '2015--..',
 //                      populations: [
-//                          [0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
-//                          [0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
-//                          [0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5],
-//                          [0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5, 0.4, 0.5, 0.5]
+//                          [0,0,0,0,0,0,0,0,0,0],
+//                          [0,0,0,0,0,0,0,0,0,0],
+//                          [0,0,0,0,0,0,0,0,0,0],
+//                          [0,0,0,0,0,0,0,0,0,0]
 //                      ],
-//                     environments: [ [14,0.4],[21,0.2],[30,0.7],[8,0.3] ]
+//                     environments: [ [0,1,1],[1,0,3],[2,1,0],[1,3,1] ]
 //          }
  
 //          appends population_update to history
@@ -348,7 +355,8 @@ nutella.net.subscribe('state_update', function(JSONmessage, from) {
 });
 
 // channel: species_event
-//  message = {habitat: 0, species: 3, action: <event>} <event> := "kill" | "increase" | "harvest" | "colonize" | "dummy"
+//
+//  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
 
 nutella.net.subscribe('species_event', function(JSONmessage, from) {
     var message=JSONmessage;
@@ -359,7 +367,11 @@ nutella.net.subscribe('species_event', function(JSONmessage, from) {
 });
 
 // channel: environmental_event   [DRAFT]
-//  message = {habitat: 0, action: <event>}  <event> := "warmer" | "colder" | "more_surface" | "less_surface" | "dummy"
+//  message = {habitat: 0, action: <event>}  <event> := "warming" | "pipeCollapse" | "plasterFall"
+//  
+//  plasterFalls for the future; would allow for more brick area
+//
+//
 
 nutella.net.subscribe('environmental_event', function(JSONmessage, from) {
     var message=JSONmessage;
@@ -377,6 +389,7 @@ nutella.net.subscribe('force_state', function(JSONmessage, from) {
     if (message.action == 'push') history['state'].push(message.state);
     history.save();
 });
+
 
 }); // end history.load();
 
