@@ -36,16 +36,16 @@ Once running, you can preview your element at
 
 ## Using it in code
 
-        selectedBugs is an array property, see test-app.html
+        toggle-selector: side button/dropdown
+        button-selector: all the choices for a toggle
+        selected-items: listens for new selections buttons
+        current-toggle: tells you which one is the current selected toggle
 
-	    <wallcology-selector max-selections="2" selected-bugs="{{selectedBugs}}"></wallcology-selector>
+	         <wallcology-selector  toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
+                                  max-selections="2" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
 	
 	
-	    selected bugs:
-	    <template is="dom-repeat" items="{{selectedBugs}}">
-	        <span>{{item}}</span>
-	    </template>
-
+	    
 
 
 

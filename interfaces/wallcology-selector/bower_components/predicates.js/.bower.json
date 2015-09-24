@@ -33,6 +33,5 @@
   },
   "_source": "git://github.com/wookieb/predicates.git",
   "_target": "~1.0.1",
-  "_originalSource": "predicates.js",
-  "_direct": true
+  "_originalSource": "predicates.js"
 }

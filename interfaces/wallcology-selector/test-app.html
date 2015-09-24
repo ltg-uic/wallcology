@@ -1,10 +1,9 @@
-<!DOCTYPE html>
 <html>
 <head>
-    <link href="../polymer/polymer.html" rel="import">
+    <link href="./bower_components/polymer/polymer.html" rel="import">
 
 
-    <link rel="import" href="wallcology-selector.html">
+    <link rel="import" href="./wallcology-selector.html">
 </head>
 
 <dom-module id="test-app">
@@ -13,13 +12,10 @@
     </style>
     <template>
 
-        <!-- toggle selectors side button dropdown, button selectors row of selections -->
         <wallcology-selector  toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
                              max-selections="2" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
 
 
-
-        <!-- test output -->
 
         <div>currentToggle:<span>{{currentToggle.name}}</span></div>
 
