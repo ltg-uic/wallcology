@@ -1,5 +1,5 @@
 {
-  "name": "configuration-bot",
+  "name": "basic-node-bot",
   "version": "1.0.0",
   "description": "The simplest possible nutella bot that can be written in JavaScript",
   "main": "node-bot.js",
@@ -23,6 +23,6 @@
   },
   "homepage": "https://github.com/nutella-framework/basic-node-bot#readme",
   "dependencies": {
-    "nutella_lib": "^0.6.1"
+    "nutella_lib": "^0.6.11"
   }
 }

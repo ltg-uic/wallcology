@@ -14,6 +14,7 @@ const forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 var history = nutella.persist.getMongoObjectStore('configuration');
 
+console.log('history', history);
 //
 //
 // everything is packed into the load function,
@@ -23,48 +24,18 @@ var history = nutella.persist.getMongoObjectStore('configuration');
 
 history.load(function(){
 
+    console.log('history load');
 // if there is no history db, initialize it here.
 // history.states[0] is the initial state of the simulation
 // history. 
 //
 
-<<<<<<< HEAD
- if (!history.hasOwnProperty('states') || forceNewDB) {
-
-      history['states'] = [];
-      history['states'][0] = {timestamp:0, populations:[], environments:[]};
-      history['states'][0]['populations'] = [
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0]
-      ];
-      history['states'][0]['environments'] = [ [0,0,0],[0,0,0],[0,0,0],[0,0,0] ];
-      history['species_events'] = [];
-      history['environmental_events'] = [];
-//  when the configuration bot is ready, uncomment the following and nest everything inside of the
-//  function response
-      // nutella.net.request('initial_state', {}, function(response){
-
-      //   for (var i=0; i<response['habitats'].length; i++) {
-      //     for (var j=0; j<response['habitats'][i]['items'].length; j++)
-      //       history['states'][0]['populations'][i][response['habitats'][i]['items'][j]]=20; //check with Joel
-      //     history['states'][0]['environments'][i][0]=response['habitats'][i]['temperature'];
-      //     history['states'][0]['environments'][i][1]=response['habitats'][i]['pipelength'];
-      //     history['states'][0]['environments'][i][2]=response['habitats'][i]['brickarea'];
-      //   }
-      // })
-
-      var d = new Date(); 
-      history['states'][0]['timestamp'] = d.getTime();
-      history.save();
-=======
 var forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 // eventually this should migrate to the configuration bot
 
  if (!history.hasOwnProperty('states') || forceNewDB) {
-
+    console.log('states');
     history['states'] = [];
     var d = new Date();
     history['states'][0] = {timestamp:d.getTime(), populations:[], environments:[]};
@@ -80,8 +51,7 @@ var forceNewDB = true; // for debugging purposes. set true to wipe DB.
     history['species_events'] = [];
     history['environmental_events'] = [];
     history.save();
->>>>>>> origin/master
-
+    console.log('we saved');
  }
 
 //      ************REQUEST HANDLERS**************
@@ -106,6 +76,7 @@ var forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 
   function interpolate(A,n,arg) {
+      console.log('A B');
 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
@@ -159,6 +130,7 @@ var forceNewDB = true; // for debugging purposes. set true to wipe DB.
 //
 
 nutella.net.handle_requests('population_history', function(JSONmessage, from) {
+        console.log('population history');
         var message = JSONmessage;
 //
 //      if missing habitat or species parameters, return empty list
@@ -195,17 +167,10 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
 // channel: environment_history
 //
 //          message = {
-<<<<<<< HEAD
-//                      environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
-//                      habitat: '2',  
-//                      points: '25', 
-//                      from: '100',  // seconds since 1970 
-=======
 //                      environmental_variable: 0, 0=temp 1=surfaces
 //                      habitat: '2',
 //                      points: '25',
 //                      from: '100',  // seconds since 1970
->>>>>>> origin/master
 //                      to: '200'
 //                    }
 //

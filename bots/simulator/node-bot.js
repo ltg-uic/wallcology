@@ -26,8 +26,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //  numbers, so this might be too frequent for joel's model
 //  when we plug that in.
 
-const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 1 * 1000; //(1000 = 1 second)
+const waitForHistoryToLoad =1000; //(1000 = 1 second)
+const frequencyOfUpdate = 1000; //(1000 = 1 second)
 
 
 var state;
@@ -36,7 +36,11 @@ setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initi
 
 function init() {
 
+    console.log('Sim bot init');
+
     nutella.net.request('last_state', {}, function(message, from) {
+        console.log('last state');
+
         state=message;
         cycleState();
 
@@ -45,6 +49,7 @@ function init() {
     //  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
 
         nutella.net.subscribe('species_event', function(message, from){
+            console.log('species event');
             switch (message.action) {
                 case "remove": 
                     state['populations'][message.habitat][message.species] = 0; //need joel's input on these 
@@ -70,6 +75,7 @@ function init() {
     //
 
         nutella.net.subscribe('environmental_event', function(message){
+        console.log('env', message);
            switch (message.action) {
                 case "warming": 
                     if (state['environments'][message.habitat][0] < 2) state['environments'][message.habitat][0] += 1 // next higest temperature; //need joel's input on these 
@@ -90,6 +96,7 @@ function init() {
 // basic simulator cycle. currently every ten seconds for testing.
 
 function cycleState () {
+    console.log('state', state);
     nutella.net.publish ('state_update',state);
     var newState=state;
     var d = new Date(); 
@@ -102,12 +109,8 @@ function cycleState () {
             if (Math.random()<.1) newState['populations'][i][j] = Math.floor(Math.random()*6); // joel will give me the expression 
     }
     state=newState;
-<<<<<<< HEAD
+    console.log('state', state);
     setTimeout(cycleState,  frequencyOfUpdate);
-=======
-    console.log('new state', state);
-    setTimeout(cycleState,  1000);
->>>>>>> origin/master
  }
 
 
