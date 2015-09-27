@@ -3,36 +3,34 @@
 <head>
     <link href="bower_components/polymer/polymer.html" rel="import">
 
+    <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+
     <link rel="import" href="bower_components/wallcology-selector/wallcology-selector.html">
     <link rel="import" href="action-selector.html">
 </head>
 
 <dom-module id="test-app">
     <style>
-
+        paper-dialog {
+            background-color: #89C4F4;
+        }
     </style>
     <template>
+
+        <paper-dialog id="dialog">
+            <h2>Header</h2>
+            <paper-dialog-scrollable>{{actionDescription}}</paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-dismiss onclick="cancel()">Cancel</paper-button>
+                <paper-button dialog-confirm onclick="confirmation()">Accept</paper-button>
+            </div>
+        </paper-dialog>
 
         <wallcology-selector id="species-selector" toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
                               max-selections="2" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
 
         <action-selector id="action-selector" toggle-selectors="{{toggleSelectors}}" button-selectors={{actionButtonSelectors}}
                              max-selections="1" selected-items="{{actionSelectedItems}}" current-toggle="{{currentToggle}}"></action-selector>
-
-        <div>currentToggle:<span>{{currentToggle.index}}</span></div>
-
-
-        <div>selectedButtons
-            <template is="dom-repeat" items="{{selectedItems}}">
-                <span>{{item}}</span>
-            </template>
-        </div>
-
-        <!--
-        <paper-dialog heading="Dialog Title">
-            <p>Some content</p>
-        </paper-dialog>
-        -->
 
     </template>
 
@@ -44,6 +42,11 @@
             // add properties and methods on the element's prototype
             properties: {
                 // declare properties for the element's public API
+                actionDescription: {
+                    type: String,
+                    notify: true,
+                    value: "prova"
+                },
                 selectedItems: {
                     type: Array,
                     notify: true,
@@ -154,13 +157,6 @@
                                 1,
                                 2,
                                 3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10
                             ],
                             'name': 'Selected habitat',
                             'index': 0

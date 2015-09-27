@@ -5,6 +5,8 @@ var actions = [
     {name: 'insert'}
 ];
 
+var pendingAction;
+
 // Nutella initialization
 
 // Parse the query parameters
@@ -12,6 +14,9 @@ var query_parameters = NUTELLA.parseURLParameters();
 
 // Get an instance of nutella.
 var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+
+var wallscope = query_parameters.wallscope;
+var key;
 
 // Location related actions
 nutella.location.ready(function() {
@@ -30,7 +35,7 @@ nutella.location.ready(function() {
                 selectAction(action);
                 break;
             case 'key':
-                var key = parseInt(dynamicResource.parameter['key']);
+                key = parseInt(dynamicResource.parameter['key']);
                 console.log('Key Enter: ' + key);
                 selectHabitat(key);
                 break;
@@ -52,18 +57,18 @@ nutella.location.ready(function() {
                 deselectAction(action);
                 break;
             case 'key':
-                var key = parseInt(dynamicResource.parameter['key']);
-                console.log('Key exit: ' + key);
-                if (key == getSelectedHabitat()) {
-                    selectHabitat(-1);
+                var newKey = parseInt(dynamicResource.parameter['key']);
+                console.log('Key exit: ' + newKey);
+                if (key == newKey) {
+                    key = undefined
                 }
                 break;
         }
     });
 
     // Enable resource tracking
-    nutella.location.resource['wallscope' + wallscope].notifyEnter = true;
-    nutella.location.resource['wallscope' + wallscope].notifyExit = true;
+    nutella.location.resource[wallscope].notifyEnter = true;
+    nutella.location.resource[wallscope].notifyExit = true;
 });
 
 
@@ -107,3 +112,72 @@ function getSelectedBugs() {
 function getSelectedHabitat() {
     return document.getElementById('species-selector').currentToggle.index;
 }
+
+function getSelectedAction() {
+    return document.getElementById('action-selector').selectedItems.map(function(item) {
+        return actions[item.index].name;
+    });
+}
+
+function askConfirmation() {
+    pendingAction = {
+        action: getSelectedAction(),
+        species: getSelectedBugs(),
+        habitat: getSelectedHabitat()
+    };
+
+    document.getElementById('wallcology-controls').actionDescription =
+        "Do you really want to " + getSelectedAction() + " species " + getSelectedBugs() + " in habitat " + getSelectedHabitat() + " ?";
+
+    if(!document.getElementById('dialog').opened) {
+        document.getElementById('dialog').toggle();
+    }
+}
+
+function confirmation() {
+
+    if(pendingAction) {
+        pendingAction.species.forEach(function (specie) {
+            nutella.net.publish('species_event', {
+                habitat: pendingAction.habitat,
+                species: specie,
+                action: pendingAction.action
+            });
+        });
+        pendingAction = undefined;
+    }
+
+    // Deselect species
+    getSelectedBugs().forEach(function(specie) {
+        deselectBug(specie);
+    });
+
+    // Deselect action
+    getSelectedAction().forEach(function(action) {
+        deselectAction(action);
+    });
+
+}
+
+function cancel() {
+    // Deselect species
+    getSelectedBugs().forEach(function(specie) {
+        deselectBug(specie);
+    });
+
+    // Deselect action
+    getSelectedAction().forEach(function(action) {
+        deselectAction(action);
+    });
+}
+
+// Every second check if its a valid state
+setInterval(function() {
+    var species = getSelectedBugs();
+    var habitat = getSelectedHabitat();
+    var action = getSelectedAction().length == 1 ? getSelectedAction()[0] : undefined;
+
+    if(species.length > 0 && habitat >= 0 && action && key == getSelectedHabitat()) {
+        askConfirmation();
+    }
+}, 1000);

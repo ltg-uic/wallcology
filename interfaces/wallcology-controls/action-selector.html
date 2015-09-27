@@ -254,7 +254,8 @@ Polymer({
         if(this.children[0].children[0].children[index].active) {
             this.children[0].children[0].children[index].active = false;
             var selectedItem = this.buttonSelectors[index];
-            this.push('selectedItems', selectedItem);
+            //this.push('selectedItems', selectedItem);
+            this.splice('selectedItems', selectedItem, 1);
         }
     },
     hasMaxSelections: function() {
