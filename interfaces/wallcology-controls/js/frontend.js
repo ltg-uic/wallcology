@@ -16,6 +16,7 @@ var query_parameters = NUTELLA.parseURLParameters();
 var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
 var wallscope = query_parameters.wallscope;
+var requireKey = query_parameters.requireKey;
 var key;
 
 // Location related actions
@@ -121,7 +122,7 @@ function getSelectedAction() {
 
 function askConfirmation() {
     pendingAction = {
-        action: getSelectedAction(),
+        action: getSelectedAction()[0],
         species: getSelectedBugs(),
         habitat: getSelectedHabitat()
     };
@@ -138,6 +139,7 @@ function confirmation() {
 
     if(pendingAction) {
         pendingAction.species.forEach(function (specie) {
+            debugger;
             nutella.net.publish('species_event', {
                 habitat: pendingAction.habitat,
                 species: specie,
@@ -177,7 +179,13 @@ setInterval(function() {
     var habitat = getSelectedHabitat();
     var action = getSelectedAction().length == 1 ? getSelectedAction()[0] : undefined;
 
-    if(species.length > 0 && habitat >= 0 && action && key == getSelectedHabitat()) {
+    var auth = true;
+
+    if(requireKey && key != getSelectedHabitat()) {
+        auth = false;
+    }
+
+    if(species.length > 0 && habitat >= 0 && action && auth) {
         askConfirmation();
     }
 }, 1000);
