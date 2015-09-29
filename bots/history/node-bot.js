@@ -9,6 +9,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //nutella.setResourceId('my_resource_id');
 
 const forceNewDB = true; // for debugging purposes. set true to wipe DB.
+var t = new Date();
+var Time = t.getTime();
 
 // Stores simulation history as an array of objects
 
