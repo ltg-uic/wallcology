@@ -28,7 +28,6 @@ history.load(function(){
 // history. 
 //
 
-<<<<<<< HEAD
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
       history['states'] = [];
@@ -58,29 +57,6 @@ history.load(function(){
       var d = new Date(); 
       history['states'][0]['timestamp'] = d.getTime();
       history.save();
-=======
-var forceNewDB = true; // for debugging purposes. set true to wipe DB.
-
-// eventually this should migrate to the configuration bot
-
- if (!history.hasOwnProperty('states') || forceNewDB) {
-
-    history['states'] = [];
-    var d = new Date();
-    history['states'][0] = {timestamp:d.getTime(), populations:[], environments:[]};
-    //initial population values across specis (by habitat)
-    history['states'][0]['populations'] = [
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0],
-                  [0,0,0,0,0,0,0,0,0,0,0]
-                  ];
-    //initial environmental values across variables (by habitat)
-    history['states'][0]['environments'] = [ [14,0.4],[21,0.2],[30,0.7],[8,0.3] ];
-    history['species_events'] = [];
-    history['environmental_events'] = [];
-    history.save();
->>>>>>> origin/master
 
  }
 
@@ -195,17 +171,11 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
 // channel: environment_history
 //
 //          message = {
-<<<<<<< HEAD
+
 //                      environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
 //                      habitat: '2',  
 //                      points: '25', 
 //                      from: '100',  // seconds since 1970 
-=======
-//                      environmental_variable: 0, 0=temp 1=surfaces
-//                      habitat: '2',
-//                      points: '25',
-//                      from: '100',  // seconds since 1970
->>>>>>> origin/master
 //                      to: '200'
 //                    }
 //
@@ -379,8 +349,8 @@ nutella.net.handle_requests('last_state', function(JSONmessage, from) {
 
 nutella.net.subscribe('state_update', function(JSONmessage, from) {
     var message=JSONmessage;
-    var d = new Date();
-    message.timestamp=d.getTime();
+    Time = Time + (15 * 60 *1000);
+    message.timestamp=Time;
     history['states'].push(message);
     history.save();
 });

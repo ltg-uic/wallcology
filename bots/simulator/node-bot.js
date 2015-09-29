@@ -27,7 +27,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //  when we plug that in.
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 1 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 15 * 60 * 1000; //(1000 = 1 second)
 
 
 var state;
@@ -102,12 +102,8 @@ function cycleState () {
             if (Math.random()<.1) newState['populations'][i][j] = Math.floor(Math.random()*6); // joel will give me the expression 
     }
     state=newState;
-<<<<<<< HEAD
+
     setTimeout(cycleState,  frequencyOfUpdate);
-=======
-    console.log('new state', state);
-    setTimeout(cycleState,  1000);
->>>>>>> origin/master
  }
 
 
