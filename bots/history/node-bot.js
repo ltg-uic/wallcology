@@ -16,6 +16,7 @@ var Time = t.getTime();
 
 var history = nutella.persist.getMongoObjectStore('configuration');
 
+console.log('history', history);
 //
 //
 // everything is packed into the load function,
@@ -25,10 +26,12 @@ var history = nutella.persist.getMongoObjectStore('configuration');
 
 history.load(function(){
 
+    console.log('history load');
 // if there is no history db, initialize it here.
 // history.states[0] is the initial state of the simulation
 // history. 
 //
+
 
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
@@ -84,6 +87,7 @@ history.load(function(){
 
 
   function interpolate(A,n,arg) {
+      console.log('A B');
 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
@@ -137,6 +141,7 @@ history.load(function(){
 //
 
 nutella.net.handle_requests('population_history', function(JSONmessage, from) {
+        console.log('population history');
         var message = JSONmessage;
 //
 //      if missing habitat or species parameters, return empty list
@@ -173,6 +178,7 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
 // channel: environment_history
 //
 //          message = {
+
 
 //                      environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
 //                      habitat: '2',  

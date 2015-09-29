@@ -11,3 +11,4 @@ dependency-reduced-pom.xml
 .idea/
 *.iml
 interfaces/wallscope-interface/.DS_Store
+node_modules/*

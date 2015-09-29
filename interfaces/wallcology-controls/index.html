@@ -2,23 +2,38 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<!-- Your interface name here-->
-	<title></title>
-	<!-- The description of this interfaces here -->
 	<meta name="description" content="">
-	<!-- Your CSS here -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="generator" content="WALLCOLOGY">
+	<title>Wallcology controls</title>
+	<meta name="theme-color" content="#303F9F">
+	<meta name="msapplication-TileColor" content="#3372DF">
+	<meta name="mobile-web-app-capable" content="yes">
+	<meta name="application-name" content="WALLCOLOGY">
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	<meta name="apple-mobile-web-app-title" content="WALLCOLOGY">
+	<link href="bower_components/polymer/polymer.html" rel="import">
+
 	<link rel="stylesheet" type="text/css" href="style.css">
 
-	<!-- Javascript libraries -->
-	<script src="js/jquery-1.11.3.min.js"></script>
-</head>
-<body>
-	<!-- Your markup here -->
+	<script type="text/javascript" src="bower_components/webcomponentsjs/webcomponents-lite.min.js"></script>
 
+	<link rel="import" href="wallcology-selector-app.html">
+
+	<script src="js/jquery-1.11.3.min.js"></script>
+
+</head>
+<body unresolved="" class="fullbleed layout vertical">
 	<div id="title">
 		<h1 id="title" class="text-center">Habitat Controls</h1>
 	</div>
 
+	<template is="dom-bind" id="app">
+		<test-app id="wallcology-controls"></test-app>
+	</template>
+
+	<!--
 	<div id="container">
 		<div id="species" class="control-container-box ">
 			<h2 class="title text-center">Species</h2>
@@ -46,6 +61,7 @@
 			</div>
 		</div>
 	</div>
+	-->
 
 				
 	<!-- Scripts -->
@@ -55,9 +71,6 @@
 	<script src="js/frontend.js"></script>
 				
 	<script type="text/javascript">
-
-
-	
 
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');

@@ -1,5 +1,6 @@
 body, html {
     font-family: Helvetica, Sans-Serif;
+    background-color: rgba(137, 196, 244, 0.08);
 }
 
 h1#title {
@@ -79,5 +80,25 @@ h1#title {
 
 h2.title {
     display: block;
+}
+
+wallcology-selector {
+    display: block;
+    width: 668px;
+    margin: 100px auto auto auto;
+}
+
+action-selector {
+    display: block;
+    width: 204px;
+    margin: 100px auto auto auto;
+}
+
+[active].action-selector {
+    background-color: rgba(255, 233, 33, 0.75)!important;
+}
+
+paper-icon-button[active].wallcology-selector {
+    background-color: rgba(255, 233, 33, 0.75)!important;
 }
 
