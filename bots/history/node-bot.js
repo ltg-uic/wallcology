@@ -9,14 +9,11 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //nutella.setResourceId('my_resource_id');
 
 const forceNewDB = true; // for debugging purposes. set true to wipe DB.
-var t = new Date();
-var Time = t.getTime();
 
 // Stores simulation history as an array of objects
 
-var history = nutella.persist.getMongoObjectStore('configuration');
+var history = nutella.persist.getMongoObjectStore('history');
 
-console.log('history', history);
 //
 //
 // everything is packed into the load function,
@@ -26,12 +23,10 @@ console.log('history', history);
 
 history.load(function(){
 
-    console.log('history load');
 // if there is no history db, initialize it here.
 // history.states[0] is the initial state of the simulation
 // history. 
 //
-
 
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
@@ -82,12 +77,12 @@ history.load(function(){
 //
 //  This utility function takes an array of the elements {timestamp: <value>, arg:<value>}
 //  as input, and returns an array of length n that represents the interpolated values from the
-//  original array. arg is the string name of the dependent variable
+//  original array. arg is the string name of the dependent variable. the timestamps are in
+//  strictly increasing order.
 //
 
 
   function interpolate(A,n,arg) {
-      console.log('A B');
 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
@@ -141,7 +136,6 @@ history.load(function(){
 //
 
 nutella.net.handle_requests('population_history', function(JSONmessage, from) {
-        console.log('population history');
         var message = JSONmessage;
 //
 //      if missing habitat or species parameters, return empty list
@@ -178,7 +172,6 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
 // channel: environment_history
 //
 //          message = {
-
 
 //                      environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
 //                      habitat: '2',  
@@ -357,8 +350,8 @@ nutella.net.handle_requests('last_state', function(JSONmessage, from) {
 
 nutella.net.subscribe('state_update', function(JSONmessage, from) {
     var message=JSONmessage;
-    Time = Time + (15 * 60 *1000);
-    message.timestamp=Time;
+    var d = new Date();
+    message.timestamp=d.getTime();
     history['states'].push(message);
     history.save();
 });
