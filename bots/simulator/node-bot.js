@@ -20,7 +20,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //  don't know how.
 //
 //  during enactment, we plan to update state every fiften
-//  minutes (16 x 60 x 1000). for testing purposes, at least,
+//  minutes (15 x 60 x 1000). for testing purposes, at least,
 //  you will want to run it much faster to generate test values.
 //  here it's set to one second, but i'm just generating random
 //  numbers, so this might be too frequent for joel's model
