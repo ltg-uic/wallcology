@@ -5,7 +5,10 @@
         0,
         1,
         4,
-        5
+        5,
+        11,
+        12,
+        13        
       ],
       "name": "Habitat 1",
       "index": 0,
@@ -18,7 +21,9 @@
         0,
         1,
         10,
-        11
+        11,
+        12,
+        13
       ],
       "name": "Habitat 2",
       "index": 1,
@@ -31,7 +36,10 @@
         0,
         1,
         7,
-        9
+        9,
+        11,
+        12,
+        13
       ],
       "name": "Habitat 3",
       "index": 2,
@@ -45,7 +53,9 @@
         5,
         6,
         10,
-        12
+        11,
+        12,
+        13
       ],
       "name": "Habitat 4",
       "index": 3,
@@ -100,20 +110,16 @@
       "index": 10
     },
     {
-      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_12.svg",
+      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
       "index": 11
     },
     {
-      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
+      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
       "index": 12
     },
     {
-      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
-      "index": 13
-    },
-    {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
-      "index": 14
+      "index": 13
     }
   ]
 }
