@@ -139,7 +139,6 @@ function confirmation() {
 
     if(pendingAction) {
         pendingAction.species.forEach(function (specie) {
-            debugger;
             nutella.net.publish('species_event', {
                 habitat: pendingAction.habitat,
                 species: specie,
