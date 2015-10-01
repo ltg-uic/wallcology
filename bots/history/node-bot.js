@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-
+console.log("History version 0.8");
 history.load(function(){
 
 // if there is no history db, initialize it here.
