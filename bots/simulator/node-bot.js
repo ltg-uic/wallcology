@@ -31,7 +31,7 @@ const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 const frequencyOfUpdate = 15 * 60 * 1000; //(1000 = 1 second)
 
 
-var state;
+var state; console.log("Version 0.8");
 
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
