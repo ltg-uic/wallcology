@@ -20,7 +20,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 //  don't know how.
 //
 //  during enactment, we plan to update state every fiften
-//  minutes (16 x 60 x 1000). for testing purposes, at least,
+//  minutes (15 x 60 x 1000). for testing purposes, at least,
 //  you will want to run it much faster to generate test values.
 //  here it's set to one second, but i'm just generating random
 //  numbers, so this might be too frequent for joel's model
@@ -28,19 +28,16 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 1 * 30 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 15 * 60 * 1000; //(1000 = 1 second)
 
 
-var state;
-
+var state; 
+console.log("Simulator version 0.8");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
 
-    console.log('Sim bot init');
-
     nutella.net.request('last_state', {}, function(message, from) {
-        console.log('last state');
 
         state=message;
         cycleState();
@@ -50,7 +47,6 @@ function init() {
     //  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
 
         nutella.net.subscribe('species_event', function(message, from){
-            console.log('species event');
             switch (message.action) {
                 case "remove": 
                     state['populations'][message.habitat][message.species] = 0; //need joel's input on these 
@@ -76,7 +72,6 @@ function init() {
     //
 
         nutella.net.subscribe('environmental_event', function(message){
-        console.log('env', message);
            switch (message.action) {
                 case "warming": 
                     if (state['environments'][message.habitat][0] < 2) state['environments'][message.habitat][0] += 1 // next higest temperature; //need joel's input on these 
@@ -97,7 +92,6 @@ function init() {
 // basic simulator cycle. currently every ten seconds for testing.
 
 function cycleState () {
-    console.log('state', state);
     nutella.net.publish ('state_update',state);
     var newState=state;
     var d = new Date(); 
@@ -105,10 +99,19 @@ function cycleState () {
     for (var i=0; i<state['populations'].length; i++) {
         for (var j=0; j<state['populations'][0].length; j++)
 //
+//  duumy data generation for now
 //  the conditional below is just to keep data smoother until we get the real formula
 //            
             if (Math.random()<.1) newState['populations'][i][j] = Math.floor(Math.random()*6); // joel will give me the expression 
     }
+    for (var i=0; i<state['environments'].length; i++) {
+        for (var j=0; j<state['environments'][0].length; j++)
+//
+//  the conditional below is just to keep data smoother until we get the real formula
+//            
+            if (Math.random()<.1) newState['environments'][i][j] = Math.floor(Math.random()*50); // joel will give me the expression 
+    }
+
     state=newState;
 
     setTimeout(cycleState,  frequencyOfUpdate);
