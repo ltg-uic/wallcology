@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.8");
+console.log("History version 0.81");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -87,6 +87,8 @@ history.load(function(){
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //
+
+  if (A.length < n) return(A);
 
   var B = [];
 
