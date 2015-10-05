@@ -80,11 +80,13 @@ nutella.location.ready(function() {
     });
 
     // Enable resource tracking
-    nutella.location.resource[wallscope].notifyEnter = true;
-    nutella.location.resource[wallscope].notifyExit = true;
+    var wallscopeResource = nutella.location.resource[wallscope];
+
+    if(wallscopeResource != undefined) {
+        wallscopeResource.notifyEnter = true;
+        wallscopeResource.notifyExit = true;
+    }
 });
-
-
 
 function selectHabitat(index) {
     document.getElementById('species-selector').enableHabitat(index);
@@ -147,6 +149,8 @@ function askConfirmation() {
     }
 }
 
+var lastAskConfirmation;
+
 function confirmation() {
 
     if(pendingAction) {
@@ -160,10 +164,12 @@ function confirmation() {
         pendingAction = undefined;
     }
 
+    lastAskConfirmation = undefined;
 }
 
-function cancel() {
 
+function cancel() {
+    lastAskConfirmation = new Date().getTime();
 }
 
 // Every second check if its a valid state
@@ -178,7 +184,11 @@ setInterval(function() {
         auth = false;
     }
 
-    if(species.length > 0 && habitat >= 0 && action && auth) {
+    if(species.length > 0 &&
+        habitat >= 0 &&
+        action && auth &&
+        (lastAskConfirmation == undefined || lastAskConfirmation+3000 < new Date().getTime())
+        ) {
         askConfirmation();
     }
 }, 1000);
