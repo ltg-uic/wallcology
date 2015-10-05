@@ -365,7 +365,7 @@ nutella.net.subscribe('state_update', function(JSONmessage, from) {
 nutella.net.subscribe('species_event', function(JSONmessage, from) {
     var message=JSONmessage;
     var d = new Date();
-    console.log(message);
+    console.log("received species event");
     message.timestamp=d.getTime();
     history['species_events'].push(message);
     history.save();
