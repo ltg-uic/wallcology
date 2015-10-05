@@ -1,8 +1,8 @@
 var actions = [
+    {name: 'insert'},
     {name: 'remove'},
     {name: 'increase'},
-    {name: 'decrease'},
-    {name: 'insert'}
+    {name: 'decrease'}
 ];
 
 var pendingAction;
@@ -17,10 +17,13 @@ var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, que
 
 var wallscope = query_parameters.wallscope;
 var requireKey = query_parameters.requireKey;
-var key;
 
 // Location related actions
 nutella.location.ready(function() {
+
+    // Check if some resource is inside when the application start
+    checkBeacon();
+
     nutella.location.resourceEntered(function(dynamicResource, staticResource) {
         var role = dynamicResource.parameter['role'];
 
@@ -38,7 +41,13 @@ nutella.location.ready(function() {
             case 'key':
                 key = parseInt(dynamicResource.parameter['key']);
                 console.log('Key Enter: ' + key);
-                selectHabitat(key);
+                if(key == 0 && wallscope == 'wallscope0' ||
+                   key == 1 && wallscope == 'wallscope1' ||
+                   key == 2 && wallscope == 'wallscope2' ||
+                   key == 3 && wallscope == 'wallscope3') {
+                    selectHabitat(key);
+                }
+
                 break;
         }
     });
@@ -60,8 +69,11 @@ nutella.location.ready(function() {
             case 'key':
                 var newKey = parseInt(dynamicResource.parameter['key']);
                 console.log('Key exit: ' + newKey);
-                if (key == newKey) {
-                    key = undefined
+                if(key == 0 && wallscope == 'wallscope0' ||
+                    key == 1 && wallscope == 'wallscope1' ||
+                    key == 2 && wallscope == 'wallscope2' ||
+                    key == 3 && wallscope == 'wallscope3') {
+                    selectHabitat(-1);
                 }
                 break;
         }
@@ -148,28 +160,10 @@ function confirmation() {
         pendingAction = undefined;
     }
 
-    // Deselect species
-    getSelectedBugs().forEach(function(specie) {
-        deselectBug(specie);
-    });
-
-    // Deselect action
-    getSelectedAction().forEach(function(action) {
-        deselectAction(action);
-    });
-
 }
 
 function cancel() {
-    // Deselect species
-    getSelectedBugs().forEach(function(specie) {
-        deselectBug(specie);
-    });
 
-    // Deselect action
-    getSelectedAction().forEach(function(action) {
-        deselectAction(action);
-    });
 }
 
 // Every second check if its a valid state
@@ -188,3 +182,70 @@ setInterval(function() {
         askConfirmation();
     }
 }, 1000);
+
+/**
+ * Check if some beacon is inside
+ */
+function checkBeacon() {
+    nutella.location.resources.forEach(function(resource) {
+        try {
+            if (resource.proximity.rid != undefined &&
+                resource.proximity.rid == wallscope &&
+                resource.type == 'DYNAMIC') {
+
+                var role = resource.parameter['role'];
+
+                switch (role) {
+                    case 'specie':
+                        var specie = parseInt(resource.parameter['specie']);
+                        console.log('Specie enter: ' + specie);
+                        selectBug(specie);
+                        break;
+                    case 'action':
+                        var action = resource.parameter['action'];
+                        console.log('Action enter: ' + action);
+                        selectAction(action);
+                        break;
+                    case 'key':
+                        key = parseInt(resource.parameter['key']);
+                        console.log('Key Enter: ' + key);
+                        if(key == 0 && wallscope == 'wallscope0' ||
+                            key == 1 && wallscope == 'wallscope1' ||
+                            key == 2 && wallscope == 'wallscope2' ||
+                            key == 3 && wallscope == 'wallscope3') {
+                            selectHabitat(key);
+                            checkBeaconNoKey();
+                        }
+
+                        break;
+                }
+            }
+        } catch(e) {}
+    });
+}
+
+function checkBeaconNoKey() {
+    nutella.location.resources.forEach(function(resource) {
+        try {
+            if (resource.proximity.rid != undefined &&
+                resource.proximity.rid == wallscope &&
+                resource.type == 'DYNAMIC') {
+
+                var role = resource.parameter['role'];
+
+                switch (role) {
+                    case 'specie':
+                        var specie = parseInt(resource.parameter['specie']);
+                        console.log('Specie enter: ' + specie);
+                        selectBug(specie);
+                        break;
+                    case 'action':
+                        var action = resource.parameter['action'];
+                        console.log('Action enter: ' + action);
+                        selectAction(action);
+                        break;
+                }
+            }
+        } catch(e) {}
+    });
+}

@@ -84,14 +84,14 @@ h2.title {
 
 wallcology-selector {
     display: block;
-    width: 668px;
+    width: 670px;
     margin: 100px auto auto auto;
 }
 
 action-selector {
     display: block;
-    width: 204px;
-    margin: 100px auto auto auto;
+    width: 376px;
+    margin: 60px auto auto auto;
 }
 
 [active].action-selector {
@@ -101,4 +101,3 @@ action-selector {
 paper-icon-button[active].wallcology-selector {
     background-color: rgba(255, 233, 33, 0.75)!important;
 }
-

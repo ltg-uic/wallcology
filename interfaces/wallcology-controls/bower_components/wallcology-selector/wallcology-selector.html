@@ -178,7 +178,7 @@
             enableHabitat: function(index) {
                 var nextToggle = this.findToggle(index);
 
-                if( nextToggle !== undefined ) {
+                if( nextToggle !== undefined && index >= 0 ) {
                     this.currentToggle = nextToggle;
                     this.disableButtons(nextToggle.items);
 
