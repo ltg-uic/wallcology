@@ -32,7 +32,7 @@ const frequencyOfUpdate = 15 * 60 * 1000; //(1000 = 1 second)
 
 
 var state; 
-console.log("Simulator version 0.8");
+console.log("Simulator version 0.8.1");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
@@ -40,7 +40,7 @@ function init() {
     nutella.net.request('last_state', {}, function(message, from) {
 
         state=message;
-        cycleState();
+        cycleStatesOnSchedule();
 
     // channel: species_event
     //
@@ -61,7 +61,7 @@ function init() {
                     state['populations'][message.habitat][message.species] = 20; // these are all total guesses
                     break;
                 };
-                cycleState();
+                cycleState(false);
         })
 
     // channel: environmental_event   [DRAFT]
@@ -83,7 +83,7 @@ function init() {
                     if (state['environments'][message.habitat][2] < 2)state['environments'][message.habitat][2] += 1; 
                     break;
                 };
-                cycleState();
+                cycleState(false);
         })
     })
 }
@@ -113,9 +113,11 @@ function cycleState () {
     }
 
     state=newState;
-
-    setTimeout(cycleState,  frequencyOfUpdate);
  }
 
+function cycleStatesOnSchedule() {
+    cycleState();
+    setTimeout(cycleStatesOnSchedule,  frequencyOfUpdate);
+}
 
 
