@@ -12,17 +12,44 @@
 <dom-module id="test-app">
     <style>
         paper-dialog {
-            background-color: #89C4F4;
+            background-color: rgb(15, 103, 151);
+            color: white;
+        }
+
+        paper-button {
+            color: rgba(255, 255, 255, 0.79);
+        }
+
+        paper-button[confirm]:hover {
+            background-color: rgba(140, 255, 142, 0.46);
+        }
+
+        paper-button[cancel]:hover {
+            background-color: rgba(255, 122, 110, 0.46);
+        }
+
+        img.sprite {
+            width: 24px;
+            height: 24px;
         }
     </style>
     <template>
 
         <paper-dialog id="dialog">
-            <h2>Header</h2>
-            <paper-dialog-scrollable>{{actionDescription}}</paper-dialog-scrollable>
+            <h2></h2>
+            <paper-dialog-scrollable>
+                Do you really want to
+                <l>{{actionDescription}}</l>
+                <template id="speciesDescriptionTemplate" is="dom-repeat" items="{{speciesDescription}}">
+                    <img src="{{item}}" class="sprite"/>
+                </template>
+                in habitat
+                <l>{{habitatDescription}}</l>
+                ?
+            </paper-dialog-scrollable>
             <div class="buttons">
-                <paper-button dialog-dismiss onclick="cancel()">Cancel</paper-button>
-                <paper-button dialog-confirm onclick="confirmation()">Accept</paper-button>
+                <paper-button dialog-dismiss onclick="cancel()" cancel>Cancel</paper-button>
+                <paper-button dialog-confirm onclick="confirmation()" confirm>Accept</paper-button>
             </div>
         </paper-dialog>
 
@@ -46,6 +73,16 @@
                     type: String,
                     notify: true,
                     value: "prova"
+                },
+                habitatDescription: {
+                    type: Number,
+                    notify: true,
+                    value: -1
+                },
+                speciesDescription: {
+                    type: Array,
+                    notify: true,
+                    value: []
                 },
                 selectedItems: {
                     type: Array,

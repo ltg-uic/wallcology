@@ -141,8 +141,16 @@ function askConfirmation() {
         habitat: getSelectedHabitat()
     };
 
-    document.getElementById('wallcology-controls').actionDescription =
-        "Do you really want to " + getSelectedAction() + " species " + getSelectedBugs() + " in habitat " + getSelectedHabitat() + " ?";
+
+    var speciesDescription = [];
+    getSelectedBugs().forEach(function(bug) {
+        speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/' + (bug + 1) + '.svg');
+    });
+
+    document.getElementById('wallcology-controls').actionDescription = getSelectedAction();
+    document.getElementById('wallcology-controls').habitatDescription = getSelectedHabitat();
+    document.getElementById('wallcology-controls').speciesDescription = speciesDescription;
+        //" <b>" +  + "</b> species " + getSelectedBugs() + "  " + getSelectedHabitat() + " ?";
 
     if(!document.getElementById('dialog').opened) {
         document.getElementById('dialog').toggle();
@@ -164,7 +172,7 @@ function confirmation() {
         pendingAction = undefined;
     }
 
-    lastAskConfirmation = undefined;
+    lastAskConfirmation = new Date().getTime();
 }
 
 
@@ -187,7 +195,7 @@ setInterval(function() {
     if(species.length > 0 &&
         habitat >= 0 &&
         action && auth &&
-        (lastAskConfirmation == undefined || lastAskConfirmation+3000 < new Date().getTime())
+        (lastAskConfirmation == undefined || lastAskConfirmation + 30000 < new Date().getTime())
         ) {
         askConfirmation();
     }
