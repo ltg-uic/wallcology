@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.8.1");
+console.log("History version 0.8.2");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -104,7 +104,7 @@ history.load(function(){
   var B_index = 1;
   var interval = (A[A.length-1]['timestamp']-A[0]['timestamp']) / (n-1);
   var new_time = A[0]['timestamp'] + B_index * interval;
-  for (i=1; i<A.length-1; i++) {
+  for (i=1; i<A.length; i++) {
     while (A[i]['timestamp'] >= new_time && B_index < (n-1)){
                     B[B_index] = {};
                     B[B_index]['timestamp'] = new_time;
