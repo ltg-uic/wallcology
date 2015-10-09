@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="import" href="../polymer/polymer.html">
+    <script src="node_modules/nutella_lib/dist/nutella_lib.js" charset="utf-8"></script>
+</head>
+
+<dom-module id="nutella-connector">
+    <style>
+
+    </style>
+    <template>
+
+
+    </template>
+
+    <script>
+
+
+        //var nutella = {};
+
+        // element registration
+        Polymer({
+            is: 'nutella-connector',
+
+            // add properties and methods on the element's prototype
+            properties: {
+
+                // declare properties for the element's public API
+                nutella: {
+                    type: Object,
+                    notify: true,
+                    value: {}
+                },
+                connected: {
+                    type: Boolean,
+                    notify: true,
+                    value: false,
+                    observer: 'connectedChanged'
+                },
+                hostname: {
+                    type: String,
+                    notify: true,
+                    value: ''
+                },
+                appid: {
+                    type: String,
+                    notify: true,
+                    value: ''
+                },
+                runid: {
+                    type: String,
+                    notify: true,
+                    value: ''
+                },
+                componentid: {
+                    type: String,
+                    notify: true,
+                    value: ''
+                }
+            },
+            connectedChanged: function (newValue, oldValue) {
+                console.log('nutella connected changed');
+            },
+            ready: function () {
+                var me = this;
+
+                me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
+                        function (success) {
+                            if (success) {
+                                console.log('Successfully connected nutella!');
+                                console.log('success done');
+                                me.connected = true;
+                            } else {
+                                console.log('Error connecting!');
+                                alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
+                            }
+                        });
+
+
+            }
+        })
+        ;
+    </script>
+</dom-module>
