@@ -8,7 +8,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
-const forceNewDB = false; // for debugging purposes. set true to wipe DB.
+const forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 // Stores simulation history as an array of objects
 
@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.8.2");
+console.log("History version 0.9.0");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -28,17 +28,24 @@ history.load(function(){
 // history. 
 //
 
+
+const resourceIndex = [5,10,9]; // which indexes in the species array correspond to resources
+const herbivoreIndex = [6,2]; // etc. ORDER MATTERS in all 3, because constants above are based on them
+const predatorIndex = [1,8]; // ditto
+
+
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
       history['states'] = [];
       history['states'][0] = {timestamp:0, populations:[], environments:[]};
       history['states'][0]['populations'] = [
-        [0,0,0,0,0,0,0,0,0,0,0],
+        [0,.5,1,0,0,1,1,0,.5,100,1],
+//        [0,0,0,0,0,10,1,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0]
       ];
-      history['states'][0]['environments'] = [ [0,0,0],[0,0,0],[0,0,0],[0,0,0] ];
+      history['states'][0]['environments'] = [ [20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1] ];
       history['species_events'] = [];
       history['environmental_events'] = [];
 //  when the configuration bot is ready, uncomment the following and nest everything inside of the
@@ -66,7 +73,7 @@ history.load(function(){
 //      The history bot handles four kinds of requests:
 //      1. population_history ({habitat, species, from, to})
 //      2. environment_history ({habitat, from, to})
-//      3. environmental_events_history ({habitat, environmental_variable, from, to})
+//      3. environmental_events_history ({habitat, environmental_variable, species, from, to})
 //      4. species_events_history ({habitat, species, from, to})
 //
 //      note: 'from' and 'to' fields are optional, defaulting to 0 and now, respectively.
@@ -88,9 +95,11 @@ history.load(function(){
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //
 
+  
   if (A.length < n) return(A);
 
   var B = [];
+
 
   //
   // the first and last points from A are copied directly to B. they start and end together.
@@ -319,7 +328,7 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 //
 //          returns the most recent state (support restart in case of failure). used by simulation bot
 
-nutella.net.handle_requests('last_state', function(JSONmessage, from) {
+nutella.net.handle_requests('last_state',function(JSONmessage, from) {
         return (history['states'][history['states'].length-1]);
 });
 
@@ -343,7 +352,7 @@ nutella.net.handle_requests('last_state', function(JSONmessage, from) {
 //                          [0,0,0,0,0,0,0,0,0,0],
 //                          [0,0,0,0,0,0,0,0,0,0]
 //                      ],
-//                     environments: [ [0,1,1],[1,0,3],[2,1,0],[1,3,1] ]
+//                     environments: [ [20,.8,.4,-1],[20,.8,.4,-1],[20,.8,.4,-1],[20,.8,.4,-1] ]
 //          }
 
 //          appends population_update to history
@@ -372,8 +381,8 @@ nutella.net.subscribe('species_event', function(JSONmessage, from) {
 });
 
 // channel: environmental_event   [DRAFT]
-//  message = {habitat: 0, action: <event>}  <event> := "warming" | "pipeCollapse" | "plasterFall"
-//  
+//  message = {habitat: 0, action: <event>, species: 2}  <event> := "warming" | "pipeCollapse" | "plasterFall" | "invasion"
+//  third parameter used only when event type=invasion
 //  plasterFalls for the future; would allow for more brick area
 //
 //
