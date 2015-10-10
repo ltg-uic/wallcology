@@ -28,7 +28,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 1 * 30 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 1 * 2 * 1000; //(1000 = 1 second)
 
 //  model constants
 
@@ -48,7 +48,7 @@ const q = [1, 1]; // one for each herbivore (measure of interference competition
 const d = [0.1, 0.1]; // one for each herbivore (intrinsic death rates)
 const beta = [0.1, 0.1]; // one for each predator  (intrinsic death rates) (just like b, but herbs to preds
 const s = [1, 1]; // one for each predator (measure of interference competition among predators)
-const delta = [0.1, 0.1]; // one per predator (intrinsicd death rath of predator)
+const delta = [0.01, 0.01]; // one per predator (intrinsicd death rath of predator)
 var m =   [
                 [ 0.300, 0.125 ], 
                 [ 0.150, 0.250 ]
@@ -61,7 +61,7 @@ const predatorIndex = [1,8]; // ditto
 
 
 var state; 
-console.log("Simulator version 0.9.0");
+console.log("Simulator version 0.9.1");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {

@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.0");
+console.log("History version 0.9.1");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -39,8 +39,7 @@ const predatorIndex = [1,8]; // ditto
       history['states'] = [];
       history['states'][0] = {timestamp:0, populations:[], environments:[]};
       history['states'][0]['populations'] = [
-        [0,.5,1,0,0,1,1,0,.5,100,1],
-//        [0,0,0,0,0,10,1,0,0,0,0],
+        [0,.5,.5,0,0,10,.5,0,.5,10,10],
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0],
         [0,0,0,0,0,0,0,0,0,0,0]
