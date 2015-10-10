@@ -1,5 +1,23 @@
 <dom-module id="shared-styles"><template><style shim-shadowdom="">
 
+      paper-icon-button.bug #icon {
+        width: 100px;
+        height: 100px;
+      }
 
+      paper-icon-button.bug::shadow #icon {
+        width: 100px;
+        height: 100px;
+      }
+
+      paper-icon-button::shadow #icon {
+        width: 200px;
+        height: 200px;
+      }
+
+      paper-icon-button.bugspacer2 {
+        --iron-icon-height: 60px;
+        --iron-icon-width: 60px;
+      }
 
     </style></template></dom-module>

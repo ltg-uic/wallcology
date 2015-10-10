@@ -4,54 +4,43 @@
 </head>
 
 <dom-module id="population-app">
-  <style include="shared-styles"></style>
-    <style>
+    <template>
+      <style include="shared-styles"></style>
+      <style>
         :host {
         }
 
         google-chart {
-            height: 150px;
-            width: 100%;
-            background-color: #ffffff;
-            padding: 0px;
-            margin: 0px;
+          height: 150px;
+          width: 100%;
+          background-color: #ffffff;
+          padding: 0px;
+          margin: 0px;
         }
 
 
-        .bugspacer {
-            --iron-icon-height: 60px;
-            --iron-icon-width: 60px;
-        }
 
-        .dateSpacer {
-            height: 80px;
-            width: 80px;
-        }
 
         .leftspacer {
-            margin-left: 45px;
+          margin-left: 45px;
         }
 
         .rightspacer {
-            margin-right: 20px;
+          margin-right: 20px;
         }
 
         .rightpadder {
-            padding-right: 40px;
+          padding-right: 40px;
         }
         .nopadding {
-            padding: 0px;
-            margin: 0px;
-        }
-        .nopadding2 {
-            padding: 0px;
-            margin-left: 5px;
+          padding: 0px;
+          margin: 0px;
         }
 
         .startdateSpacer {
-            padding: 0px;
-            margin: 200px;
-            width: 0px;
+          padding: 0px;
+          margin: 200px;
+          width: 0px;
         }
 
         .vertical-section-container {
@@ -83,17 +72,44 @@
           margin: 0px;
         @apply(--shadow-elevation-0dp);
         }
-    </style>
-    <template>
+
+        .item {
+        @apply(--layout-horizontal);
+          margin: 16px 16px 0 16px;
+          padding: 20px;
+          border-radius: 8px;
+          background-color: blue;
+          border: 1px solid #ddd;
+        }
+
+        .bugspacer {
+          --iron-icon-height: 80px;
+          --iron-icon-width: 80px;
+        }
+
+        iron-icon {
+          width: 60px;
+          height: 60px;
+          margin-left: 10px;
+        }
+
+        .datespacer {
+          width: 80px;
+        }
+
+
+
+
+      </style>
 
         <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
                            runid="default"
                            componentid="wallcology_admin"></nutella-connector>
 
-        <div class="vertical-section-container">
+        <div id='topBar' class="vertical-section-container">
             <div class="vertical-section">
                 <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
-                                     max-selections="4" selected-items="{{selectedItems}}"
+                                     max-selections="13" selected-items="{{selectedItems}}"
                                      current-toggle="{{currentToggle}}"></wallcology-selector>
             </div>
             <div class="vertical-section hspacer">
@@ -101,16 +117,25 @@
             </div>
         </div>
 
+      <!--<iron-list items="[[graphs]]" as="item">-->
+        <!--<template>-->
+          <!--<div>-->
+            <!--<div class="item">-->
+              <!--dfdfdf-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</template>-->
+      <!--</iron-list>-->
 
         <div class="vertical-section-container">
             <template is="dom-repeat" items="{{graphs}}">
                 <div class="vertical-section center">
 
                     <div class="horizontal layout center">
-                        <div class="nopadding2">
-                        <paper-icon-button toggles disabled on-tap="buttonTapped" src="{{item.imgUrl}}"
-                                           class="bug nopadding"></paper-icon-button>
-                        </div>
+
+                        <iron-icon src="{{item.imgUrl}}"
+                                           class="graphIcon" style="width: 60px;"></iron-icon>
+
                         <div class="center flex righpadding">
                             <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
                                           type='column'
@@ -130,8 +155,7 @@
 
                 <div class="horizontal layout">
                     <div class="datespacer">
-                    <paper-icon-button disabled on-tap="buttonTapped" src="" class="bugspacer">
-                                       </paper-icon-button>
+
                     </div>
                     <div class="left">
                         <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
@@ -224,7 +248,7 @@
                             trigger: 'none'
                         },
                         viewWindow: {},
-                        chartArea: {left: 40, top: 10, right: 30, bottom: 0, width: '94%', height: '80%'},
+                        chartArea: {left: 40, top: 10, right: 30, bottom: 0, width: '96%', height: '80%'},
                         hAxis: {
                             gridlines: {
                                 count: -1,
@@ -527,7 +551,7 @@
                 var me = this;
 //                console.log('connected changed', newValue, oldValue);
                 if (newValue === true) {
-                    this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
+                    this.$.nutellaConn.nutella.net.request('master_configuration_test', {}, function (r) {
                         if (r !== undefined) {
                             me.buttonSelectors = r.habitatItems;
 
@@ -552,6 +576,7 @@
                 this.toggleSelectors = [];
                 this.graphs = [];
                 this.envGraphs = [];
+               console.log('top size', this.$.topBar.height);
 
             },
             chartName: function (index) {
