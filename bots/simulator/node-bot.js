@@ -28,7 +28,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 1 * 2 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 5 * 60 * 1000; //(1000 = 1 second)
 
 //  model constants
 
