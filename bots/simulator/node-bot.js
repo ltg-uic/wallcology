@@ -28,36 +28,165 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 5 * 60 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 1 * 1 * 1000; //(1000 = 1 second)
 
 //  model constants
 
-const r = [0.25, 0.25, 0.25]; // one for each resource (maximal growth rate)
-var K = [100, 150, 60]; // one for each resource (carrying capacity)
-var alpha =   [     [ 1.0,  0.4,  0.0   ], 
-                    [ 0.5,  1.0,  0.5   ], 
-                    [ 0.0,  0.5,  1.0   ]
-                ];
-const b = [0.1, 0.1]; // one for each herbivore (conversion of resources consumed into new herbivores)
-var a =   [
-                [ 0.20, 0.08 ], 
-                [ 0.10, 0.18 ],
-                [ 0.00, 0.00 ]
+const r =   [   [0.25, 0.25, 0.25, 0.25],
+                [0.25, 0.25, 0.25, 0.25],
+                [0.25, 0.25, 0.25, 0.25],
+                [0.25, 0.25, 0.25, 0.25]
             ];
-const q = [1, 1]; // one for each herbivore (measure of interference competition among herbivores)
-const d = [0.1, 0.1]; // one for each herbivore (intrinsic death rates)
-const beta = [0.1, 0.1]; // one for each predator  (intrinsic death rates) (just like b, but herbs to preds
-const s = [1, 1]; // one for each predator (measure of interference competition among predators)
-const delta = [0.01, 0.01]; // one per predator (intrinsicd death rath of predator)
-var m =   [
-                [ 0.300, 0.125 ], 
-                [ 0.150, 0.250 ]
-           ];
+; // one for each resource (maximal growth rate)
+
+var K =     [   [100, 150, 60, 0],
+                [0,0,0,0],
+                [125,100,0,0],
+                [50, 150, 100, 0]
+            ];
+
+; // one for each resource (carrying capacity)
+
+var alpha = [
+                [       [ 1.0,  0.4,  0.0,  0.0   ], 
+                        [ 0.5,  1.0,  0.5,  0.0   ], 
+                        [ 0.0,  0.5,  1.0,  0.0   ],
+                        [ 0.0,  0.0,  0.0,  0.0   ]
+                ],
+                [       [ 0.0,  0.0,  0.0,  0.0    ], 
+                        [ 0.0,  0.0,  0.0,  0.0   ], 
+                        [ 0.0,  0.0,  0.0,  0.0   ],
+                        [ 0.0,  0.0,  0.0,  0.0   ]
+                ],
+                [       [ 1.0,  0.4,  0.0,  0.0   ], 
+                        [ 0.2,  1.0,  0.0,  0.0   ], 
+                        [ 0.0,  0.0,  0.0,  0.0   ],
+                        [ 0.0,  0.0,  0.0,  0.0   ]
+                ],
+                [       [ 1.0,  0.4,  0.0,  0.0   ], 
+                        [ 0.3,  1.0,  0.3,  0.0   ], 
+                        [ 0.0,  0.4,  1.0,  0.0   ],
+                        [ 0.0,  0.0,  0.0,  0.0   ]
+                ]
+            ];
+
+const b = [ [0.1, 0.1, 0.0, 0.0], 
+            [0.1, 0.1, 0.0, 0.0], 
+            [0.1, 0.1, 0.0, 0.0],
+            [0.1, 0.1, 0.0, 0.0] 
+          ];
+
+; // one for each herbivore (conversion of resources consumed into new herbivores)
+var a =  [
+            [
+                [ 0.20, 0.08, 0.00, 0.00 ], 
+                [ 0.10, 0.18, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ]
+            ],
+            [
+                [ 0.20, 0.08, 0.00, 0.00 ], 
+                [ 0.10, 0.18, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ]
+            ],
+            [
+                [ 0.15, 0.10, 0.00, 0.00 ], 
+                [ 0.00, 0.10, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ]
+            ],
+            [
+                [ 0.08, 0.00, 0.00, 0.00 ], 
+                [ 0.18, 0.10, 0.00, 0.00 ],
+                [ 0.06, 0.20, 0.00, 0.00 ],
+                [ 0.00, 0.00, 0.00, 0.00 ]
+            ]
+          ];
 
 
-const resourceIndex = [5,10,9]; // which indexes in the species array correspond to resources
-const herbivoreIndex = [6,2]; // etc. ORDER MATTERS in all 3, because constants above are based on them
-const predatorIndex = [1,8]; // ditto
+const q = [ [1, 1, 1, 1],  
+            [1, 1, 1, 1],  
+            [1, 1, 1, 1],  
+            [1, 1, 1, 1] 
+          ]; // one for each herbivore (measure of interference competition among herbivores)
+
+const d = [ [0.1, 0.1, 0.1, 0.1], 
+            [0.1, 0.1, 0.1, 0.1], 
+            [0.1, 0.1, 0.1, 0.1], 
+            [0.1, 0.1, 0.1, 0.1] 
+          ]; // one for each herbivore (intrinsic death rates)
+
+
+
+const beta = [  [0.1, 0.1, 0.1], 
+                [0.1, 0.1, 0.1], 
+                [0.1, 0.1, 0.1], 
+                [0.1, 0.1, 0.1] 
+             ]; // one for each predator  (intrinsic death rates) (just like b, but herbs to preds
+
+
+
+
+const s = [ [1, 1, 1], 
+            [1, 1, 1], 
+            [1, 1, 1], 
+            [1, 1, 1] 
+          ]; // one for each predator (measure of interference competition among predators)
+
+
+
+const delta = [ [0.01, 0.01, 0.01], 
+                [0.01, 0.01, 0.01], 
+                [0.01, 0.01, 0.01], 
+                [0.01, 0.01, 0.01] 
+              ]; // one per predator (intrinsicd death rath of predator)
+
+var m =   [ 
+            [
+                [ 0.300, 0.125, 0.000 ], 
+                [ 0.150, 0.250, 0.000 ],
+                [ 0.000, 0.000, 0.000 ],
+
+            ],
+            [
+                [ 0.300, 0.125, 0.000 ], 
+                [ 0.150, 0.250, 0.000 ],
+                [ 0.000, 0.000, 0.000 ],
+
+            ],
+            [
+                [ 0.150, 0.000, 0.000 ], 
+                [ 0.050, 0.120, 0.000 ],
+                [ 0.000, 0.000, 0.000 ],
+
+            ],
+            [
+                [ 0.000, 0.000, 0.000 ], 
+                [ 0.100, 0.000, 0.000 ],
+                [ 0.000, 0.000, 0.000 ],
+
+            ]
+          ];
+
+
+const resourceIndex = [ [5,10,9], 
+                        [], 
+                        [10,5], 
+                        [4,10,5] 
+                      ] ; // which indexes in the species array correspond to resources
+
+const herbivoreIndex =  [   [6,2], 
+                            [], 
+                            [6,2], 
+                            [7,0] 
+                        ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
+
+const predatorIndex = [ [1,8], 
+                        [], 
+                        [1,3], 
+                        [8] 
+                      ]; // ditto
 
 
 var state; 
@@ -85,9 +214,9 @@ function init() {
                     break;
                 case "insert":
                     state['populations'][message.habitat][message.species] = 0;
-                    if (isResource() >= 0) state['populations'][message.habitat][message.species] = 10;
-                    if (isHerbivore() >= 0) state['populations'][message.habitat][message.species] = 1;
-                    if (isPredator() >= 0) state['populations'][message.habitat][message.species] = .5;
+                    if (isResource(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 10;
+                    if (isHerbivore(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 1;
+                    if (isPredator(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = .5;
                     break;
                 };
                 cycleState();
@@ -131,21 +260,21 @@ function init() {
     })
 }
 
-function isResource (i) {
-    for (var j=0; j<resourceIndex.length; j++)
-        if (i == resourceIndex[j]) return (j);
+function isResource (h,i) {
+    for (var j=0; j<resourceIndex[h].length; j++)
+        if (i == resourceIndex[h][j]) return (j);
     return (-1);
 }
 
-function isHerbivore (i) {
-    for (var j=0; j<herbivoreIndex.length; j++)
-        if (i == herbivoreIndex[j]) return (j);
+function isHerbivore (h,i) {
+    for (var j=0; j<herbivoreIndex[h].length; j++)
+        if (i == herbivoreIndex[h][j]) return (j);
     return (-1);
 }
 
-function isPredator (i) {
-    for (var j=0; j<predatorIndex.length; j++)
-        if (i == predatorIndex[j]) return (j);
+function isPredator (h,i) {
+    for (var j=0; j<predatorIndex[h].length; j++)
+        if (i == predatorIndex[h][j]) return (j);
     return (-1);
 }
 
@@ -154,35 +283,35 @@ function isPredator (i) {
 function nextPopulation(h,i) {
     var modelIndex; //maps species to Joel's model index
 
-    if ((modelIndex = isResource(i)) >= 0) {
+    if ((modelIndex = isResource(h,i)) >= 0) {
         var sum1 = 0;
         var sum2 = 0;
-        for (var j=0; j<resourceIndex.length; j++) 
-            sum1 += (alpha[modelIndex][j] * state['populations'][h][resourceIndex[j]]);
-        for (var k=0; k<herbivoreIndex.length; k++)
-            sum2 += ((a[modelIndex][k] * state['populations'][h][herbivoreIndex[k]]) / 
-                (1 + q[k] * state['populations'][h][herbivoreIndex[k]]));
-        return(state['populations'][h][resourceIndex[modelIndex]] * 
-            Math.exp(r[modelIndex] * (K[modelIndex] - sum1)/K[modelIndex] - sum2));
+        for (var j=0; j<resourceIndex[h].length; j++) 
+            sum1 += (alpha[h][modelIndex][j] * state['populations'][h][resourceIndex[h][j]]);
+        for (var k=0; k<herbivoreIndex[h].length; k++)
+            sum2 += ((a[h][modelIndex][k] * state['populations'][h][herbivoreIndex[h][k]]) / 
+                (1 + q[h][k] * state['populations'][h][herbivoreIndex[h][k]]));
+        return(state['populations'][h][resourceIndex[h][modelIndex]] * 
+            Math.exp(r[h][modelIndex] * (K[h][modelIndex] - sum1)/K[h][modelIndex] - sum2));
     } 
-    if ((modelIndex = isHerbivore(i)) >= 0) {
+    if ((modelIndex = isHerbivore(h,i)) >= 0) {
         var sum1 = 0;
         var sum2 = 0;
-        for (var j=0; j<resourceIndex.length; j++) 
-            sum1 += ((a[j][modelIndex] * state['populations'][h][resourceIndex[j]]) / 
-            (1 + q[modelIndex] * state['populations'][h][herbivoreIndex[modelIndex]]));
-        for (var k=0; k<predatorIndex.length; k++) 
-            sum2 += ((m[modelIndex][k] * state['populations'][h][predatorIndex[k]]) / 
-            (1 + s[k] * state['populations'][h][predatorIndex[k]]));
-        return(state['populations'][h][herbivoreIndex[modelIndex]] * Math.exp(b[modelIndex] * sum1 - d[modelIndex] - sum2));
+        for (var j=0; j<resourceIndex[h].length; j++) 
+            sum1 += ((a[h][j][modelIndex] * state['populations'][h][resourceIndex[h][j]]) / 
+            (1 + q[h][modelIndex] * state['populations'][h][herbivoreIndex[h][modelIndex]]));
+        for (var k=0; k<predatorIndex[h].length; k++) 
+            sum2 += ((m[h][modelIndex][k] * state['populations'][h][predatorIndex[h][k]]) / 
+            (1 + s[h][k] * state['populations'][h][predatorIndex[h][k]]));
+        return(state['populations'][h][herbivoreIndex[h][modelIndex]] * Math.exp(b[h][modelIndex] * sum1 - d[h][modelIndex] - sum2));
     }
 
-    if ((modelIndex = isPredator(i)) >= 0) {
+    if ((modelIndex = isPredator(h,i)) >= 0) {
         var sum = 0;
-        for (var j=0; j<herbivoreIndex.length; j++) 
-            sum += ((m[j][modelIndex] * state['populations'][h][herbivoreIndex[j]]) / 
-            (1 + s[modelIndex] * state['populations'][h][predatorIndex[modelIndex]]));
-        return(state['populations'][h][predatorIndex[modelIndex]] * Math.exp(beta[modelIndex] * sum - delta[modelIndex]));
+        for (var j=0; j<herbivoreIndex[h].length; j++) 
+            sum += ((m[h][j][modelIndex] * state['populations'][h][herbivoreIndex[h][j]]) / 
+            (1 + s[h][modelIndex] * state['populations'][h][predatorIndex[h][modelIndex]]));
+        return(state['populations'][h][predatorIndex[h][modelIndex]] * Math.exp(beta[h][modelIndex] * sum - delta[h][modelIndex]));
     }
 
     return(0);
@@ -199,7 +328,7 @@ function cycleState () {
 
    var d = new Date(); 
     newState['timestamp'] = d.getTime();
-   for (var i=0; i<state['populations'].length; i++) 
+    for (var i=0; i<state['populations'].length; i++) 
         for (var j=0; j<state['populations'][i].length; j++)
             newState['populations'][i][j] = nextPopulation(i,j);
 

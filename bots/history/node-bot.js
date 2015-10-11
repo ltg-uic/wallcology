@@ -29,11 +29,6 @@ history.load(function(){
 //
 
 
-const resourceIndex = [5,10,9]; // which indexes in the species array correspond to resources
-const herbivoreIndex = [6,2]; // etc. ORDER MATTERS in all 3, because constants above are based on them
-const predatorIndex = [1,8]; // ditto
-
-
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
       history['states'] = [];
@@ -41,8 +36,8 @@ const predatorIndex = [1,8]; // ditto
       history['states'][0]['populations'] = [
         [0,.5,.5,0,0,10,.5,0,.5,10,10],
         [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0]
+        [0,.5,1,.5,0,10,1,0,0,0,10],
+        [1,0,0,0,10,10,0,1,.5,0,10]
       ];
       history['states'][0]['environments'] = [ [20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1] ];
       history['species_events'] = [];
@@ -88,44 +83,61 @@ const predatorIndex = [1,8]; // ditto
 //
 
 
-  function interpolate(A,n,arg) {
+  function interpolate(A,n,arg,beginning,ending) {
 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //
+  // need parameter validation code here
+  //
+
+    var B = [];
+
+  //
+  // 
+  //
+    var interval = (ending-beginning) / (n-1);
+
+    for (var j=0; j<n; j++) {
+      B[j] = {};
+      B[j]['timestamp'] = beginning + j * interval;
+    }
+
+    var A_index=0;
+    var B_index=0;
+
+
+    while (B[B_index]['timestamp'] < A[0]['timestamp']) {B[B_index][arg] = 0; B_index++;};
+
+    while (A_index <= A.length-1) {
+
+      if (A[A_index]['timestamp'] == B[B_index]['timestamp']) {
+        B[B_index][arg] = A[A_index][arg];
+        B_index++; A_index++;
+      } 
+
+      else 
+
+      if (A[A_index]['timestamp'] > B[B_index]['timestamp']) {
+        B[B_index][arg] = A[A_index-1][arg] +
+                  (A[A_index][arg] - A[A_index-1][arg]) *
+                  (B[B_index]['timestamp'] - A[A_index-1]['timestamp']) / (A[A_index]['timestamp'] - A[A_index-1]['timestamp']);
+        B_index++;
+      }
+
+      else
+
+      {do A_index++; while ((A[A_index]['timestamp'] < B[B_index]['timestamp']) && (A_index<=A.length-1));}
+    
+    }
+
+    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
+    
+    return (B);
+  }
+
 
   
-  if (A.length < n) return(A);
-
-  var B = [];
-
-
-  //
-  // the first and last points from A are copied directly to B. they start and end together.
-  //
-
-  B[0] = A[0];
-  B[n-1] = A[A.length-1];
-//
-//
-//
-  var B_index = 1;
-  var interval = (A[A.length-1]['timestamp']-A[0]['timestamp']) / (n-1);
-  var new_time = A[0]['timestamp'] + B_index * interval;
-  for (i=1; i<A.length; i++) {
-    while (A[i]['timestamp'] >= new_time && B_index < (n-1)){
-                    B[B_index] = {};
-                    B[B_index]['timestamp'] = new_time;
-                    B[B_index][arg] =
-                                    A[i-1][arg] +
-                                    (A[i][arg] - A[i-1][arg]) *
-                                    (new_time - A[i-1]['timestamp']) / (A[i]['timestamp'] - A[i-1]['timestamp']);
-                    B_index++;
-                    new_time = A[0]['timestamp'] + B_index * interval;
-    }
-  }
-  return(B);
-}
 
 
 //
@@ -175,7 +187,7 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
         if (message['points'] == '') return (h);
         if (message['points'] < 2) return ([]);
         if (message['points'] > history.length-1) return(h);
-        return (interpolate(h,message['points'],'population'));
+        return (interpolate(h,message['points'],'population',message['from'],message['to']));
 
     });
 
@@ -232,7 +244,7 @@ nutella.net.handle_requests('environment_history', function(JSONmessage, from) {
         if (message['points'] == '') return (h);
         if (message['points'] < 2) return ([]);
         if (message['points'] > history.length-1) return(h);
-        return (interpolate(h,message['points'],'value'));
+        return (interpolate(h,message['points'],'value',message['from'],message['to']));
     });
 
 
