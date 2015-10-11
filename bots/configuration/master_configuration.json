@@ -123,18 +123,18 @@
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
       "index": 11,
-      "color": "#68734F"
+      "color": "#F44336"
         
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
       "index": 12,
-      "color": "#68734F"
+      "color": "#795548"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
       "index": 13,
-      "color": "#68734F"
+      "color": "#FF5722"
     }
   ]
 }
