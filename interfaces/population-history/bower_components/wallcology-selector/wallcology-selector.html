@@ -43,8 +43,8 @@
         }
 
         .vcontainer {
-        @apply(- -layout-horizontal);
-        @apply(- -layout-center);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
         }
 
         paper-icon-button[toggles].selector {
@@ -52,21 +52,26 @@
             padding: 0px;
             height: 45px;
             width: 45px;
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         paper-icon-button[toggles] {
             transition: background-color 0.3s;
-
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         paper-icon-button[toggles][active] {
-            background-color: rgba(255, 233, 33, 0.25);
-            border-radius: 25px;
+            background-color: #e8e8e8;
+            border-radius: 20px;
+            border: 1px solid #e8e8e8;
         }
 
         paper-icon-button[toggles][disabled] {
             opacity: 0.25;
-            border-radius: 25px;
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         .spacer {
