@@ -17,9 +17,18 @@ var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, que
 
 var wallscope = query_parameters.wallscope;
 
-setTimeout(function() {
-    selectHabitat(parseInt(wallscope.replace(/[^\d]/g, "")));
-}, 100);
+function setHabitatBasedOnWallscope() {
+    console.log('here');
+    setTimeout(function() {
+        try {
+            selectHabitat(parseInt(wallscope.replace(/[^\d]/g, "")));
+        } catch (e) {
+            setHabitatBasedOnWallscope();
+        }
+    }, 1000);
+}
+
+setHabitatBasedOnWallscope();
 
 
 function selectHabitat(index) {
