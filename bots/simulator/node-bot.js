@@ -40,7 +40,7 @@ const r =   [   [0.25, 0.25, 0.25, 0.25],
 ; // one for each resource (maximal growth rate)
 
 var K =     [   [100, 150, 60, 0],
-                [0,0,0,0],
+                [100,80,0,0],
                 [125,100,0,0],
                 [50, 150, 100, 0]
             ];
@@ -53,8 +53,8 @@ var alpha = [
                         [ 0.0,  0.5,  1.0,  0.0   ],
                         [ 0.0,  0.0,  0.0,  0.0   ]
                 ],
-                [       [ 0.0,  0.0,  0.0,  0.0    ], 
-                        [ 0.0,  0.0,  0.0,  0.0   ], 
+                [       [ 1.0,  0.0,  0.0,  0.0    ], 
+                        [ 0.0,  1.0,  0.0,  0.0   ], 
                         [ 0.0,  0.0,  0.0,  0.0   ],
                         [ 0.0,  0.0,  0.0,  0.0   ]
                 ],
@@ -70,10 +70,10 @@ var alpha = [
                 ]
             ];
 
-const b = [ [0.1, 0.1, 0.0, 0.0], 
-            [0.1, 0.1, 0.0, 0.0], 
-            [0.1, 0.1, 0.0, 0.0],
-            [0.1, 0.1, 0.0, 0.0] 
+const b = [ [0.1, 0.1, 0.1, 0.1], 
+            [0.1, 0.1, 0.1, 0.1], 
+            [0.1, 0.1, 0.1, 0.1],
+            [0.1, 0.1, 0.1, 0.1] 
           ];
 
 ; // one for each herbivore (conversion of resources consumed into new herbivores)
@@ -85,8 +85,8 @@ var a =  [
                 [ 0.00, 0.00, 0.00, 0.00 ]
             ],
             [
-                [ 0.20, 0.08, 0.00, 0.00 ], 
-                [ 0.10, 0.18, 0.00, 0.00 ],
+                [ 0.20, 0.05, 0.00, 0.00 ], 
+                [ 0.00, 0.05, 0.20, 0.00 ],
                 [ 0.00, 0.00, 0.00, 0.00 ],
                 [ 0.00, 0.00, 0.00, 0.00 ]
             ],
@@ -150,8 +150,8 @@ var m =   [
 
             ],
             [
-                [ 0.300, 0.125, 0.000 ], 
-                [ 0.150, 0.250, 0.000 ],
+                [ 0.100, 0.000, 0.120 ], 
+                [ 0.000, 0.000, 0.000 ],
                 [ 0.000, 0.000, 0.000 ],
 
             ],
@@ -171,26 +171,26 @@ var m =   [
 
 
 const resourceIndex = [ [5,10,9], 
-                        [], 
+                        [4,5], 
                         [10,5], 
                         [4,10,5] 
                       ] ; // which indexes in the species array correspond to resources
 
 const herbivoreIndex =  [   [6,2], 
-                            [], 
+                            [6,7,0], 
                             [6,2], 
                             [7,0] 
                         ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
 
 const predatorIndex = [ [1,8], 
-                        [], 
+                        [8], 
                         [1,3], 
                         [8] 
                       ]; // ditto
 
 
 var state; 
-console.log("Simulator version 0.9.1");
+console.log("Simulator version 0.9.2");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {

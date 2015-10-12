@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.1");
+console.log("History version 0.9.2");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -35,7 +35,7 @@ history.load(function(){
       history['states'][0] = {timestamp:0, populations:[], environments:[]};
       history['states'][0]['populations'] = [
         [0,.5,.5,0,0,10,.5,0,.5,10,10],
-        [0,0,0,0,0,0,0,0,0,0,0],
+        [1,0,0,0,10,10,1,1,.5,0,0],
         [0,.5,1,.5,0,10,1,0,0,0,10],
         [1,0,0,0,10,10,0,1,.5,0,10]
       ];
@@ -97,13 +97,14 @@ history.load(function(){
   // 
   //
     var interval = (ending-beginning) / (n-1);
-
+    console.log('beginning: ' + beginning + ' ending: ' + ending + ' interval: ' + interval);
     for (var j=0; j<n; j++) {
       B[j] = {};
-      B[j]['timestamp'] = beginning + j * interval;
+      B[j]['timestamp'] = Number(beginning) + j * interval; 
+      console.log(' timestamp = ' + B[j]['timestamp']);
     }
 
-    var A_index=0;
+    var A_index=1;
     var B_index=0;
 
 
@@ -111,28 +112,28 @@ history.load(function(){
 
     while (A_index <= A.length-1) {
 
-      if (A[A_index]['timestamp'] == B[B_index]['timestamp']) {
+      if (B[B_index]['timestamp'] == A[A_index]['timestamp']) {
         B[B_index][arg] = A[A_index][arg];
         B_index++; A_index++;
       } 
 
       else 
 
-      if (A[A_index]['timestamp'] > B[B_index]['timestamp']) {
-        B[B_index][arg] = A[A_index-1][arg] +
+      if (B[B_index]['timestamp'] < A[A_index]['timestamp']) {
+            B[B_index][arg] = Number(A[A_index-1][arg]) +
                   (A[A_index][arg] - A[A_index-1][arg]) *
                   (B[B_index]['timestamp'] - A[A_index-1]['timestamp']) / (A[A_index]['timestamp'] - A[A_index-1]['timestamp']);
-        B_index++;
+            B_index++;
       }
 
       else
 
-      {do A_index++; while ((A[A_index]['timestamp'] < B[B_index]['timestamp']) && (A_index<=A.length-1));}
+      {console.log ('got here 2  A_index: ' + A_index + '  B_index: ' + B_index); do {A_index++;} while ((A_index<=A.length-1) && (A[A_index]['timestamp'] < B[B_index]['timestamp']));}
     
     }
-
+    console.log (A_index + '  ' + B_index);
     while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
-    
+
     return (B);
   }
 
@@ -158,7 +159,7 @@ history.load(function(){
 //
 
 nutella.net.handle_requests('population_history', function(JSONmessage, from) {
-        var message = JSONmessage;
+        var message = deepCopy(JSONmessage);
 //
 //      if missing habitat or species parameters, return empty list
 //
@@ -417,3 +418,14 @@ nutella.net.subscribe('force_state', function(JSONmessage, from) {
 
 
 }); // end history.load();
+
+function deepCopy(oldObj) {
+    var newObj = oldObj;
+    if (oldObj && typeof oldObj === 'object') {
+        newObj = Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+        for (var i in oldObj) {
+            newObj[i] = deepCopy(oldObj[i]);
+        }
+    }
+    return newObj;
+}
