@@ -67,60 +67,74 @@
   "habitatItems": [
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_00.svg",
-      "index": 0
+      "index": 0,
+      "color": "#FFC91B"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_01.svg",
-      "index": 1
+      "index": 1,
+      "color": "#5A6372"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_02.svg",
-      "index": 2
+      "index": 2,
+      "color": "#FFDD00"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_03.svg",
-      "index": 3
+      "index": 3,
+      "color": "#2C4721"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_04.svg",
-      "index": 4
+      "index": 4,
+      "color": "#502B6E"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_05.svg",
-      "index": 5
+      "index": 5,
+      "color": "#2C4721"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_06.svg",
-      "index": 6
+      "index": 6,
+      "color": "#8975B5"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_07.svg",
-      "index": 7
+      "index": 7,
+      "color": "#FAAA19"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_08.svg",
-      "index": 8
+      "index": 8,
+      "color": "#899C7C"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_09.svg",
-      "index": 9
+      "index": 9,
+      "color": "#4AB6C8"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_10.svg",
-      "index": 10
+      "index": 10,
+      "color": "#68734F"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
-      "index": 11
+      "index": 11,
+      "color": "#F44336"
         
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
-      "index": 12
+      "index": 12,
+      "color": "#795548"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
-      "index": 13
+      "index": 13,
+      "color": "#FF5722"
     }
   ]
 }
