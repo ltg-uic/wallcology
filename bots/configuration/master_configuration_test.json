@@ -4,8 +4,15 @@
       "items": [
         0,
         1,
+        2,
+        3,
         4,
         5,
+        6,
+        7,
+        8,
+        9,
+        10,
         11,
         12,
         13        
@@ -20,6 +27,14 @@
       "items": [
         0,
         1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
         10,
         11,
         12,
@@ -35,8 +50,15 @@
       "items": [
         0,
         1,
+        2,
+        3,
+        4,
+        5,
+        6,
         7,
+        8,
         9,
+        10,
         11,
         12,
         13
@@ -50,8 +72,15 @@
     {
       "items": [
         0,
+        1,
+        2,
+        3,
+        4,
         5,
         6,
+        7,
+        8,
+        9,
         10,
         11,
         12,
@@ -67,74 +96,60 @@
   "habitatItems": [
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_00.svg",
-      "index": 0,
-      "color": "#FFC91B"
+      "index": 0
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_01.svg",
-      "index": 1,
-      "color": "#5A6372"
+      "index": 1
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_02.svg",
-      "index": 2,
-      "color": "#FFDD00"
+      "index": 2
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_03.svg",
-      "index": 3,
-      "color": "#2C4721"
+      "index": 3
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_04.svg",
-      "index": 4,
-      "color": "#502B6E"
+      "index": 4
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_05.svg",
-      "index": 5,
-      "color": "#2C4721"
+      "index": 5
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_06.svg",
-      "index": 6,
-      "color": "#8975B5"
+      "index": 6
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_07.svg",
-      "index": 7,
-      "color": "#FAAA19"
+      "index": 7
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_08.svg",
-      "index": 8,
-      "color": "#899C7C"
+      "index": 8
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_09.svg",
-      "index": 9,
-      "color": "#4AB6C8"
+      "index": 9
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_10.svg",
-      "index": 10,
-      "color": "#68734F"
+      "index": 10
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
-      "index": 11,
-      "color": "#F44336"
+      "index": 11
         
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
-      "index": 12,
-      "color": "#795548"
+      "index": 12
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
-      "index": 13,
-      "color": "#FF5722"
+      "index": 13
     }
   ]
 }

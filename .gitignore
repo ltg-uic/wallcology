@@ -12,3 +12,8 @@ dependency-reduced-pom.xml
 *.iml
 interfaces/wallscope-interface/.DS_Store
 node_modules/*
+
+interfaces/wallscope-interface/wallcology-visualization/unity
+interfaces/wallscope-interface/wallcology-visualization/unity/*
+unity/
+unity/*

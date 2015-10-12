@@ -1,375 +1,362 @@
 <html>
 <head>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js" charset="utf-8"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js" charset="utf-8"></script>
 </head>
 
 <dom-module id="population-app">
-  <style include="shared-styles"></style>
+  <template>
+    <style include="shared-styles"></style>
     <style>
-        :host {
-        }
+      :host {
+      }
 
-        google-chart {
-            height: 150px;
-            width: 100%;
-            background-color: #ffffff;
-            padding: 0px;
-            margin: 0px;
-        }
+      google-chart {
+        height: 150px;
+        width: 100%;
+        background-color: #ffffff;
+        padding: 0px;
+        margin: 0px;
+      }
 
+      paper-button.colorful {
+        color: white;
+        background: #006699;
+        margin: 0px;
+      @apply(--shadow-elevation-0dp);
+      }
 
-        .bugspacer {
-            --iron-icon-height: 60px;
-            --iron-icon-width: 60px;
-        }
+      iron-icon {
+        width: 60px;
+        height: 60px;
+        margin-left: 5px;
+      }
 
-        .dateSpacer {
-            height: 80px;
-            width: 80px;
-        }
+      .dateSpacer {
+        height: 80px;
+        width: 80px;
+        padding: 0px;
+        margin: 0px;
+      }
 
-        .leftspacer {
-            margin-left: 45px;
-        }
+      .leftspacer {
+        margin-left: 70px;
+      }
 
-        .rightspacer {
-            margin-right: 20px;
-        }
+      .rightspacer {
+        margin-right: 30px;
+      }
 
-        .rightpadder {
-            padding-right: 40px;
-        }
-        .nopadding {
-            padding: 0px;
-            margin: 0px;
-        }
-        .nopadding2 {
-            padding: 0px;
-            margin-left: 5px;
-        }
+      .rightpadder {
+        margin-right: 0px;
+      }
 
-        .startdateSpacer {
-            padding: 0px;
-            margin: 200px;
-            width: 0px;
-        }
+      .nopadding {
+        padding: 0px;
+        margin: 0px;
+      }
 
-        .vertical-section-container {
-        @apply(--layout-vertical);
-        @apply(--center-justified);
-        }
+      .startdateSpacer {
+        padding: 0px;
+        margin: 200px;
+        width: 0px;
+      }
 
-        .horizontal-section-container {
-        @apply(--layout-horizontal);
-        @apply(--layout-center-justified);
-        @apply(--layout-wrap);
-        }
-
-        .horizontal-section {
-          background-color: white;
-          padding: 0px;
-          margin: 0 0px 0px 0px;
-        }
-
-        .vertical-section {
-          background-color: white;
-          padding: 0px;
-          margin: 0 0px 0px 0px;
-        }
-
-        paper-button.colorful {
-          color: white;
-          background: #006699;
-          margin: 0px;
-        @apply(--shadow-elevation-0dp);
-        }
     </style>
-    <template>
 
-        <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
-                           runid="default"
-                           componentid="wallcology_admin"></nutella-connector>
+    <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
+                       runid="default"
+                       componentid="wallcology_admin"></nutella-connector>
 
-        <div class="vertical-section-container">
-            <div class="vertical-section">
-                <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
-                                     max-selections="4" selected-items="{{selectedItems}}"
-                                     current-toggle="{{currentToggle}}"></wallcology-selector>
+    <div id='topBar' class="vertical-section-container">
+      <div class="vertical-section">
+        <div class="horizontal-section-container">
+
+          <div class="horizontal-section">
+            <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
+                                 max-selections="13" selected-items="{{selectedItems}}"
+                                 current-toggle="{{currentToggle}}"></wallcology-selector>
+          </div>
+        </div>
+      </div>
+      <div class="vertical-section hspacer">
+
+      </div>
+    </div>
+
+    <div class="vertical-section-container">
+      <template is="dom-repeat" items="{{graphs}}">
+        <div class="vertical-section center">
+
+          <div class="horizontal layout center">
+
+            <iron-icon src="{{item.imgUrl}}" style="width: 60px;"></iron-icon>
+
+            <div class="center flex rightpadder">
+              <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
+                            type='column'
+                            options='{{item.options}}'
+                            data={{item.data}}>
+              </google-chart>
+
             </div>
-            <div class="vertical-section hspacer">
+          </div>
 
-            </div>
+        </div>
+      </template>
+    </div>
+
+    <div class="vertical-section-container">
+      <div class="vertical-section center">
+
+        <div class="horizontal layout">
+          <div style="
+    width:  100px;"></div>
+          <div class="left">
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
+            </paper-button>
+          </div>
+          <div class="flex nopadding"></div>
+          <div class="rightspacer">
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
+            </paper-button>
+          </div>
         </div>
 
+      </div>
+    </div>
 
-        <div class="vertical-section-container">
-            <template is="dom-repeat" items="{{graphs}}">
-                <div class="vertical-section center">
+    <!-- YYYY-MM-DD -->
+    <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal
+                  on-iron-overlay-closed="dismissDialog">
+      <paper-date-picker id="startDatePicker" date="{{startDate}}" min-date="{{endDate}}"></paper-date-picker>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
 
-                    <div class="horizontal layout center">
-                        <div class="nopadding2">
-                        <paper-icon-button toggles disabled on-tap="buttonTapped" src="{{item.imgUrl}}"
-                                           class="bug nopadding"></paper-icon-button>
-                        </div>
-                        <div class="center flex righpadding">
-                            <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
-                                          type='column'
-                                          options='{{item.options}}'
-                                          data={{item.data}}>
-                            </google-chart>
+    <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal
+                  on-iron-overlay-closed="dismissDialog">
+      <paper-date-picker id="endDatePicker" date="{{endDate}}" min-date="2015-10-12"></paper-date-picker>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm>OK</paper-button>
+      </div>
+    </paper-dialog>
 
-                        </div>
-                    </div>
+    <paper-dialog id="modal" modal>
+      <p>{{alertMessage}}</p>
 
-                </div>
-            </template>
-        </div>
-
-        <div class="vertical-section-container">
-            <div class="vertical-section center">
-
-                <div class="horizontal layout">
-                    <div class="datespacer">
-                    <paper-icon-button disabled on-tap="buttonTapped" src="" class="bugspacer">
-                                       </paper-icon-button>
-                    </div>
-                    <div class="left">
-                        <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
-                        </paper-button>
-                    </div>
-                    <div class="flex nopadding"></div>
-                    <div class="rightspacer">
-                        <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
-                        </paper-button>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- YYYY-MM-DD -->
-        <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal
-                      on-iron-overlay-closed="dismissDialog">
-            <paper-date-picker id="startDatePicker" date="{{startDate}}" min-date="{{endDate}}"></paper-date-picker>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
-            </div>
-        </paper-dialog>
-
-        <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal
-                      on-iron-overlay-closed="dismissDialog">
-            <paper-date-picker id="endDatePicker" date="{{endDate}}" min-date="2015-10-12"></paper-date-picker>
-            <div class="buttons">
-                <paper-button dialog-dismiss>Cancel</paper-button>
-                <paper-button dialog-confirm>OK</paper-button>
-            </div>
-        </paper-dialog>
-
-        <paper-dialog id="modal" modal>
-            <p>{{alertMessage}}</p>
-            <div class="buttons">
-                <paper-button dialog-confirm autofocus>OK</paper-button>
-            </div>
-        </paper-dialog>
+      <div class="buttons">
+        <paper-button dialog-confirm autofocus>OK</paper-button>
+      </div>
+    </paper-dialog>
 
 
-    </template>
+  </template>
 
-    <script>
-        // element registration
-        Polymer({
-            is: 'population-app',
+  <script>
+    // element registration
+    Polymer({
+      is: 'population-app',
 
-            // add properties and methods on the element's prototype
-            properties: {
-                // declare properties for the element's public API
-                selectedItems: {
-                    type: Array,
-                    notify: true,
-                    value: []
-                },
-                currentToggle: {
-                    type: Object,
-                    notify: true,
-                    value: {},
-                    observer: 'currentToggleChanged'
-                },
-                toggleSelectors: {
-                    type: Array,
-                    notify: true,
-                    value: []
-                },
-                buttonSelectors: {
-                    type: Array,
-                    notify: true,
-                    value: []
-                },
-                graphs: {
-                    type: Array,
-                    notify: true,
-                    value: []
-                },
-                envGraphs: {
-                    type: Array,
-                    notify: true,
-                    value: []
-                },
-                chartOptions: {
-                    type: Object,
-                    notify: true,
-                    value: {
-                        legend: {position: 'none'},
-                        tooltip: {
-                            trigger: 'none'
-                        },
-                        viewWindow: {},
-                        chartArea: {left: 40, top: 10, right: 30, bottom: 0, width: '94%', height: '80%'},
-                        hAxis: {
-                            gridlines: {
-                                count: -1,
-                                units: {
-                                    days: {format: ['MMM d']},
-                                    hours: {format: ['hh:mm', 'ha']},
-                                    minutes: {format: ['hh:mm a', ':mm']}
-
-                                }
-                            },
-                            minorGridlines: {
-                                units: {
-                                    hours: {format: ['hh:mm a', 'ha']},
-                                    minutes: {format: ['hh:mm a', ':mm']}
-                                }
-                            }
-                        }
-                    }
-                },
-                startDate: {
-                    type: Date,
-                    observer: 'startDateChanged'
-                },
-                endDate: {
-                    type: Date,
-                    observer: 'endDateChanged'
-                },
-                pickerDateFormat: {
-                  type: String,
-                    notify: false,
-                    value: 'MM-DD-YYYY'
-                },
-                alertMessage: {
-                    type: String,
-                    notify: true,
-                    value: ''
-                },
-                connected: {
-                    type: Boolean,
-                    notify: true,
-                    value: false,
-                    observer: 'connectedChanged'
-                },
+      // add properties and methods on the element's prototype
+      properties: {
+        // declare properties for the element's public API
+        selectedItems: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        currentToggle: {
+          type: Object,
+          notify: true,
+          value: {},
+          observer: 'currentToggleChanged'
+        },
+        toggleSelectors: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        buttonSelectors: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        graphs: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        envEventHistories: {
+          type: Array,
+          notify: true,
+          value: []
+        },
+        chartOptions: {
+          type: Object,
+          notify: true,
+          value: {
+            legend: {position: 'none'},
+            tooltip: {
+              trigger: 'none'
             },
-            observers: [
-                'selectedItemsChanged(selectedItems.*)',
-                'toggleSelectorsChanged(toggleSelectors.*)',
-                'buttonSelectorsChanged(buttonSelectors.*)',
-                'graphsChanged(graphs.*)'
-            ],
-            graphsChanged: function (changeRecord) {
-                JSON.stringify(changeRecord);
+            viewWindow: {},
+            enableInteractivity: false,
+            animation: {
+              'startup': true, duration: 1500,
+              easing: 'inAndOut'
             },
-            selectedItemsChanged: function (changeRecord) {
-
-                if (changeRecord.path === 'selectedItems.splices') {
-
-                    var is = changeRecord.base.splices.indexSplices[0];
-
-                    if (is.addedCount > 0) {
-                        var l = changeRecord.base.length;
-                        var species = changeRecord.base[l - 1];
-                        if (species.index > 10) {
-                            this.updateGraph(species, 'environment_history');
-                        } else {
-                            this.updateGraph(species, 'population_history');
-                        }
-                    } else if (is.removed[0] !== undefined) {
-                        var s = is.removed[0];
-                        for (var i = 0; i < this.graphs.length; i++) {
-                            var g = this.graphs[i];
-                            if (g.index === s.index) {
-                                this.splice('graphs', i);
-                            }
-                        }
-
-                    }
-                    // a user was added or removed
-                } else {
-                    // an individual user or its sub-properties changed
-                    // check "changeRecord.path" to determine what changed
-
+            chartArea: {left: 35, top: 10, right: 0, bottom: 10, width: '93%', height: '75%'},
+            hAxis: {
+              gridlines: {
+                count: -1,
+                units: {
+                  days: {format: ['M/d']},
+                  hours: {format: ['hh:mm a']},
 
                 }
-            },
-            toggleSelectorsChanged: function (changeRecord) {
-
-            },
-            buttonSelectorsChanged: function (changeRecord) {
-
-            },
-            currentToggleChanged: function (newValue, oldValue) {
-            },
-            showStartDateDialogAction: function (e) {
-                this.$.startDateDialog.toggle();
-            },
-            showEndDateDialogAction: function (e) {
-                this.$.endDateDialog.toggle();
-            },
-            formatButtonDate: function(someDate) {
-                var formatted = moment(someDate).format('MM-DD-YYYY');
-                return formatted;
-            },
-            dismissDialog: function (e) {
-
-                if (e.detail.confirmed) {
-                    if( e.target.id === 'startDateDialog' ) {
-                        if( this.checkDatesValid() ) {
-                            this.startDate = this.$.startDatePicker.date;
-                            this.updateAllGraphs();
-                        }
-                    } else if( e.target.id === 'endDateDialog' ) {
-                        if( this.checkDatesValid() ) {
-                            this.endDate = this.$.endDatePicker.date;
-                            this.updateAllGraphs();
-                        }
-
-                    }
+              },
+              minorGridlines: {
+                units: {
+                  hours: {format: ['hh:mm a']},
+                  minutes: {format: ['hh:mm a']}
                 }
+              }
+            }
+          }
+        },
+        startDate: {
+          type: Date,
+          observer: 'startDateChanged'
+        },
+        endDate: {
+          type: Date,
+          observer: 'endDateChanged'
+        },
+        pickerDateFormat: {
+          type: String,
+          notify: false,
+          value: 'MM-DD-YYYY'
+        },
+        alertMessage: {
+          type: String,
+          notify: true,
+          value: ''
+        },
+        connected: {
+          type: Boolean,
+          notify: true,
+          value: false,
+          observer: 'connectedChanged'
+        },
+      },
+      observers: [
+        'selectedItemsChanged(selectedItems.*)',
+        'toggleSelectorsChanged(toggleSelectors.*)',
+        'buttonSelectorsChanged(buttonSelectors.*)',
+        'graphsChanged(graphs.*)'
+      ],
+      graphsChanged: function (changeRecord) {
+        JSON.stringify(changeRecord);
+      },
+      selectedItemsChanged: function (changeRecord) {
+
+        if (changeRecord.path === 'selectedItems.splices') {
+
+          var is = changeRecord.base.splices.indexSplices[0];
+
+          if (is.addedCount > 0) {
+            var l = changeRecord.base.length;
+            var species = changeRecord.base[l - 1];
+            if (species.index > 10) {
+              this.updateGraph(species, 'environment_history');
+            } else {
+              this.updateGraph(species, 'population_history');
+            }
+            //this.updateEventHistoryPoints();
+          } else if (is.removed[0] !== undefined) {
+            var s = is.removed[0];
+            for (var i = 0; i < this.graphs.length; i++) {
+              var g = this.graphs[i];
+              if (g.index === s.index) {
+                this.splice('graphs', i, 1);
+              }
+            }
+
+          }
+          // a user was added or removed
+        } else {
+          // an individual user or its sub-properties changed
+          // check "changeRecord.path" to determine what changed
+        }
+      },
+      toggleSelectorsChanged: function (changeRecord) {
+      },
+      buttonSelectorsChanged: function (changeRecord) {
+
+      },
+      currentToggleChanged: function (newValue, oldValue) {
+        console.log('newValue oldValue', JSON.stringify(newValue), JSON.stringify(oldValue));
+        this.set('selectedItems',[]);
+        this.clearAllGraphs();
+      },
+      showStartDateDialogAction: function () {
+        this.$.startDateDialog.toggle();
+      },
+      showEndDateDialogAction: function () {
+        this.$.endDateDialog.toggle();
+      },
+      formatButtonDate: function (someDate) {
+        var formatted = moment(someDate).format('MM-DD-YYYY');
+        return formatted;
+      },
+      dismissDialog: function (e) {
+
+        if (e.detail.confirmed) {
+          if (e.target.id === 'startDateDialog') {
+            if (this.checkDatesValid()) {
+              this.startDate = this.$.startDatePicker.date;
+              this.updateAllGraphs();
+//              this.updateEventHistoryPoints();
+            } else {
+              this.showStartDateDialogAction();
+            }
+          } else if (e.target.id === 'endDateDialog') {
+            if (this.checkDatesValid()) {
+              this.endDate = this.$.endDatePicker.date;
+              this.updateAllGraphs();
+//              this.updateEventHistoryPoints();
+            } else {
+              this.showEndDateDialogAction();
+            }
+
+          }
 
 
-                    console.log('dismissed', e);
-            },
-            checkDatesValid: function() {
+        }
+        console.log('dismissed', e);
+      },
+      checkDatesValid: function () {
 
-                if( moment(this.startDate).isSame(this.endDate)) {
-                    return true;
-                 } else if (moment(this.startDate).isAfter(this.endDate)) {
-                    this.showAlert('Start Date: ' + moment(this.startDate).format(this.pickerDateFormat) + ' cannot come after End Date: ' + moment(this.endDate).format(this.pickerDateFormat));
-                    return false;
-                } else if(moment(this.endDate).isBefore(this.startDate)) {
-                    this.showAlert('End Date: ' + moment(this.endDate).format(this.pickerDateFormat) + ' cannot come before Start Date: ' + moment(this.startDate).format(this.pickerDateFormat));
-                    return false;
-                } else if( moment(this.endDate).isAfter(new Date())) {
-                    this.showAlert('Time travel to the future is not allowed');
-                    return false;
-                } else {
-                    return true;
-                }
-            },
-            showAlert: function(message) {
-                this.alertMessage = message;
-                this.$.modal.toggle();
-            },
-            startDateChanged: function (newValue, oldValue) {
+        if (moment(this.startDate).isSame(this.endDate)) {
+          return true;
+        } else if (moment(this.startDate).isAfter(this.endDate)) {
+          return false;
+        } else if (moment(this.endDate).isBefore(this.startDate)) {
+          return false;
+        } else if (moment(this.endDate).isAfter(new Date())) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      showAlert: function (message) {
+        this.alertMessage = message;
+        this.$.modal.toggle();
+      },
+      startDateChanged: function (newValue, oldValue) {
 //                if (this.endDate !== undefined && this.endDate !== null) {
 //                    if( this.checkDatesValid()  ) {
 //                        this.updateAllGraphs();
@@ -378,8 +365,8 @@
 //                    }
 //                }
 
-            },
-            endDateChanged: function (newValue, oldValue) {
+      },
+      endDateChanged: function (newValue, oldValue) {
 //                if (this.startDate !== undefined && this.startDate !== null) {
 //                    if( this.checkDatesValid() ) {
 //                        this.updateAllGraphs();
@@ -387,177 +374,252 @@
 //
 //                    }
 //                }
-            },
+      },
+      clearAllGraphs: function() {
+        this.set('graphs',[]);
+        this.set('envEventHistories',[]);
+      },
+      updateEventHistoryPoints: function () {
+        var sdate = moment(this.startDate).startOf('day').valueOf();
+        var edate = moment(this.endDate).endOf('day').valueOf();
+        var habitatIndex = this.currentToggle.index;
+        var message = {habitat: habitatIndex, from: sdate, to: edate};
 
-            updateGraph: function (species, type) {
-                var sdate = moment(this.startDate).startOf('day').valueOf();
-                var edate = moment(this.endDate).endOf('day').valueOf();
-                var habitatIndex = this.currentToggle.index;
+        this.addEventHistoryPoints(habitatIndex, sdate, edate, message);
+      },
+      updateGraph: function (species, type) {
+        var sdate = moment(this.startDate).startOf('day').valueOf();
+        var edate = moment(this.endDate).endOf('day').valueOf();
+        var habitatIndex = this.currentToggle.index;
 
-                var message;
-                if (type === 'environment_history') {
-                    if (species.index === 11) {
-                        species.index = 0;
-                    } else if (species.index === 12) {
-                        species.index = 1;
-                    } else if (species.index === 13) {
-                        species.index = 2;
-                    }
-                    message = {
-                        habitat: habitatIndex,
-                        environmental_variable: species.index,
-                        points: 100,
-                        from: sdate,
-                        to: edate
-                    };
-                } else if (type === 'population_history') {
-                    message = {habitat: habitatIndex, species: species.index, points: 100, from: sdate, to: edate};
+        var message;
+        if (type === 'environment_history') {
+          if (species.index === 11) {
+            species.index = 0;
+          } else if (species.index === 12) {
+            species.index = 1;
+          } else if (species.index === 13) {
+            species.index = 2;
+          }
+          message = {
+            habitat: habitatIndex,
+            environmental_variable: species.index,
+            points: 100,
+            from: sdate,
+            to: edate
+          };
+        } else if (type === 'population_history') {
+          message = {habitat: habitatIndex, species: species.index, points: 100, from: sdate, to: edate};
+        }
+
+
+        this.addHistoryGraph(species, habitatIndex, sdate, edate, message, type);
+      },
+      updateAllGraphs: function () {
+        for (var i = 0; i < this.selectedItems.length; i++) {
+          var species = this.selectedItems[i];
+          if (species.index >= 11) {
+            this.updateGraph(species, 'environment_history');
+          } else {
+            this.updateGraph(species, 'population_history');
+          }
+
+        }
+      },
+      addEventHistoryPoints: function (habitatIndex, sdate, edate, message) {
+        var me = this;
+        var sDateLocal = sdate;
+        var eDateLocal = edate;
+        console.log('MESSAGE FOR ENV EVENTS: ' + JSON.stringify(message));
+        this.$.nutellaConn.nutella.net.request('environmental_events_history', message, function (response) {
+          var r = response;
+          console.log('EVENTS Response: ', r);
+
+          if (r.length > 0) {
+
+
+          } else {
+            //zero results
+            var firstEnvPoint = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+            //add one minute to the start time and set it 0
+            t.push([firstDate, 0, species.color]);
+
+            var lastEnvPoint = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+            //add one minute to the start time and set it 0
+            t.push([lastDate2, 0, species.color]);
+
+            //me.drawGraph(species, t, messageType, sdate, edate);
+
+          }
+        });
+
+
+
+      },
+      addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
+        var me = this;
+        var messageType = type;
+        var sDateLocal = sdate;
+        var eDateLocal = edate;
+        console.log(JSON.stringify(message));
+        this.$.nutellaConn.nutella.net.request(type, message, function (response) {
+          var r = response;
+          console.log('response: ', r);
+          var t = [
+
+            [{label: 'Days', type: 'date'}, {label: 'Counts', type: 'number'}, {type: 'string', role: 'style'}]
+
+<<<<<<< HEAD
+        <nutella-connector connected={{connected}} id="nutellaConn" hostname="localhost" appid="wallcology"
+                           runid="default"
+                           componentid="wallcology_admin"></nutella-connector>
+=======
+>>>>>>> origin/master
+
+          ];
+
+
+          if (r.length > 0) {
+
+            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+            //add one minute to the start time and set it 0
+            t.push([firstDate, 0, species.color]);
+
+
+            console.log('spieces color: ', species.color);
+            if (messageType === 'environment_history') {
+              if (species.index === 0) {
+                species.index = 11;
+              } else if (species.index === 1) {
+                species.index = 12;
+              } else if (species.index === 2) {
+                species.index = 13;
+              }
+
+
+              for (var i1 = 0; i1 < r.length; i1++) {
+                var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
+
+
+//                console.log('ENV date', moment(r[i1].timestamp).valueOf());
+
+                t.push([d1, r[i1].value, species.color]);
+
+
+              }
+              var lastDate1 = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+              //add one minute to the start time and set it 0
+              t.push([lastDate1, 0, species.color]);
+
+              me.drawGraph(species, t, 'environment_history', sdate, edate);
+            } else if (messageType === 'population_history') {
+              for (var i2 = 0; i2 < r.length; i2++) {
+                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
+//                console.log('new date', moment(r[i2].timestamp).valueOf());
+                if (r[i2] === null) {
+                  console.log('null population at: ', i2);
                 }
+                t.push([d2, r[i2].population, species.color]);
+              }
+
+              var lastDate2 = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+              //add one minute to the start time and set it 0
+              t.push([lastDate2, 0, species.color]);
+
+              me.drawGraph(species, t, 'population_history', sdate, edate);
+
+            }
 
 
-                this.addHistoryGraph(species, habitatIndex, sdate, edate, message, type);
-            },
-            updateAllGraphs: function () {
-                for (var i = 0; i < this.selectedItems.length; i++) {
-                    var species = this.selectedItems[i];
-                    if( species.index >= 11 ) {
-                        this.updateGraph(species,'environment_history');
-                    } else {
-                        this.updateGraph(species,'population_history');
-                    }
+          } else {
+            //zero results
+            var popFirstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+            //add one minute to the start time and set it 0
+            t.push([popFirstDate, 0, species.color]);
 
-                }
-            },
+            var popLastDate = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+            //add one minute to the start time and set it 0
+            t.push([popLastDate, 0, species.color]);
 
-            addEnvGraph: function (env, habitatIndex, sdate, edate) {
-                var me = this;
+            me.drawGraph(species, t, messageType, sdate, edate);
 
-            },
-            addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
-                var me = this;
-                var messageType = type;
-                console.log(JSON.stringify(message));
-                this.$.nutellaConn.nutella.net.request(type, message, function (response) {
-                    var r = response;
-                    console.log('response: ', r);
-                    if(r.length > 0 ) {
-                        var t = [
-
-                            [{label: 'Days', type: 'date'}, {label: 'Counts', type: 'number'}]
+          }
+        });
 
 
-                        ];
-                        if (messageType === 'environment_history') {
-                            if (species.index === 0) {
-                                species.index = 11;
-                            } else if (species.index === 1) {
-                                species.index = 12;
-//                            } else if (species.index === 2) {
-                                species.index = 13;
-                            }
-                            for (var i1 = 0; i1 < r.length; i1++) {
-                                //t.push([r[i].timestamp, r[i].population]);
-                                // var d = moment("/Date(" + r[i].timestamp + ")/").isocalendar();
-                                var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
+      },
+      drawGraph: function (species, data, type, to, from) {
+        var foundGraphs = this.graphs.filter(function (el) {
+          return (el.index === species.index);
+        });
 
-
-                                console.log('ENV date', moment(r[i1].timestamp).valueOf());
-
-                                t.push([d1, r[i1].value]);
-
-
-                            }
-                            me.drawGraph(species,t,'environment_history', sdate, edate);
-                        } else if (messageType === 'population_history') {
-                            for (var i2 = 0; i2 < r.length; i2++) {
-                                var d2 = 'Date(' +  moment(r[i2].timestamp).valueOf() + ')';
-                                console.log('new date', moment(r[i2].timestamp).valueOf());
-                                if (r[i2] === null) {
-                                    console.log('null population at: ', i2);
-                                }
-                                t.push([d2, r[i2].population]);
-                            }
-
-                            me.drawGraph(species,t,'population_history', sdate, edate);
-
-                        }
-                    } else {
-                        this.showAlert('The query return 0 results');
-                    }
-                });
-
-
-            },
-            drawGraph: function(species, data, type, to, from) {
-                var foundGraphs = this.graphs.filter(function (el) {
-                    return (el.index === species.index);
-                });
-
-                //previous
-                if( foundGraphs.length > 0 ) {
-                    var oldGraph = foundGraphs[0];
-                    oldGraph.data = data;
-                    oldGraph.options = this.chartOptions;
-                    oldGraph.options.hAxis.minValue = new Date(moment(from).valueOf());
-                    oldGraph.options.hAxis.maxValue = new Date(moment(to).valueOf());
-                    oldGraph.options.viewWindow.min = new Date(moment(from).valueOf());
-                    oldGraph.options.viewWindow.max = new Date(moment(to).valueOf());
-                    this.notifyPath('graphs.data', this.graphs);
-                    this.redrawChart(oldGraph);
-                    console.log('updated graph');
-                } else {
-                    var g = {index: species.index, data: data, imgUrl: species.imgUrl};
-                    g.options = this.chartOptions;
-                    g.options.hAxis.minValue = new Date(moment(from).valueOf());
-                    g.options.hAxis.maxValue = new Date(moment(to).valueOf());
-                    g.options.viewWindow.min = new Date(moment(from).valueOf());
-                    g.options.viewWindow.max = new Date(moment(to).valueOf());
-                    this.push('graphs', g);
-                    console.log('pushed graph');
-                }
-            },
-            redrawChart: function (graph) {
-                var chartId = this.chartName(graph.index);
-                var chart = document.getElementById(chartId);
-                chart.options = graph.options;
-                chart.data = graph.data;
-                chart.drawChart();
-            },
-            connectedChanged: function (newValue, oldValue) {
-                var me = this;
+        var min = new Date(moment(from).subtract(1, 'minute').valueOf());
+        var max = new Date(moment(to).add(1, 'minute').valueOf());
+        //previous
+        if (foundGraphs.length > 0) {
+          var oldGraph = foundGraphs[0];
+          oldGraph.data = data;
+          oldGraph.options = this.chartOptions;
+          oldGraph.options.hAxis.minValue = min;
+          oldGraph.options.hAxis.maxValue = max;
+          oldGraph.options.viewWindow.min = min;
+          oldGraph.options.viewWindow.max = max;
+          this.notifyPath('graphs.data', this.graphs);
+          this.redrawChart(oldGraph);
+          console.log('updated graph');
+        } else {
+          var g = {index: species.index, data: data, imgUrl: species.imgUrl};
+          g.options = this.chartOptions;
+          g.options.hAxis.minValue = min;
+          g.options.hAxis.maxValue = max;
+          g.options.viewWindow.min = min;
+          g.options.viewWindow.max = max;
+          this.push('graphs', g);
+          console.log('pushed graph');
+        }
+      },
+      redrawChart: function (graph) {
+        var chartId = this.chartName(graph.index);
+        var chart = document.getElementById(chartId);
+        chart.options = graph.options;
+        chart.data = graph.data;
+        chart.drawChart();
+      },
+      connectedChanged: function (newValue, oldValue) {
+        var me = this;
 //                console.log('connected changed', newValue, oldValue);
-                if (newValue === true) {
-                    this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
-                        if (r !== undefined) {
-                            me.buttonSelectors = r.habitatItems;
+        if (newValue === true) {
+          this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
+            if (r !== undefined) {
+              me.buttonSelectors = r.habitatItems;
 
-                            var start = [{
-                                'items': [],
-                                'name': 'Habitat ?  ',
-                                'index': -1
-                            }];
-                            me.toggleSelectors = start.concat(r.habitats);
+              var start = [{
+                'items': [],
+                'name': 'Habitat ?  ',
+                'index': -1
+              }];
+              me.toggleSelectors = start.concat(r.habitats);
 //                            console.log('MASTER CONFIG FETCHED');
 
-                        }
-
-                    });
-                }
-            },
-            ready: function () {
-                this.startDate = new Date();
-                this.endDate = this.startDate;
-                this.selectedItems = [];
-                this.buttonSelectors = [];
-                this.toggleSelectors = [];
-                this.graphs = [];
-                this.envGraphs = [];
-
-            },
-            chartName: function (index) {
-                console.log('graph ' + index);
-                return 'chart' + index;
             }
-        });
-    </script>
+
+          });
+        }
+      },
+      ready: function () {
+        this.startDate = new Date();
+        this.endDate = this.startDate;
+        this.selectedItems = [];
+        this.buttonSelectors = [];
+        this.toggleSelectors = [];
+        this.graphs = [];
+        this.envEventHistories = [];
+
+      },
+      chartName: function (index) {
+        console.log('graph ' + index);
+        return 'chart' + index;
+      }
+    });
+  </script>
 </dom-module>

@@ -1,6 +1,7 @@
 
 var NUTELLA = require('nutella_lib');
 var masterConfiguration = require('./master_configuration.json');
+var masterConfigurationTest = require('./master_configuration_test.json');
 var simulatorConfiguration;
 //var simulatorConfiguration = require('./simulator_configuration.json');
 
@@ -23,6 +24,11 @@ for (var i = 0; i < masterConfiguration.habitats.length; i++) {
 nutella.net.handle_requests('master_configuration', function(message, from) {
     console.log('MasterConfiguration Requested');
     return masterConfiguration;
+});
+
+nutella.net.handle_requests('master_configuration_test', function(message, from) {
+    console.log('MasterConfiguration Test Requested');
+    return masterConfigurationTest;
 });
 
 nutella.net.handle_requests('simulator_configuration', function(message, from) {

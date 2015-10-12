@@ -43,8 +43,8 @@
         }
 
         .vcontainer {
-        @apply(- -layout-horizontal);
-        @apply(- -layout-center);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
         }
 
         paper-icon-button[toggles].selector {
@@ -52,21 +52,26 @@
             padding: 0px;
             height: 45px;
             width: 45px;
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         paper-icon-button[toggles] {
             transition: background-color 0.3s;
-
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         paper-icon-button[toggles][active] {
-            background-color: rgba(255, 233, 33, 0.25);
-            border-radius: 25px;
+            background-color: #e8e8e8;
+            border-radius: 20px;
+            border: 1px solid #e8e8e8;
         }
 
         paper-icon-button[toggles][disabled] {
             opacity: 0.25;
-            border-radius: 25px;
+            border-radius: 20px;
+            border: 1px solid white;
         }
 
         .spacer {
@@ -156,10 +161,9 @@
 //                console.log('toggle tapped');
                 if (this.currentToggle !== undefined) {
 
-                    if( this.currentToggle.index === -1) {
-                        var index = this.toggleSelectors.indexOf(this.currentToggle);
-                        this.splice('toggleSelectors', index, 1);
-                    }
+//                    if( this.currentToggle.index === -1) {
+//                        this.shift('toggleSelectors');
+//                    }
 
                     //clear all the selections
                     for (var i = 0; i < this.selectedItems.length; i++) {
@@ -183,7 +187,7 @@
                     } else {
                         //restarts numbering
                         this.currentToggle = this.findToggle(0);
-                        this.disableButtons(undefined);
+                        this.disableButtons(this.findToggle(0).items);
                     }
 
                 }
@@ -196,7 +200,7 @@
                 }
             },
             disableButtons: function (buttonIndexes) {
-                if (buttonIndexes === undefined) {
+                if (buttonIndexes === undefined || buttonIndexes.length === 0) {
                     //disable all array
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                     for (var i = 0; i < buttons.length; i++) {
@@ -238,28 +242,29 @@
                 }
             },
             switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
-
-                //do the buttons
-                this.selectedItems = [];
-                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                for (var i = 0; i < buttons.length; i++) {
-                    var b = buttons[i];
-                    if (buttonIndexes.lastIndexOf(i) !== -1) {
-                        b.disabled = false;
-                        b.active = true;
-                        this.push('selectedItems', this.buttonSelectors[i]);
-                    } else {
-                        b.active = false;
-                        b.disabled = true;
-                    }
-
-                }
-
                 //do the toggle
                 var toggle = this.findToggle(toggleIndex);
                 this.currentToggle = toggle;
 
+                this.disableButtons(this.currentToggle.items);
 
+                //do the buttons
+                this.selectedItems = [];
+
+                if (buttonIndexes.length > 0) {
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        if (buttonIndexes.lastIndexOf(i) !== -1) {
+                            //b.disabled = false;
+                            b.active = true;
+                            this.push('selectedItems', this.buttonSelectors[i]);
+                        } else {
+                            b.active = false;
+                            //b.disabled = true;
+                        }
+                    }
+                }
             },
             hasMaxSelections: function () {
 

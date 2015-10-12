@@ -8,7 +8,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
-const forceNewDB = false; // for debugging purposes. set true to wipe DB.
+const forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 // Stores simulation history as an array of objects
 
@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.8.2");
+console.log("History version 0.9.2");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -28,17 +28,18 @@ history.load(function(){
 // history. 
 //
 
+
  if (!history.hasOwnProperty('states') || forceNewDB) {
 
       history['states'] = [];
       history['states'][0] = {timestamp:0, populations:[], environments:[]};
       history['states'][0]['populations'] = [
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0,0]
+        [0,.5,.5,0,0,10,.5,0,.5,10,10],
+        [1,0,0,0,10,10,1,1,.5,0,0],
+        [0,.5,1,.5,0,10,1,0,0,0,10],
+        [1,0,0,0,10,10,0,1,.5,0,10]
       ];
-      history['states'][0]['environments'] = [ [0,0,0],[0,0,0],[0,0,0],[0,0,0] ];
+      history['states'][0]['environments'] = [ [20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1] ];
       history['species_events'] = [];
       history['environmental_events'] = [];
 //  when the configuration bot is ready, uncomment the following and nest everything inside of the
@@ -66,7 +67,7 @@ history.load(function(){
 //      The history bot handles four kinds of requests:
 //      1. population_history ({habitat, species, from, to})
 //      2. environment_history ({habitat, from, to})
-//      3. environmental_events_history ({habitat, environmental_variable, from, to})
+//      3. environmental_events_history ({habitat, environmental_variable, species, from, to})
 //      4. species_events_history ({habitat, species, from, to})
 //
 //      note: 'from' and 'to' fields are optional, defaulting to 0 and now, respectively.
@@ -82,42 +83,62 @@ history.load(function(){
 //
 
 
-  function interpolate(A,n,arg) {
+  function interpolate(A,n,arg,beginning,ending) {
 
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //
-
-  if (A.length < n) return(A);
-
-  var B = [];
-
-  //
-  // the first and last points from A are copied directly to B. they start and end together.
+  // need parameter validation code here
   //
 
-  B[0] = A[0];
-  B[n-1] = A[A.length-1];
-//
-//
-//
-  var B_index = 1;
-  var interval = (A[A.length-1]['timestamp']-A[0]['timestamp']) / (n-1);
-  var new_time = A[0]['timestamp'] + B_index * interval;
-  for (i=1; i<A.length; i++) {
-    while (A[i]['timestamp'] >= new_time && B_index < (n-1)){
-                    B[B_index] = {};
-                    B[B_index]['timestamp'] = new_time;
-                    B[B_index][arg] =
-                                    A[i-1][arg] +
-                                    (A[i][arg] - A[i-1][arg]) *
-                                    (new_time - A[i-1]['timestamp']) / (A[i]['timestamp'] - A[i-1]['timestamp']);
-                    B_index++;
-                    new_time = A[0]['timestamp'] + B_index * interval;
+    var B = [];
+
+  //
+  // 
+  //
+    var interval = (ending-beginning) / (n-1);
+    console.log('beginning: ' + beginning + ' ending: ' + ending + ' interval: ' + interval);
+    for (var j=0; j<n; j++) {
+      B[j] = {};
+      B[j]['timestamp'] = Number(beginning) + j * interval; 
+      console.log(' timestamp = ' + B[j]['timestamp']);
     }
+
+    var A_index=1;
+    var B_index=0;
+
+
+    while (B[B_index]['timestamp'] < A[0]['timestamp']) {B[B_index][arg] = 0; B_index++;};
+
+    while (A_index <= A.length-1) {
+
+      if (B[B_index]['timestamp'] == A[A_index]['timestamp']) {
+        B[B_index][arg] = A[A_index][arg];
+        B_index++; A_index++;
+      } 
+
+      else 
+
+      if (B[B_index]['timestamp'] < A[A_index]['timestamp']) {
+            B[B_index][arg] = Number(A[A_index-1][arg]) +
+                  (A[A_index][arg] - A[A_index-1][arg]) *
+                  (B[B_index]['timestamp'] - A[A_index-1]['timestamp']) / (A[A_index]['timestamp'] - A[A_index-1]['timestamp']);
+            B_index++;
+      }
+
+      else
+
+      {console.log ('got here 2  A_index: ' + A_index + '  B_index: ' + B_index); do {A_index++;} while ((A_index<=A.length-1) && (A[A_index]['timestamp'] < B[B_index]['timestamp']));}
+    
+    }
+    console.log (A_index + '  ' + B_index);
+    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
+
+    return (B);
   }
-  return(B);
-}
+
+
+  
 
 
 //
@@ -138,7 +159,7 @@ history.load(function(){
 //
 
 nutella.net.handle_requests('population_history', function(JSONmessage, from) {
-        var message = JSONmessage;
+        var message = deepCopy(JSONmessage);
 //
 //      if missing habitat or species parameters, return empty list
 //
@@ -167,7 +188,7 @@ nutella.net.handle_requests('population_history', function(JSONmessage, from) {
         if (message['points'] == '') return (h);
         if (message['points'] < 2) return ([]);
         if (message['points'] > history.length-1) return(h);
-        return (interpolate(h,message['points'],'population'));
+        return (interpolate(h,message['points'],'population',message['from'],message['to']));
 
     });
 
@@ -224,7 +245,7 @@ nutella.net.handle_requests('environment_history', function(JSONmessage, from) {
         if (message['points'] == '') return (h);
         if (message['points'] < 2) return ([]);
         if (message['points'] > history.length-1) return(h);
-        return (interpolate(h,message['points'],'value'));
+        return (interpolate(h,message['points'],'value',message['from'],message['to']));
     });
 
 
@@ -319,7 +340,7 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 //
 //          returns the most recent state (support restart in case of failure). used by simulation bot
 
-nutella.net.handle_requests('last_state', function(JSONmessage, from) {
+nutella.net.handle_requests('last_state',function(JSONmessage, from) {
         return (history['states'][history['states'].length-1]);
 });
 
@@ -343,7 +364,7 @@ nutella.net.handle_requests('last_state', function(JSONmessage, from) {
 //                          [0,0,0,0,0,0,0,0,0,0],
 //                          [0,0,0,0,0,0,0,0,0,0]
 //                      ],
-//                     environments: [ [0,1,1],[1,0,3],[2,1,0],[1,3,1] ]
+//                     environments: [ [20,.8,.4,-1],[20,.8,.4,-1],[20,.8,.4,-1],[20,.8,.4,-1] ]
 //          }
 
 //          appends population_update to history
@@ -372,8 +393,8 @@ nutella.net.subscribe('species_event', function(JSONmessage, from) {
 });
 
 // channel: environmental_event   [DRAFT]
-//  message = {habitat: 0, action: <event>}  <event> := "warming" | "pipeCollapse" | "plasterFall"
-//  
+//  message = {habitat: 0, action: <event>, species: 2}  <event> := "warming" | "pipeCollapse" | "plasterFall" | "invasion"
+//  third parameter used only when event type=invasion
 //  plasterFalls for the future; would allow for more brick area
 //
 //
@@ -397,3 +418,14 @@ nutella.net.subscribe('force_state', function(JSONmessage, from) {
 
 
 }); // end history.load();
+
+function deepCopy(oldObj) {
+    var newObj = oldObj;
+    if (oldObj && typeof oldObj === 'object') {
+        newObj = Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+        for (var i in oldObj) {
+            newObj[i] = deepCopy(oldObj[i]);
+        }
+    }
+    return newObj;
+}
