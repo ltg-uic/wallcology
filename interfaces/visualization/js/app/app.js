@@ -163,7 +163,6 @@ function Last_State_Handler( response )
 function Species_Event_Handler( message, from )
 {
     // ['increase','decrease','colonize','kill'];
-    console.log("Species_Event_Handler");
     State_Update_Handler(message, from);
 
 }
@@ -172,7 +171,7 @@ function Species_Event_Handler( message, from )
 function State_Update_Handler(message, from)
 {
 
-    console.log('THE MESSAGE', message, "@", Date(message["timestamp"]));
+    console.log('THE MESSAGE ', message, Date(message["timestamp"]));
 
     // Send messages to Unity
     SetThermometerText( message['environments'][wallscopeID-1][0] );  // Set the wallscope Temperature
@@ -198,13 +197,12 @@ function UpdatePopulations(population)
 
     for (var i = 0; i < population.length; i++) {
         var count = population[i]
-        console.log("\tcount is", count);
+
         var delay = count % 2;
         count = (count < 1 && count > 0)? Math.round(count * 3) : Math.round(count);
-        console.log("\t", i, "Now count is..", count);
+        RequestPopulationCount(i);
+        console.log("\t", i, count, SpeciesCounter[i]);
 
-        // RequestPopulationCount(i.toString());
-        // console.log("\tCount and SpeciesCounter[i]", i, count,  SpeciesCounter[i] );
         switch(i)
         {
             case 0:
@@ -217,15 +215,12 @@ function UpdatePopulations(population)
                 if ( count < SpeciesCounter[i] ) {
 
                     while ( count < SpeciesCounter[i] ) {
-                        console.log("\tKill it!", i, count,  SpeciesCounter[i] );
                         KillCritter(i);
                         SpeciesCounter[i]--;
                     }
-        //
                 } else if ( count > SpeciesCounter[i] ) {
 
                     while ( count > SpeciesCounter[i] ) {
-                        console.log("\tSpawn it!", i, count,  SpeciesCounter[i] );
                         // SpeciesCounter[i]++;
                         SpawnCritter(i);
                     }
@@ -299,7 +294,7 @@ function SetThermometerText (temp)
 // id is assumed to be an integer
 function SpawnCritter ( id )
 {
-    console.log("Lets make a ", typeof id, "!");
+    // console.log("Lets make a ", typeof id, "!");
     unity3d.getUnity().SendMessage( "WallScope", "SpawnCritter", id );
     SpeciesCounter[id]++;
     console.log("We have", SpeciesCounter[id], "of species", id, "now");
@@ -309,7 +304,7 @@ function KillCritter ( id )
 {
     console.log("Killing", id, "softly!");
     console.log("NOT IMPLEMENTED YET!");
-    // unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
+    unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
     SpeciesCounter[i]--;
 }
 
