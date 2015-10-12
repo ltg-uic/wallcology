@@ -1,0 +1,27 @@
+{
+	"folders":
+	[
+		{
+			"path": "build"
+		},
+		{
+			"path": "css"
+		},
+		{
+			"path": "js"
+		},
+		{
+			"name": "Unity Scripts",
+			"path": "unity/Simulation/Assets/Scripts"
+		},
+		{
+			"path": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots"
+		},
+		{
+			"path": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces"
+		},
+		{
+			"path": "/Users/krbalmryde/Library/Logs/Unity"
+		}
+	]
+}
