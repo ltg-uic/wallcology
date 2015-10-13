@@ -8,7 +8,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
-const forceNewDB = true; // for debugging purposes. set true to wipe DB.
+const forceNewDB = false; // for debugging purposes. set true to wipe DB.
 
 // Stores simulation history as an array of objects
 
@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.2");
+console.log("History version 0.9.3");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -39,7 +39,7 @@ history.load(function(){
         [0,.5,1,.5,0,10,1,0,0,0,10],
         [1,0,0,0,10,10,0,1,.5,0,10]
       ];
-      history['states'][0]['environments'] = [ [20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1],[20,1,.4,-1] ];
+      history['states'][0]['environments'] = [ [-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1] ];
       history['species_events'] = [];
       history['environmental_events'] = [];
 //  when the configuration bot is ready, uncomment the following and nest everything inside of the
@@ -91,18 +91,15 @@ history.load(function(){
   // need parameter validation code here
   //
 
-    var B = [];
+  var B = [];
 
-  //
-  // 
-  //
     var interval = (ending-beginning) / (n-1);
-    console.log('beginning: ' + beginning + ' ending: ' + ending + ' interval: ' + interval);
     for (var j=0; j<n; j++) {
       B[j] = {};
-      B[j]['timestamp'] = Number(beginning) + j * interval; 
-      console.log(' timestamp = ' + B[j]['timestamp']);
+      B[j]['timestamp'] = Number(beginning) + j * interval; //doesn't work with Number (!)
     }
+
+  if (A.length < 5) {for(var j=0; j<n; j++) B[j][arg] = Number(0); return(B);}
 
     var A_index=1;
     var B_index=0;
@@ -239,7 +236,7 @@ nutella.net.handle_requests('environment_history', function(JSONmessage, from) {
             }).map(function(element) {
                 return({
                   timestamp: element['timestamp'],
-                  value: element['environments'][message.habitat][message.environmental_variable]});
+                  value: Math.abs(element['environments'][message.habitat][message.environmental_variable])});
               });
         if (!(message.hasOwnProperty('points'))) return(h);
         if (message['points'] == '') return (h);
@@ -257,7 +254,7 @@ nutella.net.handle_requests('environment_history', function(JSONmessage, from) {
 //                      to: '200'
 //                    }
 //
-//          returns an array of {timestamp: 5858489, action: "warmer"}
+//          returns an array of {timestamp: 5858489, action: "warmer"}  action = warming
 //          from time 'from' to time 'to' for that habitat
 
 
@@ -408,13 +405,6 @@ nutella.net.subscribe('environmental_event', function(JSONmessage, from) {
 });
 
 //this for tony's configuration app!
-
-nutella.net.subscribe('force_state', function(JSONmessage, from) {
-    var message=JSONmessage;
-    if (message.action == 'reset') {history['state'] = []; history['state'][0]=message.state;}
-    if (message.action == 'push') history['state'].push(message.state);
-    history.save();
-});
 
 
 }); // end history.load();

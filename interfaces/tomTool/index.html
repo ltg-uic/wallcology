@@ -64,13 +64,21 @@
 		document.getElementById('result').value=s;
 	});">
 
+	<input type=button name='warming' value='warming' onClick="
+
+	nutella.net.publish('environmental_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, action: 'warming'});">
+
+	<input type=button name='pipeCollapse' value='pipeCollapse' onClick="
+
+	nutella.net.publish('environmental_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, action: 'pipeCollapse'});">
+
+	<input type=button name='invastion' value='invasion' onClick="
+
+	nutella.net.publish('environmental_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, action: 'invasion'});"><br>
 
 
 
-
-
-
-	<textarea id="result" rows="10" cols="80"></textarea>
+	<textarea id="result" rows="40" cols="80"></textarea>
 
 </body>
 </html>

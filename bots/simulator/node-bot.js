@@ -190,7 +190,7 @@ const predatorIndex = [ [1,8],
 
 
 var state; 
-console.log("Simulator version 0.9.2");
+console.log("Simulator version 0.9.3");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
@@ -223,7 +223,7 @@ function init() {
         })
 
     // channel: environmental_event   [DRAFT]
-    //  message = {habitat: 0, action: <event>, species: 6}  <event> := "warming" | "pipeCollapse" | "plasterFall"
+    //  message = {habitat: 0, action: <event>, species: 6}  <event> := "warming" | "pipeCollapse" | "plasterFall" | "invasion"
     //  
     //  plasterFalls for the future; would allow for more brick area
     //
