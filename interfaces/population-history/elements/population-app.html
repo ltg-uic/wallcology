@@ -63,7 +63,7 @@
 
     </style>
 
-    <nutella-connector connected={{connected}} id="nutellaConn" hostname="localhost" appid="wallcology"
+    <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
                        runid="default"
                        componentid="wallcology_admin"></nutella-connector>
 
@@ -115,7 +115,9 @@
             <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
             </paper-button>
           </div>
+
           <div class="flex nopadding"></div>
+
           <div class="rightspacer">
             <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
             </paper-button>
@@ -371,21 +373,39 @@
               },
             },
             hAxis: {
-              gridlines: {
-                count: -1,
-                units: {
-                  days: {format: ['M/d']},
-                  hours: {format: ['hh:mm a']},
-
-                }
-              },
-              minorGridlines: {
-                units: {
-                  hours: {format: ['hh:mm a']},
-                  minutes: {format: ['hh:mm a']}
-                }
+              textPosition: 'none'
+//              gridlines: {
+//                count: -1,
+//                units: {
+//                  days: {format: ['M/d']},
+//                  hours: {format: ['hh:mm a']},
+//
+//                }
+//              },
+//              minorGridlines: {
+//                units: {
+//                  hours: {format: ['hh:mm a']},
+//                  minutes: {format: ['hh:mm a']}
+//                }
               }
             }
+        },
+        gridlines: {
+          type: Object,
+          notify: false,
+          value: {
+            count: -1,
+            units: {
+              days: {format: ['M/d']},
+              hours: {format: ['hh:mm a']},
+
+            }
+          }
+        },
+        minorGridlines: {
+          units: {
+            hours: {format: ['hh:mm a']},
+            minutes: {format: ['hh:mm a']}
           }
         },
         startDate: {
@@ -718,21 +738,39 @@
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
           oldGraph.options.hAxis.textPosition = 'none';
+          oldGraph.options.hAxis.gridlines = {};
+          oldGraph.options.hAxis.minorGridlines = {};
 //          oldGraph.options.vAxis.minValue = 0;
-          oldGraph.options.viewWindow.min = min;
-          oldGraph.options.viewWindow.max = max;
+//          oldGraph.options.hAxis.viewWindow.min = min;
+//          oldGraph.options.hAxis.viewWindow.max = max;
           this.notifyPath('graphs.data', this.graphs);
           this.redrawChart(oldGraph);
           console.log('updated graph');
         } else {
+
+          for(var j = 0; j < this.graphs.length; j++) {
+            var previousGraph = this.graphs[j];
+            previousGraph.options = this.chartOptions;
+            previousGraph.options.hAxis.minValue = min;
+            previousGraph.options.hAxis.maxValue = max;
+            previousGraph.options.hAxis.gridlines = {};
+            previousGraph.options.hAxis.minorGridlines = {};
+            previousGraph.options.hAxis.textPosition = 'none';
+          }
+
+          this.notifyPath('graphs.data', this.graphs);
+
+
           var g = {index: species.index, data: data, imgUrl: species.imgUrl};
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
-          g.options.hAxis.textPosition = 'none';
+          g.options.hAxis.gridlines = this.gridlines;
+          g.options.hAxis.minorGridlines = this.minorGridlines;
+          g.options.hAxis.textPosition = 'out';
 //          g.options.vAxis.minValue = 0;
-          g.options.viewWindow.min = min;
-          g.options.viewWindow.max = max;
+//          g.options.hAxis.viewWindow.min = min;
+//          g.options.hAxis.viewWindow.max = max;
           this.push('graphs', g);
           console.log('pushed graph');
         }

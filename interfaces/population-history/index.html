@@ -760,7 +760,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style include="shared-styles"></style>
     <style>:host {}google-chart {height: 150px;width: 100%;background-color: #ffffff;padding: 0px;margin: 0px;}paper-button.colorful {color: white;background: #006699;margin: 0px;@apply(--shadow-elevation-0dp);}iron-icon {width: 60px;height: 60px;margin-left: 5px;}.dateSpacer {height: 80px;width: 80px;padding: 0px;margin: 0px;}.leftspacer {margin-left: 70px;}.rightspacer {margin-right: 30px;}.rightpadder {margin-right: 0px;}.nopadding {padding: 0px;margin: 0px;}.startdateSpacer {padding: 0px;margin: 200px;width: 0px;}</style>
 
-    <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="localhost" appid="wallcology" runid="default" componentid="wallcology_admin"></nutella-connector>
+    <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology" runid="default" componentid="wallcology_admin"></nutella-connector>
 
     <div id="topBar" class="vertical-section-container">
       <div class="vertical-section">
@@ -805,7 +805,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
             </paper-button>
           </div>
+
           <div class="flex nopadding"></div>
+
           <div class="rightspacer">
             <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
             </paper-button>
