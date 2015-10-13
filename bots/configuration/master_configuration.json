@@ -4,11 +4,17 @@
       "items": [
         0,
         1,
+        2,
+        3,
         4,
         5,
+        6,
+        7,
+        8,
+        9,
+        10,
         11,
-        12,
-        13        
+        12         
       ],
       "name": "Habitat 1",
       "index": 0,
@@ -18,12 +24,19 @@
     },
     {
       "items": [
-        0,
+    	0,
         1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
         10,
         11,
-        12,
-        13
+        12
       ],
       "name": "Habitat 2",
       "index": 1,
@@ -33,13 +46,19 @@
     },
     {
       "items": [
-        0,
+   		0,
         1,
+        2,
+        3,
+        4,
+        5,
+        6,
         7,
+        8,
         9,
+        10,
         11,
-        12,
-        13
+        12
       ],
       "name": "Habitat 3",
       "index": 2,
@@ -50,12 +69,18 @@
     {
       "items": [
         0,
+        1,
+        2,
+        3,
+        4,
         5,
         6,
+        7,
+        8,
+        9,
         10,
         11,
-        12,
-        13
+        12
       ],
       "name": "Habitat 4",
       "index": 3,
@@ -121,20 +146,15 @@
       "color": "#68734F"
     },
     {
-      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_brick.svg",
+      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
       "index": 11,
-      "color": "#F44336"
-        
+      "color": "#FF5722"
     },
     {
       "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
       "index": 12,
       "color": "#795548"
-    },
-    {
-      "imgUrl": "http://ltg.cs.uic.edu/WC/icons/env_temp.svg",
-      "index": 13,
-      "color": "#FF5722"
     }
+ 
   ]
 }
