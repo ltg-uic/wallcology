@@ -193,7 +193,7 @@ const predatorIndex = [ [1,8],
 
 
 var state; 
-console.log("Simulator version 0.9.4");
+console.log("Simulator version 0.9.5");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
@@ -387,20 +387,20 @@ function cycleState () {
         }
         nutella.net.publish ('state_update',tempState); 
 // convert history parameters to animation parameters
-
+        var tempState2 = deepCopy(tempState);
         for (var i=0; i<state['populations'].length; i++) {
             // predators
-            tempState['populations'][i][1] = Math.round(tempState['populations'][i][1]/50);
-            tempState['populations'][i][3] = Math.round(tempState['populations'][i][3]/50);
-            tempState['populations'][i][8] = Math.round(tempState['populations'][i][8]/50);
+            tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/50);
+            tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/50);
+            tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/50);
             // herbivores
-            tempState['populations'][i][0] = Math.round(tempState['populations'][i][0]/50);
-            tempState['populations'][i][2] = Math.round(tempState['populations'][i][2]/50);
-            tempState['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
-            tempState['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
+            tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/50);
+            tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/50);
+            tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
+            tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
 
         }
-        nutella.net.publish ('animation_state_update',tempState);
+        nutella.net.publish ('animation_state_update',tempState2);
     }
     broadcastCount++;
     if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
