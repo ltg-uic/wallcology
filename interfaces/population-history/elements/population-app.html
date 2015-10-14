@@ -1,8 +1,5 @@
-<html>
-<head>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js" charset="utf-8"></script>
-</head>
 
+<!--<link rel="import" href="./shared-styles/shared-styles.html">-->
 <dom-module id="population-app">
   <template>
     <style include="shared-styles"></style>
@@ -72,7 +69,7 @@
         <div class="horizontal-section-container">
 
           <div class="horizontal-section">
-            <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
+            <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
                                  max-selections="13" selected-items="{{selectedItems}}"
                                  current-toggle="{{currentToggle}}"></wallcology-selector>
           </div>
@@ -88,8 +85,7 @@
         <div class="vertical-section center">
 
           <div class="horizontal layout center">
-
-            <iron-icon src="{{item.imgUrl}}" style="width: 60px;"></iron-icon>
+            <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
 
             <div class="center flex rightpadder">
               <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
@@ -173,7 +169,9 @@
         currentToggle: {
           type: Object,
           notify: true,
-          value: {},
+          value: function() {
+            return {};
+          },
           observer: 'currentToggleChanged'
         },
         toggleSelectors: {
@@ -275,67 +273,81 @@
           notify: true,
           value: [
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
               'index': 0,
               'color': '#FFC91B'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
               'index': 1,
               'color': '#5A6372'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
               'index': 2,
               'color': '#FFDD00'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
               'index': 3,
               'color': '#2C4721'
             },
             {
-              'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_04.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
+
               'index': 4,
               'color': '#502B6E'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
               'index': 5,
               'color': '#99cc33'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
               'index': 6,
               'color': '#8975B5'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
               'index': 7,
               'color': '#FAAA19'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
               'index': 8,
               'color': '#899C7C'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
               'index': 9,
               'color': '#4AB6C8'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
               'index': 10,
               'color': '#68734F'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
               'index': 11,
               'color': '#FF5722'
             },
             {
-              'imgUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipes.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
               'index': 12,
               'color': '#795548'
             }
@@ -363,10 +375,11 @@
             viewWindow: {},
             enableInteractivity: false,
             animation: {
-              'startup': true, duration: 1500,
-              easing: 'inAndOut'
+              'startup': true, duration: 1000,
+            //  easing: 'inAndOut'
+              easing: 'out'
             },
-            chartArea: {left: 35, top: 10, right: 0, bottom: 10, width: '93%', height: '75%'},
+            chartArea: {left: 50, top: 10, right: 0, bottom: 10, width: '93%', height: '75%'},
             vAxis: {
               viewWindow:{
                 min:0
@@ -737,9 +750,9 @@
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
-          oldGraph.options.hAxis.textPosition = 'none';
-          oldGraph.options.hAxis.gridlines = {};
-          oldGraph.options.hAxis.minorGridlines = {};
+          oldGraph.options.hAxis.textPosition = 'out';
+          oldGraph.options.hAxis.gridlines = this.gridlines;
+          oldGraph.options.hAxis.minorGridlines = this.minorGridlines;
 //          oldGraph.options.vAxis.minValue = 0;
 //          oldGraph.options.hAxis.viewWindow.min = min;
 //          oldGraph.options.hAxis.viewWindow.max = max;
@@ -748,20 +761,20 @@
           console.log('updated graph');
         } else {
 
-          for(var j = 0; j < this.graphs.length; j++) {
-            var previousGraph = this.graphs[j];
-            previousGraph.options = this.chartOptions;
-            previousGraph.options.hAxis.minValue = min;
-            previousGraph.options.hAxis.maxValue = max;
-            previousGraph.options.hAxis.gridlines = {};
-            previousGraph.options.hAxis.minorGridlines = {};
-            previousGraph.options.hAxis.textPosition = 'none';
-          }
+//          for(var j = 0; j < this.graphs.length; j++) {
+//            var previousGraph = this.graphs[j];
+//            previousGraph.options = this.chartOptions;
+//            previousGraph.options.hAxis.minValue = min;
+//            previousGraph.options.hAxis.maxValue = max;
+//            previousGraph.options.hAxis.gridlines = {};
+//            previousGraph.options.hAxis.minorGridlines = {};
+//            previousGraph.options.hAxis.textPosition = 'none';
+//          }
 
-          this.notifyPath('graphs.data', this.graphs);
+          //this.notifyPath('graphs.data', this.graphs);
 
 
-          var g = {index: species.index, data: data, imgUrl: species.imgUrl};
+          var g = {index: species.index, data: data, highlightUrl: species.highlightUrl};
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
@@ -783,25 +796,25 @@
         chart.drawChart();
       },
       connectedChanged: function (newValue, oldValue) {
-        var me = this;
-//                console.log('connected changed', newValue, oldValue);
-        if (newValue === true) {
-          this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
-            if (r !== undefined) {
-              me.buttonSelectors = r.habitatItems;
-
-              var start = [{
-                'items': [],
-                'name': 'Habitat ?  ',
-                'index': -1
-              }];
-              me.toggleSelectors = start.concat(r.habitats);
-//                            console.log('MASTER CONFIG FETCHED');
-
-            }
-
-          });
-        }
+//        var me = this;
+////                console.log('connected changed', newValue, oldValue);
+//        if (newValue === true) {
+//          this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
+//            if (r !== undefined) {
+//              me.buttonSelectors = r.habitatItems;
+//
+//              var start = [{
+//                'items': [],
+//                'name': 'Habitat ?  ',
+//                'index': -1
+//              }];
+//              me.toggleSelectors = start.concat(r.habitats);
+////                            console.log('MASTER CONFIG FETCHED');
+//
+//            }
+//
+//          });
+//        }
       },
       ready: function () {
         this.startDate = new Date();

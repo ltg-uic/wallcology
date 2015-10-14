@@ -1,85 +1,88 @@
-<!DOCTYPE html>
-<html>
-<head>
+
+    <!--<link href="./bower_components/polymer/polymer.html" rel="import">-->
+    <!--<link href="./bower_components/paper-styles/paper-styles.html" rel="import">-->
+    <!--<link href="./bower_components/paper-styles/color.html" rel="import">-->
+
+
+    <!--<link href="./bower_components/paper-button/paper-button.html" rel="import">-->
+    <!--<link href="./bower_components/paper-icon-button/paper-icon-button.html" rel="import">-->
+    <!--<link href="./bower_components/iron-flex-layout/iron-flex-layout.html" rel="import">-->
+
+    <!--<script type="text/javascript" src="./bower_components/predicates.js/browser/predicates.js"></script>-->
 
 
     <link href="../polymer/polymer.html" rel="import">
-    <!--<link href="./styles/app-theme.html" rel="import">-->
     <link href="../paper-styles/paper-styles.html" rel="import">
+    <link href="../paper-styles/color.html" rel="import">
+
 
     <link href="../paper-button/paper-button.html" rel="import">
     <link href="../paper-icon-button/paper-icon-button.html" rel="import">
 
-    <link href="../iron-flex-layout/iron-flex-layout.html" rel="import">
-
-    <script type="text/javascript" src="../predicates.js/browser/predicates.js"></script>
-
-
-</head>
-
+    <script type="text/javascript" src="predicates.js"></script>
 <dom-module id="wallcology-selector">
-    <style>
-
-        :host {
-
-        }
-
-        .pink {
-            background-color: var(--paper-pink-500);
-        }
-
-        .yellow {
-            background-color: var(--paper-yellow-500);
-        }
-
-        .bug {
-            --iron-icon-height: 45px;
-            --iron-icon-width: 45px;
-        }
-
-        paper-button.colorful {
-            color: white;
-            background: #006699;
-        }
-
-        .vcontainer {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        }
-
-        paper-icon-button[toggles].selector {
-            margin: 0px;
-            padding: 0px;
-            height: 45px;
-            width: 45px;
-            border-radius: 20px;
-            border: 1px solid white;
-        }
-
-        paper-icon-button[toggles] {
-            transition: background-color 0.3s;
-            border-radius: 20px;
-            border: 1px solid white;
-        }
-
-        paper-icon-button[toggles][active] {
-            background-color: #e8e8e8;
-            border-radius: 20px;
-            border: 1px solid #e8e8e8;
-        }
-
-        paper-icon-button[toggles][disabled] {
-            opacity: 0.25;
-            border-radius: 20px;
-            border: 1px solid white;
-        }
-
-        .spacer {
-            margin: 5px;
-        }
-
-    </style>
     <template id="layout">
+        <style>
+
+            :host {
+
+            }
+
+            .pink {
+                background-color: var(--paper-pink-500);
+            }
+
+            .yellow {
+                background-color: var(--paper-yellow-500);
+            }
+
+            .bug {
+                --iron-icon-height: 45px;
+                --iron-icon-width: 45px;
+            }
+
+            paper-button.colorful {
+                color: white;
+                background: #006699;
+            }
+
+            .vcontainer {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            }
+
+            paper-icon-button[toggles].selector {
+                margin: 0px;
+                padding: 0px;
+                height: 45px;
+                width: 45px;
+                border: 1px solid white;
+            }
+
+            paper-icon-button[toggles] {
+                transition: background-color 0.3s;
+                border: 1px solid white;
+            }
+
+            paper-icon-button[toggles][active] {
+                /*background-color: #e8e8e8;*/
+                border: 1px solid white;
+            }
+
+            paper-icon-button[toggles][disabled] {
+                opacity: 0.45;
+                border: 1px solid white;
+            }
+
+            paper-button paper-ripple {
+                pointer-events: none;
+            }
+
+            .spacer {
+                margin: 5px;
+            }
+
+        </style>
 
         <div class="horizontal layout">
             <div class="vcontainer spacer">
@@ -88,14 +91,14 @@
             </div>
             <div id="key" class="spacer">
                 <template id="buttonTemplate" is="dom-repeat" items="{{buttonSelectors}}">
-                    <paper-icon-button toggles disabled id="{{index}}" on-tap="buttonTapped" src="{{item.imgUrl}}"
+                    <paper-icon-button toggles disabled id="{{index}}" on-tap="buttonTapped" src="{{item.activeUrl}}"
                                        class="bug selector"></paper-icon-button>
                 </template>
             </div>
         </div>
 
     </template>
-
+</dom-module>
     <script>
         // element registration
         Polymer({
@@ -107,6 +110,7 @@
                 selectedItems: {
                     type: Array,
                     notify: true,
+                    selectedItems: []
                 },
                 maxSelections: {
                     type: Number,
@@ -116,173 +120,19 @@
                 currentToggle: {
                     type: Object,
                     notify: true,
-                    value: {}
+                    value: function() {
+                        return {};
+                    }
                 },
                 toggleSelectors: {
                     type: Array,
                     notify: true,
-                    value: [
-                        {
-                            "items": [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            "name": "Habitat 1",
-                            "index": 0,
-                            "temperature": 0,
-                            "pipelength": 0,
-                            "brickarea": 0
-                        },
-                        {
-                            "items": [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            "name": "Habitat 2",
-                            "index": 1,
-                            "temperature": 0,
-                            "pipelength": 0,
-                            "brickarea": 0
-                        },
-                        {
-                            "items": [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            "name": "Habitat 3",
-                            "index": 2,
-                            "temperature": 0,
-                            "pipelength": 0,
-                            "brickarea": 0
-                        },
-                        {
-                            "items": [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            "name": "Habitat 4",
-                            "index": 3,
-                            "temperature": 0,
-                            "pipelength": 0,
-                            "brickarea": 0
-                        }
-                    ]
+                    value: []
                 },
                 buttonSelectors: {
                     type: Array,
                     notify: true,
-                    value: [
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_00.svg",
-                            "index": 0,
-                            "color": "#FFC91B"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_01.svg",
-                            "index": 1,
-                            "color": "#5A6372"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_02.svg",
-                            "index": 2,
-                            "color": "#FFDD00"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_03.svg",
-                            "index": 3,
-                            "color": "#2C4721"
-                        },
-                        {
-                            "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_04.svg",
-                            "index": 4,
-                            "color": "#502B6E"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_05.svg",
-                            "index": 5,
-                            "color": "#99cc33"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_06.svg",
-                            "index": 6,
-                            "color": "#8975B5"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_07.svg",
-                            "index": 7,
-                            "color": "#FAAA19"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_08.svg",
-                            "index": 8,
-                            "color": "#899C7C"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_09.svg",
-                            "index": 9,
-                            "color": "#4AB6C8"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_10.svg",
-                            "index": 10,
-                            "color": "#68734F"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/env_temp.svg",
-                            "index": 11,
-                            "color": "#FF5722"
-                        },
-                        {
-                            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/env_pipes.svg",
-                            "index": 12,
-                            "color": "#795548"
-                        }
-
-                    ]
+                    value: []
                 }
             },
             observers: [
@@ -348,11 +198,14 @@
 
                 }
             },
+
+
             inactivateButtons: function () {
                 var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                 for (var i = 0; i < buttons.length; i++) {
                     var b = buttons[i];
                     b.active = false;
+                    this.switchIconTo('active', i);
                 }
             },
             disableButtons: function (buttonIndexes) {
@@ -361,6 +214,7 @@
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                     for (var i = 0; i < buttons.length; i++) {
                         var b = buttons[i];
+                        this.switchIconTo('active', i);
                         b.disabled = true;
                     }
                 } else {
@@ -386,15 +240,33 @@
                     var selectedItem = e.model.item;
 
                     if (e.currentTarget.active) {
+                        //make hightlighted
+
+                        var index = e.model.index;
+
+                        this.switchIconTo('highlighted', index);
                         this.push('selectedItems', selectedItem);
                     } else {
-                        var index = this.selectedItems.indexOf(selectedItem);
-                        this.splice('selectedItems', index, 1);
+                        //make active
+
+                        var index = e.model.index;
+
+                        this.switchIconTo('active', index);
+                        this.splice('selectedItems', this.selectedItems.indexOf(selectedItem), 1);
                         console.log('debug');
                     }
                 } else {
                     console.log('TOO MANY SELECTIONS');
                     e.currentTarget.active = false;
+                }
+            },
+            switchIconTo: function(state, index) {
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                var b = buttons[index];
+                if( state === 'active') {
+                    b.src = this.buttonSelectors[index].activeUrl;
+                } else if( state === 'highlighted' ) {
+                    b.src = this.buttonSelectors[index].highlightUrl;
                 }
             },
             switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
@@ -456,9 +328,6 @@
             },
             ready: function () {
                 this.selectedItems = [];
-                this.buttonSelectors = [];
-                this.toggleSelectors = [];
             }
         });
     </script>
-</dom-module>
