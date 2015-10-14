@@ -20,7 +20,7 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.3");
+console.log("History version 0.9.4");
 history.load(function(){
 
 // if there is no history db, initialize it here.
@@ -42,6 +42,25 @@ history.load(function(){
       history['states'][0]['environments'] = [ [-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1] ];
       history['species_events'] = [];
       history['environmental_events'] = [];
+      // convert populations from model values to "wall size" values before publishing
+
+    for (var i=0; i<history['states'][0]['populations'].length; i++) {
+        // predators
+        history['states'][0]['populations'][i][1] *= 100;
+        history['states'][0]['populations'][i][3] *= 100;
+        history['states'][0]['populations'][i][8] *= 100;
+        // herbivores
+        history['states'][0]['populations'][i][0] *= 200;
+        history['states'][0]['populations'][i][2] *= 200;
+        history['states'][0]['populations'][i][6] *= 200;
+        history['states'][0]['populations'][i][7] *= 200;
+        // resources
+        history['states'][0]['populations'][i][4] /= 200;
+        history['states'][0]['populations'][i][5] /= 200;
+        history['states'][0]['populations'][i][9] /= 200;
+        history['states'][0]['populations'][i][10] /= 200;
+    }
+
 //  when the configuration bot is ready, uncomment the following and nest everything inside of the
 //  function response
       // nutella.net.request('initial_state', {}, function(response){
@@ -88,6 +107,8 @@ history.load(function(){
   //
   // we'll build an array B of length n that interpolates the data points in A, then return B
   //
+  // totally inelegant. sorry.
+  //
   // need parameter validation code here
   //
 
@@ -125,10 +146,10 @@ history.load(function(){
 
       else
 
-      {console.log ('got here 2  A_index: ' + A_index + '  B_index: ' + B_index); do {A_index++;} while ((A_index<=A.length-1) && (A[A_index]['timestamp'] < B[B_index]['timestamp']));}
+      {do {A_index++;} while ((A_index<=A.length-1) && (A[A_index]['timestamp'] < B[B_index]['timestamp']));}
     
     }
-    console.log (A_index + '  ' + B_index);
+
     while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
 
     return (B);
@@ -339,6 +360,28 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 
 nutella.net.handle_requests('last_state',function(JSONmessage, from) {
         return (history['states'][history['states'].length-1]);
+});
+
+nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
+        var state = deepCopy(history['states'][history['states'].length-1]);
+//
+    for (var i=0; i<state['populations'].length; i++) {
+        // predators
+        state['populations'][i][1] /= 50;
+        state['populations'][i][3] /= 50;
+        state['populations'][i][8] /= 50;
+        // herbivores
+        state['populations'][i][0] /= 50;
+        state['populations'][i][2] /= 50;
+        state['populations'][i][6] /= 50;
+        state['populations'][i][7] /= 50;
+        // resources
+        state['populations'][i][4] *= 100;
+        state['populations'][i][5] *= 100;
+        state['populations'][i][9] *= 100;
+        state['populations'][i][10] *= 100;
+    }
+        return (state);
 });
 
 

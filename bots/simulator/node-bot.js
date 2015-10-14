@@ -29,6 +29,9 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
+const broadcastFrequency = 15; // every update. increase to "speed up" model
+
+var broadcastCount=0;
 
 //  model constants
 
@@ -190,12 +193,32 @@ const predatorIndex = [ [1,8],
 
 
 var state; 
-console.log("Simulator version 0.9.3");
+console.log("Simulator version 0.9.4");
 setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
         nutella.net.request('last_state', {}, function(message, from) {
         state=JSON.parse(JSON.stringify(message)); //deepCopy(message);
+//
+//  convert from wall values to simulator values
+//
+    for (var i=0; i<state['populations'].length; i++) {
+        // predators
+        state['populations'][i][1] /= 100;
+        state['populations'][i][3] /= 100;
+        state['populations'][i][8] /= 100;
+        // herbivores
+        state['populations'][i][0] /= 200;
+        state['populations'][i][2] /= 200;
+        state['populations'][i][6] /= 200;
+        state['populations'][i][7] /= 200;
+        // resources
+        state['populations'][i][4] *= 200;
+        state['populations'][i][5] *= 200;
+        state['populations'][i][9] *= 200;
+        state['populations'][i][10] *= 200;
+    }
+
         cycleStatesOnSchedule();
     // channel: species_event
     //
@@ -214,9 +237,9 @@ function init() {
                     break;
                 case "insert":
                     state['populations'][message.habitat][message.species] = 0;
-                    if (isResource(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 10;
-                    if (isHerbivore(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 1;
-                    if (isPredator(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = .5;
+                    if (isResource(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = .05;
+                    if (isHerbivore(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 25;
+                    if (isPredator(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 10;
                     break;
                 };
                 cycleState();
@@ -319,10 +342,69 @@ function nextPopulation(h,i) {
 
 
 
+// const resourceIndex = [ [5,10,9], 
+//                         [4,5], 
+//                         [10,5], 
+//                         [4,10,5] 
+//                       ] ; // which indexes in the species array correspond to resources
+
+// const herbivoreIndex =  [   [6,2], 
+//                             [6,7,0], 
+//                             [6,2], 
+//                             [7,0] 
+//                         ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
+
+// const predatorIndex = [ [1,8], 
+//                         [8], 
+//                         [1,3], 
+//                         [8] 
+//                       ]; // ditto
+
+
 // basic simulator cycle. 
 
 function cycleState () {
-    nutella.net.publish ('state_update',state);
+
+// convert simulation parameters to history values
+    if (broadcastCount == 0) {
+        var tempState = deepCopy(state);
+        for (var i=0; i<state['populations'].length; i++) {
+            // predators
+            tempState['populations'][i][1] *= 100;
+            tempState['populations'][i][3] *= 100;
+            tempState['populations'][i][8] *= 100;
+            // herbivores
+            tempState['populations'][i][0] *= 200;
+            tempState['populations'][i][2] *= 200;
+            tempState['populations'][i][6] *= 200;
+            tempState['populations'][i][7] *= 200;
+            // resources
+            tempState['populations'][i][4] /= 200;
+            tempState['populations'][i][5] /= 200;
+            tempState['populations'][i][9] /= 200;
+            tempState['populations'][i][10] /= 200;
+
+        }
+        nutella.net.publish ('state_update',tempState); 
+// convert history parameters to animation parameters
+
+        for (var i=0; i<state['populations'].length; i++) {
+            // predators
+            tempState['populations'][i][1] = Math.round(tempState['populations'][i][1]/50);
+            tempState['populations'][i][3] = Math.round(tempState['populations'][i][3]/50);
+            tempState['populations'][i][8] = Math.round(tempState['populations'][i][8]/50);
+            // herbivores
+            tempState['populations'][i][0] = Math.round(tempState['populations'][i][0]/50);
+            tempState['populations'][i][2] = Math.round(tempState['populations'][i][2]/50);
+            tempState['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
+            tempState['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
+
+        }
+        nutella.net.publish ('animation_state_update',tempState);
+    }
+    broadcastCount++;
+    if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
+
 //    var newState = JSON.parse(JSON.stringify(state));
    var newState = deepCopy(state);
 
@@ -348,9 +430,9 @@ function cycleState () {
 
        if (state['environments'][i][3]>0) {  //if it's in invasion mode (>0), this field identifies the invading species
             var newPop = 0;
-            if (idResource(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=10;
-            if (idResource(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=1;
-            if (idResource(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=0.5;
+            if (isResource(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=10;
+            if (isHerbivore(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=1;
+            if (isPredator(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=0.5;
             newState['populations'][i][state['environments'][i][3]][0] = 
                 Math.max(newPop,state['populations'][i][state['environments'][i][3]][0]); //degrees. Joel? this should be computable from period
             // and then we have to also store that into one of joel's variables? i'm sure we do. check with joel on constants
