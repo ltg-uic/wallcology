@@ -28,7 +28,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 2 * 1 * 1000; //(1000 = 1 second)
 const broadcastFrequency = 15; // every update. increase to "speed up" model
 
 var broadcastCount=0;
@@ -398,6 +398,11 @@ function cycleState () {
             tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/50);
             tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
             tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
+            // resources
+            tempState2['populations'][i][4] = tempState['populations'][i][4];
+            tempState2['populations'][i][5] = tempState['populations'][i][5];
+            tempState2['populations'][i][9] = tempState['populations'][i][9];
+            tempState2['populations'][i][10] = tempState['populations'][i][10];
 
         }
         nutella.net.publish ('animation_state_update',tempState2);
