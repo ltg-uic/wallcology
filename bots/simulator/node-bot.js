@@ -399,10 +399,10 @@ function cycleState () {
             tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
             tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
             // resources
-            tempState2['populations'][i][0] = tempState['populations'][i][0];
-            tempState2['populations'][i][2] = tempState['populations'][i][2];
-            tempState2['populations'][i][6] = tempState['populations'][i][6];
-            tempState2['populations'][i][7] = tempState['populations'][i][7]);
+            tempState2['populations'][i][4] = tempState['populations'][i][4];
+            tempState2['populations'][i][5] = tempState['populations'][i][5];
+            tempState2['populations'][i][9] = tempState['populations'][i][9];
+            tempState2['populations'][i][10] = tempState['populations'][i][10]);
 
         }
         nutella.net.publish ('animation_state_update',tempState2);

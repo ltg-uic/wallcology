@@ -368,18 +368,18 @@ nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
     for (var i=0; i<state['populations'].length; i++) {
         // predators
         state['populations'][i][1] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][3] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][8] = Math.round(state['populations'][i][1]/50);
+        state['populations'][i][3] = Math.round(state['populations'][i][3]/50);
+        state['populations'][i][8] = Math.round(state['populations'][i][8]/50);
         // herbivores
-        state['populations'][i][0] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][2] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][6] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][7] = Math.round(state['populations'][i][1]/50);
+        state['populations'][i][0] = Math.round(state['populations'][i][0]/50);
+        state['populations'][i][2] = Math.round(state['populations'][i][2]/50);
+        state['populations'][i][6] = Math.round(state['populations'][i][6]/50);
+        state['populations'][i][7] = Math.round(state['populations'][i][7]/50);
         // resources
-        state['populations'][i][4] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][5] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][9] = Math.round(state['populations'][i][1]/50);
-        state['populations'][i][10] = Math.round(state['populations'][i][1]/50);
+        state['populations'][i][4] = Math.round(state['populations'][i][4]/50);
+        state['populations'][i][5] = Math.round(state['populations'][i][5]/50);
+        state['populations'][i][9] = Math.round(state['populations'][i][9]/50);
+        state['populations'][i][10] = Math.round(state['populations'][i][10]/50);
  
    }
         return (state);
