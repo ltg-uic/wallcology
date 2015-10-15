@@ -327,54 +327,6 @@
 	},
 	"buffers":
 	[
-		{
-			"file": "js/app/app.js",
-			"settings":
-			{
-				"buffer_size": 4734,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
-			"settings":
-			{
-				"buffer_size": 15453,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator/node-bot.js",
-			"settings":
-			{
-				"buffer_size": 10689,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/NutellaInterface.cs",
-			"settings":
-			{
-				"buffer_size": 1401,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/CritterBehaviors/CritterControl.cs",
-			"settings":
-			{
-				"buffer_size": 836,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/TextController.cs",
-			"settings":
-			{
-				"buffer_size": 598,
-				"line_ending": "Unix"
-			}
-		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -384,9 +336,25 @@
 	"command_palette":
 	{
 		"height": 400.0,
-		"last_filter": "",
+		"last_filter": "list",
 		"selected_items":
 		[
+			[
+				"list",
+				"Package Control: List Packages"
+			],
+			[
+				"un",
+				"Set Syntax: Unity C#"
+			],
+			[
+				"List",
+				"Package Control: List Packages"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
+			],
 			[
 				"uni",
 				"Set Syntax: Unity C#"
@@ -734,13 +702,9 @@
 			[
 				"symat",
 				"Set Syntax: MATLAB"
-			],
-			[
-				"in",
-				"Package Control: Install Package"
 			]
 		],
-		"width": 475.0
+		"width": 529.0
 	},
 	"console":
 	{
@@ -761,17 +725,42 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/wallcology-visualization/js/app",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/wallcology-visualization/js/lib",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/wallcology-visualization/unity/Simulation/Assets/Scripts/CritterBehaviors",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/configuration",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces"
 	],
 	"file_history":
 	[
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app/app.js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator/node-bot.js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ChaseState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/AlertState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PatrolState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/Critter.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterManager.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/HerbivoreStatePattern.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/Predator.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/wallcology.sublime-project",
+		"/Users/krbalmryde/Library/Application Support/Sublime Text 3/Packages/User/JSON.sublime-settings",
+		"/Users/krbalmryde/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-dev/wallcology-visualization/docs/Design_ideas.txt",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-dev/wallcology-visualization/docs/Joel_notes.txt",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/.gitignore",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/README.md",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnemyMovement.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterControl.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Meshes/Critters/00.meta",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Vigilance.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/TextController.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/NutellaInterface.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/wallcology-visualization/build/wallscope1/wallscope1.html",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/.gitignore",
 		"/Users/krbalmryde/Downloads/2015CURRENT.csv",
@@ -872,38 +861,11 @@
 		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/examples/yt/load_data_yt.py",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/out_97.list",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/outputs/dead_15.list",
-		"/Users/krbalmryde/Lorenzo_Is.txt",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/ds14_cg_particle_velocity.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesWithLineWidget.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesVTK.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/ColorIsosurface.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/Data/ds14_scivis_0128/cosmology.tbl",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/topic8/MyNetCDF.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/testing.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/startup_tasks.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/setup.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/README.md",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/util/enhance.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/__hg_version__.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/__init__.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/api.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/arraytypes.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/config.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/convenience.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/funcs.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/mods.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/pmods.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/Temp/README.md",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/Final/load_data.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/Final/ds14_cg_particle_velocity.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/Final/.gitignore",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/Final/load_data_yt.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/topic8/ReadMe.txt",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/Final/load_data_yt.py"
+		"/Users/krbalmryde/Lorenzo_Is.txt"
 	],
 	"find":
 	{
-		"height": 23.0
+		"height": 38.0
 	},
 	"find_in_files":
 	{
@@ -919,6 +881,47 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"setTimeout(SpawnCritter, [ delay, i ] )",
+			"id",
+			"AdjustHerbivore",
+			"last_animation_state",
+			"last_state",
+			"query",
+			"last_animation_state",
+			"nextWayPoint",
+			"wayPoints",
+			"points",
+			"StatePattern",
+			"StatePatternCritter",
+			"navMeshAgent",
+			"StatePatternCritter",
+			"ICritterState",
+			"enemy",
+			"Enemy",
+			"enemy",
+			"Enemy",
+			"                points = _join(\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\")),\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"))\n                        );\n",
+			"                points = _join(\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\")),\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"))\n",
+			"points = SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\"));",
+			"points = SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"));",
+			"\"POIBrick\"))",
+			"private",
+			"public",
+			"private",
+			"\"100%\"",
+			"url",
+			"SetUpPointArrays",
+			"i",
+			"Range",
+			"StartCoroutine( ",
+			") );",
+			"DestroyCritter",
+			"StartCoroutine",
+			"DestroyCritter",
+			"case ",
+			"foreach",
+			"spawnPoints",
+			"InstantiateCritter",
 			",",
 			"isResource(",
 			"isResource",
@@ -1005,48 +1008,7 @@
 			"index",
 			"var",
 			"i/1000.0",
-			"logSpiral",
-			"new THREE.Color(Math.random(), Math.random(), Math.random())",
-			"Math.random()",
-			"mxGSDOF",
-			"uDOF",
-			"gatherMeans",
-			"self.ytVelocity[:,0]",
-			"self.ytVelocity",
-			" points",
-			" points!\"",
-			"dMin",
-			"return",
-			"dmVel",
-			"dMax",
-			"[:,0]",
-			"dmVel[:,0]",
-			"index",
-			"p1D",
-			"particle",
-			"ad",
-			"cPickle",
-			"self.dMin",
-			"ytMagnitude",
-			"[A-Z]",
-			"[a-z]",
-			"Velocity",
-			"VECTORS",
-			"Keypress",
-			"m",
-			"np.fromiter",
-			"xyz",
-			"dm",
-			"m",
-			"offset",
-			"addPoints",
-			"getBounds",
-			"def",
-			"y",
-			"x",
-			"xyz",
-			"index",
-			"x"
+			"logSpiral"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1109,186 +1071,8 @@
 	"groups":
 	[
 		{
-			"selected": 0,
 			"sheets":
 			[
-				{
-					"buffer": 0,
-					"file": "js/app/app.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4734,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3055,
-								3072
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1439.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 15453,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								149,
-								149
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 2,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator/node-bot.js",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 10689,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								6137,
-								6559
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/JavaScript/JavaScript.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1765.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "unity/Simulation/Assets/Scripts/NutellaInterface.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1401,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								769,
-								769
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C#/C#.tmLanguage",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "unity/Simulation/Assets/Scripts/CritterBehaviors/CritterControl.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 836,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								604,
-								708
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/C#/C#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "unity/Simulation/Assets/TextController.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 598,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								593,
-								593
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				}
 			]
 		}
 	],
@@ -1348,6 +1132,30 @@
 		"last_filter": "",
 		"selected_items":
 		[
+			[
+				"critte",
+				"Unity Scripts/CritterBehaviors/Critter.cs"
+			],
+			[
+				"critter",
+				"interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterManager.cs"
+			],
+			[
+				"chase",
+				"Unity Scripts/StateMachine/ChaseState.cs"
+			],
+			[
+				"a",
+				"Unity Scripts/StateMachine/AlertState.cs"
+			],
+			[
+				"ien",
+				"Unity Scripts/StateMachine/IEnemyState.cs"
+			],
+			[
+				"nutellain",
+				"Unity Scripts/EnvController/NutellaInterface.cs"
+			],
 			[
 				"demo",
 				"cs526/Demo/js/demo.js"

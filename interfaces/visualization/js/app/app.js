@@ -198,40 +198,24 @@ function UpdatePopulations(population)
     for (var i = 0; i < population.length; i++) {
         var count = population[i]
 
-        var delay = count % 2;
-        count = (count < 1 && count > 0)? Math.round(count * 3) : Math.round(count);
         RequestPopulationCount(i);
         console.log("\t", i, count, SpeciesCounter[i]);
 
         switch(i)
         {
             case 0:
-            case 1:
             case 2:
-            case 3:
             case 6:
             case 7:
+                AdjustHerbivore( count, i );
+                break;
+            case 1:
+            case 3:
             case 8:
-                if ( count < SpeciesCounter[i] ) {
-
-                    while ( count < SpeciesCounter[i] ) {
-                        KillCritter(i);
-                        SpeciesCounter[i]--;
-                    }
-                } else if ( count > SpeciesCounter[i] ) {
-
-                    while ( count > SpeciesCounter[i] ) {
-                        // SpeciesCounter[i]++;
-                        SpawnCritter(i);
-                    }
-
-                } else {
-                    console.log("They are both zero");
-                };
+                AdjustPredator( count, i );
                 break;
             case 4:
             case 5:
-            case 6:
             case 9:
             case 10:
                 console.log("Not Implemented yet!");
@@ -245,6 +229,41 @@ function UpdatePopulations(population)
 }
 
 
+function AdjustCritterPopulations( count, id, delay )
+{
+    console.log("AdjustCritterPopulations", count, id, delay);
+    if ( count < SpeciesCounter[ id ] ) {
+
+        while ( count < SpeciesCounter[id] ) {
+            KillCritter( id )
+        }
+    } else if ( count > SpeciesCounter[ id ] ) {
+
+        while ( count > SpeciesCounter[ id ] ) {
+            // setTimeout(SpawnCritter, [ delay, id ] )
+            SpawnCritter( id );
+        }
+
+    } else {
+        console.log("They are both zero");
+    }
+}
+
+
+function AdjustHerbivore( count, id )
+{
+    console.log("AdjustHerbivore", id);
+    AdjustCritterPopulations( count, id, 0.0 ); // Herbivores should be added immediately
+}
+
+
+function AdjustPredator( count, id )
+{
+    var duration = (Math.random() * 10) * 1000;
+    console.log("AdjustPredator", id, duration);
+    AdjustCritterPopulations( count, id, duration ); // Predators should be added after a delay
+}
+
 /*==============================================================================
  #                       UNITY MESSAGE HANDLERS
  #=============================================================================*/
@@ -254,7 +273,6 @@ function UpdatePopulations(population)
 function initWallScopeStartState( live )
 {
     console.log("Unity is READY!!", live)
-
     // Make asynchronous requests on a certain channel
     nutella.net.request( 'last_animation_state', {}, Last_State_Handler);
 }
@@ -305,7 +323,7 @@ function KillCritter ( id )
     console.log("Killing", id, "softly!");
     console.log("NOT IMPLEMENTED YET!");
     unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
-    SpeciesCounter[i]--;
+    SpeciesCounter[id]--;
 }
 
 
