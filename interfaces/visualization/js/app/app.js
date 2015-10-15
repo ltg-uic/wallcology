@@ -50,7 +50,7 @@ function initNutellaComponents()
     nutella.setResourceId('wallscope_vis');
 
     // Subscribe to the Channel, assign callback function
-    subscribeToChannel('state_update', State_Update_Handler);
+    subscribeToChannel('animation_state_update', State_Update_Handler);
     subscribeToChannel('species_event', Species_Event_Handler);
 
 
@@ -256,7 +256,7 @@ function initWallScopeStartState( live )
     console.log("Unity is READY!!", live)
 
     // Make asynchronous requests on a certain channel
-    nutella.net.request( 'last_state', 'last_state', Last_State_Handler);
+    nutella.net.request( 'last_animation_state', {}, Last_State_Handler);
 }
 
 

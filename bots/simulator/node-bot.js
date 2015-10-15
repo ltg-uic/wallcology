@@ -390,14 +390,14 @@ function cycleState () {
         var tempState2 = deepCopy(tempState);
         for (var i=0; i<state['populations'].length; i++) {
             // predators
-            tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/50);
-            tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/50);
-            tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/50);
+            tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/100);
+            tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/100);
+            tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/100);
             // herbivores
-            tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/50);
-            tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/50);
-            tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/50);
-            tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/50);
+            tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/25);
+            tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/25);
+            tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/25);
+            tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/25);
             // resources
             tempState2['populations'][i][4] = tempState['populations'][i][4];
             tempState2['populations'][i][5] = tempState['populations'][i][5];
