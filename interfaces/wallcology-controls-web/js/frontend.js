@@ -78,6 +78,13 @@ function getSelectedAction() {
 }
 
 function askConfirmation() {
+    if(getSelectedBugs().length == 0) {
+        if(getSelectedAction().length > 0) {
+            deselectAction(getSelectedAction()[0]);
+        }
+        return;
+    }
+
     pendingAction = {
         action: getSelectedAction()[0],
         species: getSelectedBugs(),
