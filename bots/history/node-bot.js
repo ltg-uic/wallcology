@@ -377,9 +377,9 @@ nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
         state['populations'][i][7] = Math.round(state['populations'][i][7]/50);
         // resources
         state['populations'][i][4] = state['populations'][i][4];
-        state['populations'][i][5] = state['populations'][i][5]);
-        state['populations'][i][9] = state['populations'][i][9]);
-        state['populations'][i][10] = state['populations'][i][10]);
+        state['populations'][i][5] = state['populations'][i][5];
+        state['populations'][i][9] = state['populations'][i][9];
+        state['populations'][i][10] = state['populations'][i][10];
  
    }
         return (state);
