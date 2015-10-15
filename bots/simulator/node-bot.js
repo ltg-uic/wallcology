@@ -402,7 +402,7 @@ function cycleState () {
             tempState2['populations'][i][4] = tempState['populations'][i][4];
             tempState2['populations'][i][5] = tempState['populations'][i][5];
             tempState2['populations'][i][9] = tempState['populations'][i][9];
-            tempState2['populations'][i][10] = tempState['populations'][i][10]);
+            tempState2['populations'][i][10] = tempState['populations'][i][10];
 
         }
         nutella.net.publish ('animation_state_update',tempState2);
