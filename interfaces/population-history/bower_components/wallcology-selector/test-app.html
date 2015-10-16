@@ -39,9 +39,7 @@
                 currentToggle: {
                     type: Object,
                     notify: true,
-                    value: function () {
-                        return {};
-                    },
+                    value: {},
                     observer: 'currentToggleChanged'
                 },
                 toggleSelectors: {
@@ -65,10 +63,7 @@
                                 12
                             ],
                             'name': 'Habitat 1',
-                            'index': 0,
-                            'temperature': 0,
-                            'pipelength': 0,
-                            'brickarea': 0
+                            'index': 0
                         },
                         {
                             'items': [
@@ -87,10 +82,7 @@
                                 12
                             ],
                             'name': 'Habitat 2',
-                            'index': 1,
-                            'temperature': 0,
-                            'pipelength': 0,
-                            'brickarea': 0
+                            'index': 1
                         },
                         {
                             'items': [
@@ -109,10 +101,7 @@
                                 12
                             ],
                             'name': 'Habitat 3',
-                            'index': 2,
-                            'temperature': 0,
-                            'pipelength': 0,
-                            'brickarea': 0
+                            'index': 2
                         },
                         {
                             'items': [
@@ -131,10 +120,7 @@
                                 12
                             ],
                             'name': 'Habitat 4',
-                            'index': 3,
-                            'temperature': 0,
-                            'pipelength': 0,
-                            'brickarea': 0
+                            'index': 3
                         }
                     ]
                 },
@@ -209,19 +195,19 @@
                             'index': 10,
                             'color': '#68734F'
                         }
-                        ,
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
-                            'index': 11,
-                            'color': '#FF5722'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
-                            'index': 12,
-                            'color': '#795548'
-                        }
+//                        ,
+//                        {
+//                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
+//                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
+//                            'index': 11,
+//                            'color': '#FF5722'
+//                        },
+//                        {
+//                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
+//                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
+//                            'index': 12,
+//                            'color': '#795548'
+//                        }
 
                     ]
                 }
@@ -279,15 +265,15 @@
                 this.$.ws.switchToggleAndButtonSelectors(-1, []);
             },
             ready: function () {
-
+                this.currentToggle = {};
                 var start = [{
                     'items': [],
-                    'name': 'Habitat ?  ',
+                    'name': 'Habitat ?   ',
                     'index': -1
                 }];
                 this.toggleSelectors = start.concat(this.toggleSelectors);
-//                this.buttonSelectors = [];
-//                this.toggleSelectors = [];
+
+
             }
         });
     </script>

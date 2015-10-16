@@ -20,7 +20,7 @@
     <link href="../paper-icon-button/paper-icon-button.html" rel="import">
 
     <script type="text/javascript" src="predicates.js"></script>
-<dom-module id="wallcology-selector">
+    <dom-module id="wallcology-selector">
     <template id="layout">
         <style>
 
@@ -44,6 +44,9 @@
             paper-button.colorful {
                 color: white;
                 background: #006699;
+                margin: 1px;
+                height: 40px;
+                width: 100px;
             }
 
             .vcontainer {
@@ -52,35 +55,46 @@
             }
 
             paper-icon-button[toggles].selector {
-                margin: 0px;
+                margin: 1px;
                 padding: 0px;
                 height: 45px;
                 width: 45px;
-                border: 1px solid white;
+            }
+
+            paper-icon-button[toggles].selector > paper-ripple {
+                margin: 1px;
+                padding: 0px;
+                height: 45px;
+                width: 45px;
             }
 
             paper-icon-button[toggles] {
-                transition: background-color 0.3s;
-                border: 1px solid white;
+                margin: 1px;
+                padding: 0px;
             }
 
+            paper-icon-button[toggles] {
+                margin: 1px;
+                padding: 0px;
+            }
+
+
+
             paper-icon-button[toggles][active] {
-                /*background-color: #e8e8e8;*/
-                border: 1px solid white;
+                color: orange;
+                margin: 1px;
+                padding: 0px;
             }
 
             paper-icon-button[toggles][disabled] {
-                opacity: 0.45;
-                border: 1px solid white;
-            }
-
-            paper-button paper-ripple {
-                pointer-events: none;
+                margin: 1px;
+                padding: 0px;
             }
 
             .spacer {
                 margin: 5px;
             }
+
 
         </style>
 
@@ -120,9 +134,7 @@
                 currentToggle: {
                     type: Object,
                     notify: true,
-                    value: function() {
-                        return {};
-                    }
+                    value: {}
                 },
                 toggleSelectors: {
                     type: Array,
@@ -133,6 +145,10 @@
                     type: Array,
                     notify: true,
                     value: []
+                },
+                debug: {
+                    type: Boolean,
+                    value: true
                 }
             },
             observers: [
@@ -141,10 +157,17 @@
                 'buttonSelectorsChanged(buttonSelectors.*)'
             ],
             selectedItemsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('selectedItemsChanged: ', changeRecord);
+                }
                 if (changeRecord.value !== null && this.selectedItems[0] !== null) {
                 }
             },
             buttonSelectorsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('buttonSelectorsChanged: ', changeRecord);
+                }
+
                 if (changeRecord.path == 'buttonSelectors.splices') {
                     // a user was added or removed
                 } else {
@@ -153,6 +176,9 @@
                 }
             },
             toggleSelectorsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('toggleSelectorsChanged: ', changeRecord);
+                }
 //                console.log('toggle', changeRecord);
                 if (this.currentToggle.name === undefined && this.toggleSelectors[0] !== undefined) {
                     for (var i = 0; i < this.toggleSelectors.length; i++) {
@@ -164,6 +190,9 @@
                 }
             },
             toggleTapped: function (e) {
+                if (this.debug) {
+                    console.log('toggleTapped: ', e);
+                }
 //                console.log('toggle tapped');
                 if (this.currentToggle !== undefined) {
 
@@ -198,17 +227,23 @@
 
                 }
             },
-
-
             inactivateButtons: function () {
+                if (this.debug) {
+                    console.log('inactivateButtons: ');
+                }
                 var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                for (var i = 0; i < buttons.length; i++) {
-                    var b = buttons[i];
-                    b.active = false;
-                    this.switchIconTo('active', i);
+                if (buttons !== undefined && buttons[0] !== undefined) {
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        b.active = false;
+                        this.switchIconTo('active', i);
+                    }
                 }
             },
             disableButtons: function (buttonIndexes) {
+                if (this.debug) {
+                    console.log('disableButtons: ', buttonIndexes);
+                }
                 if (buttonIndexes === undefined || buttonIndexes.length === 0) {
                     //disable all array
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
@@ -235,7 +270,9 @@
                 }
             },
             buttonTapped: function (e) {
-
+                if (this.debug) {
+                    console.log('buttonTapped: ', e);
+                }
                 if (!this.hasMaxSelections()) {
                     var selectedItem = e.model.item;
 
@@ -261,6 +298,9 @@
                 }
             },
             switchIconTo: function(state, index) {
+                if (this.debug) {
+                    console.log('switchIconTo: ', state, index);
+                }
                 var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                 var b = buttons[index];
                 if( state === 'active') {
@@ -270,6 +310,9 @@
                 }
             },
             switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
+                if (this.debug) {
+                    console.log('switchToggleAndButtonSelectors: ', toggleIndex, buttonIndexes);
+                }
                 //do the toggle
                 var toggle = this.findToggle(toggleIndex);
                 this.currentToggle = toggle;
@@ -295,7 +338,9 @@
                 }
             },
             hasMaxSelections: function () {
-
+                if (this.debug) {
+                    console.log('hasMaxSelections:');
+                }
                 var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                 var active = 0;
                 for (var i = 0; i < buttons.length; i++) {
@@ -312,6 +357,9 @@
                 return false;
             },
             findToggle: function (index) {
+                if (this.debug) {
+                    console.log('findToggle:', index);
+                }
                 for (var i = 0; i < this.toggleSelectors.length; i++) {
                     if (index === this.toggleSelectors[i].index) {
                         return this.toggleSelectors[i];
@@ -328,6 +376,22 @@
             },
             ready: function () {
                 this.selectedItems = [];
+            },
+            created: function () {
+                console.log(this.localName + '#' + this.id + ' was created');
+            },
+
+            attached: function () {
+                console.log(this.localName + '#' + this.id + ' was attached');
+            },
+
+            detached: function () {
+                console.log(this.localName + '#' + this.id + ' was detached');
+            },
+
+            attributeChanged: function (name, type) {
+                console.log(this.localName + '#' + this.id + ' attribute ' + name +
+                        ' was changed to ' + this.getAttribute(name));
             }
         });
     </script>
