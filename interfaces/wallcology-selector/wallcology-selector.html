@@ -148,7 +148,7 @@
                 },
                 debug: {
                     type: Boolean,
-                    value: true
+                    value: false
                 }
             },
             observers: [
@@ -244,9 +244,6 @@
 
                 if (buttonIndexes === undefined || buttonIndexes.length === 0) {
 
-                    if (this.debug) {
-                        console.log('disableButtons: ', buttonIndexes);
-                    }
 
                     //disable all array
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
@@ -381,20 +378,28 @@
                 this.selectedItems = [];
             },
             created: function () {
-                console.log(this.localName + '#' + this.id + ' was created');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was created');
+                }
             },
 
             attached: function () {
-                console.log(this.localName + '#' + this.id + ' was attached');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was attached');
+                }
             },
 
             detached: function () {
-                console.log(this.localName + '#' + this.id + ' was detached');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was detached');
+                }
             },
 
             attributeChanged: function (name, type) {
-                console.log(this.localName + '#' + this.id + ' attribute ' + name +
-                        ' was changed to ' + this.getAttribute(name));
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' attribute ' + name +
+                            ' was changed to ' + this.getAttribute(name));
+                }
             }
         });
     </script>
