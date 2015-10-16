@@ -329,18 +329,17 @@
               'color': '#68734F'
             },
             {
-              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
-              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
               'index': 11,
               'color': '#FF5722'
             },
             {
-              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
-              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
               'index': 12,
               'color': '#795548'
             }
-
           ]
         },
         graphs: {
@@ -572,14 +571,16 @@
         var habitatIndex = this.currentToggle.index;
 
         var message;
+
+        //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
+
         if (type === 'environment_history') {
           if (species.index === 11) {
             species.index = 0;
           } else if (species.index === 12) {
             species.index = 1;
-          } else if (species.index === 13) {
-            species.index = 2;
           }
+
           message = {
             habitat: habitatIndex,
             environmental_variable: species.index,
@@ -659,14 +660,15 @@
             t.push([firstDate, 0, species.color]);
 
 
+            //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
+
+
             console.log('spieces color: ', species.color);
             if (messageType === 'environment_history') {
               if (species.index === 0) {
                 species.index = 11;
               } else if (species.index === 1) {
                 species.index = 12;
-              } else if (species.index === 2) {
-                species.index = 13;
               }
 
 
