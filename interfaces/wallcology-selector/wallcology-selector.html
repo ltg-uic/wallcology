@@ -129,7 +129,7 @@
                 maxSelections: {
                     type: Number,
                     notify: true,
-                    value: 0
+                    value: 13
                 },
                 currentToggle: {
                     type: Object,
@@ -375,6 +375,7 @@
                 return null;
             },
             ready: function () {
+                this.currentToggle = {};
                 this.selectedItems = [];
             },
             created: function () {
