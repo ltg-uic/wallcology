@@ -19,7 +19,7 @@
     <!--<link href="../paper-button/paper-button.html" rel="import">-->
     <!--<link href="../paper-icon-button/paper-icon-button.html" rel="import">-->
 
-    <!--<script type="text/javascript" src="predicates.js"></script>-->
+    <script type="text/javascript" src="predicates.js"></script>
     <dom-module id="wallcology-selector">
     <template id="layout">
         <style>
@@ -247,7 +247,7 @@
                     if (this.debug) {
                         console.log('disableButtons: ', buttonIndexes);
                     }
-                    
+
                     //disable all array
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                     for (var i = 0; i < buttons.length; i++) {
