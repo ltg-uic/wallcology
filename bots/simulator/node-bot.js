@@ -28,7 +28,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-const frequencyOfUpdate = 2 * 1 * 1000; //(1000 = 1 second)
+const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
 const broadcastFrequency = 15; // every update. increase to "speed up" model
 
 var broadcastCount=0;
