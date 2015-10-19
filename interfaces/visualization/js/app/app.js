@@ -301,9 +301,8 @@ function ProgressUpdate(func, valid)
 //     expects a float/double
 function SetThermometerText (temp)
 {
-    temp = Math.round(temp * 100) / 100;
+    temp = Math.abs(Math.round(temp * 100) / 100);
     temp = temp.toString() + "˚C";
-    temp = "";
     console.log("Temperature is", temp);
     unity3d.getUnity().SendMessage("Temperature", "SetText", temp);
 }
