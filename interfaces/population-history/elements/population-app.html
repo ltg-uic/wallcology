@@ -15,13 +15,6 @@
         margin: 0px;
       }
 
-      paper-button.colorful {
-        color: white;
-        background: #006699;
-        margin: 0px;
-        font-size: 14px;
-      }
-
       iron-icon {
         width: 60px;
         height: 60px;
@@ -67,6 +60,19 @@
         padding: 0 4px;
       }
 
+      .button-title {
+        color: #000;
+        text-align: center;
+        font-size: 11px;
+      }
+
+      paper-button.colorful {
+        color: white;
+        background: #006699;
+        margin-top: 3px;
+        font-size: 12px;
+      }
+
     </style>
 
 
@@ -76,9 +82,17 @@
     <paper-toolbar>
 
       <div class="start">
-        <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
-        </paper-button>
+        <div class="vertical-section-container">
+          <div class="vertical-section">
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+            </paper-button>
+          </div>
+          <div class="vertical-section center">
+            <div class="button-title">START</div>
+          </div>
         </div>
+      </div>
+      </div>
       <div class="center flex">
         <div class="horizontal-section-container">
 
@@ -90,8 +104,15 @@
         </div>
       </div>
       <div class="end">
-        <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
-        </paper-button>
+        <div class="vertical-section-container">
+          <div class="vertical-section">
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+            </paper-button>
+          </div>
+          <div class="vertical-section center">
+            <div class="button-title">END</div>
+          </div>
+        </div>
       </div>
     </paper-toolbar>
 
@@ -458,12 +479,12 @@
               }
             }
 
-            for(var j = 0; j < this.graphs.length; j++) {
+            for (var j = 0; j < this.graphs.length; j++) {
               var previousGraph = this.graphs[j];
-              if( j === this.graphs.length-1) {
-                this.updateGraphAxis(previousGraph,'on');
+              if (j === this.graphs.length - 1) {
+                this.updateGraphAxis(previousGraph, 'on');
               } else {
-                this.updateGraphAxis(previousGraph,'off');
+                this.updateGraphAxis(previousGraph, 'off');
               }
               this.redrawChart(previousGraph);
 
@@ -710,7 +731,6 @@
           }
 
 
-
         });
 
 
@@ -727,7 +747,6 @@
         if (foundGraphs.length > 0) {
 
 
-
           var oldGraph = foundGraphs[0];
           oldGraph.data = data;
           oldGraph.options = this.chartOptions;
@@ -737,20 +756,20 @@
 
           var index = this.graphs.indexOf(oldGraph);
 
-          if( index !== this.graphs.length-1) {
-            this.updateGraphAxis(oldGraph,'off');
+          if (index !== this.graphs.length - 1) {
+            this.updateGraphAxis(oldGraph, 'off');
             this.redrawChart(oldGraph);
           } else {
-            this.updateGraphAxis(oldGraph,'on');
+            this.updateGraphAxis(oldGraph, 'on');
             this.redrawChart(oldGraph);
           }
-          if( this.debug ) {
+          if (this.debug) {
             console.log('updated graph');
           }
 
         } else {
 
-          for(var j = 0; j < this.graphs.length; j++) {
+          for (var j = 0; j < this.graphs.length; j++) {
             var previousGraph = this.graphs[j];
             this.updateGraphAxis(previousGraph, 'off');
             this.redrawChart(previousGraph);
@@ -764,9 +783,9 @@
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
-          this.updateGraphAxis(g,'on');
+          this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
-          if( this.debug ) {
+          if (this.debug) {
             console.log('pushed graph');
           }
         }
@@ -774,7 +793,7 @@
       },
       updateGraphAxis: function (someGraph, type) {
 
-        if( someGraph !== undefined ) {
+        if (someGraph !== undefined) {
           switch (type) {
             case 'on':
               someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
@@ -841,11 +860,11 @@
       },
       formatButtonSDate: function (someDate) {
         var formatted = moment(someDate).format('MM/DD/YY');
-        return 'START: '+ formatted;
+        return formatted;
       },
       formatButtonEDate: function (someDate) {
         var formatted = moment(someDate).format('MM/DD/YY');
-        return 'END: '+ formatted;
+        return formatted;
       },
     });
   </script>
