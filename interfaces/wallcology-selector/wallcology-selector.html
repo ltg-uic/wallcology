@@ -1,0 +1,406 @@
+
+    <link href="./bower_components/polymer/polymer.html" rel="import">
+    <link href="./bower_components/paper-styles/paper-styles.html" rel="import">
+    <link href="./bower_components/paper-styles/color.html" rel="import">
+
+
+    <link href="./bower_components/paper-button/paper-button.html" rel="import">
+    <link href="./bower_components/paper-icon-button/paper-icon-button.html" rel="import">
+    <link href="./bower_components/iron-flex-layout/iron-flex-layout.html" rel="import">
+
+    <script type="text/javascript" src="./bower_components/predicates.js/browser/predicates.js"></script>
+
+
+    <!--<link href="../polymer/polymer.html" rel="import">-->
+    <!--<link href="../paper-styles/paper-styles.html" rel="import">-->
+    <!--<link href="../paper-styles/color.html" rel="import">-->
+
+
+    <!--<link href="../paper-button/paper-button.html" rel="import">-->
+    <!--<link href="../paper-icon-button/paper-icon-button.html" rel="import">-->
+
+    <script type="text/javascript" src="predicates.js"></script>
+    <dom-module id="wallcology-selector">
+    <template id="layout">
+        <style>
+
+            :host {
+
+            }
+
+            .pink {
+                background-color: var(--paper-pink-500);
+            }
+
+            .yellow {
+                background-color: var(--paper-yellow-500);
+            }
+
+            .bug {
+                --iron-icon-height: 45px;
+                --iron-icon-width: 45px;
+            }
+
+            paper-button.colorful {
+                color: white;
+                background: #006699;
+                margin: 1px;
+                height: 40px;
+                width: 100px;
+            }
+
+            .vcontainer {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            }
+
+            paper-icon-button[toggles].selector {
+                margin: 1px;
+                padding: 0px;
+                height: 45px;
+                width: 45px;
+            }
+
+            paper-icon-button[toggles].selector > paper-ripple {
+                margin: 1px;
+                padding: 0px;
+                height: 45px;
+                width: 45px;
+            }
+
+            paper-icon-button[toggles] {
+                margin: 1px;
+                padding: 0px;
+            }
+
+            paper-icon-button[toggles] {
+                margin: 1px;
+                padding: 0px;
+            }
+
+
+
+            paper-icon-button[toggles][active] {
+                color: orange;
+                margin: 1px;
+                padding: 0px;
+            }
+
+            paper-icon-button[toggles][disabled] {
+                margin: 1px;
+                padding: 0px;
+            }
+
+            .spacer {
+                margin: 5px;
+            }
+
+
+        </style>
+
+        <div class="horizontal layout">
+            <div class="vcontainer spacer">
+                <paper-button class="colorful" on-tap="toggleTapped"><span>{{currentToggle.name}}</span>
+                </paper-button>
+            </div>
+            <div id="key" class="spacer">
+                <template id="buttonTemplate" is="dom-repeat" items="{{buttonSelectors}}">
+                    <paper-icon-button toggles disabled id="{{index}}" on-tap="buttonTapped" src="{{item.activeUrl}}"
+                                       class="bug selector"></paper-icon-button>
+                </template>
+            </div>
+        </div>
+
+    </template>
+</dom-module>
+    <script>
+        // element registration
+        Polymer({
+            is: 'wallcology-selector',
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                selectedItems: {
+                    type: Array,
+                    notify: true,
+                    selectedItems: []
+                },
+                maxSelections: {
+                    type: Number,
+                    notify: true,
+                    value: 13
+                },
+                currentToggle: {
+                    type: Object,
+                    notify: true,
+                    value: {}
+                },
+                toggleSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                buttonSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                debug: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            observers: [
+                'selectedItemsChanged(selectedItems.*)',
+                'toggleSelectorsChanged(toggleSelectors.*)',
+                'buttonSelectorsChanged(buttonSelectors.*)'
+            ],
+            selectedItemsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('selectedItemsChanged: ', changeRecord);
+                }
+                if (changeRecord.value !== null && this.selectedItems[0] !== null) {
+                }
+            },
+            buttonSelectorsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('buttonSelectorsChanged: ', changeRecord);
+                }
+
+                if (changeRecord.path == 'buttonSelectors.splices') {
+                    // a user was added or removed
+                } else {
+                    // an individual user or its sub-properties changed
+                    // check "changeRecord.path" to determine what changed
+                }
+            },
+            toggleSelectorsChanged: function (changeRecord) {
+                if (this.debug) {
+                    console.log('toggleSelectorsChanged: ', changeRecord);
+                }
+//                console.log('toggle', changeRecord);
+                if (this.currentToggle.name === undefined && this.toggleSelectors[0] !== undefined) {
+                    for (var i = 0; i < this.toggleSelectors.length; i++) {
+                        if (this.toggleSelectors[i].index === -1) {
+                            this.currentToggle = this.toggleSelectors[i];
+                            this.disableButtons(undefined);
+                        }
+                    }
+                }
+            },
+            toggleTapped: function (e) {
+                if (this.debug) {
+                    console.log('toggleTapped: ', e);
+                }
+//                console.log('toggle tapped');
+                if (this.currentToggle !== undefined) {
+
+//                    if( this.currentToggle.index === -1) {
+//                        this.shift('toggleSelectors');
+//                    }
+
+                    //clear all the selections
+                    for (var i = 0; i < this.selectedItems.length; i++) {
+                        this.splice('selectedItems', i);
+                    }
+                    this.selectedItems = [];
+                    //clear highlighted
+                    this.inactivateButtons();
+
+
+                    var previousIndex = this.currentToggle.index;
+                    var newIndex = previousIndex + 1;
+
+                    var nextToggle = this.findToggle(newIndex);
+
+                    if (nextToggle !== undefined) {
+                        this.currentToggle = nextToggle;
+                        this.disableButtons(nextToggle.items);
+
+
+                    } else {
+                        //restarts numbering
+                        this.currentToggle = this.findToggle(0);
+                        this.disableButtons(this.findToggle(0).items);
+                    }
+
+                }
+            },
+            inactivateButtons: function () {
+                if (this.debug) {
+                    console.log('inactivateButtons: ');
+                }
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                if (buttons !== undefined && buttons[0] !== undefined) {
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        b.active = false;
+                        this.switchIconTo('active', i);
+                    }
+                }
+            },
+            disableButtons: function (buttonIndexes) {
+
+                if (buttonIndexes === undefined || buttonIndexes.length === 0) {
+
+
+                    //disable all array
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        this.switchIconTo('active', i);
+                        b.disabled = true;
+                    }
+                } else {
+//                    console.log('indexs to disable', buttonIndexes);
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        var doesContain = predicates.in(buttonIndexes);
+                        var bIndex = parseInt(b.id);
+                        var truth = doesContain(bIndex);
+                        if (truth) {
+                            b.disabled = false;
+                        } else {
+                            b.disabled = true;
+                        }
+
+                    }
+                }
+            },
+            buttonTapped: function (e) {
+                if (this.debug) {
+                    console.log('buttonTapped: ', e);
+                }
+                if (!this.hasMaxSelections()) {
+                    var selectedItem = e.model.item;
+
+                    if (e.currentTarget.active) {
+                        //make hightlighted
+
+                        var index = e.model.index;
+
+                        this.switchIconTo('highlighted', index);
+                        this.push('selectedItems', selectedItem);
+                    } else {
+                        //make active
+
+                        var index = e.model.index;
+
+                        this.switchIconTo('active', index);
+                        this.splice('selectedItems', this.selectedItems.indexOf(selectedItem), 1);
+                        console.log('debug');
+                    }
+                } else {
+                    console.log('TOO MANY SELECTIONS');
+                    e.currentTarget.active = false;
+                }
+            },
+            switchIconTo: function(state, index) {
+                if (this.debug) {
+                    console.log('switchIconTo: ', state, index);
+                }
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                var b = buttons[index];
+                if( state === 'active') {
+                    b.src = this.buttonSelectors[index].activeUrl;
+                } else if( state === 'highlighted' ) {
+                    b.src = this.buttonSelectors[index].highlightUrl;
+                }
+            },
+            switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
+                if (this.debug) {
+                    console.log('switchToggleAndButtonSelectors: ', toggleIndex, buttonIndexes);
+                }
+                //do the toggle
+                var toggle = this.findToggle(toggleIndex);
+                this.currentToggle = toggle;
+
+                this.disableButtons(this.currentToggle.items);
+
+                //do the buttons
+                this.selectedItems = [];
+
+                if (buttonIndexes.length > 0) {
+                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                    for (var i = 0; i < buttons.length; i++) {
+                        var b = buttons[i];
+                        if (buttonIndexes.lastIndexOf(i) !== -1) {
+                            //b.disabled = false;
+                            b.active = true;
+                            this.push('selectedItems', this.buttonSelectors[i]);
+                        } else {
+                            b.active = false;
+                            //b.disabled = true;
+                        }
+                    }
+                }
+            },
+            hasMaxSelections: function () {
+                if (this.debug) {
+                    console.log('hasMaxSelections:');
+                }
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                var active = 0;
+                for (var i = 0; i < buttons.length; i++) {
+                    var b = buttons[i];
+                    if (b.active) {
+                        active++;
+                    }
+                }
+
+                if (active > this.maxSelections) {
+                    console.log('max selections' + this.maxSelections);
+                    return true;
+                }
+                return false;
+            },
+            findToggle: function (index) {
+                if (this.debug) {
+                    console.log('findToggle:', index);
+                }
+                for (var i = 0; i < this.toggleSelectors.length; i++) {
+                    if (index === this.toggleSelectors[i].index) {
+                        return this.toggleSelectors[i];
+                    }
+                }
+                return undefined;
+            },
+
+            toUpperCase: function (someString) {
+                if (someString !== null) {
+                    return someString.toUpperCase();
+                }
+                return null;
+            },
+            ready: function () {
+                this.currentToggle = {};
+                this.selectedItems = [];
+            },
+            created: function () {
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was created');
+                }
+            },
+
+            attached: function () {
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was attached');
+                }
+            },
+
+            detached: function () {
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was detached');
+                }
+            },
+
+            attributeChanged: function (name, type) {
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' attribute ' + name +
+                            ' was changed to ' + this.getAttribute(name));
+                }
+            }
+        });
+    </script>

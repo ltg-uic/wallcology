@@ -1,5 +1,5 @@
-
 <!--<link rel="import" href="./shared-styles/shared-styles.html">-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js"></script>
 <dom-module id="population-app">
   <template>
     <style include="shared-styles"></style>
@@ -19,7 +19,7 @@
         color: white;
         background: #006699;
         margin: 0px;
-      @apply(--shadow-elevation-0dp);
+        font-size: 14px;
       }
 
       iron-icon {
@@ -58,14 +58,28 @@
         width: 0px;
       }
 
+      paper-toolbar ::shadow #topBar {
+        padding: 0 4px;
+        background-color: white;
+      }
+
+      .graph-icon {
+        padding: 0 4px;
+      }
+
     </style>
+
 
     <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
                        runid="default"
                        componentid="wallcology_admin"></nutella-connector>
+    <paper-toolbar>
 
-    <div id='topBar' class="vertical-section-container">
-      <div class="vertical-section">
+      <div class="start">
+        <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+        </paper-button>
+        </div>
+      <div class="center flex">
         <div class="horizontal-section-container">
 
           <div class="horizontal-section">
@@ -75,52 +89,33 @@
           </div>
         </div>
       </div>
-      <div class="vertical-section hspacer">
-
+      <div class="end">
+        <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+        </paper-button>
       </div>
-    </div>
+    </paper-toolbar>
 
     <div class="vertical-section-container">
       <template is="dom-repeat" items="{{graphs}}">
-        <div class="vertical-section center">
+        <section>
+          <div class="vertical-section center">
 
-          <div class="horizontal layout center">
-            <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
+            <div class="horizontal layout center graph-icon">
+              <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
 
-            <div class="center flex rightpadder">
-              <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
-                            type='column'
-                            options='{{item.options}}'
-                            data={{item.data}}>
-              </google-chart>
+              <div class="center flex rightpadder">
+                <google-chart auto-fit-on-attach id="{{chartName(item.index)}}"
+                              type='column'
+                              options='{{item.options}}'
+                              data={{item.data}}>
+                </google-chart>
 
+              </div>
             </div>
-          </div>
 
-        </div>
+          </div>
+        </section>
       </template>
-    </div>
-
-    <div class="vertical-section-container">
-      <div class="vertical-section center">
-
-        <div class="horizontal layout">
-          <div style="
-    width:  100px;"></div>
-          <div class="left">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
-            </paper-button>
-          </div>
-
-          <div class="flex nopadding"></div>
-
-          <div class="rightspacer">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
-            </paper-button>
-          </div>
-        </div>
-
-      </div>
     </div>
 
     <!-- YYYY-MM-DD -->
@@ -169,7 +164,7 @@
         currentToggle: {
           type: Object,
           notify: true,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: 'currentToggleChanged'
@@ -196,9 +191,6 @@
               ],
               'name': 'Habitat 1',
               'index': 0,
-              'temperature': 0,
-              'pipelength': 0,
-              'brickarea': 0
             },
             {
               'items': [
@@ -218,9 +210,6 @@
               ],
               'name': 'Habitat 2',
               'index': 1,
-              'temperature': 0,
-              'pipelength': 0,
-              'brickarea': 0
             },
             {
               'items': [
@@ -240,9 +229,6 @@
               ],
               'name': 'Habitat 3',
               'index': 2,
-              'temperature': 0,
-              'pipelength': 0,
-              'brickarea': 0
             },
             {
               'items': [
@@ -262,9 +248,6 @@
               ],
               'name': 'Habitat 4',
               'index': 3,
-              'temperature': 0,
-              'pipelength': 0,
-              'brickarea': 0
             }
           ]
         },
@@ -340,18 +323,17 @@
               'color': '#68734F'
             },
             {
-              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
-              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
               'index': 11,
               'color': '#FF5722'
             },
             {
-              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
-              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
+              'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
+              'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
               'index': 12,
               'color': '#795548'
             }
-
           ]
         },
         graphs: {
@@ -375,50 +357,39 @@
             viewWindow: {},
             enableInteractivity: false,
             animation: {
-              'startup': true, duration: 1000,
-            //  easing: 'inAndOut'
+              startup: true,
+              duration: 1000,
+              //  easing: 'inAndOut'
               easing: 'out'
             },
-            chartArea: {left: 50, top: 10, right: 0, bottom: 10, width: '93%', height: '75%'},
+            chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
-              viewWindow:{
-                min:0
+              viewWindow: {
+                min: 0
               },
+              textStyle: {
+                fontSize: 14
+              }
             },
             hAxis: {
-              textPosition: 'none'
-//              gridlines: {
-//                count: -1,
-//                units: {
-//                  days: {format: ['M/d']},
-//                  hours: {format: ['hh:mm a']},
-//
-//                }
-//              },
-//              minorGridlines: {
-//                units: {
-//                  hours: {format: ['hh:mm a']},
-//                  minutes: {format: ['hh:mm a']}
-//                }
+              textPosition: 'out',
+              textStyle: {
+                fontSize: 14
+              },
+              gridlines: {
+                count: -1,
+                units: {
+                  days: {format: ['M/d']},
+                  hours: {format: ['h a']},
+                }
+              },
+              minorGridlines: {
+                units: {
+                  hours: {format: ['h:m a']},
+                  minutes: {format: ['h:m a']}
+                }
               }
             }
-        },
-        gridlines: {
-          type: Object,
-          notify: false,
-          value: {
-            count: -1,
-            units: {
-              days: {format: ['M/d']},
-              hours: {format: ['hh:mm a']},
-
-            }
-          }
-        },
-        minorGridlines: {
-          units: {
-            hours: {format: ['hh:mm a']},
-            minutes: {format: ['hh:mm a']}
           }
         },
         startDate: {
@@ -445,6 +416,10 @@
           value: false,
           observer: 'connectedChanged'
         },
+        debug: {
+          type: Boolean,
+          value: false
+        }
       },
       observers: [
         'selectedItemsChanged(selectedItems.*)',
@@ -453,10 +428,14 @@
         'graphsChanged(graphs.*)'
       ],
       graphsChanged: function (changeRecord) {
-        JSON.stringify(changeRecord);
+        if (this.debug) {
+          console.log('graphsChanged', changeRecord);
+        }
       },
       selectedItemsChanged: function (changeRecord) {
-
+        if (this.debug) {
+          console.log('selectedItemsChanged', changeRecord);
+        }
         if (changeRecord.path === 'selectedItems.splices') {
 
           var is = changeRecord.base.splices.indexSplices[0];
@@ -479,6 +458,18 @@
               }
             }
 
+            for(var j = 0; j < this.graphs.length; j++) {
+              var previousGraph = this.graphs[j];
+              if( j === this.graphs.length-1) {
+                this.updateGraphAxis(previousGraph,'on');
+              } else {
+                this.updateGraphAxis(previousGraph,'off');
+              }
+              this.redrawChart(previousGraph);
+
+            }
+
+
           }
           // a user was added or removed
         } else {
@@ -487,13 +478,20 @@
         }
       },
       toggleSelectorsChanged: function (changeRecord) {
+        if (this.debug) {
+          console.log('toggleSelectorsChanged', changeRecord);
+        }
       },
       buttonSelectorsChanged: function (changeRecord) {
-
+        if (this.debug) {
+          console.log('buttonSelectorsChanged', changeRecord);
+        }
       },
       currentToggleChanged: function (newValue, oldValue) {
-        console.log('newValue oldValue', JSON.stringify(newValue), JSON.stringify(oldValue));
-        this.set('selectedItems',[]);
+        if (this.debug) {
+          console.log('newValue oldValue', JSON.stringify(newValue), JSON.stringify(oldValue));
+        }
+        this.set('selectedItems', []);
         this.clearAllGraphs();
       },
       showStartDateDialogAction: function () {
@@ -502,18 +500,12 @@
       showEndDateDialogAction: function () {
         this.$.endDateDialog.toggle();
       },
-      formatButtonDate: function (someDate) {
-        var formatted = moment(someDate).format('MM-DD-YYYY');
-        return formatted;
-      },
       dismissDialog: function (e) {
-
         if (e.detail.confirmed) {
           if (e.target.id === 'startDateDialog') {
             if (this.checkDatesValid()) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
-//              this.updateEventHistoryPoints();
             } else {
               this.showStartDateDialogAction();
             }
@@ -521,16 +513,11 @@
             if (this.checkDatesValid()) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
-//              this.updateEventHistoryPoints();
             } else {
               this.showEndDateDialogAction();
             }
-
           }
-
-
         }
-        console.log('dismissed', e);
       },
       checkDatesValid: function () {
 
@@ -546,32 +533,19 @@
           return true;
         }
       },
-      showAlert: function (message) {
-        this.alertMessage = message;
-        this.$.modal.toggle();
-      },
       startDateChanged: function (newValue, oldValue) {
-//                if (this.endDate !== undefined && this.endDate !== null) {
-//                    if( this.checkDatesValid()  ) {
-//                        this.updateAllGraphs();
-//                    } else {
-//
-//                    }
-//                }
-
+        if (this.debug) {
+          console.log('startDateChanged', newValue, oldValue);
+        }
       },
       endDateChanged: function (newValue, oldValue) {
-//                if (this.startDate !== undefined && this.startDate !== null) {
-//                    if( this.checkDatesValid() ) {
-//                        this.updateAllGraphs();
-//                    } else {
-//
-//                    }
-//                }
+        if (this.debug) {
+          console.log('endDateChanged', newValue, oldValue);
+        }
       },
-      clearAllGraphs: function() {
-        this.set('graphs',[]);
-        this.set('envEventHistories',[]);
+      clearAllGraphs: function () {
+        this.set('graphs', []);
+        this.set('envEventHistories', []);
       },
       updateEventHistoryPoints: function () {
         var sdate = moment(this.startDate).startOf('day').valueOf();
@@ -587,14 +561,16 @@
         var habitatIndex = this.currentToggle.index;
 
         var message;
+
+        //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
+
         if (type === 'environment_history') {
           if (species.index === 11) {
             species.index = 0;
           } else if (species.index === 12) {
             species.index = 1;
-          } else if (species.index === 13) {
-            species.index = 2;
           }
+
           message = {
             habitat: habitatIndex,
             environmental_variable: species.index,
@@ -648,7 +624,6 @@
         });
 
 
-
       },
       addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
         var me = this;
@@ -669,9 +644,12 @@
 
           if (r.length > 0) {
 
-            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-            //add one minute to the start time and set it 0
-            t.push([firstDate, 0, species.color]);
+//            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+//            //add one minute to the start time and set it 0
+//            t.push([firstDate, 0, species.color]);
+
+
+            //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
 
 
             console.log('spieces color: ', species.color);
@@ -680,8 +658,6 @@
                 species.index = 11;
               } else if (species.index === 1) {
                 species.index = 12;
-              } else if (species.index === 2) {
-                species.index = 13;
               }
 
 
@@ -695,9 +671,9 @@
 
 
               }
-              var lastDate1 = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+              //var lastDate1 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
               //add one minute to the start time and set it 0
-              t.push([lastDate1, 0, species.color]);
+              //t.push([lastDate1, 0, species.color]);
 
               me.drawGraph(species, t, 'environment_history', sdate, edate);
             } else if (messageType === 'population_history') {
@@ -710,9 +686,9 @@
                 t.push([d2, r[i2].population, species.color]);
               }
 
-              var lastDate2 = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
-              //add one minute to the start time and set it 0
-              t.push([lastDate2, 0, species.color]);
+//              var lastDate2 = 'Date(' + moment(eDateLocal).subtract(10, 'minute').valueOf() + ')';
+//              //add one minute to the start time and set it 0
+//              t.push([lastDate2, 0, species.color]);
 
               me.drawGraph(species, t, 'population_history', sdate, edate);
 
@@ -721,21 +697,25 @@
 
           } else {
             //zero results
-            var popFirstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+            var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popFirstDate, 0, species.color]);
 
-            var popLastDate = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+            var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popLastDate, 0, species.color]);
 
             me.drawGraph(species, t, messageType, sdate, edate);
 
           }
+
+
+
         });
 
 
       },
+
       drawGraph: function (species, data, type, to, from) {
         var foundGraphs = this.graphs.filter(function (el) {
           return (el.index === species.index);
@@ -745,31 +725,37 @@
         var max = new Date(moment(to).add(1, 'minute').valueOf());
         //previous
         if (foundGraphs.length > 0) {
+
+
+
           var oldGraph = foundGraphs[0];
           oldGraph.data = data;
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
-          oldGraph.options.hAxis.textPosition = 'out';
-          oldGraph.options.hAxis.gridlines = this.gridlines;
-          oldGraph.options.hAxis.minorGridlines = this.minorGridlines;
-//          oldGraph.options.vAxis.minValue = 0;
-//          oldGraph.options.hAxis.viewWindow.min = min;
-//          oldGraph.options.hAxis.viewWindow.max = max;
-          this.notifyPath('graphs.data', this.graphs);
-          this.redrawChart(oldGraph);
-          console.log('updated graph');
+
+
+          var index = this.graphs.indexOf(oldGraph);
+
+          if( index !== this.graphs.length-1) {
+            this.updateGraphAxis(oldGraph,'off');
+            this.redrawChart(oldGraph);
+          } else {
+            this.updateGraphAxis(oldGraph,'on');
+            this.redrawChart(oldGraph);
+          }
+          if( this.debug ) {
+            console.log('updated graph');
+          }
+
         } else {
 
-//          for(var j = 0; j < this.graphs.length; j++) {
-//            var previousGraph = this.graphs[j];
-//            previousGraph.options = this.chartOptions;
-//            previousGraph.options.hAxis.minValue = min;
-//            previousGraph.options.hAxis.maxValue = max;
-//            previousGraph.options.hAxis.gridlines = {};
-//            previousGraph.options.hAxis.minorGridlines = {};
-//            previousGraph.options.hAxis.textPosition = 'none';
-//          }
+          for(var j = 0; j < this.graphs.length; j++) {
+            var previousGraph = this.graphs[j];
+            this.updateGraphAxis(previousGraph, 'off');
+            this.redrawChart(previousGraph);
+
+          }
 
           //this.notifyPath('graphs.data', this.graphs);
 
@@ -778,15 +764,33 @@
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
-          g.options.hAxis.gridlines = this.gridlines;
-          g.options.hAxis.minorGridlines = this.minorGridlines;
-          g.options.hAxis.textPosition = 'out';
-//          g.options.vAxis.minValue = 0;
-//          g.options.hAxis.viewWindow.min = min;
-//          g.options.hAxis.viewWindow.max = max;
+          this.updateGraphAxis(g,'on');
           this.push('graphs', g);
-          console.log('pushed graph');
+          if( this.debug ) {
+            console.log('pushed graph');
+          }
         }
+
+      },
+      updateGraphAxis: function (someGraph, type) {
+
+        if( someGraph !== undefined ) {
+          switch (type) {
+            case 'on':
+              someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
+              someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
+              someGraph.options.hAxis.textPosition = 'out';
+              break;
+            case 'off':
+              someGraph.options.hAxis.gridlines.units.hours = {format: [' ']};
+              someGraph.options.hAxis.gridlines.units.days = {format: [' ']};
+              someGraph.options.hAxis.textPosition = 'none';
+              break;
+            default:
+              console.log('no switch type');
+          }
+        }
+
       },
       redrawChart: function (graph) {
         var chartId = this.chartName(graph.index);
@@ -820,8 +824,6 @@
         this.startDate = new Date();
         this.endDate = this.startDate;
         this.selectedItems = [];
-//        this.buttonSelectors = [];
-//        this.toggleSelectors = [];
         this.graphs = [];
         this.envEventHistories = [];
 
@@ -836,7 +838,15 @@
       chartName: function (index) {
         console.log('graph ' + index);
         return 'chart' + index;
-      }
+      },
+      formatButtonSDate: function (someDate) {
+        var formatted = moment(someDate).format('MM/DD/YY');
+        return 'START: '+ formatted;
+      },
+      formatButtonEDate: function (someDate) {
+        var formatted = moment(someDate).format('MM/DD/YY');
+        return 'END: '+ formatted;
+      },
     });
   </script>
 </dom-module>

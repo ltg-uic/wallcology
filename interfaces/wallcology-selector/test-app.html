@@ -1,0 +1,261 @@
+<link href="bower_components/polymer/polymer.html" rel="import">
+<link href="bower_components/paper-button/paper-button.html" rel="import">
+<link href="wallcology-selector.html" rel="import">
+
+
+<dom-module id="test-app">
+    <template id="ta">
+        <style>
+            :host {
+                display: block;
+                box-sizing: border-box;
+            }
+        </style>
+        <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
+                             selected-items="{{selectedItems}}"
+                             current-toggle="{{currentToggle}}"></wallcology-selector>
+
+        <template id="test" is="dom-repeat" items="{{selectedItems}}">
+            <span>{{item.index}}</span>
+        </template>
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: 'test-app',
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                selectedItems: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                currentToggle: {
+                    type: Object,
+                    notify: true,
+                    value: {},
+                    observer: 'currentToggleChanged'
+                },
+                toggleSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            "items": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12
+                            ],
+                            "name": "Habitat 1",
+                            "index": 0
+                        },
+                        {
+                            "items": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12
+                            ],
+                            "name": "Habitat 2",
+                            "index": 1
+                        },
+                        {
+                            "items": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12
+                            ],
+                            "name": "Habitat 3",
+                            "index": 2
+                        },
+                        {
+                            "items": [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10,
+                                11,
+                                12
+                            ],
+                            "name": "Habitat 4",
+                            "index": 3
+                        }
+                    ]
+                },
+                buttonSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_00.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_00_0.svg",
+                            "index": 0,
+                            "color": "#FFC91B"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_01.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_01_0.svg",
+                            "index": 1,
+                            "color": "#5A6372"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_02.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_02_0.svg",
+                            "index": 2,
+                            "color": "#FFDD00"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_03.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_03_0.svg",
+                            "index": 3,
+                            "color": "#2C4721"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_04.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_04_0.svg",
+
+                            "index": 4,
+                            "color": "#502B6E"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_05.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_05_0.svg",
+                            "index": 5,
+                            "color": "#99cc33"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_06.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_06_0.svg",
+                            "index": 6,
+                            "color": "#8975B5"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_07.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_07_0.svg",
+                            "index": 7,
+                            "color": "#FAAA19"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_08.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_08_0.svg",
+                            "index": 8,
+                            "color": "#899C7C"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_09.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_09_0.svg",
+                            "index": 9,
+                            "color": "#4AB6C8"
+                        },
+                        {
+                            "highlightUrl": "https://ltg.cs.uic.edu/WC/icons/species_10.svg",
+                            "activeUrl": "https://ltg.cs.uic.edu/WC/icons/species_10_0.svg",
+                            "index": 10,
+                            "color": "#68734F"
+                        }
+                    ]
+                }
+
+            },
+            observers: [
+                'selectedItemsChanged(selectedItems.*)',
+                'toggleSelectorsChanged(toggleSelectors.*)',
+                'buttonSelectorsChanged(buttonSelectors.*)'
+            ],
+            selectedItemsChanged: function (changeRecord) {
+                if (changeRecord.path == 'selectedItems.splices') {
+                    // a user was added or removed
+                } else {
+                    // an individual user or its sub-properties changed
+                    // check "changeRecord.path" to determine what changed
+                }
+            },
+            testSwitchTapped: function (e) {
+                this.$.ws.switchToggleAndButtonSelectors(3, [0, 4, 5]);
+            },
+            toggleSelectorsChanged: function (changeRecord) {
+
+            },
+            buttonSelectorsChanged: function (changeRecord) {
+
+            },
+            currentToggleChanged: function (newValue, oldValue) {
+//                console.log('toggle changed test-app', newValue, oldValue);
+            },
+            connectedChanged: function (newValue, oldValue) {
+            },
+//            connectedChanged: function (newValue, oldValue) {
+//                var me = this;
+////                console.log('connected changed', newValue, oldValue);
+//                if (newValue === true) {
+//                    this.$.nutellaConn.nutella.net.request('master_configuration_test', {}, function (r) {
+//                        if (r !== undefined) {
+//                            me.buttonSelectors = r.habitatItems;
+//
+//                            var start = [{
+//                                'items': [],
+//                                'name': 'Habitat ?  ',
+//                                'index': -1
+//                            }];
+//                            me.toggleSelectors = start.concat(r.habitats);
+//                            console.log('MASTER CONFIG FETCHED');
+//
+//                        }
+//
+//                    });
+//                }
+//            },
+            forceMe: function (e) {
+                this.$.ws.switchToggleAndButtonSelectors(-1, []);
+            },
+            ready: function () {
+                this.currentToggle = {};
+                var start = [{
+                    'items': [],
+                    'name': 'Habitat ?   ',
+                    'index': -1
+                }];
+                this.toggleSelectors = start.concat(this.toggleSelectors);
+            }
+        });
+    </script>
+</dom-module>
