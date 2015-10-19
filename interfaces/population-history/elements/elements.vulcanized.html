@@ -11055,14 +11055,14 @@ if (!window.Promise) {
 
 <script>
 
-  /** 
-   * `Polymer.PaperRippleBehavior` dynamically implements a ripple 
+  /**
+   * `Polymer.PaperRippleBehavior` dynamically implements a ripple
    * when the element has focus via pointer or keyboard.
    *
    * NOTE: This behavior is intended to be used in conjunction with and after
    * `Polymer.IronButtonState` and `Polymer.IronControlState`.
    *
-   * @polymerBehavior Polymer.PaperRippleBehavior 
+   * @polymerBehavior Polymer.PaperRippleBehavior
    */
   Polymer.PaperRippleBehavior = {
 
@@ -11074,11 +11074,18 @@ if (!window.Promise) {
       noink: {
         type: Boolean,
         observer: '_noinkChanged'
+      },
+
+      /**
+       * @type {Element|undefined}
+       */
+      _rippleContainer: {
+        type: Object,
       }
     },
 
     /**
-     * Ensures a `<paper-ripple>` element is available when the element is 
+     * Ensures a `<paper-ripple>` element is available when the element is
      * focused.
      */
     _buttonStateChanged: function() {
@@ -11087,7 +11094,7 @@ if (!window.Promise) {
       }
     },
 
-    /** 
+    /**
      * In addition to the functionality provided in `IronButtonState`, ensures
      * a ripple effect is created when the element is in a `pressed` state.
      */
@@ -11099,12 +11106,12 @@ if (!window.Promise) {
     },
 
     /**
-     * Ensures this element contains a ripple effect. For startup efficiency 
+     * Ensures this element contains a ripple effect. For startup efficiency
      * the ripple effect is dynamically on demand when needed.
-     * @param {event} triggeringEvent (optional) event that triggered the 
+     * @param {!Event=} opt_triggeringEvent (optional) event that triggered the
      * ripple.
      */
-    ensureRipple: function(triggeringEvent) {
+    ensureRipple: function(opt_triggeringEvent) {
       if (!this.hasRipple()) {
         this._ripple = this._createRipple();
         this._ripple.noink = this.noink;
@@ -11112,10 +11119,13 @@ if (!window.Promise) {
         if (rippleContainer) {
           Polymer.dom(rippleContainer).appendChild(this._ripple);
         }
-        var domContainer = rippleContainer === this.shadyRoot ? this : 
+        var domContainer = rippleContainer === this.shadyRoot ? this :
           rippleContainer;
-        if (triggeringEvent && domContainer.contains(triggeringEvent.target)) {
-          this._ripple.uiDownAction(triggeringEvent);
+        if (opt_triggeringEvent) {
+          var target = opt_triggeringEvent.target;
+          if (domContainer.contains(/** @type {Node} */(target))) {
+            this._ripple.uiDownAction(opt_triggeringEvent);
+          }
         }
       }
     },
@@ -11123,7 +11133,7 @@ if (!window.Promise) {
     /**
      * Returns the `<paper-ripple>` element used by this element to create
      * ripple effects. The element's ripple is created on demand, when
-     * necessary, and calling this method will force the 
+     * necessary, and calling this method will force the
      * ripple to be created.
      */
     getRipple: function() {
@@ -11142,10 +11152,11 @@ if (!window.Promise) {
     /**
      * Create the element's ripple effect via creating a `<paper-ripple>`.
      * Override this method to customize the ripple element.
-     * @return {element} Returns a `<paper-ripple>` element.
+     * @return {!PaperRippleElement} Returns a `<paper-ripple>` element.
      */
     _createRipple: function() {
-      return document.createElement('paper-ripple');
+      return /** @type {!PaperRippleElement} */ (
+          document.createElement('paper-ripple'));
     },
 
     _noinkChanged: function(noink) {
@@ -11209,8 +11220,10 @@ if (!window.Promise) {
     },
 
     /**
-     * In addition to `IronButtonState` behavior, when space key goes down, 
+     * In addition to `IronButtonState` behavior, when space key goes down,
      * create a ripple down effect.
+     *
+     * @param {!KeyboardEvent} event .
      */
     _spaceKeyDownHandler: function(event) {
       Polymer.IronButtonStateImpl._spaceKeyDownHandler.call(this, event);
@@ -11220,8 +11233,10 @@ if (!window.Promise) {
     },
 
     /**
-     * In addition to `IronButtonState` behavior, when space key goes up, 
+     * In addition to `IronButtonState` behavior, when space key goes up,
      * create a ripple up effect.
+     *
+     * @param {!KeyboardEvent} event .
      */
     _spaceKeyUpHandler: function(event) {
       Polymer.IronButtonStateImpl._spaceKeyUpHandler.call(this, event);
@@ -24950,7 +24965,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--paper-item-focused);
       }
 
-      :host(:focus:before) {
+      :host(:focus):before {
         @apply(--layout-fit);
         content: '';
         background: currentColor;
@@ -27199,7 +27214,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 maxSelections: {
                     type: Number,
                     notify: true,
-                    value: 0
+                    value: 13
                 },
                 currentToggle: {
                     type: Object,
@@ -27218,7 +27233,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 },
                 debug: {
                     type: Boolean,
-                    value: true
+                    value: false
                 }
             },
             observers: [
@@ -27311,10 +27326,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 }
             },
             disableButtons: function (buttonIndexes) {
-                if (this.debug) {
-                    console.log('disableButtons: ', buttonIndexes);
-                }
+
                 if (buttonIndexes === undefined || buttonIndexes.length === 0) {
+
+
                     //disable all array
                     var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
                     for (var i = 0; i < buttons.length; i++) {
@@ -27445,23 +27460,32 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 return null;
             },
             ready: function () {
+                this.currentToggle = {};
                 this.selectedItems = [];
             },
             created: function () {
-                console.log(this.localName + '#' + this.id + ' was created');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was created');
+                }
             },
 
             attached: function () {
-                console.log(this.localName + '#' + this.id + ' was attached');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was attached');
+                }
             },
 
             detached: function () {
-                console.log(this.localName + '#' + this.id + ' was detached');
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' was detached');
+                }
             },
 
             attributeChanged: function (name, type) {
-                console.log(this.localName + '#' + this.id + ' attribute ' + name +
-                        ' was changed to ' + this.getAttribute(name));
+                if( this.debug ) {
+                    console.log(this.localName + '#' + this.id + ' attribute ' + name +
+                            ' was changed to ' + this.getAttribute(name));
+                }
             }
         });
     </script>
@@ -28002,6 +28026,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this._squelchNextFinishEvent = true;
           this.cancelAnimation();
           this._completeSelectedChanged();
+          this._squelchNextFinishEvent = false;
         }
 
         // configure the animation.
@@ -28491,6 +28516,7 @@ paper-calendar {
         color: white;
         background: #006699;
         margin: 0px;
+        font-size: 14px;
       }
 
       iron-icon {
@@ -28529,13 +28555,26 @@ paper-calendar {
         width: 0px;
       }
 
+      paper-toolbar ::shadow #topBar {
+        padding: 0 4px;
+        background-color: white;
+      }
+
+      .graph-icon {
+        padding: 0 4px;
+      }
+
     </style>
 
 
     <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology" runid="default" componentid="wallcology_admin"></nutella-connector>
+    <paper-toolbar>
 
-    <div id="topBar" class="vertical-section-container">
-      <div class="vertical-section">
+      <div class="start">
+        <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+        </paper-button>
+        </div>
+      <div class="center flex">
         <div class="horizontal-section-container">
 
           <div class="horizontal-section">
@@ -28543,49 +28582,30 @@ paper-calendar {
           </div>
         </div>
       </div>
-      <div class="vertical-section hspacer">
-
+      <div class="end">
+        <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+        </paper-button>
       </div>
-    </div>
+    </paper-toolbar>
 
     <div class="vertical-section-container">
       <template is="dom-repeat" items="{{graphs}}">
-        <div class="vertical-section center">
+        <section>
+          <div class="vertical-section center">
 
-          <div class="horizontal layout center">
-            <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
+            <div class="horizontal layout center graph-icon">
+              <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
 
-            <div class="center flex rightpadder">
-              <google-chart auto-fit-on-attach="" id="{{chartName(item.index)}}" type="column" options="{{item.options}}" data="{{item.data}}">
-              </google-chart>
+              <div class="center flex rightpadder">
+                <google-chart auto-fit-on-attach="" id="{{chartName(item.index)}}" type="column" options="{{item.options}}" data="{{item.data}}">
+                </google-chart>
 
+              </div>
             </div>
-          </div>
 
-        </div>
+          </div>
+        </section>
       </template>
-    </div>
-
-    <div class="vertical-section-container">
-      <div class="vertical-section center">
-
-        <div class="horizontal layout">
-          <div style="
-    width:  100px;"></div>
-          <div class="left">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonDate(startDate)}}</span>
-            </paper-button>
-          </div>
-
-          <div class="flex nopadding"></div>
-
-          <div class="rightspacer">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonDate(endDate)}}</span>
-            </paper-button>
-          </div>
-        </div>
-
-      </div>
     </div>
 
     
@@ -28632,7 +28652,7 @@ paper-calendar {
         currentToggle: {
           type: Object,
           notify: true,
-          value: function() {
+          value: function () {
             return {};
           },
           observer: 'currentToggleChanged'
@@ -28817,7 +28837,6 @@ paper-calendar {
         chartOptions: {
           type: Object,
           notify: true,
-          domainAxis: { type: 'category' },
           value: {
             legend: {position: 'none'},
             tooltip: {
@@ -28826,50 +28845,39 @@ paper-calendar {
             viewWindow: {},
             enableInteractivity: false,
             animation: {
-              'startup': true, duration: 1000,
-            //  easing: 'inAndOut'
+              startup: true,
+              duration: 1000,
+              //  easing: 'inAndOut'
               easing: 'out'
             },
-            chartArea: {left: 50, top: 10, right: 0, bottom: 10, width: '93%', height: '75%'},
+            chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
-              viewWindow:{
-                min:0
+              viewWindow: {
+                min: 0
               },
+              textStyle: {
+                fontSize: 14
+              }
             },
             hAxis: {
-              textPosition: 'none'
-//              gridlines: {
-//                count: -1,
-//                units: {
-//                  days: {format: ['M/d']},
-//                  hours: {format: ['hh:mm a']},
-//
-//                }
-//              },
-//              minorGridlines: {
-//                units: {
-//                  hours: {format: ['hh:mm a']},
-//                  minutes: {format: ['hh:mm a']}
-//                }
+              textPosition: 'out',
+              textStyle: {
+                fontSize: 14
+              },
+              gridlines: {
+                count: -1,
+                units: {
+                  days: {format: ['M/d']},
+                  hours: {format: ['h a']},
+                }
+              },
+              minorGridlines: {
+                units: {
+                  hours: {format: ['h:m a']},
+                  minutes: {format: ['h:m a']}
+                }
               }
             }
-        },
-        gridlines: {
-          type: Object,
-          notify: false,
-          value: {
-            count: -1,
-            units: {
-              days: {format: ['M/d']},
-              hours: {format: ['h a']},
-
-            }
-          }
-        },
-        minorGridlines: {
-          units: {
-            hours: {format: ['h:m a']},
-            minutes: {format: ['h:m a']}
           }
         },
         startDate: {
@@ -28908,12 +28916,12 @@ paper-calendar {
         'graphsChanged(graphs.*)'
       ],
       graphsChanged: function (changeRecord) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('graphsChanged', changeRecord);
         }
       },
       selectedItemsChanged: function (changeRecord) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('selectedItemsChanged', changeRecord);
         }
         if (changeRecord.path === 'selectedItems.splices') {
@@ -28938,6 +28946,18 @@ paper-calendar {
               }
             }
 
+            for(var j = 0; j < this.graphs.length; j++) {
+              var previousGraph = this.graphs[j];
+              if( j === this.graphs.length-1) {
+                this.updateGraphAxis(previousGraph,'on');
+              } else {
+                this.updateGraphAxis(previousGraph,'off');
+              }
+              this.redrawChart(previousGraph);
+
+            }
+
+
           }
           // a user was added or removed
         } else {
@@ -28946,20 +28966,20 @@ paper-calendar {
         }
       },
       toggleSelectorsChanged: function (changeRecord) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('toggleSelectorsChanged', changeRecord);
         }
       },
       buttonSelectorsChanged: function (changeRecord) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('buttonSelectorsChanged', changeRecord);
         }
       },
       currentToggleChanged: function (newValue, oldValue) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('newValue oldValue', JSON.stringify(newValue), JSON.stringify(oldValue));
         }
-        this.set('selectedItems',[]);
+        this.set('selectedItems', []);
         this.clearAllGraphs();
       },
       showStartDateDialogAction: function () {
@@ -28967,10 +28987,6 @@ paper-calendar {
       },
       showEndDateDialogAction: function () {
         this.$.endDateDialog.toggle();
-      },
-      formatButtonDate: function (someDate) {
-        var formatted = moment(someDate).format('MM-DD-YYYY');
-        return formatted;
       },
       dismissDialog: function (e) {
         if (e.detail.confirmed) {
@@ -29006,18 +29022,18 @@ paper-calendar {
         }
       },
       startDateChanged: function (newValue, oldValue) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('startDateChanged', newValue, oldValue);
         }
       },
       endDateChanged: function (newValue, oldValue) {
-        if( this.debug ) {
+        if (this.debug) {
           console.log('endDateChanged', newValue, oldValue);
         }
       },
-      clearAllGraphs: function() {
-        this.set('graphs',[]);
-        this.set('envEventHistories',[]);
+      clearAllGraphs: function () {
+        this.set('graphs', []);
+        this.set('envEventHistories', []);
       },
       updateEventHistoryPoints: function () {
         var sdate = moment(this.startDate).startOf('day').valueOf();
@@ -29096,7 +29112,6 @@ paper-calendar {
         });
 
 
-
       },
       addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
         var me = this;
@@ -29117,9 +29132,9 @@ paper-calendar {
 
           if (r.length > 0) {
 
-            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-            //add one minute to the start time and set it 0
-            t.push([firstDate, 0, species.color]);
+//            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+//            //add one minute to the start time and set it 0
+//            t.push([firstDate, 0, species.color]);
 
 
             //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
@@ -29144,9 +29159,9 @@ paper-calendar {
 
 
               }
-              var lastDate1 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
+              //var lastDate1 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
               //add one minute to the start time and set it 0
-              t.push([lastDate1, 0, species.color]);
+              //t.push([lastDate1, 0, species.color]);
 
               me.drawGraph(species, t, 'environment_history', sdate, edate);
             } else if (messageType === 'population_history') {
@@ -29159,9 +29174,9 @@ paper-calendar {
                 t.push([d2, r[i2].population, species.color]);
               }
 
-              var lastDate2 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
-              //add one minute to the start time and set it 0
-              t.push([lastDate2, 0, species.color]);
+//              var lastDate2 = 'Date(' + moment(eDateLocal).subtract(10, 'minute').valueOf() + ')';
+//              //add one minute to the start time and set it 0
+//              t.push([lastDate2, 0, species.color]);
 
               me.drawGraph(species, t, 'population_history', sdate, edate);
 
@@ -29170,11 +29185,11 @@ paper-calendar {
 
           } else {
             //zero results
-            var popFirstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+            var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popFirstDate, 0, species.color]);
 
-            var popLastDate = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
+            var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popLastDate, 0, species.color]);
 
@@ -29182,31 +29197,13 @@ paper-calendar {
 
           }
 
-//          this.updateGraphAxis();
 
 
         });
 
 
       },
-      updateGraphAxis: function() {
 
-//        if( this.graphs.length > 1) {
-//          for( var i = 0; i < this.graphs.length-2; i++ ) {
-//            var previousGraph = this.graphs[i];
-//            //oldGraph.options = this.chartOptions;
-//            previousGraph.options.hAxis.minValue = min;
-//            previousGraph.options.hAxis.maxValue = max;
-//            previousGraph.options.hAxis.gridlines = {};
-//            previousGraph.options.hAxis.minorGridlines = {};
-//            previousGraph.options.hAxis.textPosition = 'none';
-//            //this.notifyPath('graphs.data', this.graphs);
-//            this.redrawChart(previousGraph);
-//          }
-//        }
-
-
-      },
       drawGraph: function (species, data, type, to, from) {
         var foundGraphs = this.graphs.filter(function (el) {
           return (el.index === species.index);
@@ -29216,31 +29213,37 @@ paper-calendar {
         var max = new Date(moment(to).add(1, 'minute').valueOf());
         //previous
         if (foundGraphs.length > 0) {
+
+
+
           var oldGraph = foundGraphs[0];
           oldGraph.data = data;
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
-          oldGraph.options.hAxis.textPosition = 'out';
-          oldGraph.options.hAxis.gridlines = this.gridlines;
-          oldGraph.options.hAxis.minorGridlines = this.minorGridlines;
-//          oldGraph.options.vAxis.minValue = 0;
-//          oldGraph.options.hAxis.viewWindow.min = min;
-//          oldGraph.options.hAxis.viewWindow.max = max;
-          this.notifyPath('graphs.data', this.graphs);
-          this.redrawChart(oldGraph);
-          console.log('updated graph');
+
+
+          var index = this.graphs.indexOf(oldGraph);
+
+          if( index !== this.graphs.length-1) {
+            this.updateGraphAxis(oldGraph,'off');
+            this.redrawChart(oldGraph);
+          } else {
+            this.updateGraphAxis(oldGraph,'on');
+            this.redrawChart(oldGraph);
+          }
+          if( this.debug ) {
+            console.log('updated graph');
+          }
+
         } else {
 
-//          for(var j = 0; j < this.graphs.length; j++) {
-//            var previousGraph = this.graphs[j];
-//            previousGraph.options = this.chartOptions;
-//            previousGraph.options.hAxis.minValue = min;
-//            previousGraph.options.hAxis.maxValue = max;
-//            previousGraph.options.hAxis.gridlines = {};
-//            previousGraph.options.hAxis.minorGridlines = {};
-//            previousGraph.options.hAxis.textPosition = 'none';
-//          }
+          for(var j = 0; j < this.graphs.length; j++) {
+            var previousGraph = this.graphs[j];
+            this.updateGraphAxis(previousGraph, 'off');
+            this.redrawChart(previousGraph);
+
+          }
 
           //this.notifyPath('graphs.data', this.graphs);
 
@@ -29249,15 +29252,33 @@ paper-calendar {
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
-          g.options.hAxis.gridlines = this.gridlines;
-          g.options.hAxis.minorGridlines = this.minorGridlines;
-          g.options.hAxis.textPosition = 'out';
-//          g.options.vAxis.minValue = 0;
-//          g.options.hAxis.viewWindow.min = min;
-//          g.options.hAxis.viewWindow.max = max;
+          this.updateGraphAxis(g,'on');
           this.push('graphs', g);
-          console.log('pushed graph');
+          if( this.debug ) {
+            console.log('pushed graph');
+          }
         }
+
+      },
+      updateGraphAxis: function (someGraph, type) {
+
+        if( someGraph !== undefined ) {
+          switch (type) {
+            case 'on':
+              someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
+              someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
+              someGraph.options.hAxis.textPosition = 'out';
+              break;
+            case 'off':
+              someGraph.options.hAxis.gridlines.units.hours = {format: [' ']};
+              someGraph.options.hAxis.gridlines.units.days = {format: [' ']};
+              someGraph.options.hAxis.textPosition = 'none';
+              break;
+            default:
+              console.log('no switch type');
+          }
+        }
+
       },
       redrawChart: function (graph) {
         var chartId = this.chartName(graph.index);
@@ -29305,7 +29326,15 @@ paper-calendar {
       chartName: function (index) {
         console.log('graph ' + index);
         return 'chart' + index;
-      }
+      },
+      formatButtonSDate: function (someDate) {
+        var formatted = moment(someDate).format('MM/DD/YY');
+        return 'START: '+ formatted;
+      },
+      formatButtonEDate: function (someDate) {
+        var formatted = moment(someDate).format('MM/DD/YY');
+        return 'END: '+ formatted;
+      },
     });
   </script>
 </dom-module>

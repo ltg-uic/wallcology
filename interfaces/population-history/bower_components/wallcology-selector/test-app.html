@@ -11,12 +11,9 @@
                 box-sizing: border-box;
             }
         </style>
-        <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
-                             max-selections="13" selected-items="{{selectedItems}}"
+        <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
+                             selected-items="{{selectedItems}}"
                              current-toggle="{{currentToggle}}"></wallcology-selector>
-
-
-        <paper-button on-click="handleClick">Click me!</paper-button>
 
         <template id="test" is="dom-repeat" items="{{selectedItems}}">
             <span>{{item.index}}</span>
@@ -63,7 +60,7 @@
                                 12
                             ],
                             'name': 'Habitat 1',
-                            'index': 0
+                            'index': 0,
                         },
                         {
                             'items': [
@@ -82,7 +79,7 @@
                                 12
                             ],
                             'name': 'Habitat 2',
-                            'index': 1
+                            'index': 1,
                         },
                         {
                             'items': [
@@ -101,7 +98,7 @@
                                 12
                             ],
                             'name': 'Habitat 3',
-                            'index': 2
+                            'index': 2,
                         },
                         {
                             'items': [
@@ -120,7 +117,7 @@
                                 12
                             ],
                             'name': 'Habitat 4',
-                            'index': 3
+                            'index': 3,
                         }
                     ]
                 },
@@ -194,25 +191,21 @@
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
                             'index': 10,
                             'color': '#68734F'
+                        },
+                        {
+                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
+                            'index': 11,
+                            'color': '#FF5722'
+                        },
+                        {
+                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
+                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
+                            'index': 12,
+                            'color': '#795548'
                         }
-//                        ,
-//                        {
-//                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11.svg',
-//                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_11_0.svg',
-//                            'index': 11,
-//                            'color': '#FF5722'
-//                        },
-//                        {
-//                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12.svg',
-//                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_12_0.svg',
-//                            'index': 12,
-//                            'color': '#795548'
-//                        }
-
                     ]
-                }
-
-            },
+                },
             observers: [
                 'selectedItemsChanged(selectedItems.*)',
                 'toggleSelectorsChanged(toggleSelectors.*)',
@@ -272,8 +265,6 @@
                     'index': -1
                 }];
                 this.toggleSelectors = start.concat(this.toggleSelectors);
-
-
             }
         });
     </script>
