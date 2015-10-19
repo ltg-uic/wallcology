@@ -23,5 +23,10 @@
 		{
 			"path": "/Users/krbalmryde/Library/Logs/Unity"
 		}
-	]
+	],
+
+	"syntax_override":
+	{
+        "\\.cs": ["Unity3D", "UnityC#"]
+	}
 }
