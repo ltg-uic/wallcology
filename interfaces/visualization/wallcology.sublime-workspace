@@ -4,6 +4,14 @@
 		"selected_items":
 		[
 			[
+				"To",
+				"ToIdleState"
+			],
+			[
+				"Ray",
+				"RaycastHit"
+			],
+			[
 				"wall",
 				"wallscopeId"
 			],
@@ -327,6 +335,54 @@
 	},
 	"buffers":
 	[
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
+			"settings":
+			{
+				"buffer_size": 2235,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
+			"settings":
+			{
+				"buffer_size": 6753,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+			"settings":
+			{
+				"buffer_size": 3718,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+			"settings":
+			{
+				"buffer_size": 3686,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
+			"settings":
+			{
+				"buffer_size": 484,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+			"settings":
+			{
+				"buffer_size": 3301,
+				"line_ending": "Unix"
+			}
+		}
 	],
 	"build_system": "",
 	"build_system_choices":
@@ -335,24 +391,24 @@
 	"build_varint": "",
 	"command_palette":
 	{
-		"height": 400.0,
-		"last_filter": "list",
+		"height": 85.0,
+		"last_filter": "C#",
 		"selected_items":
 		[
 			[
-				"list",
-				"Package Control: List Packages"
+				"C#",
+				"Set Syntax: C#"
 			],
 			[
-				"un",
+				"co",
+				"Color Picker"
+			],
+			[
+				"unit",
 				"Set Syntax: Unity C#"
 			],
 			[
-				"List",
-				"Package Control: List Packages"
-			],
-			[
-				"in",
+				"ins",
 				"Package Control: Install Package"
 			],
 			[
@@ -536,10 +592,6 @@
 				"Package Control: Install Package"
 			],
 			[
-				"ins",
-				"Package Control: Install Package"
-			],
-			[
 				"JSO",
 				"Set Syntax: JSON"
 			],
@@ -702,9 +754,13 @@
 			[
 				"symat",
 				"Set Syntax: MATLAB"
+			],
+			[
+				"in",
+				"Package Control: Install Package"
 			]
 		],
-		"width": 529.0
+		"width": 450.0
 	},
 	"console":
 	{
@@ -725,41 +781,19 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces"
 	],
 	"file_history":
 	[
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app/app.js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/simulator/node-bot.js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ChaseState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/AlertState.cs",
+		"/C/Users/Kyle/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ChaseState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PatrolState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/Critter.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterManager.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/HerbivoreStatePattern.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/Predator.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app/app.js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/AlertState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ChaseState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/wallcology.sublime-project",
-		"/Users/krbalmryde/Library/Application Support/Sublime Text 3/Packages/User/JSON.sublime-settings",
-		"/Users/krbalmryde/Library/Application Support/Sublime Text 3/Packages/Default/Preferences.sublime-settings",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-dev/wallcology-visualization/docs/Design_ideas.txt",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-dev/wallcology-visualization/docs/Joel_notes.txt",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/.gitignore",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/README.md",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnemyMovement.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterControl.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Meshes/Critters/00.meta",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Vigilance.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/TextController.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterControl.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/NutellaInterface.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/wallcology-visualization/build/wallscope1/wallscope1.html",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/.gitignore",
@@ -861,7 +895,23 @@
 		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/examples/yt/load_data_yt.py",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/out_97.list",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/outputs/dead_15.list",
-		"/Users/krbalmryde/Lorenzo_Is.txt"
+		"/Users/krbalmryde/Lorenzo_Is.txt",
+		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/ds14_cg_particle_velocity.py",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesWithLineWidget.py",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesVTK.py",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/ColorIsosurface.py",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/Data/ds14_scivis_0128/cosmology.tbl",
+		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/topic8/MyNetCDF.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/testing.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/startup_tasks.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/setup.py",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/README.md",
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/util/enhance.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/__hg_version__.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/__init__.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/api.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/arraytypes.py",
+		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/config.py"
 	],
 	"find":
 	{
@@ -881,47 +931,47 @@
 		"case_sensitive": true,
 		"find_history":
 		[
-			"setTimeout(SpawnCritter, [ delay, i ] )",
-			"id",
-			"AdjustHerbivore",
-			"last_animation_state",
-			"last_state",
-			"query",
-			"last_animation_state",
-			"nextWayPoint",
+			"wander",
+			"chaseTarget",
+			"ToAlertState",
+			"ToWanderState",
+			"ww",
+			"resourcePoints",
 			"wayPoints",
-			"points",
-			"StatePattern",
-			"StatePatternCritter",
-			"navMeshAgent",
-			"StatePatternCritter",
-			"ICritterState",
-			"enemy",
-			"Enemy",
-			"enemy",
-			"Enemy",
-			"                points = _join(\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\")),\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"))\n                        );\n",
-			"                points = _join(\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\")),\n                            SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"))\n",
-			"points = SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIPipe\"));",
-			"points = SetUpPointArrays(GameObject.FindGameObjectsWithTag(\"POIBrick\"));",
-			"\"POIBrick\"))",
-			"private",
-			"public",
-			"private",
-			"\"100%\"",
-			"url",
-			"SetUpPointArrays",
-			"i",
-			"Range",
-			"StartCoroutine( ",
-			") );",
+			"idleTimer",
+			"searchTimer",
+			"IdleState",
+			"ToAlertState",
+			"ResolveStuff",
+			"Patrol",
+			"searchTimer",
 			"DestroyCritter",
-			"StartCoroutine",
-			"DestroyCritter",
-			"case ",
-			"foreach",
-			"spawnPoints",
-			"InstantiateCritter",
+			"KillCritter",
+			"chaseTarget",
+			"KillCritter",
+			"searchTimer",
+			"critter.chaseTarget.",
+			"critter.chaseTarget",
+			"chaseTarget",
+			"flight",
+			"chaseTarget",
+			"Chase",
+			"Search",
+			"critter",
+			"Search",
+			"AlertState",
+			"target.gameObject",
+			"target",
+			"hit.collider",
+			"RaycastHit hit",
+			"meshRendererFlag",
+			"case",
+			"Look",
+			"ToPatrolState",
+			"offset",
+			"critter",
+			"KillCritter",
+			"id",
 			",",
 			"isResource(",
 			"isResource",
@@ -1071,8 +1121,249 @@
 	"groups":
 	[
 		{
+			"selected": 1,
 			"sheets":
 			[
+				{
+					"buffer": 0,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 2235,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 557.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 1,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 6753,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4958,
+								4958
+							]
+						],
+						"settings":
+						{
+							"BracketHighlighterBusy": false,
+							"bh_regions":
+							[
+								"bh_angle",
+								"bh_angle_center",
+								"bh_angle_open",
+								"bh_angle_close",
+								"bh_angle_content",
+								"bh_double_quote",
+								"bh_double_quote_center",
+								"bh_double_quote_open",
+								"bh_double_quote_close",
+								"bh_double_quote_content",
+								"bh_tag",
+								"bh_tag_center",
+								"bh_tag_open",
+								"bh_tag_close",
+								"bh_tag_content",
+								"bh_round",
+								"bh_round_center",
+								"bh_round_open",
+								"bh_round_close",
+								"bh_round_content",
+								"bh_unmatched",
+								"bh_unmatched_center",
+								"bh_unmatched_open",
+								"bh_unmatched_close",
+								"bh_unmatched_content",
+								"bh_curly",
+								"bh_curly_center",
+								"bh_curly_open",
+								"bh_curly_close",
+								"bh_curly_content",
+								"bh_default",
+								"bh_default_center",
+								"bh_default_open",
+								"bh_default_close",
+								"bh_default_content",
+								"bh_square",
+								"bh_square_center",
+								"bh_square_open",
+								"bh_square_close",
+								"bh_square_content",
+								"bh_regex",
+								"bh_regex_center",
+								"bh_regex_open",
+								"bh_regex_close",
+								"bh_regex_content",
+								"bh_c_define",
+								"bh_c_define_center",
+								"bh_c_define_open",
+								"bh_c_define_close",
+								"bh_c_define_content",
+								"bh_single_quote",
+								"bh_single_quote_center",
+								"bh_single_quote_open",
+								"bh_single_quote_close",
+								"bh_single_quote_content"
+							],
+							"color_scheme": "Packages/User/Color Highlighter/themes/Sunburst.tmTheme",
+							"syntax": "Packages/C#/C#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 2691.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 0,
+					"type": "text"
+				},
+				{
+					"buffer": 2,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3718,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1049.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
+					"type": "text"
+				},
+				{
+					"buffer": 3,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3686,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1163.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 484,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 3301,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 246.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				}
 			]
 		}
 	],
@@ -1133,28 +1424,12 @@
 		"selected_items":
 		[
 			[
-				"critte",
-				"Unity Scripts/CritterBehaviors/Critter.cs"
-			],
-			[
-				"critter",
-				"interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors/CritterManager.cs"
-			],
-			[
-				"chase",
-				"Unity Scripts/StateMachine/ChaseState.cs"
+				"app",
+				"js/app/app.js"
 			],
 			[
 				"a",
-				"Unity Scripts/StateMachine/AlertState.cs"
-			],
-			[
-				"ien",
-				"Unity Scripts/StateMachine/IEnemyState.cs"
-			],
-			[
-				"nutellain",
-				"Unity Scripts/EnvController/NutellaInterface.cs"
+				"js/app/app.js"
 			],
 			[
 				"demo",

@@ -66,12 +66,12 @@ function initWebPlayer()
     {
         width: window.innerWidth, // 960,
         height: window.innerHeight, // 600,
-        params: { enableDebugging:"0" }
+        params: { enableDebugging:"1" }
     };
 
     unity3d = new UnityObject2(config);
 
-    var url = "build/wallscope" + wallscopeID.toString() + ".unity3d";
+    var url = "build/wallscope" + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
 
     console.log("Start WebPlayer");
     jQuery(function() {
@@ -283,6 +283,7 @@ function initWallScopeStartState( live )
 function ReceivePopulationCount( uID, pCount )
 {
     console.log("Species ID is", uID, "and there are", pCount );
+    SpeciesCounter[uID] = pCount;
 }
 
 
