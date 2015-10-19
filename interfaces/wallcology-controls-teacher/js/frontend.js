@@ -129,7 +129,8 @@ function confirmation() {
                     nutella.net.publish('species_event', {
                         habitat: pendingAction.habitat,
                         species: specie,
-                        action: pendingAction.action
+                        action: pendingAction.action,
+                        interface: 'teacher'
                     });
                     break;
                 case 'warming':
@@ -137,14 +138,16 @@ function confirmation() {
                 case 'plasterFall':
                     nutella.net.publish('environmental_event', {
                         habitat: pendingAction.habitat,
-                        action: pendingAction.action
+                        action: pendingAction.action,
+                        interface: 'teacher'
                     });
                     break;
                 case 'invasion':
                     nutella.net.publish('environmental_event', {
                         habitat: pendingAction.habitat,
                         species: specie,
-                        action: pendingAction.action
+                        action: pendingAction.action,
+                        interface: 'teacher'
                     });
                     break
             }

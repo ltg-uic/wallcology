@@ -166,7 +166,8 @@ function confirmation() {
             nutella.net.publish('species_event', {
                 habitat: pendingAction.habitat,
                 species: specie,
-                action: pendingAction.action
+                action: pendingAction.action,
+                interface: 'tangible'
             });
         });
         pendingAction = undefined;
