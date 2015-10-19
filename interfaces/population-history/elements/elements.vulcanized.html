@@ -27559,10 +27559,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
                     console.log('query params: broker', query_parameters.broker);
                     console.log('query params: app_id', query_parameters.app_id);
-                    console.log('query params: run_id', query_parameters.runid);
+                    console.log('query params: run_id', query_parameters.run_id);
                     console.log('query params: parseComponentId', NUTELLA.parseComponentId());
 
-                    me.nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.runid, NUTELLA.parseComponentId(),
+                    me.nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId(),
                             function (success) {
                                 if (success) {
                                     console.log('Successfully connected nutella!');
@@ -27570,7 +27570,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     me.connected = true;
                                 } else {
                                     console.log('Error connecting!');
-                                    alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.appid + ' runId: ' + query_parameters.runid + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
+                                    alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
                                 }
                             });
 
