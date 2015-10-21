@@ -72,6 +72,7 @@ function initWebPlayer()
     unity3d = new UnityObject2(config);
 
     var url = "build/wallscope" + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
+    // var url = "build/Wallcology/Wallcology.unity3d"; // + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
 
     console.log("Start WebPlayer");
     jQuery(function() {
@@ -116,39 +117,6 @@ function initWebPlayer()
  #                       NUTELLA MESSAGE HANDLERS
  #=============================================================================*/
 
-/*
-    {
-        "timestamp":1444507362765,
-        "populations":[
-            [ 0,
-              0.5575783036839,
-              1.0272956989878372,
-              0,
-              0,
-              25.642044808154427,
-              1.267141699397365,
-              0,
-              0.5329095186830878,
-              38.697148131825934,
-              25.96008723053049
-            ],
-            [0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0]
-        ],
-        "environments":[
-            [  20.12000000000002,
-               1,
-               0.4,
-               -1
-            ],
-            [20.12000000000002,1,0.4,-1],
-            [20.12000000000002,1,0.4,-1],
-            [20.12000000000002,1,0.4,-1]
-        ]
-    };
-*/
-
 // Handles most recent state of simulation
 function Last_State_Handler( response )
 {
@@ -164,7 +132,6 @@ function Species_Event_Handler( message, from )
 {
     // ['increase','decrease','colonize','kill'];
     State_Update_Handler(message, from);
-
 }
 
 
@@ -274,6 +241,7 @@ function initWallScopeStartState( live )
 {
     console.log("Unity is READY!!", live)
     // Make asynchronous requests on a certain channel
+    // LoadWallscope( wallscopeID );
     nutella.net.request( 'last_animation_state', {}, Last_State_Handler);
 }
 
@@ -316,13 +284,12 @@ function SpawnCritter ( id )
     // console.log("Lets make a ", typeof id, "!");
     unity3d.getUnity().SendMessage( "WallScope", "SpawnCritter", id );
     SpeciesCounter[id]++;
-    console.log("We have", SpeciesCounter[id], "of species", id, "now");
+    // console.log("We have", SpeciesCounter[id], "of species", id, "now");
 }
 
 function KillCritter ( id )
 {
     console.log("Killing", id, "softly!");
-    console.log("NOT IMPLEMENTED YET!");
     unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
     SpeciesCounter[id]--;
 }
@@ -331,11 +298,16 @@ function KillCritter ( id )
 // Calls UNITY requesting Population
 function RequestPopulationCount( uID )
 {
-    console.log("Make Request!", uID );
+    // console.log("Make Request!", uID );
     unity3d.getUnity().SendMessage("WallScope", "GetPopulationCount", uID);
 }
 
-
+// Tells UNITY to change the scene to the requested wallscope number
+function LoadWallscope( scopeNumber )
+{
+    console.log("Loading Wallscope scene #" + scopeNumber);
+    unity3d.getUnity().SendMessage("WallScope", "LoadWallscopeScene", parseInt(scopeNumber));
+}
 
 
 
