@@ -30,6 +30,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
 const broadcastFrequency = 15; // every update. increase to "speed up" model
+// const frequencyOfUpdate = 1 * 1 * 1000; //(1000 = 1 second)
+// const broadcastFrequency = 1; // every update. increase to "speed up" model
 
 var broadcastCount=0;
 
@@ -43,6 +45,7 @@ const r =   [   [0.25, 0.25, 0.25, 0.25],
 ; // one for each resource (maximal growth rate)
 
 var K =     [   [100, 150, 60, 0],
+// var K =     [   [20, 150, 60, 0],
                 [100,80,0,0],
                 [125,100,0,0],
                 [50, 150, 100, 0]
@@ -173,7 +176,7 @@ var m =   [
           ];
 
 
-const resourceIndex = [ [5,10,9], 
+const resourceIndex = [ [4,10,9], 
                         [4,5], 
                         [10,5], 
                         [4,10,5] 
@@ -366,47 +369,48 @@ function nextPopulation(h,i) {
 function cycleState () {
 
 // convert simulation parameters to history values
-    if (broadcastCount == 0) {
-        var tempState = deepCopy(state);
-        for (var i=0; i<state['populations'].length; i++) {
-            // predators
-            tempState['populations'][i][1] *= 100;
-            tempState['populations'][i][3] *= 100;
-            tempState['populations'][i][8] *= 100;
-            // herbivores
-            tempState['populations'][i][0] *= 200;
-            tempState['populations'][i][2] *= 200;
-            tempState['populations'][i][6] *= 200;
-            tempState['populations'][i][7] *= 200;
-            // resources
-            tempState['populations'][i][4] /= 200;
-            tempState['populations'][i][5] /= 200;
-            tempState['populations'][i][9] /= 200;
-            tempState['populations'][i][10] /= 200;
+    var tempState = deepCopy(state);
+    for (var i=0; i<state['populations'].length; i++) {
+        // predators
+        tempState['populations'][i][1] *= 100;
+        tempState['populations'][i][3] *= 100;
+        tempState['populations'][i][8] *= 100;
+        // herbivores
+        tempState['populations'][i][0] *= 200;
+        tempState['populations'][i][2] *= 200;
+        tempState['populations'][i][6] *= 200;
+        tempState['populations'][i][7] *= 200;
+        // resources
+        tempState['populations'][i][4] /= 200;
+        tempState['populations'][i][5] /= 200;
+        tempState['populations'][i][9] /= 200;
+        tempState['populations'][i][10] /= 200;
 
         }
+    if (broadcastCount == 0) 
         nutella.net.publish ('state_update',tempState); 
+
 // convert history parameters to animation parameters
-        var tempState2 = deepCopy(tempState);
-        for (var i=0; i<state['populations'].length; i++) {
-            // predators
-            tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/100);
-            tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/100);
-            tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/100);
-            // herbivores
-            tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/25);
-            tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/25);
-            tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/25);
-            tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/25);
-            // resources
-            tempState2['populations'][i][4] = tempState['populations'][i][4];
-            tempState2['populations'][i][5] = tempState['populations'][i][5];
-            tempState2['populations'][i][9] = tempState['populations'][i][9];
-            tempState2['populations'][i][10] = tempState['populations'][i][10];
+    var tempState2 = deepCopy(tempState);
+    for (var i=0; i<state['populations'].length; i++) {
+        // predators
+        tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/100);
+        tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/100);
+        tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/100);
+        // herbivores
+        tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/25);
+        tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/25);
+        tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/25);
+        tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/25);
+        // resources
+        tempState2['populations'][i][4] = tempState['populations'][i][4];
+        tempState2['populations'][i][5] = tempState['populations'][i][5];
+        tempState2['populations'][i][9] = tempState['populations'][i][9];
+        tempState2['populations'][i][10] = tempState['populations'][i][10];
 
         }
-        nutella.net.publish ('animation_state_update',tempState2);
-    }
+    nutella.net.publish ('animation_state_update',tempState2);
+    
     broadcastCount++;
     if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
 
@@ -463,3 +467,13 @@ function deepCopy(oldObj) {
     return newObj;
 }
 
+Math.nrand = function() {
+    var x1, x2, rad, y1;
+    do {
+        x1 = 2 * this.random() - 1;
+        x2 = 2 * this.random() - 1;
+        rad = x1 * x1 + x2 * x2;
+    } while(rad >= 1 || rad == 0);
+    var c = this.sqrt(-2 * Math.log(rad) / rad);
+    return x1 * c;
+};
