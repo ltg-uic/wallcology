@@ -64,8 +64,8 @@ function initWebPlayer()
 {
     var config =
     {
-        width: 90%, // window.innerWidth, // 960,
-        height: 90%, //window.innerHeight, // 600,
+        width: window.innerWidth, // 960,
+        height: window.innerHeight, // 600,
         params: { enableDebugging:"1" }
     };
 
