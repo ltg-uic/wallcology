@@ -64,8 +64,8 @@ function initWebPlayer()
 {
     var config =
     {
-        width: window.innerWidth, // 960,
-        height: window.innerHeight, // 600,
+        width: 90%, // window.innerWidth, // 960,
+        height: 90%, //window.innerHeight, // 600,
         params: { enableDebugging:"1" }
     };
 
@@ -160,13 +160,13 @@ function subscribeToChannel(channelName, messageHandler)
 // Manage population updates.
 function UpdatePopulations(population)
 {
-    console.log("UpdatePopulations!", population);
+    // console.log("UpdatePopulations!", population);
 
     for (var i = 0; i < population.length; i++) {
         var count = population[i]
 
         RequestPopulationCount(i);
-        console.log("\t", i, count, SpeciesCounter[i]);
+        // console.log("\t", i, count, SpeciesCounter[i]);
 
         switch(i)
         {
@@ -185,10 +185,10 @@ function UpdatePopulations(population)
             case 5:
             case 9:
             case 10:
-                console.log("Not Implemented yet!");
+                // console.log("Not Implemented yet!");
                 break;
             default:
-                console.log("No critter Ive ever heard of");
+                // console.log("No critter Ive ever heard of");
                 break;
         }
     }
@@ -198,7 +198,7 @@ function UpdatePopulations(population)
 
 function AdjustCritterPopulations( count, id, delay )
 {
-    console.log("AdjustCritterPopulations", count, id, delay);
+    // console.log("AdjustCritterPopulations", count, id, delay);
     if ( count < SpeciesCounter[ id ] ) {
 
         while ( count < SpeciesCounter[id] ) {
@@ -212,14 +212,14 @@ function AdjustCritterPopulations( count, id, delay )
         }
 
     } else {
-        console.log("They are both zero");
+        // console.log("They are both zero");
     }
 }
 
 
 function AdjustHerbivore( count, id )
 {
-    console.log("AdjustHerbivore", id);
+    // console.log("AdjustHerbivore", id);
     AdjustCritterPopulations( count, id, 0.0 ); // Herbivores should be added immediately
 }
 
@@ -227,7 +227,7 @@ function AdjustHerbivore( count, id )
 function AdjustPredator( count, id )
 {
     var duration = (Math.random() * 10) * 1000;
-    console.log("AdjustPredator", id, duration);
+    // console.log("AdjustPredator", id, duration);
     AdjustCritterPopulations( count, id, duration ); // Predators should be added after a delay
 }
 
@@ -250,14 +250,22 @@ function initWallScopeStartState( live )
 // Unity GameObjects with that Identifier that
 function ReceivePopulationCount( uID, pCount )
 {
-    console.log("Species ID is", uID, "and there are", pCount );
+    // console.log("Species ID is", uID, "and there are", pCount );
     SpeciesCounter[uID] = pCount;
 }
 
 
 function ProgressUpdate(func, valid)
 {
-    console.log(func, 'has executed', valid);
+    // console.log(func, 'has executed', valid);
+}
+
+
+// Unity calls this function in order to replace a slain critter;
+function StablizePopulation( id )
+{
+    console.log("StablizePopulation! ", id);
+    SpawnCritter( parseInt(id) );
 }
 /*==============================================================================
  #                       UNITY MESSAGE REQUESTS
