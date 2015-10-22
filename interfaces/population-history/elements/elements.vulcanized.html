@@ -11683,8 +11683,8 @@ is separate from validation, and `allowed-pattern` does not affect how the input
        * custom element that uses this behavior should also use
        * Polymer.IronValidatableBehavior and define a custom validation method.
        * Otherwise, a `required` element will always be considered valid.
-       * It's also strongly recomended to provide a visual style for the element
-       * when it's value is invalid.
+       * It's also strongly recommended to provide a visual style for the element
+       * when its value is invalid.
        */
       required: {
         type: Boolean,
@@ -16194,7 +16194,6 @@ module.exports = function handleCurry(args, func, valueIndex) {
 
 },{}]},{},[1])(1)
 });</script>
-    
     <script charset="utf-8">(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.NUTELLA = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /******************
  * nutella_lib.js *
@@ -21362,6 +21361,9 @@ module.exports = AbstractNet;
 module.exports.version = '0.6.12';
 },{}]},{},[1])(1)
 });</script>
+
+
+
 <script>//! moment.js
 //! version : 2.8.4
 //! authors : Tim Wood, Iskren Chernev, Moment.js contributors
@@ -24588,37 +24590,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   });
 </script>
 <dom-module id="paper-material" assetpath="../bower_components/paper-material/">
-  <style>
-    :host {
-      display: block;
-      position: relative;
-    }
-
-    :host([animated]) {
-      @apply(--shadow-transition);
-    }
-
-    :host([elevation="1"]) {
-      @apply(--shadow-elevation-2dp);
-    }
-
-    :host([elevation="2"]) {
-      @apply(--shadow-elevation-4dp);
-    }
-
-    :host([elevation="3"]) {
-      @apply(--shadow-elevation-6dp);
-    }
-
-    :host([elevation="4"]) {
-      @apply(--shadow-elevation-8dp);
-    }
-
-    :host([elevation="5"]) {
-      @apply(--shadow-elevation-16dp);
-    }
-  </style>
   <template>
+    <style>
+      :host {
+        display: block;
+        position: relative;
+      }
+
+      :host([animated]) {
+        @apply(--shadow-transition);
+      }
+
+      :host([elevation="1"]) {
+        @apply(--shadow-elevation-2dp);
+      }
+
+      :host([elevation="2"]) {
+        @apply(--shadow-elevation-4dp);
+      }
+
+      :host([elevation="3"]) {
+        @apply(--shadow-elevation-6dp);
+      }
+
+      :host([elevation="4"]) {
+        @apply(--shadow-elevation-8dp);
+      }
+
+      :host([elevation="5"]) {
+        @apply(--shadow-elevation-16dp);
+      }
+    </style>
+
     <content></content>
   </template>
 </dom-module>
@@ -24627,7 +24630,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     is: 'paper-material',
 
     properties: {
-
       /**
        * The z-depth of this element, from 0-5. Setting to 0 will remove the
        * shadow, and each increasing number greater than 0 will be "deeper"
@@ -27490,11 +27492,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
     </script>
 <dom-module id="nutella-connector" assetpath="../bower_components/nutella-connector/">
-    <style>
 
-    </style>
     <template>
+        <style>
 
+        </style>
 
     </template>
 
@@ -27541,6 +27543,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     type: String,
                     notify: true,
                     value: ''
+                },
+                roomcast: {
+                    type: Boolean
                 }
             },
             connectedChanged: function (newValue, oldValue) {
@@ -27548,19 +27553,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             },
             ready: function () {
                 var me = this;
+                // Nutella initialization
+                if( this.roomcast ) {
+                    var query_parameters = NUTELLA.parseURLParameters();
 
-                me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
-                        function (success) {
-                            if (success) {
-                                console.log('Successfully connected nutella!');
-                                console.log('success done');
-                                me.connected = true;
-                            } else {
-                                console.log('Error connecting!');
-                                alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
-                            }
-                        });
+                    console.log('query params: broker', query_parameters.broker);
+                    console.log('query params: app_id', query_parameters.app_id);
+                    console.log('query params: run_id', query_parameters.run_id);
+                    console.log('query params: parseComponentId', NUTELLA.parseComponentId());
 
+                    me.nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId(),
+                            function (success) {
+                                if (success) {
+                                    console.log('Successfully connected nutella!');
+                                    console.log('success done');
+                                    me.connected = true;
+                                } else {
+                                    console.log('Error connecting!');
+                                    alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
+                                }
+                            });
+
+
+                } else {
+                    me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
+                            function (success) {
+                                if (success) {
+                                    console.log('Successfully connected nutella!');
+                                    console.log('success done');
+                                    me.connected = true;
+                                } else {
+                                    console.log('Error connecting!');
+                                    alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
+                                }
+                            });
+
+
+                }
 
             }
         })
@@ -28512,13 +28541,6 @@ paper-calendar {
         margin: 0px;
       }
 
-      paper-button.colorful {
-        color: white;
-        background: #006699;
-        margin: 0px;
-        font-size: 14px;
-      }
-
       iron-icon {
         width: 60px;
         height: 60px;
@@ -28564,15 +28586,41 @@ paper-calendar {
         padding: 0 4px;
       }
 
+      .button-title {
+        color: #000;
+        text-align: center;
+        font-size: 11px;
+      }
+
+      paper-button.colorful {
+        color: white;
+        background: #006699;
+        margin-top: 3px;
+        font-size: 12px;
+      }
+
     </style>
 
 
+<<<<<<< HEAD
     <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="localhost" appid="wallcology" runid="default" componentid="wallcology_admin"></nutella-connector>
+=======
+    <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology" runid="default" componentid="wallcology_admin" roomcast=""></nutella-connector>
+    <paper-toolbar>
+>>>>>>> origin/master
 
       <div class="start">
-        <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
-        </paper-button>
+        <div class="vertical-section-container">
+          <div class="vertical-section">
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+            </paper-button>
+          </div>
+          <div class="vertical-section center">
+            <div class="button-title">START</div>
+          </div>
         </div>
+      </div>
+      
       <div class="center flex">
         <div class="horizontal-section-container">
 
@@ -28582,8 +28630,15 @@ paper-calendar {
         </div>
       </div>
       <div class="end">
-        <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
-        </paper-button>
+        <div class="vertical-section-container">
+          <div class="vertical-section">
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+            </paper-button>
+          </div>
+          <div class="vertical-section center">
+            <div class="button-title">END</div>
+          </div>
+        </div>
       </div>
     </paper-toolbar>
 
@@ -28945,12 +29000,12 @@ paper-calendar {
               }
             }
 
-            for(var j = 0; j < this.graphs.length; j++) {
+            for (var j = 0; j < this.graphs.length; j++) {
               var previousGraph = this.graphs[j];
-              if( j === this.graphs.length-1) {
-                this.updateGraphAxis(previousGraph,'on');
+              if (j === this.graphs.length - 1) {
+                this.updateGraphAxis(previousGraph, 'on');
               } else {
-                this.updateGraphAxis(previousGraph,'off');
+                this.updateGraphAxis(previousGraph, 'off');
               }
               this.redrawChart(previousGraph);
 
@@ -29197,7 +29252,6 @@ paper-calendar {
           }
 
 
-
         });
 
 
@@ -29214,7 +29268,6 @@ paper-calendar {
         if (foundGraphs.length > 0) {
 
 
-
           var oldGraph = foundGraphs[0];
           oldGraph.data = data;
           oldGraph.options = this.chartOptions;
@@ -29224,20 +29277,20 @@ paper-calendar {
 
           var index = this.graphs.indexOf(oldGraph);
 
-          if( index !== this.graphs.length-1) {
-            this.updateGraphAxis(oldGraph,'off');
+          if (index !== this.graphs.length - 1) {
+            this.updateGraphAxis(oldGraph, 'off');
             this.redrawChart(oldGraph);
           } else {
-            this.updateGraphAxis(oldGraph,'on');
+            this.updateGraphAxis(oldGraph, 'on');
             this.redrawChart(oldGraph);
           }
-          if( this.debug ) {
+          if (this.debug) {
             console.log('updated graph');
           }
 
         } else {
 
-          for(var j = 0; j < this.graphs.length; j++) {
+          for (var j = 0; j < this.graphs.length; j++) {
             var previousGraph = this.graphs[j];
             this.updateGraphAxis(previousGraph, 'off');
             this.redrawChart(previousGraph);
@@ -29251,9 +29304,9 @@ paper-calendar {
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
-          this.updateGraphAxis(g,'on');
+          this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
-          if( this.debug ) {
+          if (this.debug) {
             console.log('pushed graph');
           }
         }
@@ -29261,7 +29314,7 @@ paper-calendar {
       },
       updateGraphAxis: function (someGraph, type) {
 
-        if( someGraph !== undefined ) {
+        if (someGraph !== undefined) {
           switch (type) {
             case 'on':
               someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
@@ -29328,11 +29381,11 @@ paper-calendar {
       },
       formatButtonSDate: function (someDate) {
         var formatted = moment(someDate).format('MM/DD/YY');
-        return 'START: '+ formatted;
+        return formatted;
       },
       formatButtonEDate: function (someDate) {
         var formatted = moment(someDate).format('MM/DD/YY');
-        return 'END: '+ formatted;
+        return formatted;
       },
     });
   </script>

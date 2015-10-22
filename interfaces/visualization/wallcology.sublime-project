@@ -22,6 +22,17 @@
 		},
 		{
 			"path": "/Users/krbalmryde/Library/Logs/Unity"
+		},
+		{
+			"path": "unity/Simulation/Assets/Editor"
 		}
-	]
+	],
+	"syntax_override":
+	{
+		"\\.cs":
+		[
+			"Unity3D",
+			"UnityC#"
+		]
+	}
 }

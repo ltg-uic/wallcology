@@ -66,12 +66,13 @@ function initWebPlayer()
     {
         width: window.innerWidth, // 960,
         height: window.innerHeight, // 600,
-        params: { enableDebugging:"0" }
+        params: { enableDebugging:"1" }
     };
 
     unity3d = new UnityObject2(config);
 
-    var url = "build/wallscope" + wallscopeID.toString() + ".unity3d";
+    var url = "build/wallscope" + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
+    // var url = "build/Wallcology/Wallcology.unity3d"; // + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
 
     console.log("Start WebPlayer");
     jQuery(function() {
@@ -116,39 +117,6 @@ function initWebPlayer()
  #                       NUTELLA MESSAGE HANDLERS
  #=============================================================================*/
 
-/*
-    {
-        "timestamp":1444507362765,
-        "populations":[
-            [ 0,
-              0.5575783036839,
-              1.0272956989878372,
-              0,
-              0,
-              25.642044808154427,
-              1.267141699397365,
-              0,
-              0.5329095186830878,
-              38.697148131825934,
-              25.96008723053049
-            ],
-            [0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0],
-            [0,0,0,0,0,0,0,0,0,0,0]
-        ],
-        "environments":[
-            [  20.12000000000002,
-               1,
-               0.4,
-               -1
-            ],
-            [20.12000000000002,1,0.4,-1],
-            [20.12000000000002,1,0.4,-1],
-            [20.12000000000002,1,0.4,-1]
-        ]
-    };
-*/
-
 // Handles most recent state of simulation
 function Last_State_Handler( response )
 {
@@ -164,7 +132,6 @@ function Species_Event_Handler( message, from )
 {
     // ['increase','decrease','colonize','kill'];
     State_Update_Handler(message, from);
-
 }
 
 
@@ -198,40 +165,24 @@ function UpdatePopulations(population)
     for (var i = 0; i < population.length; i++) {
         var count = population[i]
 
-        var delay = count % 2;
-        count = (count < 1 && count > 0)? Math.round(count * 3) : Math.round(count);
         RequestPopulationCount(i);
         console.log("\t", i, count, SpeciesCounter[i]);
 
         switch(i)
         {
             case 0:
-            case 1:
             case 2:
-            case 3:
             case 6:
             case 7:
+                AdjustHerbivore( count, i );
+                break;
+            case 1:
+            case 3:
             case 8:
-                if ( count < SpeciesCounter[i] ) {
-
-                    while ( count < SpeciesCounter[i] ) {
-                        KillCritter(i);
-                        SpeciesCounter[i]--;
-                    }
-                } else if ( count > SpeciesCounter[i] ) {
-
-                    while ( count > SpeciesCounter[i] ) {
-                        // SpeciesCounter[i]++;
-                        SpawnCritter(i);
-                    }
-
-                } else {
-                    console.log("They are both zero");
-                };
+                AdjustPredator( count, i );
                 break;
             case 4:
             case 5:
-            case 6:
             case 9:
             case 10:
                 console.log("Not Implemented yet!");
@@ -245,6 +196,41 @@ function UpdatePopulations(population)
 }
 
 
+function AdjustCritterPopulations( count, id, delay )
+{
+    console.log("AdjustCritterPopulations", count, id, delay);
+    if ( count < SpeciesCounter[ id ] ) {
+
+        while ( count < SpeciesCounter[id] ) {
+            KillCritter( id )
+        }
+    } else if ( count > SpeciesCounter[ id ] ) {
+
+        while ( count > SpeciesCounter[ id ] ) {
+            // setTimeout(SpawnCritter, [ delay, id ] )
+            SpawnCritter( id );
+        }
+
+    } else {
+        console.log("They are both zero");
+    }
+}
+
+
+function AdjustHerbivore( count, id )
+{
+    console.log("AdjustHerbivore", id);
+    AdjustCritterPopulations( count, id, 0.0 ); // Herbivores should be added immediately
+}
+
+
+function AdjustPredator( count, id )
+{
+    var duration = (Math.random() * 10) * 1000;
+    console.log("AdjustPredator", id, duration);
+    AdjustCritterPopulations( count, id, duration ); // Predators should be added after a delay
+}
+
 /*==============================================================================
  #                       UNITY MESSAGE HANDLERS
  #=============================================================================*/
@@ -254,8 +240,8 @@ function UpdatePopulations(population)
 function initWallScopeStartState( live )
 {
     console.log("Unity is READY!!", live)
-
     // Make asynchronous requests on a certain channel
+    // LoadWallscope( wallscopeID );
     nutella.net.request( 'last_animation_state', {}, Last_State_Handler);
 }
 
@@ -265,6 +251,7 @@ function initWallScopeStartState( live )
 function ReceivePopulationCount( uID, pCount )
 {
     console.log("Species ID is", uID, "and there are", pCount );
+    SpeciesCounter[uID] = pCount;
 }
 
 
@@ -282,9 +269,9 @@ function ProgressUpdate(func, valid)
 //     expects a float/double
 function SetThermometerText (temp)
 {
-    temp = Math.round(temp * 100) / 100;
+    temp = Math.abs(Math.round(temp * 100) / 100);
     temp = temp.toString() + "˚C";
-
+    temp = "";
     console.log("Temperature is", temp);
     unity3d.getUnity().SendMessage("Temperature", "SetText", temp);
 }
@@ -297,26 +284,30 @@ function SpawnCritter ( id )
     // console.log("Lets make a ", typeof id, "!");
     unity3d.getUnity().SendMessage( "WallScope", "SpawnCritter", id );
     SpeciesCounter[id]++;
-    console.log("We have", SpeciesCounter[id], "of species", id, "now");
+    // console.log("We have", SpeciesCounter[id], "of species", id, "now");
 }
 
 function KillCritter ( id )
 {
     console.log("Killing", id, "softly!");
-    console.log("NOT IMPLEMENTED YET!");
     unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
-    SpeciesCounter[i]--;
+    SpeciesCounter[id]--;
 }
 
 
 // Calls UNITY requesting Population
 function RequestPopulationCount( uID )
 {
-    console.log("Make Request!", uID );
+    // console.log("Make Request!", uID );
     unity3d.getUnity().SendMessage("WallScope", "GetPopulationCount", uID);
 }
 
-
+// Tells UNITY to change the scene to the requested wallscope number
+function LoadWallscope( scopeNumber )
+{
+    console.log("Loading Wallscope scene #" + scopeNumber);
+    unity3d.getUnity().SendMessage("WallScope", "LoadWallscopeScene", parseInt(scopeNumber));
+}
 
 
 
