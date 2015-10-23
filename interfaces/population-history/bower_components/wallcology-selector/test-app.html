@@ -1,17 +1,9 @@
 <link href="bower_components/polymer/polymer.html" rel="import">
 <link href="bower_components/paper-button/paper-button.html" rel="import">
 <link href="wallcology-selector.html" rel="import">
-
-
 <dom-module id="test-app">
     <template id="ta">
-        <style>
-            :host {
-                display: block;
-                box-sizing: border-box;
-            }
-        </style>
-        <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
+        <wallcology-selector toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}" max-selections="4"
                              selected-items="{{selectedItems}}"
                              current-toggle="{{currentToggle}}"></wallcology-selector>
 
@@ -19,7 +11,6 @@
             <span>{{item.index}}</span>
         </template>
     </template>
-
     <script>
         // element registration
         Polymer({
@@ -205,7 +196,8 @@
                             'color': '#795548'
                         }
                     ]
-                },
+                }
+            },
             observers: [
                 'selectedItemsChanged(selectedItems.*)',
                 'toggleSelectorsChanged(toggleSelectors.*)',
