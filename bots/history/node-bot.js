@@ -8,7 +8,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
-const forceNewDB = false; // for debugging purposes. set true to wipe DB.
+const forceNewDB = true; // for debugging purposes. set true to wipe DB.
 
 // Stores simulation history as an array of objects
 
@@ -34,7 +34,7 @@ history.load(function(){
       history['states'] = [];
       history['states'][0] = {timestamp:0, populations:[], environments:[]};
       history['states'][0]['populations'] = [
-        [0,.5,.5,0,0,10,.5,0,.5,10,10],
+        [0,.5,.5,0,10,0,.5,0,.5,10,10],
         // [0,0,.5,0,0,0,0,0,.5,10,10],
         [1,0,0,0,10,10,1,1,.5,0,0],
         [0,.5,1,.5,0,10,1,0,0,0,10],
