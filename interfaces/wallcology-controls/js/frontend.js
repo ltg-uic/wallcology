@@ -46,6 +46,7 @@ nutella.location.ready(function() {
                    key == 2 && wallscope == 'wallscope2' ||
                    key == 3 && wallscope == 'wallscope3') {
                     selectHabitat(key);
+                    checkBeaconNoKey();
                 }
 
                 break;
@@ -85,22 +86,28 @@ nutella.location.ready(function() {
     if(wallscopeResource != undefined) {
         wallscopeResource.notifyEnter = true;
         wallscopeResource.notifyExit = true;
+        console.log('Subscribed to events on ' + wallscopeResource.rid);
     }
 });
 
 function selectHabitat(index) {
+    console.log('Select habitat ' + index);
     document.getElementById('species-selector').enableHabitat(index);
 }
 
 function selectBug(index) {
+    console.log('Select bug ' + index);
     document.getElementById('species-selector').selectBug(index);
 }
 
 function deselectBug(index) {
+    console.log('Deselect bug ' + index);
     document.getElementById('species-selector').deselectBug(index);
 }
 
 function selectAction(name) {
+    console.log('Select action ' + name);
+
     var index = actions.map(function(action) {
        return action.name;
     }).indexOf(name);
@@ -110,6 +117,8 @@ function selectAction(name) {
 }
 
 function deselectAction(name) {
+    console.log('Deselect action ' + name);
+
     var index = actions.map(function(action) {
         return action.name;
     }).indexOf(name);
