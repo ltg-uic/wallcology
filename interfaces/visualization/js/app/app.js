@@ -237,29 +237,32 @@ function initWallScopeStartState( live )
 // Unity GameObjects with that Identifier that
 function ReceivePopulationCount( uID, pCount )
 {
-    console.log("Checking Population Levels...%o ", SpeciesCounter );
-    console.log("\tSpecies ID is " + uID.toString() , "and there are " + pCount.toString());
-    if (SpeciesCounter[ uID ] !== pCount)
-    {
-        console.log("\t\tTHEY ARE NOT THE SAME!");
-        if (SpeciesCounter[ uID ] < pCount)
-        {
-            console.log("\t\tToo Many Bugs");
-            var difference = pCount - SpeciesCounter[ uID ]
-            for (var i = 0; i < difference; i++) {
-                KillCritter( uID );
-            };
-        }
-        else if (SpeciesCounter[ uID ] > pCount)
-        {
-            console.log("\t\tNot Enough Bugs!");
-            var difference = SpeciesCounter[ uID ] - pCount;
-            for (var i = 0; i < difference; i++) {
-                SpawnCritter( uID );
-            };
 
-        }
-    };
+    nutella.net.request( 'last_animation_state', {}, function(message, from) {
+
+        var populationLevel = message['populations'][wallscopeID-1];
+        console.log("\tID is %o and there are %o in Unity but %o in Nutella", uID, pCount, populationLevel[ uID ]);
+
+        if (populationLevel[ uID ] !== pCount)
+        {
+            if (populationLevel[ uID ] < pCount)
+            {
+                var difference = pCount - populationLevel[ uID ]
+                for (var i = 0; i < difference; i++) {
+                    KillCritter( uID );
+                };
+            }
+            else if (populationLevel[ uID ] > pCount)
+            {
+                var difference = populationLevel[ uID ] - pCount;
+                for (var i = 0; i < difference; i++) {
+                    SpawnCritter( uID );
+                };
+
+            }
+        };
+
+    });
 
 }
 
@@ -269,13 +272,6 @@ function ProgressUpdate(func, valid)
     // console.log(func + ' has executed ' + valid.toString());
 }
 
-
-// Unity calls this function in order to replace a slain critter;
-function StablizePopulation( id )
-{
-    console.log("StablizePopulation! ", id);
-    SpawnCritter( parseInt(id) );
-}
 /*==============================================================================
  #                       UNITY MESSAGE REQUESTS
  #=============================================================================*/
@@ -305,7 +301,7 @@ function SpawnCritter ( id )
 
 function KillCritter ( id )
 {
-    // console.log("Killing " + id.toString() + " softly!");
+    console.log("Killing " + id.toString() + " softly!");
     unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
 }
 
