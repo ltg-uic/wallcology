@@ -157,15 +157,24 @@ function subscribeToChannel(channelName, messageHandler)
 
 
 
+// function CheckPopulationCounts()
+// {
+//     setInterval(UpdatePopulationCount, 10000);
+// }
+
+// function UpdatePopulationCount()
+// {
+//     var arr = new Array(10);
+//     UpdatePopulations(arr)
+// }
+
+
 // Manage population updates.
 function UpdatePopulations(population)
 {
     console.log("UpdatePopulations!", population);
 
-    for (var i = 0; i < population.length; i++) {
-        var count = population[i]
-        SpeciesCounter[i] = population[i];
-        // console.log("\t", i, count, SpeciesCounter[i]);
+    for (var i = 0; i < 11; i++) {
 
         switch(i)
         {
