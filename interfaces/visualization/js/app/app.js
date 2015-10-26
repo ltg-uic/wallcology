@@ -160,26 +160,24 @@ function subscribeToChannel(channelName, messageHandler)
 // Manage population updates.
 function UpdatePopulations(population)
 {
-    // console.log("UpdatePopulations!", population);
+    console.log("UpdatePopulations!", population);
 
     for (var i = 0; i < population.length; i++) {
         var count = population[i]
-
-        RequestPopulationCount(i);
+        SpeciesCounter[i] = population[i];
         // console.log("\t", i, count, SpeciesCounter[i]);
 
         switch(i)
         {
             case 0:
+            case 1:
             case 2:
+            case 3:
             case 6:
             case 7:
-                AdjustHerbivore( count, i );
-                break;
-            case 1:
-            case 3:
             case 8:
-                AdjustPredator( count, i );
+                RequestPopulationCount( i );
+                // AdjustCritterPopulations( count, i );
                 break;
             case 4:
             case 5:
@@ -191,44 +189,33 @@ function UpdatePopulations(population)
                 // console.log("No critter Ive ever heard of");
                 break;
         }
+        // RequestPopulationCount(i);
     }
-    console.log("Thats a wrap!", SpeciesCounter);
+    console.log("Thats a wrap! %o ", SpeciesCounter);
 }
 
 
-function AdjustCritterPopulations( count, id, delay )
+function AdjustCritterPopulations( T, id )
 {
-    // console.log("AdjustCritterPopulations", count, id, delay);
-    if ( count < SpeciesCounter[ id ] ) {
-
-        while ( count < SpeciesCounter[id] ) {
-            KillCritter( id )
-        }
-    } else if ( count > SpeciesCounter[ id ] ) {
-
-        while ( count > SpeciesCounter[ id ] ) {
-            // setTimeout(SpawnCritter, [ delay, id ] )
+    var S = SpeciesCounter[ id ];
+    console.log("AdjustCritterPopulations: " + id.toString() + " from " + S.toString() + " to " + T.toString());
+    if ( S > T )
+    {
+        console.log("There is too many of them! " + id.toString(), S,  T);
+        for (var i = S; i >= T; i--) {
+            KillCritter( id );
+            SpeciesCounter[ id ]--;
+        };
+    }
+    else if ( S < T )
+    {
+        console.log("\tWe need to add more bugs!", T);
+        for (var i = S; i <= T; i++) {
+            console.log("\t"+ i.toString());
             SpawnCritter( id );
-        }
-
-    } else {
-        // console.log("They are both zero");
+            SpeciesCounter[ id ]++;
+        };
     }
-}
-
-
-function AdjustHerbivore( count, id )
-{
-    // console.log("AdjustHerbivore", id);
-    AdjustCritterPopulations( count, id, 0.0 ); // Herbivores should be added immediately
-}
-
-
-function AdjustPredator( count, id )
-{
-    var duration = (Math.random() * 10) * 1000;
-    // console.log("AdjustPredator", id, duration);
-    AdjustCritterPopulations( count, id, duration ); // Predators should be added after a delay
 }
 
 /*==============================================================================
@@ -250,14 +237,36 @@ function initWallScopeStartState( live )
 // Unity GameObjects with that Identifier that
 function ReceivePopulationCount( uID, pCount )
 {
-    // console.log("Species ID is", uID, "and there are", pCount );
-    SpeciesCounter[uID] = pCount;
+    console.log("Checking Population Levels...%o ", SpeciesCounter );
+    console.log("\tSpecies ID is " + uID.toString() , "and there are " + pCount.toString());
+    if (SpeciesCounter[ uID ] !== pCount)
+    {
+        console.log("\t\tTHEY ARE NOT THE SAME!");
+        if (SpeciesCounter[ uID ] < pCount)
+        {
+            console.log("\t\tToo Many Bugs");
+            var difference = pCount - SpeciesCounter[ uID ]
+            for (var i = 0; i < difference; i++) {
+                KillCritter( uID );
+            };
+        }
+        else if (SpeciesCounter[ uID ] > pCount)
+        {
+            console.log("\t\tNot Enough Bugs!");
+            var difference = SpeciesCounter[ uID ] - pCount;
+            for (var i = 0; i < difference; i++) {
+                SpawnCritter( uID );
+            };
+
+        }
+    };
+
 }
 
 
 function ProgressUpdate(func, valid)
 {
-    // console.log(func, 'has executed', valid);
+    // console.log(func + ' has executed ' + valid.toString());
 }
 
 
@@ -289,17 +298,15 @@ function SetThermometerText (temp)
 // id is assumed to be an integer
 function SpawnCritter ( id )
 {
-    // console.log("Lets make a ", typeof id, "!");
+    console.log("Lets make a "+id.toString() +"! ", typeof id  );
     unity3d.getUnity().SendMessage( "WallScope", "SpawnCritter", id );
-    SpeciesCounter[id]++;
     // console.log("We have", SpeciesCounter[id], "of species", id, "now");
 }
 
 function KillCritter ( id )
 {
-    console.log("Killing", id, "softly!");
+    // console.log("Killing " + id.toString() + " softly!");
     unity3d.getUnity().SendMessage("WallScope", "KillCritter", id);
-    SpeciesCounter[id]--;
 }
 
 

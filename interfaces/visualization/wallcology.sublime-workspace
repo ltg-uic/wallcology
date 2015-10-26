@@ -360,18 +360,10 @@
 	"buffers":
 	[
 		{
-			"file": "/Users/krbalmryde/.bash_functions",
-			"settings":
-			{
-				"buffer_size": 22082,
-				"line_ending": "Unix"
-			}
-		},
-		{
 			"file": "js/app/app.js",
 			"settings":
 			{
-				"buffer_size": 9560,
+				"buffer_size": 9772,
 				"line_ending": "Unix"
 			}
 		},
@@ -403,7 +395,22 @@
 			"file": "unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
 			"settings":
 			{
-				"buffer_size": 4954,
+				"buffer_size": 5030,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"settings":
+			{
+				"buffer_size": 0,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/krbalmryde/.bash_aliases",
+			"settings":
+			{
+				"buffer_size": 8037,
 				"line_ending": "Unix"
 			}
 		},
@@ -813,25 +820,23 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/CritterBehaviors",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Editor"
 	],
 	"file_history":
 	[
+		"/Users/krbalmryde/Downloads/index.html",
+		"/Users/krbalmryde/Dropbox/Code-Projects/Contracts/css/ready/uptake-analyzer.html",
+		"/Users/krbalmryde/Downloads/css (1)/uptake-analyzer.html",
+		"/Users/krbalmryde/.bash_functions",
+		"/Users/krbalmryde/.bash_profile",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Editor/WallScopeBuilder.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
-		"/Users/krbalmryde/.bash_profile",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/WallScopeBuilder.cs",
 		"/Users/krbalmryde/.bash_aliases",
 		"/Users/krbalmryde/Dropbox/Code-Projects/Contracts/forAlex/App.js",
-		"/Users/krbalmryde/.bash_functions",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PursueState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app/app.js",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
@@ -946,10 +951,7 @@
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesWithLineWidget.py",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesVTK.py",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/ColorIsosurface.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/Data/ds14_scivis_0128/cosmology.tbl",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/topic8/MyNetCDF.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/testing.py",
-		"/Users/krbalmryde/Library/Enthought/Canopy_64bit/User/lib/python2.7/site-packages/yt/startup_tasks.py"
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/Data/ds14_scivis_0128/cosmology.tbl"
 	],
 	"find":
 	{
@@ -970,6 +972,11 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"meshName",
+			"ProgressUpdate",
+			"SpawnCritter",
+			"AdjustCritterPopulations",
+			"InstantiateCritter",
 			"navMeshAgent",
 			"killZone",
 			"lossyScale",
@@ -1092,12 +1099,7 @@
 			"Handle",
 			"HandleP",
 			"    void",
-			");",
-			"void",
-			"WanderDuration",
-			"meshName",
-			"Pipe",
-			" ,"
+			");"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1160,54 +1162,24 @@
 	"groups":
 	[
 		{
-			"selected": 5,
+			"selected": 0,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/Users/krbalmryde/.bash_functions",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 22082,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								22037,
-								22037
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 12567.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
 					"file": "js/app/app.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 9560,
+						"buffer_size": 9772,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2311,
-								2311
+								5121,
+								5121
 							]
 						],
 						"settings":
@@ -1217,14 +1189,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1009.0,
+						"translation.y": 4286.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
-					"buffer": 2,
+					"buffer": 1,
 					"file": "unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 					"semi_transient": false,
 					"settings":
@@ -1236,8 +1208,12 @@
 						"selection":
 						[
 							[
-								7522,
-								7522
+								626,
+								640
+							],
+							[
+								4872,
+								4886
 							]
 						],
 						"settings":
@@ -1247,14 +1223,14 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 18.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
+					"buffer": 2,
 					"file": "unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 					"semi_transient": false,
 					"settings":
@@ -1266,8 +1242,8 @@
 						"selection":
 						[
 							[
-								1776,
-								1788
+								1773,
+								1773
 							]
 						],
 						"settings":
@@ -1280,11 +1256,11 @@
 						"translation.y": 403.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
+					"buffer": 3,
 					"file": "unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
 					"semi_transient": false,
 					"settings":
@@ -1302,7 +1278,9 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
@@ -1312,20 +1290,20 @@
 					"type": "text"
 				},
 				{
-					"buffer": 5,
+					"buffer": 4,
 					"file": "unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4954,
+						"buffer_size": 5030,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3991,
-								3991
+								4629,
+								4629
 							]
 						],
 						"settings":
@@ -1335,14 +1313,69 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1705.0,
+						"translation.y": 1995.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 0,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Text/Plain text.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
 					"buffer": 6,
+					"file": "/Users/krbalmryde/.bash_aliases",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8037,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
 					"file": "unity/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
 					"semi_transient": false,
 					"settings":
@@ -1360,17 +1393,19 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 351.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
-					"buffer": 7,
+					"buffer": 8,
 					"file": "unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
 					"semi_transient": false,
 					"settings":
@@ -1388,13 +1423,15 @@
 						],
 						"settings":
 						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 8,
 					"type": "text"
 				}
 			]
@@ -1783,7 +1820,7 @@
 		[
 			[
 				"",
-				"~/Dropbox/Code-Projects/EVL/DarkSkyVis/DarkSkyVis.sublime-project"
+				"~/Dropbox/Code-Projects/KrbAlmryde.github.io/KrbAlmryde.sublime-project"
 			]
 		],
 		"width": 380.0
