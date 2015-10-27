@@ -166,7 +166,7 @@ function UpdatePopulations()
 
 function CheckPopulationCounts()
 {
-    window.setInterval(UpdatePopulations, 30000);
+    window.setInterval(UpdatePopulations, 120000);
 }
 
 
