@@ -4,13 +4,8 @@ var NUTELLA = require('nutella_lib');
 var cliArgs = NUTELLA.parseArgs();
 var componentId = NUTELLA.parseComponentId();
 var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, componentId);
-// Optionally you can set the resource Id
+console.log("Simulator version 0.9.8");
 
-// WHEN do you need it, by the way?
-
-// nutella.setResourceId('my_resource_id');
-
-// 
 //
 //  these constants are important for debugging
 //  the first forces a delay before attempting to retrieve
@@ -28,225 +23,95 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
+// const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
+// const broadcastFrequency = 15; // every update. increase to "speed up" model
 const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
 const broadcastFrequency = 15; // every update. increase to "speed up" model
-// const frequencyOfUpdate = 1 * 1 * 1000; //(1000 = 1 second)
-// const broadcastFrequency = 1; // every update. increase to "speed up" model
 
-var broadcastCount=0;
+var broadcastCount; //cyclic clock controls broadcast frequency
+var state; //current state of the simulation
+var model; //population model
 
-//  model constants
+// listen for model edit, reload model
 
-const r =   [   [0.25, 0.25, 0.25, 0.25],
-                [0.25, 0.25, 0.25, 0.25],
-                [0.25, 0.25, 0.25, 0.25],
-                [0.25, 0.25, 0.25, 0.25]
-            ];
-; // one for each resource (maximal growth rate)
+// nutella.net.subscribe('write_model', function(message, from){
+//     var temp_model = nutella.persist.getMongoObjectStore('model');
+//     temp_model=message; 
+//     model=deepCopy(temp_model); 
+// });
 
-var K =     [   [100, 150, 60, 0],
-// var K =     [   [20, 150, 60, 0],
-                [100,80,0,0],
-                [125,100,0,0],
-                [50, 150, 100, 0]
-            ];
-
-; // one for each resource (carrying capacity)
-
-var alpha = [
-                [       [ 1.0,  0.4,  0.0,  0.0   ], 
-                        [ 0.5,  1.0,  0.5,  0.0   ], 
-                        [ 0.0,  0.5,  1.0,  0.0   ],
-                        [ 0.0,  0.0,  0.0,  0.0   ]
-                ],
-                [       [ 1.0,  0.0,  0.0,  0.0    ], 
-                        [ 0.0,  1.0,  0.0,  0.0   ], 
-                        [ 0.0,  0.0,  0.0,  0.0   ],
-                        [ 0.0,  0.0,  0.0,  0.0   ]
-                ],
-                [       [ 1.0,  0.4,  0.0,  0.0   ], 
-                        [ 0.2,  1.0,  0.0,  0.0   ], 
-                        [ 0.0,  0.0,  0.0,  0.0   ],
-                        [ 0.0,  0.0,  0.0,  0.0   ]
-                ],
-                [       [ 1.0,  0.4,  0.0,  0.0   ], 
-                        [ 0.3,  1.0,  0.3,  0.0   ], 
-                        [ 0.0,  0.4,  1.0,  0.0   ],
-                        [ 0.0,  0.0,  0.0,  0.0   ]
-                ]
-            ];
-
-const b = [ [0.1, 0.1, 0.1, 0.1], 
-            [0.1, 0.1, 0.1, 0.1], 
-            [0.1, 0.1, 0.1, 0.1],
-            [0.1, 0.1, 0.1, 0.1] 
-          ];
-
-; // one for each herbivore (conversion of resources consumed into new herbivores)
-var a =  [
-            [
-                [ 0.20, 0.08, 0.00, 0.00 ], 
-                [ 0.10, 0.18, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ]
-            ],
-            [
-                [ 0.20, 0.05, 0.00, 0.00 ], 
-                [ 0.00, 0.05, 0.20, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ]
-            ],
-            [
-                [ 0.15, 0.10, 0.00, 0.00 ], 
-                [ 0.00, 0.10, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ]
-            ],
-            [
-                [ 0.08, 0.00, 0.00, 0.00 ], 
-                [ 0.18, 0.10, 0.00, 0.00 ],
-                [ 0.06, 0.20, 0.00, 0.00 ],
-                [ 0.00, 0.00, 0.00, 0.00 ]
-            ]
-          ];
+// nutella.net.handle_requests('read_model', function(JSONmessage, from) {
+//     return(model);
+// });
 
 
-const q = [ [1, 1, 1, 1],  
-            [1, 1, 1, 1],  
-            [1, 1, 1, 1],  
-            [1, 1, 1, 1] 
-          ]; // one for each herbivore (measure of interference competition among herbivores)
-
-const d = [ [0.1, 0.1, 0.1, 0.1], 
-            [0.1, 0.1, 0.1, 0.1], 
-            [0.1, 0.1, 0.1, 0.1], 
-            [0.1, 0.1, 0.1, 0.1] 
-          ]; // one for each herbivore (intrinsic death rates)
+    broadcastCount=0;
+    model = nutella.persist.getMongoObjectStore('model');
+    model.load(function(){ 
+        setTimeout(init,waitForHistoryToLoad); // give history time to load or initialize; a kludge}
+    });
 
 
+// end of program. everything else is functions
 
-const beta = [  [0.1, 0.1, 0.1], 
-                [0.1, 0.1, 0.1], 
-                [0.1, 0.1, 0.1], 
-                [0.1, 0.1, 0.1] 
-             ]; // one for each predator  (intrinsic death rates) (just like b, but herbs to preds
+// history['states'][0]['environments'] = [ [20.4,1,1,-1],[18.9,1,1,-1],[11.4,1,1,-1],[12.1,1,1,-1] ];
+//       history['species_events'] = [];
+//       history['environmental_events'] = [];
 
-
-
-
-const s = [ [1, 1, 1], 
-            [1, 1, 1], 
-            [1, 1, 1], 
-            [1, 1, 1] 
-          ]; // one for each predator (measure of interference competition among predators)
-
-
-
-const delta = [ [0.01, 0.01, 0.01], 
-                [0.01, 0.01, 0.01], 
-                [0.01, 0.01, 0.01], 
-                [0.01, 0.01, 0.01] 
-              ]; // one per predator (intrinsicd death rath of predator)
-
-var m =   [ 
-            [
-                [ 0.300, 0.125, 0.000 ], 
-                [ 0.150, 0.250, 0.000 ],
-                [ 0.000, 0.000, 0.000 ],
-
-            ],
-            [
-                [ 0.100, 0.000, 0.120 ], 
-                [ 0.000, 0.000, 0.000 ],
-                [ 0.000, 0.000, 0.000 ],
-
-            ],
-            [
-                [ 0.150, 0.000, 0.000 ], 
-                [ 0.050, 0.120, 0.000 ],
-                [ 0.000, 0.000, 0.000 ],
-
-            ],
-            [
-                [ 0.000, 0.000, 0.000 ], 
-                [ 0.100, 0.000, 0.000 ],
-                [ 0.000, 0.000, 0.000 ],
-
-            ]
-          ];
-
-
-const resourceIndex = [ [4,10,9], 
-                        [4,5], 
-                        [10,5], 
-                        [4,10,5] 
-                      ] ; // which indexes in the species array correspond to resources
-
-const herbivoreIndex =  [   [6,2], 
-                            [6,7,0], 
-                            [6,2], 
-                            [7,0] 
-                        ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
-
-const predatorIndex = [ [1,8], 
-                        [8], 
-                        [1,3], 
-                        [8] 
-                      ]; // ditto
-
-
-var state; 
-console.log("Simulator version 0.9.5");
-setTimeout(init,waitForHistoryToLoad); // give history a minute to load or initialize
 
 function init() {
-        nutella.net.request('last_state', {}, function(message, from) {
-        state=JSON.parse(JSON.stringify(message)); //deepCopy(message);
-//
-//  convert from wall values to simulator values
-//
-    for (var i=0; i<state['populations'].length; i++) {
-        // predators
-        state['populations'][i][1] /= 100;
-        state['populations'][i][3] /= 100;
-        state['populations'][i][8] /= 100;
-        // herbivores
-        state['populations'][i][0] /= 200;
-        state['populations'][i][2] /= 200;
-        state['populations'][i][6] /= 200;
-        state['populations'][i][7] /= 200;
-        // resources
-        state['populations'][i][4] *= 200;
-        state['populations'][i][5] *= 200;
-        state['populations'][i][9] *= 200;
-        state['populations'][i][10] *= 200;
-    }
+    nutella.net.request('last_state', {}, function(message) {
+        state=JSON.parse(JSON.stringify(message));
 
-        cycleStatesOnSchedule();
+        if (message == 'new') { //need to build initial state
+            var d = new Date();
+            state = {}; 
+            state['timestamp'] = d.getTime();
+            state['populations'] = model['populations'];
+            state['environments'] = model['environments'];
+        } else { // model parameters are right if created here, but need to be adjusted if from history
+            state['timestamp'] = message['timestamp'];
+            state['populations'] = message['populations'];
+            state['environments'] = message['environments'];            
+            for (var habitat=0; habitat<state['populations'].length; habitat++) 
+                for (var species=0; species<state['populations'][habitat].length; species++) 
+                    state['populations'][habitat][species] *= 
+                        model['historyToSimulator'][model['species'][species]['trophicLevel']];
+        };
+        cycleStatesOnSchedule(); // cycles at frequencyOfUpdate milliseconds
+    
+
+
+//
+//  convert from history population values to simulator values
+//  
+
+
     // channel: species_event
     //
     //  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
 
-        nutella.net.subscribe('species_event', function(message, from){
-            switch (message.action) {
-                case "remove": 
-                    state['populations'][message.habitat][message.species] = 0;  
-                    break;
-                case "decrease": 
-                    state['populations'][message.habitat][message.species] *= 0.2; 
-                    break;
-                case "increase": 
-                    state['populations'][message.habitat][message.species] *= 2; 
-                    break;
-                case "insert":
-                    state['populations'][message.habitat][message.species] = 0;
-                    if (isResource(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = .05;
-                    if (isHerbivore(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 25;
-                    if (isPredator(message.habitat,message.species) >= 0) state['populations'][message.habitat][message.species] = 10;
-                    break;
-                };
-                cycleState();
-        })
+    nutella.net.subscribe('species_event', function(message, from){
+        switch (message.action) {
+            case "remove": 
+                state['populations'][message.habitat][message.species] = 0;  
+                break;
+            case "decrease": 
+                state['populations'][message.habitat][message.species] *= 
+                    model['decreaseFactor']; 
+                break;
+            case "increase": 
+                state['populations'][message.habitat][message.species] *= 
+                    model['increaseFactor']; 
+                break;
+            case "insert":
+                state['populations'][message.habitat][message.species] *= 
+                    (model['defaultPopulations'][model['species'][message.species]['trophicLevel']] *
+                        model['invasionPopulationAdjustment']);
+                break;
+            };
+        cycleStateOnce();
+    });
 
     // channel: environmental_event   [DRAFT]
     //  message = {habitat: 0, action: <event>, species: 6}  <event> := "warming" | "pipeCollapse" | "plasterFall" | "invasion"
@@ -255,206 +120,248 @@ function init() {
     //
     //
 
-        nutella.net.subscribe('environmental_event', function(message){
-
-            switch (message.action) {
-                case "warming": // here, flag mode by making temp negative. it's a hack, but it preserves db structure
-                    state['environments'][message.habitat][0] = 
-                    Math.abs(state['environments'][message.habitat][0]); // next higest temperature; //need joel's input on these 
-                    break;
-                case "pipeCollapse": // these are events. they have instaneous effects. check with joel on constants
-                    if      (state['environments'][message.habitat][1] > 0.9 ) state['environments'][message.habitat][1] = 0.9;
-                    else if (state['environments'][message.habitat][1] > 0.7 ) state['environments'][message.habitat][1] = 0.7;
-                    else if (state['environments'][message.habitat][1] > 0.6 ) state['environments'][message.habitat][1] = 0.6;
-                    else if (state['environments'][message.habitat][1] > 0.5 ) state['environments'][message.habitat][1] = 0.5;
-                    else if (state['environments'][message.habitat][1] > 0.3 ) {
-                        state['environments'][message.habitat][1] = 0.3;
-                        // adjust joel's parameters because we're at "low" pipe level;
-                    }
-                    break;
-                case "plasterFall": 
-                    if (state['environments'][message.habitat][2] < 0.8) 
-                        state['environments'][message.habitat][2] += 0.1; 
-                    break;
-                case "invasion":
-                    state['environments'][message.habitat][3] = message.species; // -1 or undefined or null means no invasion. positive = invasion
-                    break;
-    
+    nutella.net.subscribe('environmental_event', function(message){
+        switch (message.action) {
+            case "warming":
+                if (state['environments'][message.habitat][0] <= model['tempThreshholds'][2]) 
+                    model['tempIncrements'][message.habitat] = model['tempIncrementLevel']; model.save();
+                break;
+            case "pipeCollapse": // these are events. they have instaneous effects. check with joel on constants
+                if (state['environments'][message.habitat][1] >= .4) state['environments'][message.habitat][1] -= .2;
+                break;
+            case "plasterFall": 
+                break;
+            case "invasion":
+                state['environments'][message.habitat][3] = message.species; // -1 or undefined or null means no invasion. positive = invasion
+                break;
             };
-            cycleState();
-        })
-    })
+            cycleStateOnce();
+        });
+    });
 }
 
+function cycleStatesOnSchedule() {
+    cycleStateOnce();
+    setTimeout(cycleStatesOnSchedule,  frequencyOfUpdate);
+}
+
+
+function cycleStateOnce () {
+
+    // for (var habitat=0; habitat<state['populations'].length; habitat++) 
+    //     for (var species=0; species<state['populations'][habitat].length; species++) 
+    //         state['populations'][habitat][species] *= 
+    //             model['historyToSimulator'][model['species'][species]['trophicLevel']];
+
+// convert simulation parameters to history values
+    var tempState; 
+    // convert to History population magnitudes and report to history bot
+    // but only every frequencyOfUpdate * BroadcastFrequency milliseconds
+    for (var h=0; h<4; h++) adjustForPressures(h);
+
+
+    if (broadcastCount == 0) {
+        tempState = deepCopy(state); 
+        for (var habitat=0; habitat<tempState['populations'].length; habitat++) 
+            for (var species=0; species<tempState['populations'][habitat].length; species++) {
+                tempState['populations'][habitat][species] *= 
+                    model['simulatorToHistory'][model['species'][species]['trophicLevel']]; };
+        nutella.net.publish ('state_update',tempState);
+    }
+    broadcastCount++;
+    if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
+
+//  convert simulation parameters to animation values. obviously i need to break this out.
+//  broadcast to Animator on every cycle (i.e., every frequencyOfUpdate milliseconds)
+
+    var tempState2 = deepCopy(state);
+    for (var habitat=0; habitat<tempState2['populations'].length; habitat++) 
+        for (var species=0; species<tempState2['populations'][habitat].length; species++) 
+            tempState2['populations'][habitat][species] *= 
+                model['simulatorToAnimator'][model['species'][species]['trophicLevel']];
+    nutella.net.publish ('animation_state_update',tempState2);
+
+
+    var tempState3 = deepCopy(state);
+    var d = new Date(); 
+    tempState3['timestamp'] = d.getTime();
+    for (var habitat=0; habitat<tempState3['populations'].length; habitat++) {
+        for (var species=0; species<tempState3['populations'][habitat].length; species++)
+            tempState3['populations'][habitat][species] = nextPopulation(habitat,species);
+    }
+
+    state = deepCopy(tempState3);
+
+}
+
+//  adjust habitat h for various external pressures:
+//  warming, habitat destruction, and invasive species
+
+function adjustForPressures(h) {
+    adjustForTemperatures(h);
+    adjustForPipes(h);
+    adjustForInvasions(h);
+}
+
+function adjustForTemperatures(h) {
+
+    // temperature adjustments
+    // note: the value at index 0 in state['environments'][h][0] is the temperature.
+    // the value in 'threshholds' is the point at which you turn off the temp increase.
+    // this allows for two "stage" of warming. only works for habitat 3.
+
+    if (h == 3) {
+        if (model['tempIncrements'][h]>0) {
+            var oldTemp = state['environments'][h][0];
+            var newTemp = oldTemp + model['tempIncrements'][h];
+            state['environments'][h][0] = newTemp; 
+            if ((oldTemp <= model['tempThreshholds'][0] && newTemp > model['tempThreshholds'][0]) ||
+                (oldTemp <= model['tempThreshholds'][1] && newTemp > model['tempThreshholds'][1]) ||
+                (oldTemp <= model['tempThreshholds'][2] && newTemp > model['tempThreshholds'][2])) {
+                    model['tempIncrements'][h] = 0; 
+                    model.save();
+            } else {
+                if (state['environments'][h][0] > model['tempThreshholds'][1]) {
+                        model['K'][h][2] = 10; 
+                        model['a'][h][1][1] = 0; model['a'][h][2][1] = 0;
+                        model.save();
+                }
+                else {
+                    if (state['environments'][h][0] > model['tempThreshholds'][0]) {
+                            model['K'][h][2] = 50; 
+                            model['a'][h][1][1] = .05; model['a'][h][2][1] = .1;
+                            model.save();}
+                }
+            }
+        }
+    }
+}
+
+//  adjustments for reductions in available pipe length. these will work ONLY
+//  in habitat 0. state['environments'][h][1] is pipe length (0<x<1)
+
+function adjustForPipes(h) {
+
+    if (h == 0) {
+        model['K'][h][0] = state['environments'][h][1] * 100; //very hard-wired ([0])
+        model['b'][h][0]  = state['environments'][h][1] * .1; //very hard-wired ([0])
+        model['beta'][h][0] = state['environments'][h][1] * .1; //very hard-wired ([0])
+        model.save();
+    }
+}
+
+//  adjustments for invasive species. this will "work" for all species (but would
+//  result in garbage unless the appropriate coefficients were defined. 
+
+function adjustForInvasions(h) {
+    if (h == 3) return;
+
+//  chronic invasion; if invader depleted, add more (half of baseline population)
+
+    if (state['environments'][h][3] >= 0) {
+        state['populations'][h][state['environments'][h][3]] = 
+            Math.max(state['populations'][h][state['environments'][h][3]],
+                model['defaultPopulations'][model['species'][state['environments'][h][3]]['trophicLevel']]*
+                model['invasionPopulationAdjustment']);
+    // parameter adjustments for particular invasions
+
+    // hard wired for environment 2: predator invasion by species 8
+
+        // if (h == 2 && model['m'][h][1][1] > .01) {
+        //     model['m'][h][1][1] -= 0.00015277777778; model.save();
+        // }
+        
+        if (h == 2) {model['m'][h][1][1] = .01; model.save();}
+        
+    //  hard wired for environment 1: resource invasion by species 9
+
+    //  no transforms necessary. it's taken care of by the original model
+
+
+    //  hard wired for environment 0: herbivore invasion
+
+    //  TBD
+
+
+
+
+
+    }
+ }
+
+//  mapping functions. this is funky because i had to fit it into an existing
+//  database. once we standardize the mappings we'll be able to avoid this
+//  nonsense altogether
+
+//  basically, there are times when we need to know where a species (0 .. 11)
+//  sits in one of joel's models. it gets mapped to both a  modelIndex
+//  (0, 1, ...), but also to one of three different arrays (resourceIndex, herbivore
+//  Index, and predatorIndex). each function checks to see if the species is at its
+//  trophic level, and if so, returns its modelIndex. if the species does not belong
+//  to that trophic level, -1 is returned. had to make double duty of the DB cell.
+
 function isResource (h,i) {
-    for (var j=0; j<resourceIndex[h].length; j++)
-        if (i == resourceIndex[h][j]) return (j);
+    for (var j=0; j<model['resourceIndex'][h].length; j++)
+        if (i == model['resourceIndex'][h][j]) return (j);
     return (-1);
 }
 
 function isHerbivore (h,i) {
-    for (var j=0; j<herbivoreIndex[h].length; j++)
-        if (i == herbivoreIndex[h][j]) return (j);
+    for (var j=0; j<model['herbivoreIndex'][h].length; j++)
+        if (i == model['herbivoreIndex'][h][j]) return (j);
     return (-1);
 }
 
 function isPredator (h,i) {
-    for (var j=0; j<predatorIndex[h].length; j++)
-        if (i == predatorIndex[h][j]) return (j);
+    for (var j=0; j<model['predatorIndex'][h].length; j++)
+        if (i == model['predatorIndex'][h][j]) return (j);
     return (-1);
 }
 
-// growth model
 
-function nextPopulation(h,i) {
+
+function nextPopulation(h,i) { // h=habitat, i=species
+
+    // use model to compute next population state
+
     var modelIndex; //maps species to Joel's model index
-
     if ((modelIndex = isResource(h,i)) >= 0) {
         var sum1 = 0;
         var sum2 = 0;
-        for (var j=0; j<resourceIndex[h].length; j++) 
-            sum1 += (alpha[h][modelIndex][j] * state['populations'][h][resourceIndex[h][j]]);
-        for (var k=0; k<herbivoreIndex[h].length; k++)
-            sum2 += ((a[h][modelIndex][k] * state['populations'][h][herbivoreIndex[h][k]]) / 
-                (1 + q[h][k] * state['populations'][h][herbivoreIndex[h][k]]));
-        return(state['populations'][h][resourceIndex[h][modelIndex]] * 
-            Math.exp(r[h][modelIndex] * (K[h][modelIndex] - sum1)/K[h][modelIndex] - sum2));
+        for (var j=0; j<model['resourceIndex'][h].length; j++) 
+            sum1 += (model['alpha'][h][modelIndex][j] * state['populations'][h][model['resourceIndex'][h][j]]);
+        for (var k=0; k<model['herbivoreIndex'][h].length; k++)
+            sum2 += ((model['a'][h][modelIndex][k] * state['populations'][h][model['herbivoreIndex'][h][k]]) / 
+                (1 + model['q'][h][k] * state['populations'][h][model['herbivoreIndex'][h][k]]));
+        return(state['populations'][h][model['resourceIndex'][h][modelIndex]] * 
+            Math.exp(model['r'][h][modelIndex] * (model['K'][h][modelIndex] - sum1)/model['K'][h][modelIndex] - sum2));
     } 
     if ((modelIndex = isHerbivore(h,i)) >= 0) {
         var sum1 = 0;
         var sum2 = 0;
-        for (var j=0; j<resourceIndex[h].length; j++) 
-            sum1 += ((a[h][j][modelIndex] * state['populations'][h][resourceIndex[h][j]]) / 
-            (1 + q[h][modelIndex] * state['populations'][h][herbivoreIndex[h][modelIndex]]));
-        for (var k=0; k<predatorIndex[h].length; k++) 
-            sum2 += ((m[h][modelIndex][k] * state['populations'][h][predatorIndex[h][k]]) / 
-            (1 + s[h][k] * state['populations'][h][predatorIndex[h][k]]));
-        return(state['populations'][h][herbivoreIndex[h][modelIndex]] * Math.exp(b[h][modelIndex] * sum1 - d[h][modelIndex] - sum2));
+        for (var j=0; j<model['resourceIndex'][h].length; j++) 
+            sum1 += ((model['a'][h][j][modelIndex] * state['populations'][h][model['resourceIndex'][h][j]]) / 
+            (1 + model['q'][h][modelIndex] * state['populations'][h][model['herbivoreIndex'][h][modelIndex]]));
+        for (var k=0; k<model['predatorIndex'][h].length; k++) 
+            sum2 += ((model['m'][h][modelIndex][k] * state['populations'][h][model['predatorIndex'][h][k]]) / 
+            (1 + model['s'][h][k] * state['populations'][h][model['predatorIndex'][h][k]]));
+        return(state['populations'][h][model['herbivoreIndex'][h][modelIndex]] * 
+            Math.exp(model['b'][h][modelIndex] * sum1 - model['d'][h][modelIndex] - sum2));
     }
 
     if ((modelIndex = isPredator(h,i)) >= 0) {
         var sum = 0;
-        for (var j=0; j<herbivoreIndex[h].length; j++) 
-            sum += ((m[h][j][modelIndex] * state['populations'][h][herbivoreIndex[h][j]]) / 
-            (1 + s[h][modelIndex] * state['populations'][h][predatorIndex[h][modelIndex]]));
-        return(state['populations'][h][predatorIndex[h][modelIndex]] * Math.exp(beta[h][modelIndex] * sum - delta[h][modelIndex]));
+        for (var j=0; j<model['herbivoreIndex'][h].length; j++) 
+            sum += ((model['m'][h][j][modelIndex] * state['populations'][h][model['herbivoreIndex'][h][j]]) / 
+            (1 + model['s'][h][modelIndex] * state['populations'][h][model['predatorIndex'][h][modelIndex]]));
+        return(state['populations'][h][model['predatorIndex'][h][modelIndex]] * 
+            Math.exp(model['beta'][h][modelIndex] * sum - model['delta'][h][modelIndex]));
     }
 
     return(0);
 }
 
-
-
-// const resourceIndex = [ [5,10,9], 
-//                         [4,5], 
-//                         [10,5], 
-//                         [4,10,5] 
-//                       ] ; // which indexes in the species array correspond to resources
-
-// const herbivoreIndex =  [   [6,2], 
-//                             [6,7,0], 
-//                             [6,2], 
-//                             [7,0] 
-//                         ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
-
-// const predatorIndex = [ [1,8], 
-//                         [8], 
-//                         [1,3], 
-//                         [8] 
-//                       ]; // ditto
-
-
-// basic simulator cycle. 
-
-function cycleState () {
-
-// convert simulation parameters to history values
-    var tempState = deepCopy(state);
-    for (var i=0; i<state['populations'].length; i++) {
-        // predators
-        tempState['populations'][i][1] *= 100;
-        tempState['populations'][i][3] *= 100;
-        tempState['populations'][i][8] *= 100;
-        // herbivores
-        tempState['populations'][i][0] *= 200;
-        tempState['populations'][i][2] *= 200;
-        tempState['populations'][i][6] *= 200;
-        tempState['populations'][i][7] *= 200;
-        // resources
-        tempState['populations'][i][4] /= 200;
-        tempState['populations'][i][5] /= 200;
-        tempState['populations'][i][9] /= 200;
-        tempState['populations'][i][10] /= 200;
-
-        }
-    if (broadcastCount == 0) 
-        nutella.net.publish ('state_update',tempState); 
-
-// convert history parameters to animation parameters
-    var tempState2 = deepCopy(tempState);
-    for (var i=0; i<state['populations'].length; i++) {
-        // predators
-        tempState2['populations'][i][1] = Math.round(tempState['populations'][i][1]/100);
-        tempState2['populations'][i][3] = Math.round(tempState['populations'][i][3]/100);
-        tempState2['populations'][i][8] = Math.round(tempState['populations'][i][8]/100);
-        // herbivores
-        tempState2['populations'][i][0] = Math.round(tempState['populations'][i][0]/25);
-        tempState2['populations'][i][2] = Math.round(tempState['populations'][i][2]/25);
-        tempState2['populations'][i][6] = Math.round(tempState['populations'][i][6]/25);
-        tempState2['populations'][i][7] = Math.round(tempState['populations'][i][7]/25);
-        // resources
-        tempState2['populations'][i][4] = tempState['populations'][i][4];
-        tempState2['populations'][i][5] = tempState['populations'][i][5];
-        tempState2['populations'][i][9] = tempState['populations'][i][9];
-        tempState2['populations'][i][10] = tempState['populations'][i][10];
-
-        }
-    nutella.net.publish ('animation_state_update',tempState2);
-    
-    broadcastCount++;
-    if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
-
-//    var newState = JSON.parse(JSON.stringify(state));
-   var newState = deepCopy(state);
-
-   var d = new Date(); 
-    newState['timestamp'] = d.getTime();
-    for (var i=0; i<state['populations'].length; i++) 
-        for (var j=0; j<state['populations'][i].length; j++)
-            newState['populations'][i][j] = nextPopulation(i,j);
-
-    // accounting for continuous pressures
-
- 
-    for (var i=0; i<state['environments'][0].length; i++) {
-
-    // warming
-
-       if (state['environments'][i][0]>0)   //if it's in warming mode, update the temperature
-                                                            //add here because warming environments have positive values
-            newState['environments'][i][0] += .01; //degrees. Joel? this should be computable from period
-            // and then we have to also store that into one of joel's variables? i'm sure we do.
-
-    // invasion
-
-       if (state['environments'][i][3]>0) {  //if it's in invasion mode (>0), this field identifies the invading species
-            var newPop = 0;
-            if (isResource(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=10;
-            if (isHerbivore(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=1;
-            if (isPredator(newState['populations'][i][state['environments'][i][3]][0]) >= 0) newPop=0.5;
-            newState['populations'][i][state['environments'][i][3]][0] = 
-                Math.max(newPop,state['populations'][i][state['environments'][i][3]][0]); //degrees. Joel? this should be computable from period
-            // and then we have to also store that into one of joel's variables? i'm sure we do. check with joel on constants
-        }
-    }
-    state = deepCopy(newState);
-    // throw new Error('simulator halted');
- }
-
-function cycleStatesOnSchedule() {
-    cycleState();
-    setTimeout(cycleStatesOnSchedule,  frequencyOfUpdate);
-}
+//utility functions
 
 function deepCopy(oldObj) {
     var newObj = oldObj;
@@ -466,6 +373,10 @@ function deepCopy(oldObj) {
     }
     return newObj;
 }
+
+
+// should we add some normal variation to our graphs?
+
 
 Math.nrand = function() {
     var x1, x2, rad, y1;
