@@ -21,8 +21,6 @@
 var unity3d,
     wallscopeID;
 
-var SpeciesCounter = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];  // Keeps track of the current population counts
-
 /*==============================================================================
  #                            FUNCTION DEFINITIONS
  #=============================================================================*/
@@ -49,11 +47,6 @@ function initNutellaComponents()
     // (Optional) Set the resourceId
     nutella.setResourceId('wallscope_vis');
 
-    // Subscribe to the Channel, assign callback function
-    subscribeToChannel('animation_state_update', State_Update_Handler);
-    subscribeToChannel('species_event', Species_Event_Handler);
-
-
     // initialize the unity WebPlayer
     initWebPlayer();
 
@@ -72,7 +65,6 @@ function initWebPlayer()
     unity3d = new UnityObject2(config);
 
     var url = "build/wallscope" + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
-    // var url = "build/Wallcology/Wallcology.unity3d"; // + wallscopeID.toString() + "/wallscope" + wallscopeID.toString() + ".unity3d";
 
     console.log("Start WebPlayer");
     jQuery(function() {
@@ -124,55 +116,28 @@ function Last_State_Handler( response )
     console.log("last_state!", response);
 
     // Since they are doing the same thing...
-    State_Update_Handler( response, null );
-}
+    // State_Update_Handler( response, null );
 
-
-function Species_Event_Handler( message, from )
-{
-    // ['increase','decrease','colonize','kill'];
-    State_Update_Handler(message, from);
-}
-
-
-function State_Update_Handler(message, from)
-{
-
-    console.log('THE MESSAGE ', message, Date(message["timestamp"]));
+    console.log('THE MESSAGE ', response, Date(response["timestamp"]));
 
     // Send messages to Unity
-    SetThermometerText( message['environments'][wallscopeID-1][0] );  // Set the wallscope Temperature
-    UpdatePopulations(message['populations'][wallscopeID-1]);
+    SetThermometerText( response['environments'][wallscopeID-1][0] );  // Set the wallscope Temperature
+
+    // Get the initial population state update
+    UpdatePopulations();
+
+    // Set our interval to be called every N minutes.
+    CheckPopulationCounts();
 }
 
 /*==============================================================================
  #                          UTILITY FUNCTIONS
  #=============================================================================*/
-// Helper function to subscribe to channels
-function subscribeToChannel(channelName, messageHandler)
-{
-    console.log("subscribing to channel:", channelName);
-    nutella.net.subscribe(channelName, messageHandler);
-};
-
-
-
-// function CheckPopulationCounts()
-// {
-//     setInterval(UpdatePopulationCount, 10000);
-// }
-
-// function UpdatePopulationCount()
-// {
-//     var arr = new Array(10);
-//     UpdatePopulations(arr)
-// }
-
 
 // Manage population updates.
-function UpdatePopulations(population)
+function UpdatePopulations()
 {
-    console.log("UpdatePopulations!", population);
+    console.log("UpdatePopulations!");
 
     for (var i = 0; i < 11; i++) {
 
@@ -186,46 +151,24 @@ function UpdatePopulations(population)
             case 7:
             case 8:
                 RequestPopulationCount( i );
-                // AdjustCritterPopulations( count, i );
                 break;
             case 4:
             case 5:
             case 9:
             case 10:
-                // console.log("Not Implemented yet!");
                 break;
             default:
                 // console.log("No critter Ive ever heard of");
                 break;
         }
-        // RequestPopulationCount(i);
     }
-    console.log("Thats a wrap! %o ", SpeciesCounter);
 }
 
-
-function AdjustCritterPopulations( T, id )
+function CheckPopulationCounts()
 {
-    var S = SpeciesCounter[ id ];
-    console.log("AdjustCritterPopulations: " + id.toString() + " from " + S.toString() + " to " + T.toString());
-    if ( S > T )
-    {
-        console.log("There is too many of them! " + id.toString(), S,  T);
-        for (var i = S; i >= T; i--) {
-            KillCritter( id );
-            SpeciesCounter[ id ]--;
-        };
-    }
-    else if ( S < T )
-    {
-        console.log("\tWe need to add more bugs!", T);
-        for (var i = S; i <= T; i++) {
-            console.log("\t"+ i.toString());
-            SpawnCritter( id );
-            SpeciesCounter[ id ]++;
-        };
-    }
+    window.setInterval(UpdatePopulations, 30000);
 }
+
 
 /*==============================================================================
  #                       UNITY MESSAGE HANDLERS
