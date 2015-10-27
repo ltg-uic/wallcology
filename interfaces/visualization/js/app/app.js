@@ -224,6 +224,11 @@ function ProgressUpdate(func, valid)
     // console.log(func + ' has executed ' + valid.toString());
 }
 
+function DebugMessage(string)
+{
+    console.log(string);
+}
+
 /*==============================================================================
  #                       UNITY MESSAGE REQUESTS
  #=============================================================================*/
@@ -236,7 +241,7 @@ function SetThermometerText (temp)
 {
     temp = Math.abs(Math.round(temp * 100) / 100);
     temp = temp.toString() + "˚C";
-    temp = "";
+    // temp = "";
     console.log("Temperature is", temp);
     unity3d.getUnity().SendMessage("Temperature", "SetText", temp);
 }
