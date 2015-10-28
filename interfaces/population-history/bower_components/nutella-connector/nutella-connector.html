@@ -78,7 +78,7 @@
                     console.log('query params: app_id', query_parameters.app_id);
                     console.log('query params: run_id', query_parameters.run_id);
                     console.log('query params: parseComponentId', NUTELLA.parseComponentId());
-
+                    console.log('using nutella dynamic');
                     me.nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId(),
                             function (success) {
                                 if (success) {
@@ -89,10 +89,11 @@
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
                                 }
-                            });
+                            }, {secure:true});
 
 
                 } else {
+                    console.log('using nutella static');
                     me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
                             function (success) {
                                 if (success) {
@@ -103,7 +104,7 @@
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
                                 }
-                            });
+                            },{secure:true});
 
 
                 }

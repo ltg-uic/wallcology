@@ -10809,6 +10809,15 @@ if (!window.Promise) {
         type: String,
         observer: 'queryChanged'
       },
+
+      /**
+       * If true, the query attribute is assumed to be a complete media query
+       * string rather than a single media feature.
+       */
+      full: {
+        type: Boolean,
+        value: false
+      },
       
       /**
        * @type {function(MediaQueryList)}
@@ -10854,7 +10863,7 @@ if (!window.Promise) {
       if (!query) {
         return;
       }
-      if (query[0] !== '(') {
+      if (!this.full && query[0] !== '(') {
         query = '(' + query + ')';
       }
       this._mq = window.matchMedia(query);
@@ -11314,10 +11323,14 @@ if (!window.Promise) {
       _triggerKeyHandler: function(keyCombo, handlerName, keyboardEvent) {
         var detail = Object.create(keyCombo);
         detail.keyboardEvent = keyboardEvent;
-
-        this[handlerName].call(this, new CustomEvent(keyCombo.event, {
-          detail: detail
-        }));
+        var event = new CustomEvent(keyCombo.event, {
+          detail: detail,
+          cancelable: true
+        });
+        this[handlerName].call(this, event);
+        if (event.defaultPrevented) {
+          keyboardEvent.preventDefault();
+        }
       }
     };
   })();
@@ -11820,7 +11833,7 @@ if (!window.Promise) {
   /**
    * `Polymer.PaperInkyFocusBehavior` implements a ripple when the element has keyboard focus.
    *
-   * @polymerBehavior Polymer.PaperInkyFocusBehaviorImpl
+   * @polymerBehavior Polymer.PaperInkyFocusBehavior
    */
   Polymer.PaperInkyFocusBehaviorImpl = {
 
@@ -24636,16 +24649,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .input-content.label-is-floating ::content .paper-input-label {
         -webkit-transform: translateY(-75%) scale(0.75);
         transform: translateY(-75%) scale(0.75);
-        -webkit-transform-origin: left top;
-        transform-origin: left top;
         -webkit-transition: -webkit-transform 0.25s;
         transition: transform 0.25s;
+
+        -webkit-transform-origin: left top;
+        transform-origin: left top;
 
         /* Since we scale to 75/100 of the size, we actually have 100/75 of the
         original space now available */
         width: 133%;
 
         @apply(--paper-transition-easing);
+      }
+
+      :host-context([dir="rtl"]) .input-content.label-is-floating ::content label,
+      :host-context([dir="rtl"]) .input-content.label-is-floating ::content .paper-input-label {
+        /* TODO(noms): Figure out why leaving the width at 133% before the animation
+         * actually makes
+         * it wider on the right side, not left side, as you would expect in RTL */
+        width: 100%;
+        -webkit-transform-origin: right top;
+        transform-origin: right top;
       }
 
       .input-content.label-is-highlighted ::content label,
@@ -24678,6 +24702,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         border: none;
         color: var(--paper-input-container-input-color, --primary-text-color);
         -webkit-appearance: none;
+        text-align: inherit;
 
         @apply(--paper-font-subhead);
         @apply(--paper-input-container-input);
@@ -24702,6 +24727,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         resize: none;
       }
 
+      .add-on-content {
+        position: relative;
+      }
+
       .add-on-content.is-invalid ::content * {
         color: var(--paper-input-container-invalid-color, --google-red-500);
       }
@@ -24717,7 +24746,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <div class$="[[_computeInputContentClass(noLabelFloat,alwaysFloatLabel,focused,invalid,_inputHasContent)]]">
       <content select="[prefix]" id="prefix"></content>
-      <div class="label-and-input-container">
+
+      <div class="label-and-input-container" id="labelAndInputContainer">
         <content select=":not([add-on]):not([prefix]):not([suffix])"></content>
       </div>
       <content select="[suffix]"></content>
@@ -24880,6 +24910,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       } else {
         this._handleValue(this._inputElement);
       }
+
+      this._numberOfPrefixNodes = 0;
+      this._prefixObserver = Polymer.dom(this.$.prefix).observeNodes(
+          function(mutations) {
+            // Keep track whether there's at least one prefix node, since it
+            // affects laying out the floating label.
+            this._numberOfPrefixNodes += mutations.addedNodes.length -
+                mutations.removedNodes.length;
+          }.bind(this));
+    },
+
+    detached: function() {
+      if (this._prefixObserver) {
+        Polymer.dom(this.$.prefix).unobserveNodes(this._prefixObserver);
+      }
     },
 
     _onAddonAttached: function(event) {
@@ -24976,16 +25021,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           } else if (focused) {
             cls += " label-is-highlighted";
           }
-          // The label might have a horizontal offset if a prefix element exists
+          // If a prefix element exists, the label has a horizontal offset
           // which needs to be undone when displayed as a floating label.
-          if (Polymer.dom(this.$.prefix).getDistributedNodes().length > 0 &&
-              label && label.offsetParent) {
-            label.style.left = -label.offsetParent.offsetLeft + 'px';
+          if (this._numberOfPrefixNodes > 0) {
+            this.$.labelAndInputContainer.style.position = 'static';
           }
         } else {
           // When the label is not floating, it should overlap the input element.
           if (label) {
-            label.style.left = 0;
+            this.$.labelAndInputContainer.style.position = 'relative';
           }
         }
       } else {
@@ -25030,6 +25074,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--paper-font-caption);
         @apply(--paper-input-error);
         position: absolute;
+        left:0;
+        right:0;
       }
 
       :host([invalid]) {
@@ -25038,7 +25084,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <content></content>
-    
+
   </template>
 </dom-module>
 
@@ -25076,6 +25122,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         @apply(--paper-font-caption);
         @apply(--paper-input-char-counter);
+      }
+
+      :host-context([dir="rtl"]) {
+        float: left;
       }
     </style>
 
@@ -28304,7 +28354,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     console.log('query params: app_id', query_parameters.app_id);
                     console.log('query params: run_id', query_parameters.run_id);
                     console.log('query params: parseComponentId', NUTELLA.parseComponentId());
-
+                    console.log('using nutella dynamic');
                     me.nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId(),
                             function (success) {
                                 if (success) {
@@ -28315,10 +28365,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
                                 }
-                            });
+                            }, {secure:true});
 
 
                 } else {
+                    console.log('using nutella static');
                     me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
                             function (success) {
                                 if (success) {
@@ -28329,7 +28380,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
                                 }
-                            });
+                            },{secure:true});
 
 
                 }
@@ -29645,9 +29696,8 @@ paper-calendar {
             },
             chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
-              viewWindow: {
-                min: 0
-              },
+              minValue: 0,
+              maxValue: 100,
               textStyle: {
                 fontSize: 14
               }
@@ -29672,6 +29722,10 @@ paper-calendar {
               }
             }
           }
+        },
+        yAxisMax: {
+          type: Number,
+          value: 300
         },
         startDate: {
           type: Date,
@@ -29946,24 +30000,33 @@ paper-calendar {
                 var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
 
 
-//                console.log('ENV date', moment(r[i1].timestamp).valueOf());
+                if( r[i1].value > me.yAxisMax ) {
+                  console.log('old max: ', me.yAxisMax );
+                  me.yAxisMax = r[i1].value;
+                  console.log('new max: ', me.yAxisMax );
 
+                }
                 t.push([d1, r[i1].value, species.color]);
-
-
               }
-              //var lastDate1 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
-              //add one minute to the start time and set it 0
-              //t.push([lastDate1, 0, species.color]);
-
               me.drawGraph(species, t, 'environment_history', sdate, edate);
+
             } else if (messageType === 'population_history') {
               for (var i2 = 0; i2 < r.length; i2++) {
                 var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
-//                console.log('new date', moment(r[i2].timestamp).valueOf());
-                if (r[i2] === null) {
-                  console.log('null population at: ', i2);
+
+//                if( r[i2] === null ) {
+//                  console.log('null population at: ', i2);
+//                }
+
+
+                console.log('old max: ', me.yAxisMax );
+                console.log('value: ', r[i2].population);
+                if( r[i2].population > me.yAxisMax ) {
+                  console.log('old max: ', me.yAxisMax );
+                  me.yAxisMax = r[i2].population;
+                  console.log('new max: ', me.yAxisMax );
                 }
+
                 t.push([d2, r[i2].population, species.color]);
               }
 
@@ -30012,6 +30075,9 @@ paper-calendar {
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
+          oldGraph.options.hAxis.minValue = 0;
+          oldGraph.options.vAxis.maxValue = this.yAxisMax;
+
 
 
           var index = this.graphs.indexOf(oldGraph);
@@ -30043,6 +30109,9 @@ paper-calendar {
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
+          g.options.vAxis.minValue = 0;
+          g.options.vAxis.maxValue = this.yAxisMax;
+
           this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
           if (this.debug) {
