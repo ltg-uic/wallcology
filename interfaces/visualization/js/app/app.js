@@ -270,14 +270,6 @@ function RequestPopulationCount( uID )
     unity3d.getUnity().SendMessage("WallScope", "GetPopulationCount", uID);
 }
 
-// Tells UNITY to change the scene to the requested wallscope number
-function LoadWallscope( scopeNumber )
-{
-    console.log("Loading Wallscope scene #" + scopeNumber);
-    unity3d.getUnity().SendMessage("WallScope", "LoadWallscopeScene", parseInt(scopeNumber));
-}
-
-
 
 /*==============================================================================
  #                             START OF MAIN
