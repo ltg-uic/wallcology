@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here  MY CHANGE HERE-->
+	<title></title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+	<!-- Your CSS here -->
+</head>
+
+<body>
+
+
+	<!-- Scripts -->
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<script src="html2canvas.js" type="text/javascript"></script>
+	<!-- Your scripts here -->
+
+	<script type="text/javascript">
+
+
+	// Parse the query parameters
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	// Get an instance of nutella.
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+
+// to use:
+
+// 1. comment out unwanted species/environment variables (var images)
+// 2. call drawHabitatSelector (h, f, c) (for the habitat button)
+
+//	h =  ?1234" | "A1234" | "fixed"
+//	f = fixed habitat if h=="fixed"
+//	c = true (clear species selections on habitat change) | false (don't clear selections)
+//
+
+// 3. call drawSelectorBar (n)
+
+// n = maximum number of selectable items
+
+// 4. write these three functions:
+
+// function select (species) { };			// code for when a species is selected
+// function deSelect (species) { };			// code for when a species is deselected
+// function habitatSelect(habitat) { };		// code for when a habitat is selected
+
+//	example calls:
+//
+//	drawHabitatSelector ('?1234', 0, true);
+//	drawSelectorBar (3);
+//
+//	creates Habitat button with ?, 1, 2, 3, 4.
+//	after initial selection, no return to ?
+//	clears species selections on habitat change
+//	maximum of 3 selections
+
+
+
+
+
+// globals
+
+// selectable objects
+// comment out the ones you don't want
+// (e.g., if you don't want temp, pipes,comment out the last two)
+
+var isOpera = !!window.opera || navigator.userAgent.indexOf(' OPR/') >= 0;
+    // Opera 8.0+ (UA detection to detect Blink/v8-powered Opera)
+var isFirefox = typeof InstallTrigger !== 'undefined';   // Firefox 1.0+
+var isSafari = Object.prototype.toString.call(window.HTMLElement).indexOf('Constructor') > 0;
+    // At least Safari 3+: "[object HTMLElementConstructor]"
+var isChrome = !!window.chrome && !isOpera;              // Chrome 1+
+
+var images = [ 	{selected: 'https://ltg.cs.uic.edu/WC/icons/species_00.svg', 
+				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg'},
+ 				{selected: 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+ 				   unselected: 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg'}
+ 			 ];
+
+function preloadImage(url)
+{
+    var img=new Image();
+    img.src=url;
+}
+
+for (var i=0; i<images.length; i++) { 
+	preloadImage(images[i].selected); 
+	preloadImage(images[i].unselected); 
+}
+
+var state = [];
+
+for (var i=0; i<images.length; i++) {
+	state[i] = 'unselected';
+}
+
+const N_POINTS = 50;
+
+var numSelected;
+var maxSelectable;
+var habitatSelectorType;
+var fixedIndex;
+var clearSelectionsOnHabitatChange;
+var selectedHabitat;
+
+// initialize
+
+//	function drawSelectorBar(habitatSelectorType, fixedIndex, maxSelections, clearSelectionsOnHabitatChange)
+//	habitatSelectorType =  ?1234" | "A1234" | "fixed"
+//	initialHabitat = 1 | 2 | 3 | 4
+//	maxSelections = integer>0
+//	clearSelectionsOnHabitatChange = true (clear species selections)  false (don't clear selections)
+//
+
+
+function drawHabitatSelector(h, f, c) {
+
+	habitatSelectorType = h;
+	fixedIndex = f; // 0,1,2,3
+	clearSelectionsOnHabitatChange = c; // Boolean
+
+	document.write('<select id="habitatSelectorButton" onChange="habitatSelectorChange();">');
+	
+	if (habitatSelectorType == '?1234') document.write ('<option selected value="?">Habitat ?</option>');
+	if (habitatSelectorType == 'A1234') document.write ('<option selected value="A">All Habitats</option>');
+	if (habitatSelectorType == 'fixed') {
+		document.write ('<option selected value="' + fixedIndex + '">Habitat ' + (fixedIndex+1) + '</option>');
+	} else {
+		for (var i=0; i<4; i++) document.write ('<option value="' + i + '">Habitat ' + (i+1) + '</option>');
+	}
+	document.writeln('</select>');
+	var x = document.getElementById("habitatSelectorButton");
+	var s = x.selectedIndex;
+	selectedHabitat = x[s].value; //alert(selectedHabitat);
+}
+
+function habitatSelectorChange(){
+	if (clearSelectionsOnHabitatChange) {
+		for (var i=0; i<state.length; i++) {if (state[i] == 'selected') clickHandler(i);};
+	};
+	var x = document.getElementById("habitatSelectorButton");
+	var s = x.selectedIndex;
+	selectedHabitat = x[s].value; //alert(selectedHabitat);
+	if(habitatSelectorType == '?1234' && x[0].value == '?') x.options.remove(0);
+	habitatSelect(selectedHabitat);
+}
+
+function drawSelectorBar(n) 
+{
+	for (var i=0; i<images.length; i++)	state[i] = 'unselected';
+	maxSelectable = n;
+	numSelected = 0;
+	for (var i=0; i<state.length; i++) 
+		document.write ('<IMG SRC="' + images[i][state[i]] + '" ID="IMG' + i  + 
+			'" onClick="clickHandler(' + i + ');" width="50" height="50">');
+	document.write('<input type=button onClick="html2canvas(document.body, {onrendered: function(canvas) {document.body.appendChild(canvas);}});" value=snap name=snap>snap</input>');
+}
+
+
+function clickHandler(species) {
+		var x = document.getElementById("habitatSelectorButton");
+		if(x[0].value != '?') {
+			if (state[species] == 'selected') {
+				state[species] = 'unselected';
+				deSelect(species);
+				numSelected--;
+
+			} else {
+				if (numSelected < maxSelectable) {
+					state[species] = 'selected';
+					select(species);
+					numSelected++;
+				}
+			}
+			updateImage (species);
+		}
+}
+
+function updateImage(i) {
+	document.getElementById('IMG'+i).src = images[i][state[i]];
+}
+
+// these are the handlers for when a species is selected or deselected or the habitat changed
+
+  			// code for when a species is selected
+function habitatSelect(habitat) {
+}
+
+
+
+ 	// code for when a habitat is selected
+
+
+
+
+
+
+//
+// population graphs
+// 
+
+drawHabitatSelector('?1234', 2, true); 
+drawSelectorBar(4);
+document.write ('<DIV ID=graphs>');
+var canvasWidth = window.innerWidth-30;
+// this should be cleaned up a bit
+var canvasHeight = Math.floor(((window.innerHeight-60) - document.getElementById('graphs').offsetTop)/4);
+for (var i=0; i<4; i++) {
+	document.write('<canvas id="canvas' + i + '" width="' + canvasWidth +
+		'" height="' + canvasHeight + '" style="border:1px solid #d3d3d3;"></canvas><br>');
+}
+document.write ('</DIV>');
+
+
+document.write('From: ' + '<input type="text" id="from" width=15 onChange="setFrom();">');
+document.write('To: ' + '<input type="text" id="to" width=15 onChange="setTo();">');
+
+var from = -1;
+var to = -1;
+
+function setFrom() {
+	from = Date.parse(document.getElementById('from').value);
+	if (to >= 0 && selectedHabitat > 0) {
+		for (var c=0; c<4; c++) {
+			if (canvas[c] > 0 ) { 
+				clearCanvas(c);
+				drawGraph(c);
+			}
+		}
+	}
+}
+
+function setTo() {
+	to = Date.parse(document.getElementById('to').value);
+	if (from == to) to += 24 * 60 * 60 * 1000;
+	if (from >= 0 && selectedHabitat>0) {
+		for (var c=0; c<4; c++) {
+			if (canvas[c] > 0 ) { 
+				clearCanvas(c);
+				drawGraph(c);
+			}
+		}
+	}
+}
+				
+
+//
+// initially, all the canvases are blank
+//
+
+var canvas = ['blank','blank','blank','blank'];
+
+function findBlankCanvas () {
+	for (var i=0; i<4; i++) if (canvas[i] == 'blank') return(i);
+	console.log ('error: no blank canvas');
+}
+
+function findCanvas (species) {
+	for (var i=0; i<4; i++) if (canvas[i] == species) return(i);
+	console.log('error: could not find species to match ' + species);
+}
+
+function select (species) { 
+
+	var c = findBlankCanvas();
+	canvas[c] = species;
+	drawGraph (c);
+}
+
+function deSelect (species) { 
+	var c = findCanvas(species);
+	clearCanvas (c);
+	canvas[c] = 'blank';
+	for (var i=c; i<3; i++) {
+		if ((canvas[i] == 'blank') && (canvas[i+1] != 'blank')) {
+			canvas[i] = canvas[i+1];
+			drawGraph(i);
+			canvas[i+1] = 'blank';
+			clearCanvas (i+1);
+		}
+
+	}
+} 
+
+function habitatSelect(h) {
+	for (var i=0; i<4; i++) clearCanvas(i);
+}
+
+function clearCanvas (c) {
+	var b_canvas = document.getElementById('canvas' + c);
+	b_canvas.width = b_canvas.width;
+	canvas[c]='blank';
+	// var ctx = document.getElementById('canvas' + c).getContext('2d');
+	// ctx.clearRect(0, 0, canvas[c].width, canvas[c].height);
+}
+
+
+function drawGraph(c) {
+	var canvasID = 'canvas' + c;
+	var cat = new Image();
+	cat.src = images[canvas[c]].selected;
+	var ctx = document.getElementById(canvasID).getContext('2d');
+	// weirdness here. safari wants 10xdimensions of image!
+		if (isSafari) ctx.drawImage(cat, 10, 20, 50, 50); //no clue why 500x500 works :-)
+		if (isChrome) ctx.drawImage(cat, 10, 20, 50, 50); // Chrome gets it right
+	var minX = 100;
+	var maxX = document.getElementById(canvasID).width-20;
+	var minY = 10;
+	var maxY = document.getElementById(canvasID).height-10;
+    ctx.moveTo(minX, y(minY));   
+  	ctx.lineTo(maxX, y(minY));
+    ctx.moveTo(minX, y(minY));
+  	ctx.lineTo(minX, y(maxY));
+	ctx.strokeStyle = '#000';
+	ctx.stroke();
+	var parm = {'habitat': selectedHabitat, 'species': canvas[c], 'points': N_POINTS, 'from': from,'to':to};
+	//alert(parm.habitat + '  ' + parm.species + '  ' + parm.points + '  ' + parm.from + '  ' + parm.to);
+	nutella.net.request('population_history', parm, function(message, f) {
+		var popState = JSON.parse(JSON.stringify(message));
+		//alert(message[48]['timestamp'] + '  ' + message[48]['population']);
+		var yMax = 0; 
+		for (var i=0; i<popState.length; i++) {if (popState[i]['population'] > yMax) yMax=popState[i]['population']};
+		if (yMax == 0) {
+			ctx.font = "24px sans-serif";
+  			ctx.fillText("None found", minX + ((maxX-minX)/4), y(minY + ((maxY-minY)/2)));
+			return;
+		};
+		var minTime = popState[0]['timestamp'];
+		var maxTime = popState[popState.length-1]['timestamp'];
+		for (var i=0; i<popState.length; i++) {
+			ctx.moveTo (minX + (maxX - minX) * ((popState[i]['timestamp'] - minTime)/(maxTime - minTime)),
+				y(minY));
+			ctx.lineTo (minX + (maxX - minX) * ((popState[i]['timestamp'] - minTime)/(maxTime - minTime)),
+				y(minY + (popState[i]['population']/yMax)*.95*(maxY - minY)));
+		}
+		ctx.strokeStyle = '#000';
+		ctx.stroke();
+	});
+}
+
+
+
+
+
+function y(arg) {
+	return (Math.round(canvas0.height-arg));
+}
+
+
+</script>
+
+
+</body>
+</html> 

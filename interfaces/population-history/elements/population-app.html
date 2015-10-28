@@ -385,9 +385,8 @@
             },
             chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
-              viewWindow: {
-                min: 0
-              },
+              minValue: 0,
+              maxValue: 100,
               textStyle: {
                 fontSize: 14
               }
@@ -413,6 +412,10 @@
             }
           }
         },
+        yAxisMax: {
+          type: Number,
+          value: 300
+        },
         startDate: {
           type: Date,
           observer: 'startDateChanged'
@@ -436,6 +439,10 @@
           notify: true,
           value: false,
           observer: 'connectedChanged'
+        },
+        herbs: {
+          type: Boolean,
+          value: false
         },
         debug: {
           type: Boolean,
@@ -686,24 +693,33 @@
                 var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
 
 
-//                console.log('ENV date', moment(r[i1].timestamp).valueOf());
+                if( r[i1].value > me.yAxisMax ) {
+                  console.log('old max: ', me.yAxisMax );
+                  me.yAxisMax = r[i1].value;
+                  console.log('new max: ', me.yAxisMax );
 
+                }
                 t.push([d1, r[i1].value, species.color]);
-
-
               }
-              //var lastDate1 = 'Date(' + moment(eDateLocal).subtract(2, 'minute').valueOf() + ')';
-              //add one minute to the start time and set it 0
-              //t.push([lastDate1, 0, species.color]);
-
               me.drawGraph(species, t, 'environment_history', sdate, edate);
+
             } else if (messageType === 'population_history') {
               for (var i2 = 0; i2 < r.length; i2++) {
                 var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
-//                console.log('new date', moment(r[i2].timestamp).valueOf());
-                if (r[i2] === null) {
-                  console.log('null population at: ', i2);
+
+//                if( r[i2] === null ) {
+//                  console.log('null population at: ', i2);
+//                }
+
+
+                console.log('old max: ', me.yAxisMax );
+                console.log('value: ', r[i2].population);
+                if( r[i2].population > me.yAxisMax ) {
+                  console.log('old max: ', me.yAxisMax );
+                  me.yAxisMax = r[i2].population;
+                  console.log('new max: ', me.yAxisMax );
                 }
+
                 t.push([d2, r[i2].population, species.color]);
               }
 
@@ -752,6 +768,9 @@
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
+          oldGraph.options.hAxis.minValue = 0;
+          oldGraph.options.vAxis.maxValue = this.yAxisMax;
+
 
 
           var index = this.graphs.indexOf(oldGraph);
@@ -783,6 +802,9 @@
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
+          g.options.vAxis.minValue = 0;
+          g.options.vAxis.maxValue = this.yAxisMax;
+
           this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
           if (this.debug) {

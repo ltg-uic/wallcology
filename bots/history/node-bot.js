@@ -8,11 +8,20 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 //nutella.setResourceId('my_resource_id');
 
-const forceNewDB = true; // for debugging purposes. set true to wipe DB.
+ // for debugging purposes. set true to wipe DB.
 
 // Stores simulation history as an array of objects
 
 var history = nutella.persist.getMongoObjectStore('history');
+
+var adjustTime = false;
+var startTime = 1445724666 * 1000;
+// var ddd = new Date();
+var endTime;
+// endTime = ddd.getTime();
+   endTime = 1446070266 * 1000; //comment this out to use current time as the endpoint.
+
+
 
 //
 //
@@ -20,66 +29,39 @@ var history = nutella.persist.getMongoObjectStore('history');
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.4");
+console.log("History version 1.01");
+
 history.load(function(){
-
+        // console.log(history);
+        // console.log(history.hasOwnProperty('states'));
+        // console.log(history['states'].hasOwnProperty('populations'));
 // if there is no history db, initialize it here.
-// history.states[0] is the initial state of the simulation
-// history. 
+// 
+
+//console.log("Load ends at: " + ddd.getTime());
+
+// hacking for false histories
+
+if (adjustTime) {
+  var timeDelta = (endTime-startTime)/history['states'].length;
+  console.log (startTime);
+  console.log (endTime);
+  console.log (timeDelta);
+  for (var i=0; i<history['states'].length; i++) {
+    history['states'][i]['timestamp'] = Number(startTime) + i*timeDelta;
+  };
+  history.save();
+  throw new Error("End of time conversion");
+}
 //
+//  history = {states: []; species_events: []; environmental_events[]}
 
-
- if (!history.hasOwnProperty('states') || forceNewDB) {
-
-      history['states'] = [];
-      history['states'][0] = {timestamp:0, populations:[], environments:[]};
-      history['states'][0]['populations'] = [
-        [0,.5,.5,0,10,0,.5,0,.5,10,10],
-        // [0,0,.5,0,0,0,0,0,.5,10,10],
-        [1,0,0,0,10,10,1,1,.5,0,0],
-        [0,.5,1,.5,0,10,1,0,0,0,10],
-        [1,0,0,0,10,10,0,1,.5,0,10]
-      ];
-      history['states'][0]['environments'] = [ [-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1],[-20,1,.4,-1] ];
-      history['species_events'] = [];
-      history['environmental_events'] = [];
-      // convert populations from model values to "wall size" values before publishing
-
-    for (var i=0; i<history['states'][0]['populations'].length; i++) {
-        // predators
-        history['states'][0]['populations'][i][1] *= 100;
-        history['states'][0]['populations'][i][3] *= 100;
-        history['states'][0]['populations'][i][8] *= 100;
-        // herbivores
-        history['states'][0]['populations'][i][0] *= 200;
-        history['states'][0]['populations'][i][2] *= 200;
-        history['states'][0]['populations'][i][6] *= 200;
-        history['states'][0]['populations'][i][7] *= 200;
-        // resources
-        history['states'][0]['populations'][i][4] /= 200;
-        history['states'][0]['populations'][i][5] /= 200;
-        history['states'][0]['populations'][i][9] /= 200;
-        history['states'][0]['populations'][i][10] /= 200;
+    if (!history.hasOwnProperty('states')) {
+        history['states'] = [];
+        history['species_events'] = [];
+        history['environmental_events'] = [];
+        history.save();
     }
-
-//  when the configuration bot is ready, uncomment the following and nest everything inside of the
-//  function response
-      // nutella.net.request('initial_state', {}, function(response){
-
-      //   for (var i=0; i<response['habitats'].length; i++) {
-      //     for (var j=0; j<response['habitats'][i]['items'].length; j++)
-      //       history['states'][0]['populations'][i][response['habitats'][i]['items'][j]]=20; //check with Joel
-      //     history['states'][0]['environments'][i][0]=response['habitats'][i]['temperature'];
-      //     history['states'][0]['environments'][i][1]=response['habitats'][i]['pipelength'];
-      //     history['states'][0]['environments'][i][2]=response['habitats'][i]['brickarea'];
-      //   }
-      // })
-
-      var d = new Date(); 
-      history['states'][0]['timestamp'] = d.getTime();
-      history.save();
-
- }
 
 //      ************REQUEST HANDLERS**************
 //
@@ -112,13 +94,17 @@ history.load(function(){
   //
   // need parameter validation code here
   //
-
+  console.log(A);
+  console.log('n= ' + n);
+  console.log('arg = ' + arg);
+  console.log('begin = ' + beginning);
+  console.log('end = ' + ending);
   var B = [];
 
     var interval = (ending-beginning) / (n-1);
     for (var j=0; j<n; j++) {
       B[j] = {};
-      B[j]['timestamp'] = Number(beginning) + j * interval; //doesn't work with Number (!)
+      B[j]['timestamp'] = Number(beginning) + j * interval; //doesn't work without Number (!)
     }
 
   if (A.length < 5) {for(var j=0; j<n; j++) B[j][arg] = Number(0); return(B);}
@@ -151,7 +137,8 @@ history.load(function(){
     
     }
 
-    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
+    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;};
+//    console.log(B);
 
     return (B);
   }
@@ -360,7 +347,11 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 //          returns the most recent state (support restart in case of failure). used by simulation bot
 
 nutella.net.handle_requests('last_state',function(JSONmessage, from) {
-        return (history['states'][history['states'].length-1]);
+        // console.log(history['states'].length); // comes up zero (that's right)
+        var last = history['states'].length-1;
+        if (last < 0) {return ('new');} else {return (history['states'][last]);};
+        // console.log(history['states'][last]);
+            // throw new Error("Something went badly wrong!");
 });
 
 nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
@@ -413,11 +404,24 @@ nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
 
 
 
-nutella.net.subscribe('state_update', function(JSONmessage, from) {
-    var message=JSONmessage;
+nutella.net.subscribe('state_update', function(m, from) {
+    
+    // console.log(m);
+    // console.log(JSON.parse(JSONmessage));
+    // throw new Error("Something went badly wrong!");
+
+    var message = {};
+    message['timestamp'] = m['timestamp'];
+    message['populations'] = m['populations'];
+    message['environments'] = m['environments'];
+    // console.log(message);
     var d = new Date();
-    message.timestamp=d.getTime();
-    history['states'].push(message);
+    message['timestamp']=d.getTime();
+    if (history['states'].length == 0) {
+      history['states'][0]=message;
+    } else {
+      history['states'].push(message);
+    };
     history.save();
 });
 
@@ -428,7 +432,7 @@ nutella.net.subscribe('state_update', function(JSONmessage, from) {
 nutella.net.subscribe('species_event', function(JSONmessage, from) {
     var message=JSONmessage;
     var d = new Date();
-    console.log("received species event");
+    // console.log("received species event");
     message.timestamp=d.getTime();
     history['species_events'].push(message);
     history.save();
