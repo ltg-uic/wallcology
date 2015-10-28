@@ -25,8 +25,8 @@ console.log("Simulator version 0.9.8");
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 // const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
 // const broadcastFrequency = 15; // every update. increase to "speed up" model
-const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
-const broadcastFrequency = 15; // every update. increase to "speed up" model
+const frequencyOfUpdate = 1 * 1 * 1000; //(1000 = 1 second)
+const broadcastFrequency = 1; // 
 
 var broadcastCount; //cyclic clock controls broadcast frequency
 var state; //current state of the simulation
@@ -162,11 +162,13 @@ function cycleStateOnce () {
 
     if (broadcastCount == 0) {
         tempState = deepCopy(state); 
-        for (var habitat=0; habitat<tempState['populations'].length; habitat++) 
+        for (var habitat=0; habitat<tempState['populations'].length; habitat++) {
             for (var species=0; species<tempState['populations'][habitat].length; species++) {
                 tempState['populations'][habitat][species] *= 
                     model['simulatorToHistory'][model['species'][species]['trophicLevel']]; };
+        }            
         nutella.net.publish ('state_update',tempState);
+
     }
     broadcastCount++;
     if (broadcastCount >= broadcastFrequency) broadcastCount = 0;
@@ -175,10 +177,13 @@ function cycleStateOnce () {
 //  broadcast to Animator on every cycle (i.e., every frequencyOfUpdate milliseconds)
 
     var tempState2 = deepCopy(state);
-    for (var habitat=0; habitat<tempState2['populations'].length; habitat++) 
-        for (var species=0; species<tempState2['populations'][habitat].length; species++) 
+    for (var habitat=0; habitat<tempState2['populations'].length; habitat++) {
+        for (var species=0; species<tempState2['populations'][habitat].length; species++) {
             tempState2['populations'][habitat][species] *= 
                 model['simulatorToAnimator'][model['species'][species]['trophicLevel']];
+        };        
+        tempState2['environments'][habitat][0] += (Math.random() - .5);
+    }
     nutella.net.publish ('animation_state_update',tempState2);
 
 

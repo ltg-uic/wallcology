@@ -14,6 +14,12 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var history = nutella.persist.getMongoObjectStore('history');
 
+const adjustTime = false;
+var startTime = 1445741984 * 1000;
+var ddd = new Date();
+var endTime = ddd.getTime();
+console.log(endTime);
+
 //
 //
 // everything is packed into the load function,
@@ -21,12 +27,29 @@ var history = nutella.persist.getMongoObjectStore('history');
 // before any of the other handlers can fire
 //
 console.log("History version 0.9.8");
+console.log("Load begins at: " + ddd)
 history.load(function(){
         // console.log(history);
         // console.log(history.hasOwnProperty('states'));
         // console.log(history['states'].hasOwnProperty('populations'));
 // if there is no history db, initialize it here.
 // 
+
+console.log("Load ends at: " + ddd.getTime());
+
+// hacking for time correction
+
+if (adjustTime) {
+  var timeDelta = (endTime-startTime)/history['states'].length;
+  console.log (startTime);
+  console.log (endTime);
+  console.log (timeDelta);
+  for (var i=0; i<history['states'].length; i++) {
+    history['states'][i]['timestamp'] = Number(startTime) + i*timeDelta;
+  };
+  history.save();
+  throw new Error("End of time conversion");
+}
 //
 //  history = {states: []; species_events: []; environmental_events[]}
 
@@ -35,7 +58,6 @@ history.load(function(){
         history['species_events'] = [];
         history['environmental_events'] = [];
         history.save();
-        // throw new Error("Something went badly wrong!");
     }
 
 //      ************REQUEST HANDLERS**************
@@ -69,13 +91,17 @@ history.load(function(){
   //
   // need parameter validation code here
   //
-
+  console.log(A);
+  console.log('n= ' + n);
+  console.log('arg = ' + arg);
+  console.log('begin = ' + beginning);
+  console.log('end = ' + ending);
   var B = [];
 
     var interval = (ending-beginning) / (n-1);
     for (var j=0; j<n; j++) {
       B[j] = {};
-      B[j]['timestamp'] = Number(beginning) + j * interval; //doesn't work with Number (!)
+      B[j]['timestamp'] = Number(beginning) + j * interval; //doesn't work without Number (!)
     }
 
   if (A.length < 5) {for(var j=0; j<n; j++) B[j][arg] = Number(0); return(B);}
@@ -108,7 +134,8 @@ history.load(function(){
     
     }
 
-    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;}
+    while (B_index <= n-1) {B[B_index][arg] = 0; B_index++;};
+//    console.log(B);
 
     return (B);
   }

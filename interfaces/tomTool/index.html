@@ -59,7 +59,7 @@
 		var r = response;
 		var s = '';
 		for (var i=0; i<r.length; i++) {
-			s = s + r[i].population + '\n';
+			s = s + r[i].timestamp + '   ' + r[i].population + '\n';
 		}
 		document.getElementById('result').value=s;
 	});">
@@ -72,7 +72,7 @@
 
 	nutella.net.publish('environmental_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, action: 'pipeCollapse'});">
 
-	<input type=button name='invastion' value='invasion' onClick="
+	<input type=button name='invasion' value='invasion' onClick="
 
 	nutella.net.publish('environmental_event', {habitat: document.getElementById('habitat').value, species: document.getElementById('species').value, action: 'invasion'});"><br>
 
