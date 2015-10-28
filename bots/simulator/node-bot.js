@@ -4,7 +4,7 @@ var NUTELLA = require('nutella_lib');
 var cliArgs = NUTELLA.parseArgs();
 var componentId = NUTELLA.parseComponentId();
 var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, componentId);
-console.log("Simulator version 0.9.8");
+console.log("Simulator version 1.0");
 
 //
 //  these constants are important for debugging
@@ -25,8 +25,8 @@ console.log("Simulator version 0.9.8");
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 // const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
 // const broadcastFrequency = 15; // every update. increase to "speed up" model
-const frequencyOfUpdate = 1 * 1 * 1000; //(1000 = 1 second)
-const broadcastFrequency = 1; // 
+const frequencyOfUpdate = 4 * 60 * 1000; //(1000 = 1 second. send to animation every 4 min)
+const broadcastFrequency = 5; // (save in history every 5 cycles (minimizing size))
 
 var broadcastCount; //cyclic clock controls broadcast frequency
 var state; //current state of the simulation
@@ -123,16 +123,24 @@ function init() {
     nutella.net.subscribe('environmental_event', function(message){
         switch (message.action) {
             case "warming":
-                if (state['environments'][message.habitat][0] <= model['tempThreshholds'][2]) 
-                    model['tempIncrements'][message.habitat] = model['tempIncrementLevel']; model.save();
+                if (message.habitat == 3) {
+                    if (state['environments'][message.habitat][0] <= model['tempThreshholds'][2]) 
+                        model['tempIncrements'][message.habitat] = model['tempIncrementLevel']; 
+                        model.save();
+                    }
                 break;
             case "pipeCollapse": // these are events. they have instaneous effects. check with joel on constants
-                if (state['environments'][message.habitat][1] >= .4) state['environments'][message.habitat][1] -= .2;
+                if (message.habitat == 0) {
+                    if (state['environments'][message.habitat][1] >= .4) 
+                        state['environments'][message.habitat][1] -= .2;
+                }
                 break;
             case "plasterFall": 
                 break;
             case "invasion":
-                state['environments'][message.habitat][3] = message.species; // -1 or undefined or null means no invasion. positive = invasion
+                if (message.habitat == 1 || message.habitat == 2) {
+                    state['environments'][message.habitat][3] = message.species; // -1 or undefined or null means no invasion. positive = invasion
+                }
                 break;
             };
             cycleStateOnce();
@@ -193,6 +201,9 @@ function cycleStateOnce () {
     for (var habitat=0; habitat<tempState3['populations'].length; habitat++) {
         for (var species=0; species<tempState3['populations'][habitat].length; species++)
             tempState3['populations'][habitat][species] = nextPopulation(habitat,species);
+            if (tempState3['populations'][habitat][species] < .001) {
+                tempState3['populations'][habitat][species] = 0;
+            }
     }
 
     state = deepCopy(tempState3);
@@ -249,8 +260,8 @@ function adjustForPipes(h) {
 
     if (h == 0) {
         model['K'][h][0] = state['environments'][h][1] * 100; //very hard-wired ([0])
-        model['b'][h][0]  = state['environments'][h][1] * .1; //very hard-wired ([0])
-        model['beta'][h][0] = state['environments'][h][1] * .1; //very hard-wired ([0])
+        model['b'][h][0]  = state['environments'][h][1] * .1 - .01; //very hard-wired ([0])
+        model['beta'][h][0] = state['environments'][h][1] * .1 - .01; //very hard-wired ([0])
         model.save();
     }
 }

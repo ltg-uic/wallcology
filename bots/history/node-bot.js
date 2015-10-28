@@ -14,11 +14,14 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var history = nutella.persist.getMongoObjectStore('history');
 
-const adjustTime = false;
-var startTime = 1445741984 * 1000;
-var ddd = new Date();
-var endTime = ddd.getTime();
-console.log(endTime);
+// var adjustTime = false;
+// var startTime = 1445783400 * 1000;
+// var ddd = new Date();
+// var endTime;
+// endTime = ddd.getTime();
+// endTime = 1446129000 * 1000; //comment this out to use current time as the endpoint.
+
+
 
 //
 //
@@ -26,7 +29,7 @@ console.log(endTime);
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 0.9.8");
+console.log("History version 1.0");
 console.log("Load begins at: " + ddd)
 history.load(function(){
         // console.log(history);
@@ -35,21 +38,21 @@ history.load(function(){
 // if there is no history db, initialize it here.
 // 
 
-console.log("Load ends at: " + ddd.getTime());
+//console.log("Load ends at: " + ddd.getTime());
 
-// hacking for time correction
+// hacking for false histories
 
-if (adjustTime) {
-  var timeDelta = (endTime-startTime)/history['states'].length;
-  console.log (startTime);
-  console.log (endTime);
-  console.log (timeDelta);
-  for (var i=0; i<history['states'].length; i++) {
-    history['states'][i]['timestamp'] = Number(startTime) + i*timeDelta;
-  };
-  history.save();
-  throw new Error("End of time conversion");
-}
+// if (adjustTime) {
+//   var timeDelta = (endTime-startTime)/history['states'].length;
+//   console.log (startTime);
+//   console.log (endTime);
+//   console.log (timeDelta);
+//   for (var i=0; i<history['states'].length; i++) {
+//     history['states'][i]['timestamp'] = Number(startTime) + i*timeDelta;
+//   };
+//   history.save();
+// //  throw new Error("End of time conversion");
+// }
 //
 //  history = {states: []; species_events: []; environmental_events[]}
 
