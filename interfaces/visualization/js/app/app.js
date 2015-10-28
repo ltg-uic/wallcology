@@ -110,29 +110,44 @@ function initWebPlayer()
  #=============================================================================*/
 
 // Handles most recent state of simulation
+var lastState;
 function Last_State_Handler( response )
 {
+
+    lastState = response;
+
     // Send messages to Unity
     console.log("last_state!", response);
-
-    // Since they are doing the same thing...
-    // State_Update_Handler( response, null );
 
     console.log('THE MESSAGE ', response, Date(response["timestamp"]));
 
     // Send messages to Unity
     SetThermometerText( response['environments'][wallscopeID-1][0] );  // Set the wallscope Temperature
 
-    // Get the initial population state update
+    // Get the population state update
     UpdatePopulations();
 
-    // Set our interval to be called every N minutes.
-    CheckPopulationCounts();
+    // Update collapse
+    UpdateCollapse(response['environments'][wallscopeID-1][1]);
 }
 
 /*==============================================================================
  #                          UTILITY FUNCTIONS
  #=============================================================================*/
+
+// Update the collapse
+function UpdateCollapse(value) {
+    if(value < 0.21) {
+        // Collapse the pipes
+        console.log('Collapse the pipes');
+        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", true);
+    }
+    else {
+        // Uncollapse the pipes
+        console.log('Pipes are not collapsed');
+        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", false);
+    }
+}
 
 // Manage population updates.
 function UpdatePopulations()
@@ -166,7 +181,7 @@ function UpdatePopulations()
 
 function CheckPopulationCounts()
 {
-    window.setInterval(UpdatePopulations, 120000);
+    window.setInterval(periodicUpdate, 20000);
 }
 
 
@@ -178,9 +193,16 @@ function CheckPopulationCounts()
 // Allows Unity to tell us its ready
 function initWallScopeStartState( live )
 {
-    console.log("Unity is READY!!", live)
-    // Make asynchronous requests on a certain channel
-    // LoadWallscope( wallscopeID );
+    console.log("Unity is READY!!", live);
+
+    periodicUpdate();
+
+    // Set our interval to be called every N minutes.
+    CheckPopulationCounts();
+}
+
+function periodicUpdate() {
+    console.log('Periodic update');
     nutella.net.request( 'last_animation_state', {}, Last_State_Handler);
 }
 
@@ -189,32 +211,29 @@ function initWallScopeStartState( live )
 // Unity GameObjects with that Identifier that
 function ReceivePopulationCount( uID, pCount )
 {
+    console.log('Count species: ' + uID + ' count: ' + pCount);
 
-    nutella.net.request( 'last_animation_state', {}, function(message, from) {
+    var populationLevel = lastState['populations'][wallscopeID-1];
+    console.log("\tID is %o and there are %o in Unity but %o in Nutella", uID, pCount, populationLevel[ uID ]);
 
-        var populationLevel = message['populations'][wallscopeID-1];
-        console.log("\tID is %o and there are %o in Unity but %o in Nutella", uID, pCount, populationLevel[ uID ]);
+    if (populationLevel[ uID ] < pCount)
+    {
+        var difference = pCount - populationLevel[ uID ];
+        for (var i = 0; i < difference; i++) {
+            console.log('Killed: ' + difference + ' of species ' + uID);
+            KillCritter( uID );
+        }
+    }
+    else if (populationLevel[ uID ] > pCount)
+    {
+        var difference = populationLevel[ uID ] - pCount;
+        for (var i = 0; i < difference; i++) {
+            console.log('Spawned: ' + difference + ' of species ' + uID);
+            SpawnCritter( uID );
+        }
 
-        if (populationLevel[ uID ] !== pCount)
-        {
-            if (populationLevel[ uID ] < pCount)
-            {
-                var difference = pCount - populationLevel[ uID ]
-                for (var i = 0; i < difference; i++) {
-                    KillCritter( uID );
-                };
-            }
-            else if (populationLevel[ uID ] > pCount)
-            {
-                var difference = populationLevel[ uID ] - pCount;
-                for (var i = 0; i < difference; i++) {
-                    SpawnCritter( uID );
-                };
+    }
 
-            }
-        };
-
-    });
 
 }
 

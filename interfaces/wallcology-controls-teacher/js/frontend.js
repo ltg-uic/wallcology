@@ -87,7 +87,9 @@ function askConfirmation() {
     var species = getSelectedBugs();
     var habitat = getSelectedHabitat();
 
-    if(species == 0 && action != 'warming' && action != 'pipeCollapse' && action != 'plasterFall') {
+    console.log(species);
+
+    if(species.length == 0 && action != 'warming' && action != 'pipeCollapse' && action != 'plasterFall') {
         if(getSelectedAction().length > 0) {
             deselectAction(getSelectedAction()[0]);
         }
@@ -103,7 +105,12 @@ function askConfirmation() {
 
     var speciesDescription = [];
     getSelectedBugs().forEach(function(bug) {
-        speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/' + (bug + 1) + '.svg');
+        if(bug < 10) {
+            speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/species_0' + (bug) + '.svg');
+        }
+        else {
+            speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/species_' + (bug) + '.svg');
+        }
     });
 
     document.getElementById('wallcology-controls').actionDescription = getSelectedAction();
@@ -125,7 +132,7 @@ function confirmation() {
                 case 'insert':
                 case 'remove':
                 case 'increase':
-                case decrease:
+                case 'decrease':
                     nutella.net.publish('species_event', {
                         habitat: pendingAction.habitat,
                         species: specie,

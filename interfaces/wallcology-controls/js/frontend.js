@@ -153,7 +153,13 @@ function askConfirmation() {
 
     var speciesDescription = [];
     getSelectedBugs().forEach(function(bug) {
-        speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/' + (bug + 1) + '.svg');
+        if(bug < 10) {
+            speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/species_0' + (bug) + '.svg');
+        }
+        else {
+            speciesDescription.push('http://ltg.cs.uic.edu/WC/icons/species_' + (bug) + '.svg');
+        }
+
     });
 
     document.getElementById('wallcology-controls').actionDescription = getSelectedAction();
