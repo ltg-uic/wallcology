@@ -43,7 +43,7 @@
 
             paper-button.colorful {
                 color: white;
-                background: #006699;
+                background: #237599;
                 margin: 1px;
                 height: 40px;
                 width: 100px;
@@ -77,8 +77,6 @@
                 margin: 1px;
                 padding: 0px;
             }
-
-
 
             paper-icon-button[toggles][active] {
                 color: orange;
@@ -226,80 +224,94 @@
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
                             'index': 0,
-                            'color': '#FFC91B'
+                            'color': '#FFC91B',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
                             'index': 1,
-                            'color': '#5A6372'
+                            'color': '#5A6372',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
                             'index': 2,
-                            'color': '#FFDD00'
+                            'color': '#FFDD00',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
                             'index': 3,
-                            'color': '#2C4721'
+                            'color': '#2C4721',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
 
                             'index': 4,
-                            'color': '#502B6E'
+                            'color': '#502B6E',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
                             'index': 5,
-                            'color': '#99cc33'
+                            'color': '#99cc33',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
                             'index': 6,
-                            'color': '#8975B5'
+                            'color': '#8975B5',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
                             'index': 7,
-                            'color': '#FAAA19'
+                            'color': '#FAAA19',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
                             'index': 8,
-                            'color': '#899C7C'
+                            'color': '#899C7C',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
                             'index': 9,
-                            'color': '#4AB6C8'
+                            'color': '#4AB6C8',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
                             'index': 10,
-                            'color': '#68734F'
+                            'color': '#68734F',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
                             'index': 11,
-                            'color': '#FF5722'
+                            'color': '#FF5722',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
                             'index': 12,
-                            'color': '#795548'
+                            'color': '#795548',
+                            'type': 'r'
+
                         }
                     ]
                 },
@@ -527,7 +539,7 @@
 
             toUpperCase: function (someString) {
                 if (someString !== null) {
-                    return someString.toUpperCase();
+                    return someString;
                 }
                 return null;
             },

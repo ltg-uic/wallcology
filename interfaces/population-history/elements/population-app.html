@@ -68,7 +68,7 @@
 
       paper-button.colorful {
         color: white;
-        background: #006699;
+        background: #237599;
         margin-top: 3px;
         font-size: 12px;
       }
@@ -280,80 +280,92 @@
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
               'index': 0,
-              'color': '#FFC91B'
+              'color': '#FFC91B',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
               'index': 1,
-              'color': '#5A6372'
+              'color': '#5A6372',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
               'index': 2,
-              'color': '#FFDD00'
+              'color': '#FFDD00',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
               'index': 3,
-              'color': '#2C4721'
+              'color': '#2C4721',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
-
               'index': 4,
-              'color': '#502B6E'
+              'color': '#502B6E',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
               'index': 5,
-              'color': '#99cc33'
+              'color': '#99cc33',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
               'index': 6,
-              'color': '#8975B5'
+              'color': '#8975B5',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
               'index': 7,
-              'color': '#FAAA19'
+              'color': '#FAAA19',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
               'index': 8,
-              'color': '#899C7C'
+              'color': '#899C7C',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
               'index': 9,
-              'color': '#4AB6C8'
+              'color': '#4AB6C8',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
               'index': 10,
-              'color': '#68734F'
+              'color': '#68734F',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
               'index': 11,
-              'color': '#FF5722'
+              'color': '#FF5722',
+              'type': 'e'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
               'index': 12,
-              'color': '#795548'
+              'color': '#795548',
+              'type': 'e'
             }
           ]
         },
@@ -412,9 +424,9 @@
             }
           }
         },
-        yAxisMax: {
-          type: Number,
-          value: 300
+        maxes: {
+          type: Object,
+          value: {}
         },
         startDate: {
           type: Date,
@@ -439,10 +451,6 @@
           notify: true,
           value: false,
           observer: 'connectedChanged'
-        },
-        herbs: {
-          type: Boolean,
-          value: false
         },
         debug: {
           type: Boolean,
@@ -658,6 +666,7 @@
         var messageType = type;
         var sDateLocal = sdate;
         var eDateLocal = edate;
+        var sSpecies = species;
         console.log(JSON.stringify(message));
         this.$.nutellaConn.nutella.net.request(type, message, function (response) {
           var r = response;
@@ -671,21 +680,12 @@
 
 
           if (r.length > 0) {
-
-//            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-//            //add one minute to the start time and set it 0
-//            t.push([firstDate, 0, species.color]);
-
-
             //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
-
-
-            console.log('spieces color: ', species.color);
             if (messageType === 'environment_history') {
-              if (species.index === 0) {
-                species.index = 11;
-              } else if (species.index === 1) {
-                species.index = 12;
+              if (sSpecies.index === 0) {
+                sSpecies.index = 11;
+              } else if (sSpecies.index === 1) {
+                sSpecies.index = 12;
               }
 
 
@@ -693,42 +693,25 @@
                 var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
 
 
-                if( r[i1].value > me.yAxisMax ) {
-                  console.log('old max: ', me.yAxisMax );
-                  me.yAxisMax = r[i1].value;
-                  console.log('new max: ', me.yAxisMax );
 
-                }
-                t.push([d1, r[i1].value, species.color]);
+                //me.caluclateGraphMax(sSpecies, r[i1].value);
+
+                t.push([d1, r[i1].value, sSpecies.color]);
               }
-              me.drawGraph(species, t, 'environment_history', sdate, edate);
+              me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
 
             } else if (messageType === 'population_history') {
               for (var i2 = 0; i2 < r.length; i2++) {
                 var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
 
-//                if( r[i2] === null ) {
-//                  console.log('null population at: ', i2);
-//                }
+                //me.caluclateGraphMax(sSpecies, r[i2].population);
 
 
-                console.log('old max: ', me.yAxisMax );
-                console.log('value: ', r[i2].population);
-                if( r[i2].population > me.yAxisMax ) {
-                  console.log('old max: ', me.yAxisMax );
-                  me.yAxisMax = r[i2].population;
-                  console.log('new max: ', me.yAxisMax );
-                }
-
-                t.push([d2, r[i2].population, species.color]);
+                t.push([d2, r[i2].population, sSpecies.color]);
               }
 
-//              var lastDate2 = 'Date(' + moment(eDateLocal).subtract(10, 'minute').valueOf() + ')';
-//              //add one minute to the start time and set it 0
-//              t.push([lastDate2, 0, species.color]);
 
-              me.drawGraph(species, t, 'population_history', sdate, edate);
-
+              me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
             }
 
 
@@ -736,13 +719,13 @@
             //zero results
             var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
-            t.push([popFirstDate, 0, species.color]);
+            t.push([popFirstDate, 0, sSpecies.color]);
 
             var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
-            t.push([popLastDate, 0, species.color]);
+            t.push([popLastDate, 0, sSpecies.color]);
 
-            me.drawGraph(species, t, messageType, sdate, edate);
+            me.drawGraph(sSpecies, t, messageType, sdate, edate);
 
           }
 
@@ -768,8 +751,9 @@
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
-          oldGraph.options.hAxis.minValue = 0;
-          oldGraph.options.vAxis.maxValue = this.yAxisMax;
+          oldGraph.options.vAxis.minValue = 0;
+//          var b = this.getGraphMax(oldGraph);
+//          oldGraph.options.vAxis.maxValue = b;
 
 
 
@@ -790,6 +774,8 @@
 
           for (var j = 0; j < this.graphs.length; j++) {
             var previousGraph = this.graphs[j];
+//            var v = this.getGraphMax(previousGraph);
+//            previousGraph.options.vAxis.maxValue = v;
             this.updateGraphAxis(previousGraph, 'off');
             this.redrawChart(previousGraph);
 
@@ -798,12 +784,13 @@
           //this.notifyPath('graphs.data', this.graphs);
 
 
-          var g = {index: species.index, data: data, highlightUrl: species.highlightUrl};
+          var g = {index: species.index, type: species.type, data: data, highlightUrl: species.highlightUrl};
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
           g.options.vAxis.minValue = 0;
-          g.options.vAxis.maxValue = this.yAxisMax;
+//          var v = this.getGraphMax(g);
+//          g.options.vAxis.maxValue = v;
 
           this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
@@ -813,7 +800,49 @@
         }
 
       },
+      getGraphMax: function(species) {
+        if( species.type === 'r' ) {
+          return this.maxes.r;
+        } else if( species.type === 'h') {
+          return this.maxes.h;
+        } else if( species.type === 'p' ) {
+          return this.maxes.p;
+        } else if( species.type === 'e' ) {
+          return this.maxes.e;
+        }
+      },
+      caluclateGraphMax: function(critterType, value) {
+        var max = 0;
+        switch(critterType.type) {
+          case 'r':
+            if( value > this.maxes.r ) {
+              this.maxes.r = value;
+              max = this.maxes.r;
+              return max;
+            }
+            break;
+          case 'h':
+            if( value > this.maxes.h) {
+              this.maxes.h = value;
+              max = this.maxes.h;
+              return max;
+            }
+            break;
+          case 'p':
+            if( value > this.maxes.p) {
+              this.maxes.p = value;
+              max = this.maxes.p;
+              return max;
+            }
+            break;
+          case 'e':
+            max = value;
+            break;
+        }
+        return max;
+      },
       updateGraphAxis: function (someGraph, type) {
+
 
         if (someGraph !== undefined) {
           switch (type) {
@@ -874,6 +903,8 @@
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
+
+        this.maxes = { r: 0.1, h: 0.1, p: 0.1, e: 0.1 };
 
       },
       chartName: function (index) {
