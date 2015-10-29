@@ -694,7 +694,7 @@
 
 
 
-                me.caluclateGraphMax(sSpecies, r[i1].value);
+                //me.caluclateGraphMax(sSpecies, r[i1].value);
 
                 t.push([d1, r[i1].value, sSpecies.color]);
               }
@@ -704,7 +704,7 @@
               for (var i2 = 0; i2 < r.length; i2++) {
                 var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
 
-                me.caluclateGraphMax(sSpecies, r[i2].population);
+                //me.caluclateGraphMax(sSpecies, r[i2].population);
 
 
                 t.push([d2, r[i2].population, sSpecies.color]);
@@ -752,8 +752,8 @@
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
           oldGraph.options.vAxis.minValue = 0;
-          var b = this.getGraphMax(oldGraph);
-          oldGraph.options.vAxis.maxValue = b;
+//          var b = this.getGraphMax(oldGraph);
+//          oldGraph.options.vAxis.maxValue = b;
 
 
 
@@ -774,6 +774,8 @@
 
           for (var j = 0; j < this.graphs.length; j++) {
             var previousGraph = this.graphs[j];
+//            var v = this.getGraphMax(previousGraph);
+//            previousGraph.options.vAxis.maxValue = v;
             this.updateGraphAxis(previousGraph, 'off');
             this.redrawChart(previousGraph);
 
@@ -787,8 +789,8 @@
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
           g.options.vAxis.minValue = 0;
-          var v = this.getGraphMax(g);
-          g.options.vAxis.maxValue = v;
+//          var v = this.getGraphMax(g);
+//          g.options.vAxis.maxValue = v;
 
           this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
@@ -841,8 +843,7 @@
       },
       updateGraphAxis: function (someGraph, type) {
 
-        var v = this.getGraphMax(someGraph);
-        someGraph.options.vAxis.maxValue = v;
+
         if (someGraph !== undefined) {
           switch (type) {
             case 'on':
