@@ -140,12 +140,12 @@ function UpdateCollapse(value) {
     if(value < 0.21) {
         // Collapse the pipes
         console.log('Collapse the pipes');
-        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", true);
+        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", 1);
     }
     else {
         // Uncollapse the pipes
         console.log('Pipes are not collapsed');
-        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", false);
+        unity3d.getUnity().SendMessage("WallScope", "pipeCollapse", 0);
     }
 }
 
