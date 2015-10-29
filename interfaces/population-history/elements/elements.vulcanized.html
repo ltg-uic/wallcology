@@ -8001,6 +8001,10 @@ CSS properties               | Action
       if (!this._fitInfo.positionedBy.horizontally) {
         this.style.left = '0px';
       }
+      if (!this._fitInfo.positionedBy.vertically || !this._fitInfo.positionedBy.horizontally) {
+        // need position:fixed to properly size the element
+        this.style.position = 'fixed';
+      }
       // need border-box for margin/padding
       this.sizingTarget.style.boxSizing = 'border-box';
       // constrain the width and height if not already set
@@ -9379,6 +9383,8 @@ context. You should place this element as a child of `<body>` whenever possible.
 
       /**
        * Returns the currently selected item.
+       *
+       * @type {?Object}
        */
       selectedItem: {
         type: Object,
@@ -9420,10 +9426,20 @@ context. You should place this element as a child of `<body>` whenever possible.
       },
 
       /**
+       * The list of items from which a selection can be made.
+       */
+      items: {
+        type: Array,
+        readOnly: true,
+        value: function() {
+          return [];
+        }
+      },
+
+      /**
        * The set of excluded elements where the key is the `localName`
        * of the element that will be ignored from the item list.
        *
-       * @type {object}
        * @default {template: 1}
        */
       _excludedLocalNames: {
@@ -9443,15 +9459,12 @@ context. You should place this element as a child of `<body>` whenever possible.
     created: function() {
       this._bindFilterItem = this._filterItem.bind(this);
       this._selection = new Polymer.IronSelection(this._applySelection.bind(this));
-      // TODO(cdata): When polymer/polymer#2535 lands, we do not need to do this
-      // book keeping anymore:
-      this.__listeningForActivate = false;
     },
 
     attached: function() {
       this._observer = this._observeItems(this);
-      this._contentObserver = this._observeContent(this);
-      if (!this.selectedItem && this.selected) {
+      this._updateItems();
+      if (!this._shouldUpdateSelection) {
         this._updateSelected(this.attrForSelected,this.selected)
       }
       this._addListener(this.activateEvent);
@@ -9459,23 +9472,9 @@ context. You should place this element as a child of `<body>` whenever possible.
 
     detached: function() {
       if (this._observer) {
-        this._observer.disconnect();
-      }
-      if (this._contentObserver) {
-        this._contentObserver.disconnect();
+        Polymer.dom(this).unobserveNodes(this._observer);
       }
       this._removeListener(this.activateEvent);
-    },
-
-    /**
-     * Returns an array of selectable items.
-     *
-     * @property items
-     * @type Array
-     */
-    get items() {
-      var nodes = Polymer.dom(this).queryDistributedElements(this.selectable || '*');
-      return Array.prototype.filter.call(nodes, this._bindFilterItem);
     },
 
     /**
@@ -9520,23 +9519,27 @@ context. You should place this element as a child of `<body>` whenever possible.
       this.selected = this._indexToValue(index);
     },
 
-    _addListener: function(eventName) {
-      if (!this.isAttached || this.__listeningForActivate) {
-        return;
-      }
+    get _shouldUpdateSelection() {
+      return this.selected != null;
+    },
 
-      this.__listeningForActivate = true;
+    _addListener: function(eventName) {
       this.listen(this, eventName, '_activateHandler');
     },
 
     _removeListener: function(eventName) {
       this.unlisten(this, eventName, '_activateHandler');
-      this.__listeningForActivate = false;
     },
 
     _activateEventChanged: function(eventName, old) {
       this._removeListener(old);
       this._addListener(eventName);
+    },
+
+    _updateItems: function() {
+      var nodes = Polymer.dom(this).queryDistributedElements(this.selectable || '*');
+      nodes = Array.prototype.filter.call(nodes, this._bindFilterItem);
+      this._setItems(nodes);
     },
 
     _updateSelected: function() {
@@ -9597,18 +9600,9 @@ context. You should place this element as a child of `<body>` whenever possible.
       this._setSelectedItem(this._selection.get());
     },
 
-    // observe content changes under the given node.
-    _observeContent: function(node) {
-      var content = node.querySelector('content');
-      if (content && content.parentElement === node) {
-        return this._observeItems(node.domHost);
-      }
-    },
-
     // observe items change under the given node.
     _observeItems: function(node) {
-      // TODO(cdata): Update this when we get distributed children changed.
-      var observer = new MutationObserver(function(mutations) {
+      return Polymer.dom(node).observeNodes(function(mutations) {
         // Let other interested parties know about the change so that
         // we don't have to recreate mutation observers everywher.
         this.fire('iron-items-changed', mutations, {
@@ -9616,15 +9610,12 @@ context. You should place this element as a child of `<body>` whenever possible.
           cancelable: false
         });
 
-        if (this.selected != null) {
+        this._updateItems();
+
+        if (this._shouldUpdateSelection) {
           this._updateSelected();
         }
-      }.bind(this));
-      observer.observe(node, {
-        childList: true,
-        subtree: true
       });
-      return observer;
     },
 
     _activateHandler: function(e) {
@@ -9712,6 +9703,11 @@ context. You should place this element as a child of `<body>` whenever possible.
 
     multiChanged: function(multi) {
       this._selection.multi = multi;
+    },
+
+    get _shouldUpdateSelection() {
+      return this.selected != null ||
+        (this.selectedValues != null && this.selectedValues.length);
     },
 
     _updateSelected: function() {
@@ -10119,7 +10115,7 @@ if (!window.Promise) {
      *     async By default, all requests are sent asynchronously. To send synchronous requests,
      *         set to true.
      *     body The content for the request body for POST method.
-     *     headers HTTP request headers. All keys must be lower case.
+     *     headers HTTP request headers.
      *     handleAs The response type. Default is 'text'.
      *     withCredentials Whether or not to send credentials on the request. Default is false.
      *   timeout: (Number|undefined)
@@ -10157,6 +10153,7 @@ if (!window.Promise) {
         this.rejectCompletes(new Error('Request aborted.'));
       }.bind(this));
 
+
       // Called after all of the above.
       xhr.addEventListener('loadend', function () {
         this._updateStatus();
@@ -10184,7 +10181,13 @@ if (!window.Promise) {
         'xml': 'application/xml',
         'arraybuffer': 'application/octet-stream'
       }[options.handleAs];
-      var headers = options.headers || {};
+      var headers = options.headers || Object.create(null);
+      var newHeaders = Object.create(null);
+      for (var key in headers) {
+        newHeaders[key.toLowerCase()] = headers[key];
+      }
+      headers = newHeaders;
+
       if (acceptType && !headers['accept']) {
         headers['accept'] = acceptType;
       }
@@ -10543,7 +10546,7 @@ if (!window.Promise) {
        *
        * The type of the response is determined by the value of `handleAs` at
        * the time that the request was generated.
-       * 
+       *
        * @type {Object}
        */
       lastResponse: {
@@ -10554,7 +10557,7 @@ if (!window.Promise) {
 
       /**
        * lastRequest's error, if any.
-       * 
+       *
        * @type {Object}
        */
       lastError: {
@@ -10664,9 +10667,7 @@ if (!window.Promise) {
 
       if (this.headers instanceof Object) {
         for (header in this.headers) {
-          // Normalize headers in lower case to make it easier for iron-request
-          // to reason about them.
-          headers[header.toLowerCase()] = this.headers[header].toString();
+          headers[header] = this.headers[header].toString();
         }
       }
 
@@ -27767,7 +27768,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             paper-button.colorful {
                 color: white;
-                background: #006699;
+                background: #237599;
                 margin: 1px;
                 height: 40px;
                 width: 100px;
@@ -27801,8 +27802,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 margin: 1px;
                 padding: 0px;
             }
-
-
 
             paper-icon-button[toggles][active] {
                 color: orange;
@@ -27949,80 +27948,94 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
                             'index': 0,
-                            'color': '#FFC91B'
+                            'color': '#FFC91B',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
                             'index': 1,
-                            'color': '#5A6372'
+                            'color': '#5A6372',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
                             'index': 2,
-                            'color': '#FFDD00'
+                            'color': '#FFDD00',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
                             'index': 3,
-                            'color': '#2C4721'
+                            'color': '#2C4721',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
 
                             'index': 4,
-                            'color': '#502B6E'
+                            'color': '#502B6E',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
                             'index': 5,
-                            'color': '#99cc33'
+                            'color': '#99cc33',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
                             'index': 6,
-                            'color': '#8975B5'
+                            'color': '#8975B5',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
                             'index': 7,
-                            'color': '#FAAA19'
+                            'color': '#FAAA19',
+                            'type': 'h'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
                             'index': 8,
-                            'color': '#899C7C'
+                            'color': '#899C7C',
+                            'type': 'p'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
                             'index': 9,
-                            'color': '#4AB6C8'
+                            'color': '#4AB6C8',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
                             'index': 10,
-                            'color': '#68734F'
+                            'color': '#68734F',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
                             'index': 11,
-                            'color': '#FF5722'
+                            'color': '#FF5722',
+                            'type': 'r'
                         },
                         {
                             'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
                             'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
                             'index': 12,
-                            'color': '#795548'
+                            'color': '#795548',
+                            'type': 'r'
+
                         }
                     ]
                 },
@@ -28250,7 +28263,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
             toUpperCase: function (someString) {
                 if (someString !== null) {
-                    return someString.toUpperCase();
+                    return someString;
                 }
                 return null;
             },
@@ -29388,7 +29401,7 @@ paper-calendar {
 
       paper-button.colorful {
         color: white;
-        background: #006699;
+        background: #237599;
         margin-top: 3px;
         font-size: 12px;
       }
@@ -29591,80 +29604,92 @@ paper-calendar {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
               'index': 0,
-              'color': '#FFC91B'
+              'color': '#FFC91B',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
               'index': 1,
-              'color': '#5A6372'
+              'color': '#5A6372',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
               'index': 2,
-              'color': '#FFDD00'
+              'color': '#FFDD00',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
               'index': 3,
-              'color': '#2C4721'
+              'color': '#2C4721',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
-
               'index': 4,
-              'color': '#502B6E'
+              'color': '#502B6E',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
               'index': 5,
-              'color': '#99cc33'
+              'color': '#99cc33',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
               'index': 6,
-              'color': '#8975B5'
+              'color': '#8975B5',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
               'index': 7,
-              'color': '#FAAA19'
+              'color': '#FAAA19',
+              'type': 'h'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
               'index': 8,
-              'color': '#899C7C'
+              'color': '#899C7C',
+              'type': 'p'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
               'index': 9,
-              'color': '#4AB6C8'
+              'color': '#4AB6C8',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
               'index': 10,
-              'color': '#68734F'
+              'color': '#68734F',
+              'type': 'r'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
               'index': 11,
-              'color': '#FF5722'
+              'color': '#FF5722',
+              'type': 'e'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
               'index': 12,
-              'color': '#795548'
+              'color': '#795548',
+              'type': 'e'
             }
           ]
         },
@@ -29723,9 +29748,9 @@ paper-calendar {
             }
           }
         },
-        yAxisMax: {
-          type: Number,
-          value: 300
+        maxes: {
+          type: Object,
+          value: {}
         },
         startDate: {
           type: Date,
@@ -29750,10 +29775,6 @@ paper-calendar {
           notify: true,
           value: false,
           observer: 'connectedChanged'
-        },
-        herbs: {
-          type: Boolean,
-          value: false
         },
         debug: {
           type: Boolean,
@@ -29969,6 +29990,7 @@ paper-calendar {
         var messageType = type;
         var sDateLocal = sdate;
         var eDateLocal = edate;
+        var sSpecies = species;
         console.log(JSON.stringify(message));
         this.$.nutellaConn.nutella.net.request(type, message, function (response) {
           var r = response;
@@ -29982,21 +30004,12 @@ paper-calendar {
 
 
           if (r.length > 0) {
-
-//            var firstDate = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-//            //add one minute to the start time and set it 0
-//            t.push([firstDate, 0, species.color]);
-
-
             //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
-
-
-            console.log('spieces color: ', species.color);
             if (messageType === 'environment_history') {
-              if (species.index === 0) {
-                species.index = 11;
-              } else if (species.index === 1) {
-                species.index = 12;
+              if (sSpecies.index === 0) {
+                sSpecies.index = 11;
+              } else if (sSpecies.index === 1) {
+                sSpecies.index = 12;
               }
 
 
@@ -30004,42 +30017,25 @@ paper-calendar {
                 var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
 
 
-                if( r[i1].value > me.yAxisMax ) {
-                  console.log('old max: ', me.yAxisMax );
-                  me.yAxisMax = r[i1].value;
-                  console.log('new max: ', me.yAxisMax );
 
-                }
-                t.push([d1, r[i1].value, species.color]);
+                me.caluclateGraphMax(sSpecies, r[i1].value);
+
+                t.push([d1, r[i1].value, sSpecies.color]);
               }
-              me.drawGraph(species, t, 'environment_history', sdate, edate);
+              me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
 
             } else if (messageType === 'population_history') {
               for (var i2 = 0; i2 < r.length; i2++) {
                 var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
 
-//                if( r[i2] === null ) {
-//                  console.log('null population at: ', i2);
-//                }
+                me.caluclateGraphMax(sSpecies, r[i2].population);
 
 
-                console.log('old max: ', me.yAxisMax );
-                console.log('value: ', r[i2].population);
-                if( r[i2].population > me.yAxisMax ) {
-                  console.log('old max: ', me.yAxisMax );
-                  me.yAxisMax = r[i2].population;
-                  console.log('new max: ', me.yAxisMax );
-                }
-
-                t.push([d2, r[i2].population, species.color]);
+                t.push([d2, r[i2].population, sSpecies.color]);
               }
 
-//              var lastDate2 = 'Date(' + moment(eDateLocal).subtract(10, 'minute').valueOf() + ')';
-//              //add one minute to the start time and set it 0
-//              t.push([lastDate2, 0, species.color]);
 
-              me.drawGraph(species, t, 'population_history', sdate, edate);
-
+              me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
             }
 
 
@@ -30047,13 +30043,13 @@ paper-calendar {
             //zero results
             var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
-            t.push([popFirstDate, 0, species.color]);
+            t.push([popFirstDate, 0, sSpecies.color]);
 
             var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 'minute').valueOf() + ')';
             //add one minute to the start time and set it 0
-            t.push([popLastDate, 0, species.color]);
+            t.push([popLastDate, 0, sSpecies.color]);
 
-            me.drawGraph(species, t, messageType, sdate, edate);
+            me.drawGraph(sSpecies, t, messageType, sdate, edate);
 
           }
 
@@ -30079,8 +30075,9 @@ paper-calendar {
           oldGraph.options = this.chartOptions;
           oldGraph.options.hAxis.minValue = min;
           oldGraph.options.hAxis.maxValue = max;
-          oldGraph.options.hAxis.minValue = 0;
-          oldGraph.options.vAxis.maxValue = this.yAxisMax;
+          oldGraph.options.vAxis.minValue = 0;
+          var b = this.getGraphMax(oldGraph);
+          oldGraph.options.vAxis.maxValue = b;
 
 
 
@@ -30109,12 +30106,13 @@ paper-calendar {
           //this.notifyPath('graphs.data', this.graphs);
 
 
-          var g = {index: species.index, data: data, highlightUrl: species.highlightUrl};
+          var g = {index: species.index, type: species.type, data: data, highlightUrl: species.highlightUrl};
           g.options = this.chartOptions;
           g.options.hAxis.minValue = min;
           g.options.hAxis.maxValue = max;
           g.options.vAxis.minValue = 0;
-          g.options.vAxis.maxValue = this.yAxisMax;
+          var v = this.getGraphMax(g);
+          g.options.vAxis.maxValue = v;
 
           this.updateGraphAxis(g, 'on');
           this.push('graphs', g);
@@ -30124,8 +30122,51 @@ paper-calendar {
         }
 
       },
+      getGraphMax: function(species) {
+        if( species.type === 'r' ) {
+          return this.maxes.r;
+        } else if( species.type === 'h') {
+          return this.maxes.h;
+        } else if( species.type === 'p' ) {
+          return this.maxes.p;
+        } else if( species.type === 'e' ) {
+          return this.maxes.e;
+        }
+      },
+      caluclateGraphMax: function(critterType, value) {
+        var max = 0;
+        switch(critterType.type) {
+          case 'r':
+            if( value > this.maxes.r ) {
+              this.maxes.r = value;
+              max = this.maxes.r;
+              return max;
+            }
+            break;
+          case 'h':
+            if( value > this.maxes.h) {
+              this.maxes.h = value;
+              max = this.maxes.h;
+              return max;
+            }
+            break;
+          case 'p':
+            if( value > this.maxes.p) {
+              this.maxes.p = value;
+              max = this.maxes.p;
+              return max;
+            }
+            break;
+          case 'e':
+            max = value;
+            break;
+        }
+        return max;
+      },
       updateGraphAxis: function (someGraph, type) {
 
+        var v = this.getGraphMax(someGraph);
+        someGraph.options.vAxis.maxValue = v;
         if (someGraph !== undefined) {
           switch (type) {
             case 'on':
@@ -30185,6 +30226,8 @@ paper-calendar {
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
+
+        this.maxes = { r: 0.1, h: 0.1, p: 0.1, e: 0.1 };
 
       },
       chartName: function (index) {
