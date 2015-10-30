@@ -491,15 +491,16 @@
               var g = this.graphs[i];
               if (g.index === s.index) {
                 this.splice('graphs', i, 1);
+                this.recomputeScale(g);
               }
             }
 
             for (var j = 0; j < this.graphs.length; j++) {
               var previousGraph = this.graphs[j];
               if (j === this.graphs.length - 1) {
-                this.updateGraphAxis(previousGraph, 'on');
+                this.updateGraphAxis(previousGraph, 'out');
               } else {
-                this.updateGraphAxis(previousGraph, 'off');
+                this.updateGraphAxis(previousGraph, 'none');
               }
               this.redrawChart(previousGraph);
 
@@ -511,6 +512,21 @@
         } else {
           // an individual user or its sub-properties changed
           // check "changeRecord.path" to determine what changed
+        }
+      },
+      resetScale: function (type) {
+        var index = this.currentToggle.index;
+        if (type === 'r') {
+          this.maxes[index].r = 1;
+          return;
+        } else if (type === 'h') {
+          this.maxes[index].h = 1;
+          return;
+        } else if (type === 'p') {
+          this.maxes[index].p = 1;
+          return;
+        } else if (type === 'e') {
+
         }
       },
       toggleSelectorsChanged: function (changeRecord) {
@@ -695,30 +711,29 @@
                 t.push([d2, r[i2].population, sSpecies.color]);
               }
 
-              me.setGraphMax(sSpecies,me.findMaxValue(t));
+              me.setGraphMax(sSpecies, me.findMaxValue(t));
 
               var foundGraphs = me.graphs.filter(function (el) {
                 return (el.index === sSpecies.index);
               });
 
-              if( foundGraphs.length > 0 ) {
+              if (foundGraphs.length > 0) {
 
-                  var f = foundGraphs[0];
+                var f = foundGraphs[0];
 
-//                  var min = new Date(moment(sdate).subtract(1, 'minute').valueOf());
-//                  var max = new Date(moment(edate).add(1, 'minute').valueOf());
+                me.recomputeScale(f);
 
                 var min = new Date(moment(sdate).valueOf());
                 var max = new Date(moment(edate).valueOf());
 
 
-                  f.data = t;
-                  var textPosition = f.options.hAxis.textPosition;
-                  //el.options = me.chartOptions;
-                  var v = me.getGraphMax(f);
-                  f.options.vAxis.maxValue = v;
-                  me.updateGraphAxis(f,textPosition, min, max);
-                  me.redrawChart(f);
+                f.data = t;
+                var textPosition = f.options.hAxis.textPosition;
+                //el.options = me.chartOptions;
+                var v = me.getGraphMax(f);
+                f.options.vAxis.maxValue = v;
+                me.updateGraphAxis(f, textPosition, min, max);
+                me.redrawChart(f);
               } else {
                 //we have a new one
                 me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
@@ -745,17 +760,47 @@
 
 
       },
+      recomputeScale: function (graph) {
+        if (graph !== undefined) {
+          var type = graph.type;
 
-      findMaxValue: function(numbers) {
+          //reset
+          this.resetScale(type);
+
+          for (var i = 0; i < this.graphs.length; i++) {
+            var a = this.graphs[i];
+            if (type === a.type) {
+              this.setGraphMax(a, this.findMaxValue(a.data));
+            }
+          }
+
+          //set the new max
+          for (var k = 0; k < this.graphs.length; k++) {
+            var b = this.graphs[k];
+            if (type === b.type) {
+
+              var textPosition = b.options.hAxis.textPosition;
+              //el.options = me.chartOptions;
+              var v = this.getGraphMax(b);
+              b.options.vAxis.maxValue = v;
+              this.updateGraphAxis(b, textPosition);
+              this.redrawChart(b);
+            }
+          }
+
+          //look for all for that type
+        }
+      },
+      findMaxValue: function (numbers) {
         //because the first el is the graph heading
         var low = numbers[1][1]; // first number in array
         var high = numbers[1][1]; // first number in array
 
-        for (var i = 1; i < numbers.length; i++ ) {
-          if ( numbers[i][1] > high ) {
+        for (var i = 1; i < numbers.length; i++) {
+          if (numbers[i][1] > high) {
             high = numbers[i][1];
           }
-          if ( numbers[i][1] < low ) {
+          if (numbers[i][1] < low) {
             low = numbers[i][1];
           }
         }
@@ -764,7 +809,7 @@
       },
       drawGraph: function (species, data, type, to, from) {
 
-        if( this.graphs !== undefined || this.graphs[0] !== undefined ) {
+        if (this.graphs !== undefined || this.graphs[0] !== undefined) {
           //if we have previous graphs
 
 //          var min = new Date(moment(from).subtract(1, 'minute').valueOf());
@@ -777,81 +822,81 @@
           if (this.graphs.length > 0) {
             for (var j = 0; j < this.graphs.length; j++) {
               var previousGraph = this.graphs[j];
-              this.updateGraphAxis(previousGraph, 'off', min, max);
+              this.updateGraphAxis(previousGraph, 'none', min, max);
               this.redrawChart(previousGraph);
             }
           }
 
-            //add new graph
-            var g = {index: species.index, type: species.type, data: data, highlightUrl: species.highlightUrl};
-            g.options = JSON.parse(JSON.stringify(this.chartOptions));
-            this.updateGraphAxis(g, 'on', min, max);
+          //add new graph
+          var g = {index: species.index, type: species.type, data: data, highlightUrl: species.highlightUrl};
+          g.options = JSON.parse(JSON.stringify(this.chartOptions));
+          this.updateGraphAxis(g, 'out', min, max);
 
 
-
-            this.push('graphs', g);
-            if (this.debug) {
-              console.log('pushed graph');
-            }
+          this.push('graphs', g);
+          if (this.debug) {
+            console.log('pushed graph');
+          }
 
         }
       },
-      setGraphMax: function(species,newMax) {
+      setGraphMax: function (species, newMax) {
         var index = this.currentToggle.index;
         var max = this.maxes[index];
-        if( species.type === 'r' ) {
-          if( newMax > this.maxes[index].r ) {
+        if (species.type === 'r') {
+          if (newMax > this.maxes[index].r) {
             this.maxes[index].r = newMax;
           }
-        } else if( species.type === 'h') {
-          if( newMax > this.maxes[index].h ) {
+        } else if (species.type === 'h') {
+          if (newMax > this.maxes[index].h) {
             this.maxes[index].h = newMax;
           }
-        } else if( species.type === 'p' ) {
-            if( newMax > this.maxes[index].p ) {
-              this.maxes[index].p = newMax;
-            }
-        } else if( species.type === 'e' ) {
+        } else if (species.type === 'p') {
+          if (newMax > this.maxes[index].p) {
+            this.maxes[index].p = newMax;
+          }
+        } else if (species.type === 'e') {
           //this.maxes[index].e;
         }
       },
-      getGraphMax: function(graph) {
+      getGraphMax: function (graph) {
         var index = this.currentToggle.index;
         var max = this.maxes[index];
-        if( graph.type === 'r' ) {
+        if (graph.type === 'r') {
           return this.maxes[index].r;
-        } else if( graph.type === 'h') {
+        } else if (graph.type === 'h') {
           return this.maxes[index].h;
-        } else if( graph.type === 'p' ) {
+        } else if (graph.type === 'p') {
           return this.maxes[index].p;
-        } else if( graph.type === 'e' ) {
+        } else if (graph.type === 'e') {
           return this.maxes[index].e;
         }
       },
-      updateGraphAxis: function(someGraph, type, min, max) {
+      updateGraphAxis: function (someGraph, type, min, max) {
 
-        if( min !== undefined && max !== undefined ) {
+        if (min !== undefined && max !== undefined) {
           someGraph.options.hAxis.minValue = min;
           someGraph.options.hAxis.maxValue = max;
         }
 
         var v = this.getGraphMax(someGraph);
         someGraph.options.vAxis.maxValue = v;
-
         someGraph.options.vAxis.minValue = 0;
+        someGraph.options.hAxis.textPosition = type;
         if (someGraph !== undefined) {
           switch (type) {
-            case 'on':
+            case 'out':
 //              someGraph.options.hAxis.minorGridlines.units.hours = {format: ['h a']};
 //              someGraph.options.hAxis.minorGridlines.units.minutes = {format: ['h:mm a']};
               someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
               someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
-              someGraph.options.hAxis.textPosition = 'out';
               break;
-            case 'off':
+            case 'none':
               someGraph.options.hAxis.gridlines.units.hours = {format: [' ']};
               someGraph.options.hAxis.gridlines.units.days = {format: [' ']};
-              someGraph.options.hAxis.textPosition = 'none';
+              someGraph.options.hAxis.minorGridlines.units.hours = {format: [' ']};
+              someGraph.options.hAxis.minorGridlines.units.minutes = {format: [' ']};
+
               break;
             default:
               console.log('no switch type');
@@ -900,7 +945,12 @@
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
-        this.maxes = [{ r: 1.0, h: 1.0, p: 1.0, e: 1.0 },{ r: 1.0, h: 1.0, p: 1.0, e: 1.0 },{ r: 1.0, h: 1.0, p: 1.0, e: 1.0 },{ r: 1.0, h: 1.0, p: 1.0, e: 1.0}];
+        this.maxes = [{r: 1.0, h: 1.0, p: 1.0, e: 1.0}, {r: 1.0, h: 1.0, p: 1.0, e: 1.0}, {
+          r: 1.0,
+          h: 1.0,
+          p: 1.0,
+          e: 1.0
+        }, {r: 1.0, h: 1.0, p: 1.0, e: 1.0}];
       },
       chartName: function (index) {
         console.log('graph ' + index);
