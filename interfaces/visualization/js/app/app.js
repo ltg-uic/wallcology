@@ -165,7 +165,7 @@ function UpdatePopulations()
             case 6:
             case 7:
             case 8:
-                // RequestPopulationCount( i );
+                RequestPopulationCount( i );
                 break;
             case 4:
             case 5:
