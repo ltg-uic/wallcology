@@ -22,7 +22,11 @@ var requireKey = query_parameters.requireKey;
 nutella.location.ready(function() {
 
     // Check if some resource is inside when the application start
-    checkBeacon();
+    setInterval(function() {
+        // Check if there are beacons inside every 3 seconds
+        checkBeacon();
+    }, 3000);
+
 
     nutella.location.resourceEntered(function(dynamicResource, staticResource) {
         var role = dynamicResource.parameter['role'];
@@ -45,8 +49,8 @@ nutella.location.ready(function() {
                    key == 1 && wallscope == 'wallscope1' ||
                    key == 2 && wallscope == 'wallscope2' ||
                    key == 3 && wallscope == 'wallscope3') {
-                    selectHabitat(key);
-                    checkBeaconNoKey();
+                        selectHabitat(key);
+                        checkBeaconNoKey();
                 }
 
                 break;
