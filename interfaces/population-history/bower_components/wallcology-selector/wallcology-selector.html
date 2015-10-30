@@ -47,6 +47,7 @@
                 margin: 1px;
                 height: 40px;
                 width: 100px;
+                text-transform: none;
             }
 
             .vcontainer {
@@ -535,13 +536,6 @@
                     }
                 }
                 return undefined;
-            },
-
-            toUpperCase: function (someString) {
-                if (someString !== null) {
-                    return someString;
-                }
-                return null;
             },
             ready: function () {
                 this.currentToggle = {};
