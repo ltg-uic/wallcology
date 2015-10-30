@@ -363,79 +363,7 @@
 			"file": "js/app/app.js",
 			"settings":
 			{
-				"buffer_size": 8098,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
-			"settings":
-			{
-				"buffer_size": 8933,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
-			"settings":
-			{
-				"buffer_size": 3117,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
-			"settings":
-			{
-				"buffer_size": 4387,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
-			"settings":
-			{
-				"buffer_size": 4232,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
-			"settings":
-			{
-				"buffer_size": 6324,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
-			"settings":
-			{
-				"buffer_size": 1145,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
-			"settings":
-			{
-				"buffer_size": 7503,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
-			"settings":
-			{
-				"buffer_size": 4604,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
-			"settings":
-			{
-				"buffer_size": 5135,
+				"buffer_size": 8559,
 				"line_ending": "Unix"
 			}
 		}
@@ -832,12 +760,18 @@
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Editor"
 	],
 	"file_history":
 	[
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 		"/Users/krbalmryde/.bash_profile",
 		"/Users/krbalmryde/.bash_functions",
 		"/Users/krbalmryde/.bash_aliases",
@@ -848,15 +782,10 @@
 		"/Users/krbalmryde/Dropbox/Code-Projects/Contracts/css/ready/uptake-analyzer.html",
 		"/Users/krbalmryde/Downloads/css (1)/uptake-analyzer.html",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Editor/WallScopeBuilder.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/WallScopeBuilder.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/Contracts/forAlex/App.js",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PursueState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ChaseState.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/AlertState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots/history/node-bot.js",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/wallcology.sublime-project",
@@ -962,9 +891,7 @@
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/outputs/dead_15.list",
 		"/Users/krbalmryde/Lorenzo_Is.txt",
 		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/ds14_cg_particle_velocity.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesWithLineWidget.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesVTK.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/ColorIsosurface.py"
+		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/examples/StreamlinesWithLineWidget.py"
 	],
 	"find":
 	{
@@ -1175,7 +1102,7 @@
 	"groups":
 	[
 		{
-			"selected": 2,
+			"selected": 0,
 			"sheets":
 			[
 				{
@@ -1184,15 +1111,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8098,
+						"buffer_size": 8559,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3603,
-								3621
+								1688,
+								1688
 							]
 						],
 						"settings":
@@ -1205,345 +1132,7 @@
 						"translation.y": 736.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 1,
-					"file": "unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8933,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								559,
-								582
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 211.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 3117,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1967,
-								2021
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 480.0,
-						"zoom_level": 1.0
-					},
 					"stack_index": 0,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4387,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2476,
-								2476
-							],
-							[
-								2643,
-								2643
-							],
-							[
-								2791,
-								2791
-							],
-							[
-								2968,
-								2968
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1098.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 8,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4232,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								2420,
-								2420
-							],
-							[
-								2661,
-								2661
-							],
-							[
-								2914,
-								2914
-							],
-							[
-								3182,
-								3182
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1704.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 7,
-					"type": "text"
-				},
-				{
-					"buffer": 5,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 6324,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								694,
-								694
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": -0.0,
-						"translation.y": 3.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 3,
-					"type": "text"
-				},
-				{
-					"buffer": 6,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
-					"semi_transient": true,
-					"settings":
-					{
-						"buffer_size": 1145,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 9,
-					"type": "text"
-				},
-				{
-					"buffer": 7,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 7503,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								5493,
-								5493
-							],
-							[
-								5665,
-								5665
-							],
-							[
-								5904,
-								5904
-							],
-							[
-								6132,
-								6132
-							],
-							[
-								6310,
-								6310
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1326.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 8,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 4604,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								3218,
-								3218
-							],
-							[
-								3446,
-								3446
-							],
-							[
-								3686,
-								3686
-							],
-							[
-								3891,
-								3891
-							],
-							[
-								4069,
-								4069
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 1466.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 6,
-					"type": "text"
-				},
-				{
-					"buffer": 9,
-					"file": "unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5135,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								1869,
-								1869
-							],
-							[
-								2036,
-								2036
-							],
-							[
-								2184,
-								2184
-							],
-							[
-								2361,
-								2361
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 735.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 5,
 					"type": "text"
 				}
 			]

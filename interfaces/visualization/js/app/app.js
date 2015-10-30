@@ -165,12 +165,13 @@ function UpdatePopulations()
             case 6:
             case 7:
             case 8:
-                RequestPopulationCount( i );
+                // RequestPopulationCount( i );
                 break;
             case 4:
             case 5:
             case 9:
             case 10:
+                RequestVegetationPresence( i )
                 break;
             default:
                 // console.log("No critter Ive ever heard of");
@@ -233,8 +234,6 @@ function ReceivePopulationCount( uID, pCount )
         }
 
     }
-
-
 }
 
 
@@ -287,6 +286,14 @@ function RequestPopulationCount( uID )
 {
     // console.log("Make Request!", uID );
     unity3d.getUnity().SendMessage("WallScope", "GetPopulationCount", uID);
+}
+
+
+function RequestVegetationPresence( uID )
+{
+    var scaleLevel = lastState['populations'][wallscopeID-1][+uID];
+    console.log("RequestVegetationPresence!", uID, scaleLevel );
+    unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleLevel.toString() + " " + uID.toString());
 }
 
 

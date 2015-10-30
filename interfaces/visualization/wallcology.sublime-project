@@ -12,7 +12,7 @@
 		},
 		{
 			"name": "Unity Scripts",
-			"path": "unity/Simulation/Assets/Scripts"
+			"path": "unity/Wallcology-Simulator/Simulation/Assets/Scripts"
 		},
 		{
 			"path": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots"
