@@ -5,6 +5,9 @@
     <style include="shared-styles"></style>
     <style>
       :host {
+
+        //datepicker
+        --primary-background-color: white;
       }
 
       google-chart {
@@ -64,6 +67,7 @@
         color: #000;
         text-align: center;
         font-size: 11px;
+        margin-top: 2px;
       }
 
       paper-button.colorful {
@@ -73,9 +77,11 @@
         font-size: 12px;
       }
 
+
+
     </style>
 
-
+    <section>
     <nutella-connector connected={{connected}} id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology"
                        runid="default"
                        componentid="wallcology_admin" roomcast></nutella-connector>
@@ -142,31 +148,31 @@
     <!-- YYYY-MM-DD -->
     <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal
                   on-iron-overlay-closed="dismissDialog">
-      <paper-date-picker id="startDatePicker" date="{{startDate}}" min-date="{{endDate}}"></paper-date-picker>
+      <paper-date-picker id="startDatePicker" date="{{tempStartDate}}" min-date="{{endDate}}"></paper-date-picker>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm>OK</paper-button>
+        <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
 
     <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal
                   on-iron-overlay-closed="dismissDialog">
-      <paper-date-picker id="endDatePicker" date="{{endDate}}" min-date="2015-10-12"></paper-date-picker>
+      <paper-date-picker id="endDatePicker" date="{{tempEndDate}}" min-date="2015-10-12"></paper-date-picker>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm>OK</paper-button>
-      </div>
-    </paper-dialog>
-
-    <paper-dialog id="modal" modal>
-      <p>{{alertMessage}}</p>
-
-      <div class="buttons">
         <paper-button dialog-confirm autofocus>OK</paper-button>
       </div>
     </paper-dialog>
 
+    <!--<paper-dialog id="modal" modal>-->
+      <!--<p>{{alertMessage}}</p>-->
 
+      <!--<div class="buttons">-->
+        <!--<paper-button dialog-confirm autofocus>OK</paper-button>-->
+      <!--</div>-->
+    <!--</paper-dialog>-->
+
+</section>
   </template>
 
   <script>
@@ -398,7 +404,7 @@
             chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
               minValue: 0,
-              maxValue: 1,
+              maxValue: 0.025,
               textStyle: {
                 fontSize: 14
               }
@@ -428,6 +434,12 @@
           type: Array,
           value: []
         },
+        tempStartDate: {
+          type: Date,
+        },
+        tempEndDate: {
+          type: Date,
+        },
         startDate: {
           type: Date,
           observer: 'startDateChanged'
@@ -452,11 +464,29 @@
           value: false,
           observer: 'connectedChanged'
         },
+        defaultR: {
+          type: Number,
+          value: 0.025
+        },
+        defaultH: {
+          type: Number,
+          value: 1.0
+        },
+        defaultP: {
+          type: Number,
+          value: 1.0
+        },
+        defaultE: {
+          type: Number,
+          value: 1.0
+        },
         debug: {
           type: Boolean,
           value: false
         }
       },
+
+      //{r: 0.025, h: 1.0, p: 1.0, e: 1.0}
       observers: [
         'selectedItemsChanged(selectedItems.*)',
         'toggleSelectorsChanged(toggleSelectors.*)',
@@ -517,13 +547,13 @@
       resetScale: function (type) {
         var index = this.currentToggle.index;
         if (type === 'r') {
-          this.maxes[index].r = 1;
+          this.maxes[index].r = this.defaultR;
           return;
         } else if (type === 'h') {
-          this.maxes[index].h = 1;
+          this.maxes[index].h = this.defaultH;
           return;
         } else if (type === 'p') {
-          this.maxes[index].p = 1;
+          this.maxes[index].p = this.defaultP;
           return;
         } else if (type === 'e') {
 
@@ -555,19 +585,27 @@
       dismissDialog: function (e) {
         if (e.detail.confirmed) {
           if (e.target.id === 'startDateDialog') {
-            if (this.checkDatesValid()) {
+            var ts = moment(this.tempStartDate).format().valueOf();
+            var ee = moment(this.endDate).format().valueOf();
+            if ( ee > ts) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
             } else {
               this.showStartDateDialogAction();
             }
           } else if (e.target.id === 'endDateDialog') {
-            if (this.checkDatesValid()) {
+            var te = moment(this.tempEndDate).format().valueOf();
+            var ss = moment(this.startDate).format().valueOf();
+            if ( te > ss ) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
             } else {
               this.showEndDateDialogAction();
             }
+          }
+        } else if(e.detail.canceled) {
+          if (e.target.id === 'startDateDialog') {
+            this.tempStartDate = this.startDate;
           }
         }
       },
@@ -691,6 +729,9 @@
           ];
 
 
+          var min = new Date(moment(sdate).valueOf());
+          var max = new Date(moment(edate).valueOf());
+
           if (r.length > 0) {
             //environmental_variable: 0, 0=temperature 1=pipe length 2=brick area
             if (messageType === 'environment_history') {
@@ -703,7 +744,31 @@
                 var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
                 t.push([d1, r[i1].value, sSpecies.color]);
               }
-              me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
+
+
+              var foundENVGraphs = me.graphs.filter(function (el) {
+                return (el.index === sSpecies.index);
+              });
+
+
+              if (foundENVGraphs.length > 0) {
+
+                var foundEnvGraph = foundENVGraphs[0];
+
+                foundEnvGraph.data = t;
+                var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
+                //el.options = me.chartOptions;
+                var envGraphMax = me.getGraphMax(foundEnvGraph);
+                foundEnvGraph.options.vAxis.maxValue = envGraphMax;
+                me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
+                me.redrawChart(foundEnvGraph);
+              } else {
+                //we have a new one
+                me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
+              }
+
+
+
 
             } else if (messageType === 'population_history') {
               for (var i2 = 0; i2 < r.length; i2++) {
@@ -713,27 +778,24 @@
 
               me.setGraphMax(sSpecies, me.findMaxValue(t));
 
-              var foundGraphs = me.graphs.filter(function (el) {
+              var foundHISGraphs = me.graphs.filter(function (el) {
                 return (el.index === sSpecies.index);
               });
 
-              if (foundGraphs.length > 0) {
+              if (foundHISGraphs.length > 0) {
 
-                var f = foundGraphs[0];
+                var foundHisGraph = foundHISGraphs[0];
 
-                me.recomputeScale(f);
-
-                var min = new Date(moment(sdate).valueOf());
-                var max = new Date(moment(edate).valueOf());
+                me.recomputeScale(foundHisGraph);
 
 
-                f.data = t;
-                var textPosition = f.options.hAxis.textPosition;
+                foundHisGraph.data = t;
+                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
                 //el.options = me.chartOptions;
-                var v = me.getGraphMax(f);
-                f.options.vAxis.maxValue = v;
-                me.updateGraphAxis(f, textPosition, min, max);
-                me.redrawChart(f);
+                var hisGraphMax = me.getGraphMax(foundHisGraph);
+                foundHisGraph.options.vAxis.maxValue = hisGraphMax;
+                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
+                me.redrawChart(foundHisGraph);
               } else {
                 //we have a new one
                 me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
@@ -912,29 +974,12 @@
         chart.drawChart();
       },
       connectedChanged: function (newValue, oldValue) {
-//        var me = this;
-////                console.log('connected changed', newValue, oldValue);
-//        if (newValue === true) {
-//          this.$.nutellaConn.nutella.net.request('master_configuration', {}, function (r) {
-//            if (r !== undefined) {
-//              me.buttonSelectors = r.habitatItems;
-//
-//              var start = [{
-//                'items': [],
-//                'name': 'Habitat ?  ',
-//                'index': -1
-//              }];
-//              me.toggleSelectors = start.concat(r.habitats);
-////                            console.log('MASTER CONFIG FETCHED');
-//
-//            }
-//
-//          });
-//        }
       },
       ready: function () {
         this.startDate = new Date();
         this.endDate = this.startDate;
+        this.tempStartDate = this.startDate;
+        this.tempEndDate = this.startDate;
         this.selectedItems = [];
         this.graphs = [];
         this.envEventHistories = [];
@@ -945,12 +990,12 @@
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
-        this.maxes = [{r: 1.0, h: 1.0, p: 1.0, e: 1.0}, {r: 1.0, h: 1.0, p: 1.0, e: 1.0}, {
-          r: 1.0,
-          h: 1.0,
-          p: 1.0,
-          e: 1.0
-        }, {r: 1.0, h: 1.0, p: 1.0, e: 1.0}];
+        this.maxes = [{r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}, {r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}, {
+          r: this.defaultR,
+          h: this.defaultH,
+          p: this.defaultP,
+          e: this.defaultE,
+        }, {r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}];
       },
       chartName: function (index) {
         console.log('graph ' + index);
