@@ -404,7 +404,7 @@
             chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
               minValue: 0,
-              maxValue: 0.025,
+              maxValue: 0.1,
               textStyle: {
                 fontSize: 14
               }
@@ -470,15 +470,15 @@
         },
         defaultH: {
           type: Number,
-          value:0.1
+          value: 0.0
         },
         defaultP: {
           type: Number,
-          value:0.1
+          value: 0.0
         },
         defaultE: {
           type: Number,
-          value:0.1
+          value: 0.0
         },
         debug: {
           type: Boolean,
@@ -792,8 +792,6 @@
                 foundHisGraph.data = t;
                 var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
                 //el.options = me.chartOptions;
-                var hisGraphMax = me.getGraphMax(foundHisGraph);
-                foundHisGraph.options.vAxis.maxValue = hisGraphMax;
                 me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
                 me.redrawChart(foundHisGraph);
               } else {
@@ -942,9 +940,47 @@
         }
 
         var v = this.getGraphMax(someGraph);
-        someGraph.options.vAxis.maxValue = v;
-        someGraph.options.vAxis.minValue = 0;
+
         someGraph.options.hAxis.textPosition = type;
+
+        var pat = '';
+
+        someGraph.options.vAxis.minValue = 0;
+
+        if( someGraph.type === 'p' || someGraph.type === 'r' || someGraph.type === 'h'  ) {
+
+//          Ymax <=1, show one decimal place (e.g. 0.1, 0.2, etc.) this means that
+//          for the example you show me, there would only be one label (0.1) on the y axis
+//
+//          if Ymax > 1, no decimal places.
+
+
+          if( v <= 1 ) {
+
+            if( v ===  0 || v <=  0.1 ) {
+              someGraph.options.vAxis.maxValue = 0.1;
+            } else {
+              someGraph.options.vAxis.maxValue = v;
+
+            }
+            someGraph.options.vAxis.format = '0.#';
+            someGraph.options.vAxis.gridlines = {count: 2};
+          } else if( v > 1) {
+            //find how many digits we have before the decimal
+            var vstring = v.toString().split('.')[0];
+
+
+
+            for( var i = 0; i < vstring.length; i++ ) {
+              pat = pat + '#';
+            }
+            console.log('NUM PATTER: ' + pat);
+            someGraph.options.vAxis.format = pat;
+            someGraph.options.vAxis.maxValue = v;
+          }
+
+        }
+
         if (someGraph !== undefined) {
           switch (type) {
             case 'out':
