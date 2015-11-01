@@ -30638,6 +30638,7 @@ paper-calendar {
 
         someGraph.options.vAxis.minValue = 0;
 
+        console.log('V: ',v);
         if( someGraph.type === 'p' || someGraph.type === 'r' || someGraph.type === 'h'  ) {
 
 //          Ymax <=1, show one decimal place (e.g. 0.1, 0.2, etc.) this means that
@@ -30649,13 +30650,15 @@ paper-calendar {
           if( v <= 1 ) {
 
             if( v ===  0 || v <=  0.1 ) {
-              someGraph.options.vAxis.maxValue = 0.1;
+              v = 0.1;
+              //someGraph.options.vAxis.maxValue = 0.1;
             } else {
               someGraph.options.vAxis.maxValue = v;
-
             }
             someGraph.options.vAxis.format = '0.#';
-            someGraph.options.vAxis.gridlines = {count: 2};
+            someGraph.options.vAxis.ticks = [0,v];
+            someGraph.options.vAxis.minorGridlines = {count: 3};
+
           } else if( v > 1) {
             //find how many digits we have before the decimal
             var vstring = v.toString().split('.')[0];
