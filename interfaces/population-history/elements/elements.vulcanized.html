@@ -1180,7 +1180,7 @@ debouncer.stop();
 }
 }
 });
-Polymer.version = '1.2.0';
+Polymer.version = '1.2.1';
 Polymer.Base._addFeature({
 _registerFeatures: function () {
 this._prepIs();
@@ -1586,6 +1586,17 @@ this.patch();
 DomApi.prototype = {
 flush: function () {
 Polymer.dom.flush();
+},
+deepContains: function (node) {
+if (this.node.contains(node)) {
+return true;
+}
+var n = node;
+var wrappedDocument = wrap(document);
+while (n && n !== wrappedDocument && n !== this.node) {
+n = Polymer.dom(n).parentNode || n.host;
+}
+return n === this.node;
 },
 _lazyDistribute: function (host) {
 if (host.shadyRoot && host.shadyRoot._distributionClean) {
@@ -4392,7 +4403,7 @@ elt[n] = props[n];
 return elt;
 },
 isLightDescendant: function (node) {
-return this.contains(node) && Polymer.dom(this).getOwnerRoot() === Polymer.dom(node).getOwnerRoot();
+return this !== node && this.contains(node) && Polymer.dom(this).getOwnerRoot() === Polymer.dom(node).getOwnerRoot();
 },
 isLocalDescendant: function (node) {
 return this.root === Polymer.dom(node).getOwnerRoot();
@@ -4990,7 +5001,7 @@ this._handlers = [];
 Polymer.Base._addFeature({
 notifyPath: function (path, value, fromAbove) {
 var info = {};
-path = this._get(path, this, info);
+this._get(path, this, info);
 this._notifyPath(info.path, value, fromAbove);
 },
 _notifyPath: function (path, value, fromAbove) {
@@ -5107,9 +5118,9 @@ if (effect.value === path || effect.value.indexOf(path + '.') === 0) {
 Polymer.Bind._annotationEffect.call(this, path, value, effect);
 } else if (path.indexOf(effect.value + '.') === 0 && !effect.negate) {
 var node = this._nodes[effect.index];
-if (node && node.notifyPath) {
+if (node && node._notifyPath) {
 var p = this._fixPath(effect.name, effect.value, path);
-node.notifyPath(p, value, true);
+node._notifyPath(p, value, true);
 }
 }
 },
@@ -5149,9 +5160,9 @@ _notifyBoundPaths: function (path, value) {
 for (var a in this._boundPaths) {
 var b = this._boundPaths[a];
 if (path.indexOf(a + '.') == 0) {
-this.notifyPath(this._fixPath(b, a, path), value);
+this._notifyPath(this._fixPath(b, a, path), value);
 } else if (path.indexOf(b + '.') == 0) {
-this.notifyPath(this._fixPath(a, b, path), value);
+this._notifyPath(this._fixPath(a, b, path), value);
 }
 }
 },
@@ -5419,7 +5430,7 @@ _rx: {
 comments: /\/\*[^*]*\*+([^\/*][^*]*\*+)*\//gim,
 port: /@import[^;]*;/gim,
 customProp: /(?:^|[\s;])--[^;{]*?:[^{};]*?(?:[;\n]|$)/gim,
-mixinProp: /(?:^|[\s;])--[^;{]*?:[^{;]*?{[^}]*?}(?:[;\n]|$)?/gim,
+mixinProp: /(?:^|[\s;])?--[^;{]*?:[^{;]*?{[^}]*?}(?:[;\n]|$)?/gim,
 mixinApply: /@apply[\s]*\([^)]*?\)[\s]*(?:[;\n]|$)?/gim,
 varApply: /[^;:]*?:[^;]*var[^;]*(?:[;\n]|$)?/gim,
 keyframesRule: /^@[^\s]*keyframes/
@@ -6122,7 +6133,7 @@ props[i] = v;
 }
 },
 rx: {
-VAR_ASSIGN: /(?:^|[;\n]\s*)(--[\w-]*?):\s*(?:([^;{]*)|{([^}]*)})(?:(?=[;\n])|$)/gi,
+VAR_ASSIGN: /(?:^|[;\s{]\s*)(--[\w-]*?)\s*:\s*(?:([^;{]*)|{([^}]*)})(?:(?=[;\s}])|$)/gi,
 MIXIN_MATCH: /(?:^|\W+)@apply[\s]*\(([^)]*)\)/i,
 VAR_MATCH: /(^|\W+)var\([\s]*([^,)]*)[\s]*,?[\s]*((?:[^,)]*)|(?:[^;]*\([^;)]*\)))[\s]*?\)/gi,
 VAR_CAPTURE: /\([\s]*(--[^,\s)]*)(?:,[\s]*(--[^,\s)]*))?(?:\)|,)/gi,
@@ -6657,7 +6668,10 @@ _pathEffectorImpl: function (path, value, fromAbove) {
 if (this._forwardParentPath) {
 if (path.indexOf(this._parentPropPrefix) === 0) {
 var subPath = path.substring(this._parentPropPrefix.length);
+var model = this._modelForPath(subPath);
+if (model in this._parentProps) {
 this._forwardParentPath(subPath, value);
+}
 }
 }
 Polymer.Base._pathEffector.call(this._templatized, path, value, fromAbove);
@@ -25634,7 +25648,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'paper-item',
 
       hostAttributes: {
-        role: 'listitem',
+        role: 'option',
         tabindex: '0'
       },
 
@@ -25674,7 +25688,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'paper-icon-item',
 
       hostAttributes: {
-        'role': 'listitem',
+        'role': 'option',
         'tabindex': '0'
       },
 
@@ -27996,7 +28010,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div>
             <div id="key" class="spacer">
                 <template id="buttonTemplate" is="dom-repeat" items="{{buttonSelectors}}">
-                    <paper-icon-button toggles="" disabled="" id="{{index}}" on-tap="buttonTapped" src="{{item.activeUrl}}" class="bug selector"></paper-icon-button>
+                    <paper-icon-button toggles="" disabled="" id="{{index}}" on-tap="buttonTapped" src="{{item.activeUrl}}" class="bug selector" noink=""></paper-icon-button>
                 </template>
             </div>
         </div>
@@ -28250,6 +28264,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     }
                 }
             },
+            getAllButtons: function() {
+                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            },
             toggleTapped: function (e) {
                 if (this.debug) {
                     console.log('toggleTapped: ', e);
@@ -28300,9 +28317,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                         this.switchIconTo('active', i);
                     }
                 }
-            },
-            getAllButtons: function() {
-                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
             },
             disableButtons: function (buttonIndexes) {
 
@@ -30091,7 +30105,7 @@ paper-calendar {
             enableInteractivity: false,
             animation: {
               startup: true,
-              duration: 1000,
+              duration: 250,
               easing: 'inAndOut',
               //easing: 'out'
             },
@@ -30195,7 +30209,7 @@ paper-calendar {
         var maxSelect = this.$.ws.maxSelections;
 
 
-        console.log('THIS SELECTED ITEMS: ' + this.graphs + ' max ' + maxSelect);
+        //console.log('THIS SELECTED ITEMS: ' + this.graphs + ' max ' + maxSelect);
 
 //        if( this.graphs.length > maxSelect ) {
 //          alert('HEY! Why are you clicking so fast! The bug counters need enough time to give you a result!\n Refresh the Page');
@@ -30208,7 +30222,7 @@ paper-calendar {
         var maxSelect = this.$.ws.maxSelections;
 
 
-        console.log('THIS SELECTED ITEMS: ' + this.selectedItems + ' max ' + maxSelect);
+        //console.log('THIS SELECTED ITEMS: ' + this.selectedItems + ' max ' + maxSelect);
 
         if( this.selectedItems.length > maxSelect ) {
           alert('HEY! Why are you clicking so fast! The bug counters need enough time to give you a result!\n Refresh the Page');
@@ -30404,34 +30418,6 @@ paper-calendar {
 
         }
       },
-//      addEventHistoryPoints: function (habitatIndex, sdate, edate, message) {
-//        var me = this;
-//        var sDateLocal = sdate;
-//        var eDateLocal = edate;
-//        this.$.nutellaConn.nutella.net.request('environmental_events_history', message, function (response) {
-//          var r = response;
-//          console.log('EVENTS Response: ', r);
-//
-//          if (r.length > 0) {
-//
-//
-//          } else {
-//            //zero results
-//            var firstEnvPoint = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-//            //add one minute to the start time and set it 0
-//            t.push([firstDate, 0, species.color]);
-//
-//            var lastEnvPoint = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
-//            //add one minute to the start time and set it 0
-//            t.push([lastDate2, 0, species.color]);
-//
-//            //me.drawGraph(species, t, messageType, sdate, edate);
-//
-//          }
-//        });
-//
-//
-//      },
       addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
 //        var selectorButtons = this.$.ws.getAllButtons();
 //        selectorButtons[species.index].disabled = true;
@@ -30459,88 +30445,141 @@ paper-calendar {
               } else if (sSpecies.index === 1) {
                 sSpecies.index = 12;
               }
-              for (var i1 = 0; i1 < r.length; i1++) {
-                var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
-                t.push([d1, r[i1].value, sSpecies.color]);
-              }
 
-              var envMax = me.findMaxValue(t);
-              me.setGraphMax(sSpecies, envMax);
 
-              var foundENVGraphs = me.graphs.filter(function (el) {
-                return (el.index === sSpecies.index);
+              async.each(r, function(d, callback) {
+//                for (var i1 = 0; i1 < r.length; i1++) {
+//                  var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
+//                  t.push([d1, r[i1].value, sSpecies.color]);
+//                }
+
+                var d1 = 'Date(' + moment(d.timestamp).valueOf() + ')';
+                t.push([d1, d.value, sSpecies.color]);
+
+
+
+                 callback();
+              }, function(err){
+
+
+                var envMax = me.findMaxValue(t);
+                me.setGraphMax(sSpecies, envMax);
+
+                var foundENVGraphs = me.graphs.filter(function (el) {
+                  return (el.index === sSpecies.index);
+                });
+
+                if (foundENVGraphs.length > 0) {
+                  var foundEnvGraph = foundENVGraphs[0];
+                  foundEnvGraph.data = t;
+                  var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
+                  //el.options = me.chartOptions;
+                  var envGraphMax = me.getGraphMax(foundEnvGraph);
+                  foundEnvGraph.options.vAxis.maxValue = envGraphMax;
+                  me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
+                  me.redrawChart(foundEnvGraph);
+                } else {
+                  //we have a new one
+                  //envMax = me.findMaxValue(t);
+                  me.setGraphMax(sSpecies, envMax);
+                  me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
+                }
               });
 
-              if (foundENVGraphs.length > 0) {
 
-                var foundEnvGraph = foundENVGraphs[0];
-                foundEnvGraph.data = t;
-                var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
-                //el.options = me.chartOptions;
-                var envGraphMax = me.getGraphMax(foundEnvGraph);
-                foundEnvGraph.options.vAxis.maxValue = envGraphMax;
-                me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
-                me.redrawChart(foundEnvGraph);
-
-
-              } else {
-                //we have a new one
-                //envMax = me.findMaxValue(t);
-                me.setGraphMax(sSpecies, envMax);
-                me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
-
-
-              }
-
-              console.log('hellow');
 
 
             } else if (messageType === 'population_history') {
-              for (var i2 = 0; i2 < r.length; i2++) {
-                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
-                t.push([d2, r[i2].population, sSpecies.color]);
-              }
+
+
+              async.each(r, function(d, callback) {
+                var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
+                t.push([d2, d.population, sSpecies.color]);
 
 
 
-              var hisMax = me.findMaxValue(t);
-              me.setGraphMax(sSpecies, hisMax);
 
-              var foundHISGraphs = me.graphs.filter(function (el) {
-                return (el.index === sSpecies.index);
+                callback();
+              }, function(err){
+
+                var hisMax = me.findMaxValue(t);
+                me.setGraphMax(sSpecies, hisMax);
+
+
+                var foundHISGraphs = me.graphs.filter(function (el) {
+                  return (el.index === sSpecies.index);
+                });
+
+
+                if (foundHISGraphs.length > 0) {
+
+                  var foundHisGraph = foundHISGraphs[0];
+
+                  me.recomputeScale(foundHisGraph);
+
+
+                  foundHisGraph.data = t;
+                  var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
+                  //el.options = me.chartOptions;
+                  me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
+                  me.redrawChart(foundHisGraph);
+
+
+                } else {
+                  //we have a new one
+                  hisMax = me.findMaxValue(t);
+                  me.setGraphMax(sSpecies, hisMax);
+                  me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
+
+                }
+
               });
 
-              if (foundHISGraphs.length > 0) {
-
-                var foundHisGraph = foundHISGraphs[0];
-
-                me.recomputeScale(foundHisGraph);
 
 
-                foundHisGraph.data = t;
-                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
-                //el.options = me.chartOptions;
-                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
-                me.redrawChart(foundHisGraph);
-
-
-              } else {
-                //we have a new one
-                hisMax = me.findMaxValue(t);
-                me.setGraphMax(sSpecies, hisMax);
-                me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
-
-              }
+//              for (var i2 = 0; i2 < r.length; i2++) {
+//                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
+//                t.push([d2, r[i2].population, sSpecies.color]);
+//              }
+//
+//              var hisMax = me.findMaxValue(t);
+//              me.setGraphMax(sSpecies, hisMax);
+//
+//              var foundHISGraphs = me.graphs.filter(function (el) {
+//                return (el.index === sSpecies.index);
+//              });
+//
+//              if (foundHISGraphs.length > 0) {
+//
+//                var foundHisGraph = foundHISGraphs[0];
+//
+//                me.recomputeScale(foundHisGraph);
+//
+//
+//                foundHisGraph.data = t;
+//                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
+//                //el.options = me.chartOptions;
+//                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
+//                me.redrawChart(foundHisGraph);
+//
+//
+//              } else {
+//                //we have a new one
+//                hisMax = me.findMaxValue(t);
+//                me.setGraphMax(sSpecies, hisMax);
+//                me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
+//
+//              }
             }
 
 
           } else {
             //zero results
-            var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 'minute').valueOf() + ')';
+            var popFirstDate = 'Date(' + moment(sDateLocal).add(30, 's').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popFirstDate, 0, sSpecies.color]);
 
-            var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 'minute').valueOf() + ')';
+            var popLastDate = 'Date(' + moment(eDateLocal).subtract(30, 's').valueOf() + ')';
             //add one minute to the start time and set it 0
             t.push([popLastDate, 0, sSpecies.color]);
 
@@ -30704,14 +30743,37 @@ paper-calendar {
           }
         };
 
+
+//        var t1 = moment(min).startOf('day').valueOf();
+//        var t2 = moment(max).endOf('day').valueOf();
+
+        var t1 = moment(min);
+        var t2 = moment(max);
+        var t3= t1.diff(t2,'days');
+
+        var timeTicks = [];
+        if( t3 === 0 ) {
+          var s = moment(min).startOf('day');
+          timeTicks.push(s.valueOf());
+
+          for(var k = 1; k < 23; k++){
+            s.add(k,'h');
+            timeTicks.push(s.valueOf());
+          }
+
+          timeTicks.push(moment(max).endOf('day').valueOf());
+        }
+
         if (min !== undefined && max !== undefined) {
-          someGraph.options.hAxis.minValue = min;
-          someGraph.options.hAxis.maxValue = max;
+          someGraph.options.hAxis.minValue = t1;
+          someGraph.options.hAxis.maxValue = t2;
         }
 
         var dataPointMax = this.getGraphMax(someGraph);
 
         someGraph.options.hAxis.textPosition = type;
+
+       // someGraph.options.hAxis.ticks = ['12 AM', '12 AM'];
 
         var pat = '';
 
@@ -30736,7 +30798,7 @@ paper-calendar {
               someGraph.options.vAxis.format = '0.0';
             }
             someGraph.options.vAxis.maxValue = dataPointMax;
-            someGraph.options.vAxis.ticks = [0,tickMax];
+            someGraph.options.vAxis.ticks = [{v:0, f:'0'},tickMax];
             someGraph.options.vAxis.minorGridlines = {count: 3};
             //someGraph.options.vAxis.gridlines = {count: 0};
           } else if( dataPointMax > 1) {
@@ -30753,11 +30815,15 @@ paper-calendar {
 
           console.log('drawing graph: ' + someGraph.type + someGraph.index + ' with max datapoint of: ' + dataPointMax + ' and max tick ' + tickMax);
 
-        if (someGraph !== undefined) {
+
+
+        someGraph.options.hAxis.gridlines.count = -1;
+
+
           switch (type) {
             case 'out':
 //              someGraph.options.hAxis.minorGridlines.units.hours = {format: ['h a']};
-//              someGraph.options.hAxis.minorGridlines.units.minutes = {format: ['h:mm a']};
+
               someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
               someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
               break;
@@ -30771,7 +30837,6 @@ paper-calendar {
             default:
               console.log('no switch type');
           }
-        }
 
       },
       round_up: function(val, precision) {
