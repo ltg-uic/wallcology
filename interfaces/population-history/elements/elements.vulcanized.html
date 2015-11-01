@@ -30443,7 +30443,8 @@ paper-calendar {
         console.log(JSON.stringify(message));
         this.$.nutellaConn.nutella.net.request(type, message, function (response) {
           var r = response;
-          console.log('Response: ' + sSpecies.r + sSpecies.index + ': ' + r);
+          console.log('Response: ' + sSpecies.r + sSpecies.index + ': ');
+          console.log('R: ',r);
           var t = [
             [{label: 'Days', type: 'date'}, {label: 'Counts', type: 'number'}, {type: 'string', role: 'style'}]
           ];
