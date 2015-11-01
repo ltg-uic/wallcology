@@ -410,6 +410,9 @@
                     }
                 }
             },
+            getAllButtons: function() {
+                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            },
             disableButtons: function (buttonIndexes) {
 
                 if (buttonIndexes === undefined || buttonIndexes.length === 0) {
