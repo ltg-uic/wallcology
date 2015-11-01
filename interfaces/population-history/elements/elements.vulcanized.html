@@ -28301,6 +28301,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     }
                 }
             },
+            getAllButtons: function() {
+                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            },
             disableButtons: function (buttonIndexes) {
 
                 if (buttonIndexes === undefined || buttonIndexes.length === 0) {
@@ -30055,14 +30058,14 @@ paper-calendar {
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
               'index': 11,
               'color': '#FF5722',
-              'type': 'e'
+              'type': 'et'
             },
             {
               'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
               'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
               'index': 12,
               'color': '#795548',
-              'type': 'e'
+              'type': 'ep'
             }
           ]
         },
@@ -30088,9 +30091,9 @@ paper-calendar {
             enableInteractivity: false,
             animation: {
               startup: true,
-              duration: 250,
-              //  easing: 'inAndOut'
-              easing: 'out'
+              duration: 1000,
+              easing: 'inAndOut',
+              //easing: 'out'
             },
             chartArea: {left: '5%', width: '93%', height: '75%'},
             vAxis: {
@@ -30157,7 +30160,7 @@ paper-calendar {
         },
         defaultR: {
           type: Number,
-          value: 0.025
+          value: 0.0
         },
         defaultH: {
           type: Number,
@@ -30188,8 +30191,30 @@ paper-calendar {
         if (this.debug) {
           console.log('graphsChanged', changeRecord);
         }
+
+        var maxSelect = this.$.ws.maxSelections;
+
+
+        console.log('THIS SELECTED ITEMS: ' + this.graphs + ' max ' + maxSelect);
+
+//        if( this.graphs.length > maxSelect ) {
+//          alert('HEY! Why are you clicking so fast! The bug counters need enough time to give you a result!\n Refresh the Page');
+//          return;
+//        }
+
       },
       selectedItemsChanged: function (changeRecord) {
+
+        var maxSelect = this.$.ws.maxSelections;
+
+
+        console.log('THIS SELECTED ITEMS: ' + this.selectedItems + ' max ' + maxSelect);
+
+        if( this.selectedItems.length > maxSelect ) {
+          alert('HEY! Why are you clicking so fast! The bug counters need enough time to give you a result!\n Refresh the Page');
+          return;
+        }
+
         if (this.debug) {
           console.log('selectedItemsChanged', changeRecord);
         }
@@ -30246,8 +30271,10 @@ paper-calendar {
         } else if (type === 'p') {
           this.maxes[index].p = this.defaultP;
           return;
-        } else if (type === 'e') {
-
+        } else if (type === 'ep') {
+          this.maxes[index].ep = this.defaultE;
+        } else if (type === 'et') {
+          this.maxes[index].et = this.defaultE;
         }
       },
       toggleSelectorsChanged: function (changeRecord) {
@@ -30377,35 +30404,37 @@ paper-calendar {
 
         }
       },
-      addEventHistoryPoints: function (habitatIndex, sdate, edate, message) {
-        var me = this;
-        var sDateLocal = sdate;
-        var eDateLocal = edate;
-        this.$.nutellaConn.nutella.net.request('environmental_events_history', message, function (response) {
-          var r = response;
-          console.log('EVENTS Response: ', r);
-
-          if (r.length > 0) {
-
-
-          } else {
-            //zero results
-            var firstEnvPoint = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
-            //add one minute to the start time and set it 0
-            t.push([firstDate, 0, species.color]);
-
-            var lastEnvPoint = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
-            //add one minute to the start time and set it 0
-            t.push([lastDate2, 0, species.color]);
-
-            //me.drawGraph(species, t, messageType, sdate, edate);
-
-          }
-        });
-
-
-      },
+//      addEventHistoryPoints: function (habitatIndex, sdate, edate, message) {
+//        var me = this;
+//        var sDateLocal = sdate;
+//        var eDateLocal = edate;
+//        this.$.nutellaConn.nutella.net.request('environmental_events_history', message, function (response) {
+//          var r = response;
+//          console.log('EVENTS Response: ', r);
+//
+//          if (r.length > 0) {
+//
+//
+//          } else {
+//            //zero results
+//            var firstEnvPoint = 'Date(' + moment(sDateLocal).subtract(1, 'minute').valueOf() + ')';
+//            //add one minute to the start time and set it 0
+//            t.push([firstDate, 0, species.color]);
+//
+//            var lastEnvPoint = 'Date(' + moment(eDateLocal).add(2, 'minute').valueOf() + ')';
+//            //add one minute to the start time and set it 0
+//            t.push([lastDate2, 0, species.color]);
+//
+//            //me.drawGraph(species, t, messageType, sdate, edate);
+//
+//          }
+//        });
+//
+//
+//      },
       addHistoryGraph: function (species, habitatIndex, sdate, edate, message, type) {
+//        var selectorButtons = this.$.ws.getAllButtons();
+//        selectorButtons[species.index].disabled = true;
         var me = this;
         var messageType = type;
         var sDateLocal = sdate;
@@ -30414,12 +30443,10 @@ paper-calendar {
         console.log(JSON.stringify(message));
         this.$.nutellaConn.nutella.net.request(type, message, function (response) {
           var r = response;
-          console.log('response: ', r);
+          console.log('Response: ' + sSpecies.r + sSpecies.index + ': ' + r);
           var t = [
             [{label: 'Days', type: 'date'}, {label: 'Counts', type: 'number'}, {type: 'string', role: 'style'}]
           ];
-
-
           var min = new Date(moment(sdate).valueOf());
           var max = new Date(moment(edate).valueOf());
 
@@ -30436,16 +30463,16 @@ paper-calendar {
                 t.push([d1, r[i1].value, sSpecies.color]);
               }
 
+              var envMax = me.findMaxValue(t);
+              me.setGraphMax(sSpecies, envMax);
 
               var foundENVGraphs = me.graphs.filter(function (el) {
                 return (el.index === sSpecies.index);
               });
 
-
               if (foundENVGraphs.length > 0) {
 
                 var foundEnvGraph = foundENVGraphs[0];
-
                 foundEnvGraph.data = t;
                 var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
                 //el.options = me.chartOptions;
@@ -30453,12 +30480,18 @@ paper-calendar {
                 foundEnvGraph.options.vAxis.maxValue = envGraphMax;
                 me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
                 me.redrawChart(foundEnvGraph);
+
+
               } else {
                 //we have a new one
+                //envMax = me.findMaxValue(t);
+                me.setGraphMax(sSpecies, envMax);
                 me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
+
+
               }
 
-
+              console.log('hellow');
 
 
             } else if (messageType === 'population_history') {
@@ -30467,7 +30500,10 @@ paper-calendar {
                 t.push([d2, r[i2].population, sSpecies.color]);
               }
 
-              me.setGraphMax(sSpecies, me.findMaxValue(t));
+
+
+              var hisMax = me.findMaxValue(t);
+              me.setGraphMax(sSpecies, hisMax);
 
               var foundHISGraphs = me.graphs.filter(function (el) {
                 return (el.index === sSpecies.index);
@@ -30485,9 +30521,14 @@ paper-calendar {
                 //el.options = me.chartOptions;
                 me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
                 me.redrawChart(foundHisGraph);
+
+
               } else {
                 //we have a new one
+                hisMax = me.findMaxValue(t);
+                me.setGraphMax(sSpecies, hisMax);
                 me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
+
               }
             }
 
@@ -30504,7 +30545,12 @@ paper-calendar {
 
             me.drawGraph(sSpecies, t, messageType, sdate, edate);
 
+            setTimedOut(function(){
+              selectorButtons[sSpecies.index].disabled = false;
+            }, 1000);
           }
+
+
 
 
         });
@@ -30528,7 +30574,7 @@ paper-calendar {
           //set the new max
           for (var k = 0; k < this.graphs.length; k++) {
             var b = this.graphs[k];
-            if (type === b.type) {
+            if (type === b.type && b.index !== graph.index) {
 
               var textPosition = b.options.hAxis.textPosition;
               //el.options = me.chartOptions;
@@ -30606,8 +30652,10 @@ paper-calendar {
           if (newMax > this.maxes[index].p) {
             this.maxes[index].p = newMax;
           }
-        } else if (species.type === 'e') {
-          //this.maxes[index].e;
+        } else if (species.type === 'et') {
+          this.maxes[index].et = newMax;
+        }else if (species.type === 'ep') {
+          this.maxes[index].ep = newMax;
         }
       },
       getGraphMax: function (graph) {
@@ -30619,61 +30667,90 @@ paper-calendar {
           return this.maxes[index].h;
         } else if (graph.type === 'p') {
           return this.maxes[index].p;
-        } else if (graph.type === 'e') {
-          return this.maxes[index].e;
+        } else if (graph.type === 'et') {
+          return this.maxes[index].et;
+        } else if (graph.type === 'ep') {
+          return this.maxes[index].ep;
         }
       },
       updateGraphAxis: function (someGraph, type, min, max) {
+
+        someGraph.options.vAxis =  {
+          minValue: 0,
+            maxValue: 0.1,
+            textStyle: {
+            fontSize: 14
+          }
+        };
+
+        someGraph.options.xAxis = {
+          textPosition: 'out',
+            textStyle: {
+          fontSize: 14
+        },
+          gridlines: {
+            count: -1,
+              units: {
+              days: {format: ['M/d']},
+              hours: {format: ['h a']},
+            }
+          },
+          minorGridlines: {
+            units: {
+              hours: {format: ['h a']},
+              minutes: {format: ['h:mm a']}
+            }
+          }
+        };
 
         if (min !== undefined && max !== undefined) {
           someGraph.options.hAxis.minValue = min;
           someGraph.options.hAxis.maxValue = max;
         }
 
-        var v = this.getGraphMax(someGraph);
+        var dataPointMax = this.getGraphMax(someGraph);
 
         someGraph.options.hAxis.textPosition = type;
 
         var pat = '';
 
-        someGraph.options.vAxis.minValue = 0;
-
-        console.log('V: ',v);
-        if( someGraph.type === 'p' || someGraph.type === 'r' || someGraph.type === 'h'  ) {
 
 //          Ymax <=1, show one decimal place (e.g. 0.1, 0.2, etc.) this means that
 //          for the example you show me, there would only be one label (0.1) on the y axis
 //
 //          if Ymax > 1, no decimal places.
 
+          var tickMax = 0;
+          if( dataPointMax <= 1 ) {
 
-          if( v <= 1 ) {
-
-            if( v ===  0 || v <=  0.1 ) {
-              v = 0.1;
-              //someGraph.options.vAxis.maxValue = 0.1;
-            } else {
-              someGraph.options.vAxis.maxValue = v;
+            if( dataPointMax === 0 || dataPointMax <  0.1 ) {
+              tickMax = 1.0;
+              someGraph.options.vAxis.format = '0.0';
+            } else if( dataPointMax > 0.1 && dataPointMax <  1){
+              tickMax = this.round_up(dataPointMax, 1.0);
+              someGraph.options.vAxis.format = '0.#';
             }
-            someGraph.options.vAxis.format = '0.#';
-            someGraph.options.vAxis.ticks = [0,v];
+            else if(dataPointMax === 1){
+              tickMax = 1.0;
+              someGraph.options.vAxis.format = '0.0';
+            }
+            someGraph.options.vAxis.maxValue = dataPointMax;
+            someGraph.options.vAxis.ticks = [0,tickMax];
             someGraph.options.vAxis.minorGridlines = {count: 3};
-
-          } else if( v > 1) {
+            //someGraph.options.vAxis.gridlines = {count: 0};
+          } else if( dataPointMax > 1) {
             //find how many digits we have before the decimal
-            var vstring = v.toString().split('.')[0];
-
-
-
+            var vstring = dataPointMax.toString().split('.')[0];
             for( var i = 0; i < vstring.length; i++ ) {
               pat = pat + '#';
             }
-            console.log('NUM PATTER: ' + pat);
             someGraph.options.vAxis.format = pat;
-            someGraph.options.vAxis.maxValue = v;
+            someGraph.options.vAxis.maxValue = dataPointMax;
+           // someGraph.options.vAxis.minorGridlines = {count: 3};
+           // someGraph.options.vAxis.majorGridlines = {count: 5};
           }
 
-        }
+          console.log('drawing graph: ' + someGraph.type + someGraph.index + ' with max datapoint of: ' + dataPointMax + ' and max tick ' + tickMax);
 
         if (someGraph !== undefined) {
           switch (type) {
@@ -30696,12 +30773,23 @@ paper-calendar {
         }
 
       },
+      round_up: function(val, precision) {
+      power = Math.pow (10, precision);
+      poweredVal = Math.ceil (val * power);
+      result = poweredVal / power;
+
+        return result;
+      },
       redrawChart: function (graph) {
+
+
+
         var chartId = this.chartName(graph.index);
         var chart = document.getElementById(chartId);
         //chart.options = graph.options;
         chart.data = graph.data;
         chart.drawChart();
+
       },
       connectedChanged: function (newValue, oldValue) {
       },
@@ -30720,15 +30808,18 @@ paper-calendar {
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
-        this.maxes = [{r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}, {r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}, {
+        this.maxes = [{r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
+          ep: this.defaultE}, {r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
+          ep: this.defaultE}, {
           r: this.defaultR,
           h: this.defaultH,
           p: this.defaultP,
-          e: this.defaultE,
-        }, {r: this.defaultR, h: this.defaultH, p: this.defaultP, e: this.defaultE}];
+          et: this.defaultE,
+          ep: this.defaultE
+        }, {r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
+          ep: this.defaultE}];
       },
       chartName: function (index) {
-        console.log('graph ' + index);
         return 'chart' + index;
       },
       formatButtonSDate: function (someDate) {
