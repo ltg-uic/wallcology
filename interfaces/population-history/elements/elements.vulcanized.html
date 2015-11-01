@@ -30492,84 +30492,84 @@ paper-calendar {
             } else if (messageType === 'population_history') {
 
 
-//              async.each(r, function(d, callback) {
-//                var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
-//                t.push([d2, d.population, sSpecies.color]);
-//
-//
-//
-//
-//                callback();
-//              }, function(err){
-//
-//                var hisMax = me.findMaxValue(t);
-//                me.setGraphMax(sSpecies, hisMax);
-//
-//
-//                var foundHISGraphs = me.graphs.filter(function (el) {
-//                  return (el.index === sSpecies.index);
-//                });
-//
-//
-//                if (foundHISGraphs.length > 0) {
-//
-//                  var foundHisGraph = foundHISGraphs[0];
-//
-//                  me.recomputeScale(foundHisGraph);
-//
-//
-//                  foundHisGraph.data = t;
-//                  var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
-//                  //el.options = me.chartOptions;
-//                  me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
-//                  me.redrawChart(foundHisGraph);
-//
-//
-//                } else {
-//                  //we have a new one
-//                  hisMax = me.findMaxValue(t);
-//                  me.setGraphMax(sSpecies, hisMax);
-//                  me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
-//
-//                }
-//
-//              });
+              async.each(r, function(d, callback) {
+                var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
+                t.push([d2, d.population, sSpecies.color]);
 
 
 
-              for (var i2 = 0; i2 < r.length; i2++) {
-                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
-                t.push([d2, r[i2].population, sSpecies.color]);
-              }
 
-              var hisMax = me.findMaxValue(t);
-              me.setGraphMax(sSpecies, hisMax);
+                callback();
+              }, function(err){
 
-              var foundHISGraphs = me.graphs.filter(function (el) {
-                return (el.index === sSpecies.index);
+                var hisMax = me.findMaxValue(t);
+                me.setGraphMax(sSpecies, hisMax);
+
+
+                var foundHISGraphs = me.graphs.filter(function (el) {
+                  return (el.index === sSpecies.index);
+                });
+
+
+                if (foundHISGraphs.length > 0) {
+
+                  var foundHisGraph = foundHISGraphs[0];
+
+                  me.recomputeScale(foundHisGraph);
+
+
+                  foundHisGraph.data = t;
+                  var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
+                  //el.options = me.chartOptions;
+                  me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
+                  me.redrawChart(foundHisGraph);
+
+
+                } else {
+                  //we have a new one
+                  hisMax = me.findMaxValue(t);
+                  me.setGraphMax(sSpecies, hisMax);
+                  me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
+
+                }
+
               });
 
-              if (foundHISGraphs.length > 0) {
-
-                var foundHisGraph = foundHISGraphs[0];
-
-                me.recomputeScale(foundHisGraph);
 
 
-                foundHisGraph.data = t;
-                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
-                //el.options = me.chartOptions;
-                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
-                me.redrawChart(foundHisGraph);
-
-
-              } else {
-                //we have a new one
-                hisMax = me.findMaxValue(t);
-                me.setGraphMax(sSpecies, hisMax);
-                me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
-
-              }
+//              for (var i2 = 0; i2 < r.length; i2++) {
+//                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
+//                t.push([d2, r[i2].population, sSpecies.color]);
+//              }
+//
+//              var hisMax = me.findMaxValue(t);
+//              me.setGraphMax(sSpecies, hisMax);
+//
+//              var foundHISGraphs = me.graphs.filter(function (el) {
+//                return (el.index === sSpecies.index);
+//              });
+//
+//              if (foundHISGraphs.length > 0) {
+//
+//                var foundHisGraph = foundHISGraphs[0];
+//
+//                me.recomputeScale(foundHisGraph);
+//
+//
+//                foundHisGraph.data = t;
+//                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
+//                //el.options = me.chartOptions;
+//                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
+//                me.redrawChart(foundHisGraph);
+//
+//
+//              } else {
+//                //we have a new one
+//                hisMax = me.findMaxValue(t);
+//                me.setGraphMax(sSpecies, hisMax);
+//                me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
+//
+//              }
             }
 
 
