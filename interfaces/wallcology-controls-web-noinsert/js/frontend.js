@@ -91,6 +91,11 @@ function askConfirmation() {
         habitat: getSelectedHabitat()
     };
 
+    debugger;
+    if(pendingAction.action == 'insert') {
+        deselectAction(getSelectedAction()[0]);
+        return; // Insert disabled
+    }
 
     var speciesDescription = [];
     getSelectedBugs().forEach(function(bug) {
