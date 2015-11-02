@@ -296,9 +296,10 @@ function RequestVegetationPresence( uID )
     var scaleString = scaleLevel = scaleLevel.toString();
 
     if (scaleString.includes('e')) {
-        scaleString = "0.00";
+        scaleString = "0.0001";
         console.log("Made an adjustment!", scaleString);
     };
+    console.log("RequestVegetationPresence!", uID, scaleLevel );
     unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleString + " " + uID.toString());
 }
 
