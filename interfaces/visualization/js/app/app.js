@@ -244,7 +244,7 @@ function ProgressUpdate(func, valid)
 
 function DebugMessage(string)
 {
-    // console.log(string);
+    console.log(string);
 }
 
 /*==============================================================================
