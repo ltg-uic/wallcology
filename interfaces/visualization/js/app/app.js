@@ -293,7 +293,11 @@ function RequestVegetationPresence( uID )
 {
     var scaleLevel = lastState['populations'][wallscopeID-1][+uID];
     console.log("RequestVegetationPresence!", uID, scaleLevel );
-    unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleLevel.toString() + " " + uID.toString());
+    scaleLevel = scaleLevel.toString();
+    if (scaleLevel.includes('e')) {
+        scaleLevel = "0.00";
+    };
+    unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleLevel + " " + uID.toString());
 }
 
 
