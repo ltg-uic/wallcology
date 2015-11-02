@@ -15,11 +15,11 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 var history = nutella.persist.getMongoObjectStore('history');
 
 var adjustTime = false;
-var startTime = 1445724666 * 1000;
+var startTime = 1445660045 * 1000;
 // var ddd = new Date();
 var endTime;
 // endTime = ddd.getTime();
-   endTime = 1446070266 * 1000; //comment this out to use current time as the endpoint.
+   endTime = 1446092045 * 1000; //comment this out to use current time as the endpoint.
 
 
 

@@ -23,8 +23,8 @@ console.log("Simulator version 1.0");
 
 
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
-// const frequencyOfUpdate = 2 * 60 * 1000; //(1000 = 1 second)
-// const broadcastFrequency = 15; // every update. increase to "speed up" model
+// const frequencyOfUpdate = 4 * 60 * 1000; //(1000 = 1 second)
+// const broadcastFrequency = 5; // every update. increase to "speed up" model
 const frequencyOfUpdate = 4 * 60 * 1000; //(1000 = 1 second. send to animation every 4 min)
 const broadcastFrequency = 5; // (save in history every 5 cycles (minimizing size))
 
@@ -87,6 +87,12 @@ function init() {
 //  
 
 
+
+
+    nutella.net.handle_requests('read_model', function(JSONmessage, from) {
+            return(model);           
+        });
+
     // channel: species_event
     //
     //  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
@@ -94,22 +100,37 @@ function init() {
     nutella.net.subscribe('species_event', function(message, from){
         switch (message.action) {
             case "remove": 
-                state['populations'][message.habitat][message.species] = 0;  
+                state['populations'][message.habitat][message.species] = 0; 
                 break;
-            case "decrease": 
-                state['populations'][message.habitat][message.species] *= 
-                    model['decreaseFactor']; 
+            case "decrease": //unlimited decreasing
+                state['populations'][message.habitat][message.species] *= 0.5; //model['decreaseFactor']; 
                 break;
-            case "increase": 
-                state['populations'][message.habitat][message.species] *= 
-                    model['increaseFactor']; 
+            case "increase": // constrained increasing, can only effectively double population once
+                var t = new Date();
+                var now = t.getTime();
+                var twoHoursAgo = now - (2 * 60 * 60 * 1000); //seconds;                
+                var nIncreases = 0;
+                var nDecreases = 0;
+                nutella.net.request('species_events_history', 
+                    {'habitat': message.habitat, 'species': message.species, 'from': twoHoursAgo, 'to': now},
+                     function(response) {
+                        for (var i=0; i < response.length; i++) {
+                            if (response[i]['action'] == 'decrease') nDecreases++;
+                            if (response[i]['action'] == 'increase') nIncreases++;
+                            }
+                        if (nIncreases > (nDecreases + 1)) {
+                            nutella.net.publish ('too_soon',{'habitat': message.habitat, 'species': message.species});
+                        } else {
+                            state['populations'][message.habitat][message.species] *= model['increaseFactor']; 
+                        };
+                });
                 break;
-            case "insert":
-                state['populations'][message.habitat][message.species] *= 
-                    (model['defaultPopulations'][model['species'][message.species]['trophicLevel']] *
-                        model['invasionPopulationAdjustment']);
-                break;
-            };
+            case "insert":  
+            if (state['populations'][message.habitat][message.species] < .001) 
+                    state['populations'][message.habitat][message.species]= 
+                        model['defaultPopulations'][model['species'][message.species]['trophicLevel']];
+            break;
+        };
         cycleStateOnce();
     });
 

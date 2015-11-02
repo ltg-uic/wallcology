@@ -1,0 +1,39 @@
+{
+  "name": "predicates",
+  "version": "1.0.1",
+  "description": "Set of various predicates for type checking, assertions, filtering etc",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wookieb/predicates"
+  },
+  "keywords": [
+    "predicates",
+    "predicate",
+    "type",
+    "check",
+    "assert",
+    "filter"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^8.x.x",
+    "chai": "^1.10.0",
+    "dmd-examples-highlight": "^0.1.x",
+    "eslint": "^0.10.x",
+    "glob": "^4.3.x",
+    "gulp": "^3.8.x",
+    "gulp-coverage": "^0.3.32",
+    "gulp-eslint": "^0.2.0",
+    "gulp-mocha": "^2.0.0",
+    "gulp-rename": "^1.2.0",
+    "gulp-size": "^1.1.0",
+    "gulp-uglify": "^1.0.2",
+    "jsdoc-to-markdown": "^0.5.x",
+    "mocha": "^2.0.x",
+    "vinyl-buffer": "^1.0.0",
+    "vinyl-source-stream": "^1.0.0"
+  },
+  "author": "Łukasz Kużyński",
+  "license": "MIT"
+}

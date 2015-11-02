@@ -105,7 +105,7 @@
             <div id="key" class="spacer">
                 <template id="buttonTemplate" is="dom-repeat" items="{{buttonSelectors}}">
                     <paper-icon-button toggles disabled id="{{index}}" on-tap="buttonTapped" src="{{item.activeUrl}}"
-                                       class="bug selector"></paper-icon-button>
+                                       class="bug selector" noink></paper-icon-button>
                 </template>
             </div>
         </div>
@@ -358,6 +358,9 @@
                         }
                     }
                 }
+            },
+            getAllButtons: function() {
+                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
             },
             toggleTapped: function (e) {
                 if (this.debug) {

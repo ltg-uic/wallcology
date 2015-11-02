@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link href="bower_components/polymer/polymer.html" rel="import">
+
+    <link rel="import" href="bower_components/paper-dialog/paper-dialog.html">
+
+    <link rel="import" href="bower_components/wallcology-selector/wallcology-selector.html">
+    <link rel="import" href="action-selector.html">
+</head>
+
+<dom-module id="test-app">
+    <style>
+        paper-dialog {
+            background-color: rgb(189, 233, 255);
+            color: #000000;
+        }
+
+        paper-button {
+            color: rgba(0, 0, 0, 0.79);
+        }
+
+        paper-button[confirm]:hover {
+            background-color: rgba(59, 166, 67, 0.81);
+        }
+
+        paper-button[cancel]:hover {
+            background-color: rgba(255, 122, 110, 0.8);
+        }
+
+        img.sprite {
+            width: 24px;
+            height: 24px;
+        }
+    </style>
+    <template>
+
+        <paper-dialog id="dialog">
+            <h2></h2>
+            <paper-dialog-scrollable>
+                Do you really want to
+                <l>{{actionDescription}}</l>
+                <template id="speciesDescriptionTemplate" is="dom-repeat" items="{{speciesDescription}}">
+                    <img src="{{item}}" class="sprite"/>
+                </template>
+                in habitat
+                <l>{{habitatDescription}}</l>
+                ?
+            </paper-dialog-scrollable>
+            <div class="buttons">
+                <paper-button dialog-dismiss onclick="cancel()" cancel>Cancel</paper-button>
+                <paper-button dialog-confirm onclick="confirmation()" confirm>Accept</paper-button>
+            </div>
+        </paper-dialog>
+
+        <wallcology-selector id="species-selector" toggle-selectors="{{toggleSelectors}}" button-selectors={{buttonSelectors}}
+                              max-selections="11" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
+
+        <action-selector id="action-selector" toggle-selectors="{{toggleSelectors}}" button-selectors={{actionButtonSelectors}}
+                             max-selections="1" selected-items="{{actionSelectedItems}}" current-toggle="{{currentToggle}}"></action-selector>
+
+    </template>
+
+    <script>
+        // element registration
+        Polymer({
+            is: 'test-app',
+
+            // add properties and methods on the element's prototype
+            properties: {
+                // declare properties for the element's public API
+                actionDescription: {
+                    type: String,
+                    notify: true,
+                    value: "prova"
+                },
+                habitatDescription: {
+                    type: Number,
+                    notify: true,
+                    value: -1
+                },
+                speciesDescription: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                selectedItems: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                actionSelectedItems: {
+                    type: Array,
+                    notify: true,
+                    value: []
+                },
+                currentToggle: {
+                    type: Object,
+                    notify: true,
+                    value: {},
+                    observer: 'currentToggleChanged'
+                },
+                toggleSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            'items': [],
+                            'name': 'Habitat ?  ',
+                            'index': -1
+                        },
+                        {
+                            'items': [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10
+                            ],
+                            'name': 'Habitat 1',
+                            'index': 0
+                        },
+                        {
+                            'items': [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10
+                            ],
+                            'name': 'Habitat 2',
+                            'index': 1
+                        },
+                        {
+                            'items': [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10
+                            ],
+                            'name': 'Habitat 3',
+                            'index': 2
+                        },
+                        {
+                            'items': [
+                                0,
+                                1,
+                                2,
+                                3,
+                                4,
+                                5,
+                                6,
+                                7,
+                                8,
+                                9,
+                                10
+                            ],
+                            'name': 'Habitat 4',
+                            'index': 3
+                        }
+                    ]
+                },
+                toggleActionSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            'items': [],
+                            'name': 'Not selected habitat',
+                            'index': -1
+                        },
+                        {
+                            'items': [
+                                0,
+                                1,
+                                2,
+                                3,
+                            ],
+                            'name': 'Selected habitat',
+                            'index': 0
+                        }
+                    ]
+                },
+                buttonSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_00.svg',
+                            'index': 0
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_01.svg',
+                            'index': 1
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_02.svg',
+                            'index': 2
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_03.svg',
+                            'index': 3
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_04.svg',
+                            'index': 4
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_05.svg',
+                            'index': 5
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_06.svg',
+                            'index': 6
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_07.svg',
+                            'index': 7
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_08.svg',
+                            'index': 8
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_09.svg',
+                            'index': 9
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/species_10.svg',
+                            'index': 10
+                        }
+                    ]
+                },
+                actionButtonSelectors: {
+                    type: Array,
+                    notify: true,
+                    value: [
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/action_insert_0.svg',
+                            'index': 0
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/action_remove.svg',
+                            'index': 1
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/action_increase.svg',
+                            'index': 2
+                        },
+                        {
+                            'imgUrl': 'http://ltg.cs.uic.edu/WC/icons/action_decrease.svg',
+                            'index': 3
+                        }
+                    ]
+                }
+            },
+            observers: [
+                'selectedItemsChanged(selectedItems.*)',
+                'toggleSelectorsChanged(toggleSelectors.*)',
+                'buttonSelectorsChanged(buttonSelectors.*)',
+                'actionSelected(actionSelectedItems.*)'
+            ],
+            selectedItemsChanged: function (changeRecord) {
+
+                if (changeRecord.path == 'selectedItems.splices') {
+                    // a user was added or removed
+                } else {
+                    // an individual user or its sub-properties changed
+                    // check "changeRecord.path" to determine what changed
+
+
+                }
+            },
+            actionSelected: function(changeRecord) {
+                if(changeRecord.base.length > 0) {
+                    askConfirmation();
+                }
+            },
+            toggleSelectorsChanged: function(changeRecord){
+
+            },
+            buttonSelectorsChanged: function (changeRecord) {
+
+            },
+            currentToggleChanged: function(newValue, oldValue){
+                console.log('toggle changed test-app', newValue, oldValue);
+            },
+            ready: function () {
+                this.selectedItems = [];
+            },
+            created: function() {
+
+                //document.getElementById('species-selector').enableHabitat(1);   // Enable habitat1
+                // document.getElementById('species-selector').deselectBug(1);    // Deselect bug 1
+            }
+        });
+    </script>
+</dom-module>
