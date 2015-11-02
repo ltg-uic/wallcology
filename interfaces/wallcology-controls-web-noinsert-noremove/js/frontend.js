@@ -91,7 +91,6 @@ function askConfirmation() {
         habitat: getSelectedHabitat()
     };
 
-    debugger;
     if(pendingAction.action == 'insert' || pendingAction.action == 'remove') {
         deselectAction(getSelectedAction()[0]);
         return; // Insert & remove disabled
