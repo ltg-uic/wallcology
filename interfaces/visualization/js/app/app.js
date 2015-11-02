@@ -297,9 +297,8 @@ function RequestVegetationPresence( uID )
     if (scaleString.includes('e')) {
         scaleString = "0.00";
         console.log("Made an adjustment!");
-    } else {
-        unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleString + " " + uID.toString());
     };
+    unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleString + " " + uID.toString());
 }
 
 
