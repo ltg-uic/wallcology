@@ -167,7 +167,7 @@ function askConfirmation() {
     });
 
     document.getElementById('wallcology-controls').actionDescription = getSelectedAction();
-    document.getElementById('wallcology-controls').habitatDescription = getSelectedHabitat();
+    document.getElementById('wallcology-controls').habitatDescription = getSelectedHabitat() + 1;
     document.getElementById('wallcology-controls').speciesDescription = speciesDescription;
         //" <b>" +  + "</b> species " + getSelectedBugs() + "  " + getSelectedHabitat() + " ?";
 
