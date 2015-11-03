@@ -363,15 +363,7 @@
 			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 			"settings":
 			{
-				"buffer_size": 10437,
-				"line_ending": "Unix"
-			}
-		},
-		{
-			"file": "/Users/krbalmryde/.bash_aliases",
-			"settings":
-			{
-				"buffer_size": 8037,
+				"buffer_size": 13450,
 				"line_ending": "Unix"
 			}
 		},
@@ -379,23 +371,71 @@
 			"file": "js/app/app.js",
 			"settings":
 			{
-				"buffer_size": 8902,
+				"buffer_size": 9155,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/krbalmryde/.bash_functions",
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 			"settings":
 			{
-				"buffer_size": 22264,
+				"buffer_size": 4530,
 				"line_ending": "Unix"
 			}
 		},
 		{
-			"file": "/Users/krbalmryde/.bash_profile",
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
 			"settings":
 			{
-				"buffer_size": 5060,
+				"buffer_size": 4878,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
+			"settings":
+			{
+				"buffer_size": 1159,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+			"settings":
+			{
+				"buffer_size": 4371,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+			"settings":
+			{
+				"buffer_size": 4236,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+			"settings":
+			{
+				"buffer_size": 4624,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
+			"settings":
+			{
+				"buffer_size": 5085,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
+			"settings":
+			{
+				"buffer_size": 8462,
 				"line_ending": "Unix"
 			}
 		}
@@ -789,19 +829,29 @@
 	},
 	"expanded_folders":
 	[
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/EnvController",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine"
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Spider Crawler/Scipts",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Spider Crawler/Scipts/Editor"
 	],
 	"file_history":
 	[
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/population-history/scripts/app.js",
+		"/Users/krbalmryde/.bash_functions",
 		"/Users/krbalmryde/.bash_aliases",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-back/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
-		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/wallcology.sublime-project",
 		"/Users/krbalmryde/.bash_profile",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/EnvController/ScumController.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/BoundaryController.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/wallcology.sublime-project",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/js/app/app.js",
+		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology-back/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
@@ -810,7 +860,6 @@
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
-		"/Users/krbalmryde/.bash_functions",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Simulation/Assets/Scripts/StateMachine/ICritterState.cs",
 		"/Users/krbalmryde/Downloads/index.html",
@@ -915,16 +964,7 @@
 		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/hlists/hlist_0.65000.list",
 		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/explore.py",
 		"/Users/krbalmryde/Dropbox/Class-Projects/cs524/Journal/README.md",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs524/Journal/TextRendering/Notes.md",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs524/Journal/.gitignore",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/.gitignore",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/doc/Redshift_blueshift.svg",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/src/useful.py",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/examples/yt/load_data_yt.py",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/out_97.list",
-		"/Users/krbalmryde/Dropbox/Class-projects/cs594/SciVis2015/data/ds14_scivis_0128/rockstar/outputs/dead_15.list",
-		"/Users/krbalmryde/Lorenzo_Is.txt",
-		"/Users/krbalmryde/Dropbox/Class-Projects/cs594/SciVis2015/src/ds14_cg_particle_velocity.py"
+		"/Users/krbalmryde/Dropbox/Class-Projects/cs524/Journal/TextRendering/Notes.md"
 	],
 	"find":
 	{
@@ -945,6 +985,42 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"scaleLevel",
+			"GetPopulationCountDebug",
+			"Debug",
+			"critter.navMeshAgent.height*2",
+			"SamplePosition",
+			"critter.navMeshAgent.height*2",
+			"SamplePosition",
+			".x",
+			"navMeshAgent",
+			"currentState.transform",
+			"enter",
+			"enterDuration",
+			"enterTime",
+			"int index",
+			"WarpCritter",
+			"BrickPoints",
+			"PipePoints",
+			"Debug",
+			"SamplePosition",
+			"0.5f,",
+			"SpawnCritter",
+			"Random",
+			"UnitSp",
+			"Random",
+			"insideUnitSphere",
+			"GetFromName",
+			"LayerFromName",
+			"MeshArea",
+			", MeshArea",
+			"MeshArea",
+			", MeshArea",
+			"MeshArea",
+			"critter.",
+			"MeshArea",
+			"Scripts",
+			"DebugCritters",
 			"f",
 			",",
 			"ScaleVegetation",
@@ -1036,43 +1112,7 @@
 			"LoadWallscope",
 			"InitializeSpawnPoints",
 			"LoadWallscopeScene",
-			"LoadWallscope",
-			"g",
-			"zoomed",
-			"cx",
-			"attr('cx'",
-			"attr('cx', ",
-			"attr('cx', function (d) {\n    return projection([d.lon, d.lat])[0];\n})",
-			"LoadWallscope",
-			"LoadWallscopeScene",
-			"RequestPopulationCount",
-			"url",
-			"ToFlightState",
-			"HandlePredator",
-			"SetDurations",
-			"predator",
-			"ToFlightState",
-			"HandlePredator",
-			"exit",
-			"wander",
-			"Wander",
-			"void",
-			"critter",
-			"critters",
-			"RequestPopulationCount",
-			"SendMessage",
-			"RequestPopulationCount",
-			"GetPopulationCount",
-			"RequestPopulationCount",
-			"meshRendererFlag",
-			"RequestPopulationCount",
-			"ReceivePopulationCount",
-			"RequestPopulationCount",
-			"InstantiateCritter",
-			"AdjustCritterPopulations",
-			"RequestPopulationCount",
-			"GetPopulationCount",
-			"RequestPopulationCount"
+			"LoadWallscope"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -1144,15 +1184,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10437,
+						"buffer_size": 13450,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								1052,
-								1052
+								3667,
+								3667
 							]
 						],
 						"settings":
@@ -1162,7 +1202,7 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 403.0,
+						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 0,
@@ -1170,47 +1210,19 @@
 				},
 				{
 					"buffer": 1,
-					"file": "/Users/krbalmryde/.bash_aliases",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 8037,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
-						},
-						"translation.x": 0.0,
-						"translation.y": 0.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
-					"type": "text"
-				},
-				{
-					"buffer": 2,
 					"file": "js/app/app.js",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8902,
+						"buffer_size": 9155,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								7108,
-								7108
+								8866,
+								8866
 							]
 						],
 						"settings":
@@ -1220,68 +1232,251 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1612.0,
+						"translation.y": 4040.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 1,
 					"type": "text"
 				},
 				{
-					"buffer": 3,
-					"file": "/Users/krbalmryde/.bash_functions",
+					"buffer": 2,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 22264,
+						"buffer_size": 4530,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								22056,
-								22056
+								3328,
+								3328
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage",
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
 							"tab_size": 4,
 							"translate_tabs_to_spaces": true
 						},
-						"translation.x": 81.0,
-						"translation.y": 12805.0,
+						"translation.x": 0.0,
+						"translation.y": 970.0,
 						"zoom_level": 1.0
 					},
 					"stack_index": 2,
 					"type": "text"
 				},
 				{
-					"buffer": 4,
-					"file": "/Users/krbalmryde/.bash_profile",
+					"buffer": 3,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5060,
+						"buffer_size": 4878,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								4661,
+								4661
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1909.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 4,
+					"type": "text"
+				},
+				{
+					"buffer": 4,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ExitState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 1159,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								888,
+								888
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
+					"stack_index": 7,
+					"type": "text"
+				},
+				{
+					"buffer": 5,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/FlightState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4371,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3375,
+								3375
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 5,
+					"type": "text"
+				},
+				{
+					"buffer": 6,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/ForageState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4236,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								3595,
+								3595
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 8,
+					"type": "text"
+				},
+				{
+					"buffer": 7,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/IdleState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 4624,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4490,
+								4490
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1647.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
+					"type": "text"
+				},
+				{
+					"buffer": 8,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/PursuitState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 5085,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								4822,
+								4766
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 1422.0,
+						"zoom_level": 1.0
+					},
 					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 9,
+					"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8462,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								2518,
+								2518
+							]
+						],
+						"settings":
+						{
+							"spell_check": false,
+							"syntax": "Packages/Unity3D/UnityC#.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 0.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 6,
 					"type": "text"
 				}
 			]
@@ -1345,7 +1540,15 @@
 		[
 			[
 				"app",
-				"js/app/app.js"
+				"interfaces/visualization/js/app/app.js"
+			],
+			[
+				"scum",
+				"Unity Scripts/EnvController/ScumController.cs"
+			],
+			[
+				"boun",
+				"interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/BoundaryController.cs"
 			],
 			[
 				"a",
@@ -1691,7 +1894,7 @@
 	"show_minimap": false,
 	"show_open_files": true,
 	"show_tabs": true,
-	"side_bar_visible": true,
+	"side_bar_visible": false,
 	"side_bar_width": 198.0,
 	"status_bar_visible": true,
 	"template_settings":
