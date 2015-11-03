@@ -15,6 +15,10 @@
 			"path": "unity/Wallcology-Simulator/Simulation/Assets/Scripts"
 		},
 		{
+			"name": "Unity Spider Scripts",
+			"path": "unity/Wallcology-Simulator/Simulation/Assets/Spider Crawler/Scipts"
+		},
+		{
 			"path": "/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/bots"
 		},
 		{

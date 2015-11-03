@@ -244,7 +244,7 @@ function ProgressUpdate(func, valid)
 
 function DebugMessage(string)
 {
-    // console.log(string);
+    console.log(string);
 }
 
 /*==============================================================================
@@ -293,6 +293,13 @@ function RequestVegetationPresence( uID )
 {
     var scaleLevel = lastState['populations'][wallscopeID-1][+uID];
     console.log("RequestVegetationPresence!", uID, scaleLevel );
+    var scaleString = scaleLevel = scaleLevel.toString();
+
+    if (scaleString.includes('e')) {
+        scaleLevel = 0.0001;
+        console.log("Made an adjustment!", scaleString);
+    };
+    console.log("\tRequestVegetationPresence!", uID, scaleLevel );
     unity3d.getUnity().SendMessage("WallScope", "ScaleVegetation", scaleLevel.toString() + " " + uID.toString());
 }
 
