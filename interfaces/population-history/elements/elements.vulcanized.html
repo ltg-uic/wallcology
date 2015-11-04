@@ -8848,6 +8848,8 @@ context. You should place this element as a child of `<body>` whenever possible.
       /**
        * Only runs if someone invokes the factory/constructor directly
        * e.g. `new Polymer.IronMeta()`
+       *
+       * @param {{type: (string|undefined), key: (string|undefined), value}=} config
        */
       factoryImpl: function(config) {
         if (config) {
@@ -9012,6 +9014,8 @@ context. You should place this element as a child of `<body>` whenever possible.
       /**
        * Actually a factory method, not a true constructor. Only runs if
        * someone invokes it directly (via `new Polymer.IronMeta()`);
+       *
+       * @param {{type: (string|undefined), key: (string|undefined)}=} config
        */
       factoryImpl: function(config) {
         if (config) {
@@ -9076,8 +9080,8 @@ context. You should place this element as a child of `<body>` whenever possible.
    *       <svg>
    *         <defs>
    *           <g id="shape">
-   *             <rect x="50" y="50" width="50" height="50" />
-   *             <circle cx="50" cy="50" r="50" />
+   *             <rect x="12" y="0" width="12" height="24" />
+   *             <circle cx="12" cy="12" r="12" />
    *           </g>
    *         </defs>
    *       </svg>
@@ -9117,7 +9121,7 @@ context. You should place this element as a child of `<body>` whenever possible.
       }
 
     },
-    
+
     attached: function() {
       this.style.display = 'none';
     },
@@ -11412,9 +11416,8 @@ if (!window.Promise) {
       // handled). In either case, we can disregard `event.path`.
 
       if (event.target === this) {
-        var focused = event.type === 'focus';
-        this._setFocused(focused);
-      } else if (!this.shadowRoot) {
+        this._setFocused(event.type === 'focus');
+      } else if (!this.shadowRoot && !this.isLightDescendant(event.target)) {
         this.fire(event.type, {sourceEvent: event}, {
           node: this,
           bubbles: event.bubbles,
@@ -11569,14 +11572,43 @@ if (!window.Promise) {
       this._setPressed(false);
     },
 
+    __isFocusedLightDescendant: function(target) {
+      var root = Polymer.dom(this).getOwnerRoot() || document;
+      var focusedElement = root.activeElement;
+
+      // TODO(noms): remove the `this !== target` check once polymer#2610 is fixed.
+      return this !== target && this.isLightDescendant(target) && target == focusedElement;
+    },
+
+    /**
+     * @param {!KeyboardEvent} event .
+     */
     _spaceKeyDownHandler: function(event) {
       var keyboardEvent = event.detail.keyboardEvent;
+      var target = Polymer.dom(keyboardEvent).localTarget;
+
+      // Ignore the event if this is coming from a focused light child, since that
+      // element will deal with it.
+      if (this.__isFocusedLightDescendant(target))
+        return;
+
       keyboardEvent.preventDefault();
       keyboardEvent.stopImmediatePropagation();
       this._setPressed(true);
     },
 
-    _spaceKeyUpHandler: function() {
+    /**
+     * @param {!KeyboardEvent} event .
+     */
+    _spaceKeyUpHandler: function(event) {
+      var keyboardEvent = event.detail.keyboardEvent;
+      var target = Polymer.dom(keyboardEvent).localTarget;
+
+      // Ignore the event if this is coming from a focused light child, since that
+      // element will deal with it.
+      if (this.__isFocusedLightDescendant(target))
+        return;
+
       if (this.pressed) {
         this._asyncClick();
       }
@@ -16804,7 +16836,7 @@ module.exports = function handleCurry(args, func, valueIndex) {
 
 },{}]},{},[1])(1)
 });</script>
-    <script charset="utf-8">(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.NUTELLA = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+<script charset="utf-8">(function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.NUTELLA = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /******************
  * nutella_lib.js *
  ******************/
@@ -27930,6 +27962,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <template id="layout">
         <style>
 
+
+            :host {
+
+            }
+
+
             :host {
 
             }
@@ -27948,17 +27986,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
 
             paper-button.colorful {
+                border: 1px solid #0e4f69 !important;
                 color: white;
-                background: #237599;
                 margin: 1px;
-                height: 40px;
-                width: 100px;
+                background-color: #135b78 !important;
+                /*background: #237599;*/
+                /*margin-top: 1px;*/
+                height: 33px;
+                width: 73px;
+                font-size: 12px;
                 text-transform: none;
             }
 
             .vcontainer {
-            @apply(--layout-horizontal);
-            @apply(--layout-center);
+                @apply(--layout-horizontal);
+                @apply(--layout-center);
             }
 
             paper-icon-button[toggles].selector {
@@ -28000,12 +28042,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 margin: 5px;
             }
 
+            .selector-container {
+                /*position: relative;*/
+                padding: 0px;
+
+                margin: 2px auto 2px auto;
+                /*background-color: #e3e3e3;*/
+                /*height: 60px;*/
+                -webkit-box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.3);
+                box-shadow: inset 0 3px 9px rgba(0, 0, 0, 0.3);
+                /* border: 1px solid #237599;*/
+            }
+
 
         </style>
 
-        <div class="horizontal layout">
+        <div class="selector-container horizontal layout">
             <div class="vcontainer spacer">
-                <paper-button class="colorful" on-tap="toggleTapped"><span>{{currentToggle.name}}</span>
+                <paper-button class="colorful" on-tap="toggleTapped" noink=""><span>{{currentToggle.name}}</span>
                 </paper-button>
             </div>
             <div id="key" class="spacer">
@@ -28017,464 +28071,464 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </template>
 </dom-module>
-    <script>
-        // element registration
-        Polymer({
-            is: 'wallcology-selector',
+<script>
+    // element registration
+    Polymer({
+        is: 'wallcology-selector',
 
-            // add properties and methods on the element's prototype
-            properties: {
-                // declare properties for the element's public API
-                selectedItems: {
-                    type: Array,
-                    notify: true,
-                    selectedItems: []
-                },
-                maxSelections: {
-                    type: Number,
-                    notify: true,
-                    value: 13
-                },
-                currentToggle: {
-                    type: Object,
-                    notify: true,
-                    value: {}
-                },
-                toggleSelectors: {
-                    type: Array,
-                    notify: true,
-                    value: [
-                        {
-                            'items': [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            'name': 'Habitat 1',
-                            'index': 0,
-                        },
-                        {
-                            'items': [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            'name': 'Habitat 2',
-                            'index': 1,
-                        },
-                        {
-                            'items': [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            'name': 'Habitat 3',
-                            'index': 2,
-                        },
-                        {
-                            'items': [
-                                0,
-                                1,
-                                2,
-                                3,
-                                4,
-                                5,
-                                6,
-                                7,
-                                8,
-                                9,
-                                10,
-                                11,
-                                12
-                            ],
-                            'name': 'Habitat 4',
-                            'index': 3,
-                        }
-                    ]
-                },
-                buttonSelectors: {
-                    type: Array,
-                    notify: true,
-                    value: [
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
-                            'index': 0,
-                            'color': '#FFC91B',
-                            'type': 'h'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
-                            'index': 1,
-                            'color': '#5A6372',
-                            'type': 'p'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
-                            'index': 2,
-                            'color': '#FFDD00',
-                            'type': 'h'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
-                            'index': 3,
-                            'color': '#2C4721',
-                            'type': 'p'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
-
-                            'index': 4,
-                            'color': '#502B6E',
-                            'type': 'r'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
-                            'index': 5,
-                            'color': '#99cc33',
-                            'type': 'r'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
-                            'index': 6,
-                            'color': '#8975B5',
-                            'type': 'h'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
-                            'index': 7,
-                            'color': '#FAAA19',
-                            'type': 'h'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
-                            'index': 8,
-                            'color': '#899C7C',
-                            'type': 'p'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
-                            'index': 9,
-                            'color': '#4AB6C8',
-                            'type': 'r'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
-                            'index': 10,
-                            'color': '#68734F',
-                            'type': 'r'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
-                            'index': 11,
-                            'color': '#FF5722',
-                            'type': 'r'
-                        },
-                        {
-                            'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
-                            'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
-                            'index': 12,
-                            'color': '#795548',
-                            'type': 'r'
-
-                        }
-                    ]
-                },
-                debug: {
-                    type: Boolean,
-                    value: false
-                }
+        // add properties and methods on the element's prototype
+        properties: {
+            // declare properties for the element's public API
+            selectedItems: {
+                type: Array,
+                notify: true,
+                selectedItems: []
             },
-            observers: [
-                'selectedItemsChanged(selectedItems.*)',
-                'toggleSelectorsChanged(toggleSelectors.*)',
-                'buttonSelectorsChanged(buttonSelectors.*)'
-            ],
-            selectedItemsChanged: function (changeRecord) {
-                if (this.debug) {
-                    console.log('selectedItemsChanged: ', changeRecord);
-                }
-                if (changeRecord.value !== null && this.selectedItems[0] !== null) {
-                }
+            maxSelections: {
+                type: Number,
+                notify: true,
+                value: 13
             },
-            buttonSelectorsChanged: function (changeRecord) {
-                if (this.debug) {
-                    console.log('buttonSelectorsChanged: ', changeRecord);
-                }
+            currentToggle: {
+                type: Object,
+                notify: true,
+                value: {}
+            },
+            toggleSelectors: {
+                type: Array,
+                notify: true,
+                value: [
+                    {
+                        'items': [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12
+                        ],
+                        'name': 'Habitat 1',
+                        'index': 0,
+                    },
+                    {
+                        'items': [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12
+                        ],
+                        'name': 'Habitat 2',
+                        'index': 1,
+                    },
+                    {
+                        'items': [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12
+                        ],
+                        'name': 'Habitat 3',
+                        'index': 2,
+                    },
+                    {
+                        'items': [
+                            0,
+                            1,
+                            2,
+                            3,
+                            4,
+                            5,
+                            6,
+                            7,
+                            8,
+                            9,
+                            10,
+                            11,
+                            12
+                        ],
+                        'name': 'Habitat 4',
+                        'index': 3,
+                    }
+                ]
+            },
+            buttonSelectors: {
+                type: Array,
+                notify: true,
+                value: [
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_00_0.svg',
+                        'index': 0,
+                        'color': '#FFC91B',
+                        'type': 'h'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_01_0.svg',
+                        'index': 1,
+                        'color': '#5A6372',
+                        'type': 'p'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_02_0.svg',
+                        'index': 2,
+                        'color': '#FFDD00',
+                        'type': 'h'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_03_0.svg',
+                        'index': 3,
+                        'color': '#2C4721',
+                        'type': 'p'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_04_0.svg',
 
-                if (changeRecord.path == 'buttonSelectors.splices') {
-                    // a user was added or removed
-                } else {
-                    // an individual user or its sub-properties changed
-                    // check "changeRecord.path" to determine what changed
-                }
+                        'index': 4,
+                        'color': '#502B6E',
+                        'type': 'r'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_05_0.svg',
+                        'index': 5,
+                        'color': '#99cc33',
+                        'type': 'r'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_06_0.svg',
+                        'index': 6,
+                        'color': '#8975B5',
+                        'type': 'h'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_07_0.svg',
+                        'index': 7,
+                        'color': '#FAAA19',
+                        'type': 'h'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_08_0.svg',
+                        'index': 8,
+                        'color': '#899C7C',
+                        'type': 'p'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_09_0.svg',
+                        'index': 9,
+                        'color': '#4AB6C8',
+                        'type': 'r'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/species_10_0.svg',
+                        'index': 10,
+                        'color': '#68734F',
+                        'type': 'r'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_temp_0.svg',
+                        'index': 11,
+                        'color': '#FF5722',
+                        'type': 'r'
+                    },
+                    {
+                        'highlightUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe.svg',
+                        'activeUrl': 'https://ltg.cs.uic.edu/WC/icons/env_pipe_0.svg',
+                        'index': 12,
+                        'color': '#795548',
+                        'type': 'r'
+
+                    }
+                ]
             },
-            toggleSelectorsChanged: function (changeRecord) {
-                if (this.debug) {
-                    console.log('toggleSelectorsChanged: ', changeRecord);
-                }
+            debug: {
+                type: Boolean,
+                value: false
+            }
+        },
+        observers: [
+            'selectedItemsChanged(selectedItems.*)',
+            'toggleSelectorsChanged(toggleSelectors.*)',
+            'buttonSelectorsChanged(buttonSelectors.*)'
+        ],
+        selectedItemsChanged: function (changeRecord) {
+            if (this.debug) {
+                console.log('selectedItemsChanged: ', changeRecord);
+            }
+            if (changeRecord.value !== null && this.selectedItems[0] !== null) {
+            }
+        },
+        buttonSelectorsChanged: function (changeRecord) {
+            if (this.debug) {
+                console.log('buttonSelectorsChanged: ', changeRecord);
+            }
+
+            if (changeRecord.path == 'buttonSelectors.splices') {
+                // a user was added or removed
+            } else {
+                // an individual user or its sub-properties changed
+                // check "changeRecord.path" to determine what changed
+            }
+        },
+        toggleSelectorsChanged: function (changeRecord) {
+            if (this.debug) {
+                console.log('toggleSelectorsChanged: ', changeRecord);
+            }
 //                console.log('toggle', changeRecord);
-                if (this.currentToggle.name === undefined && this.toggleSelectors[0] !== undefined) {
-                    for (var i = 0; i < this.toggleSelectors.length; i++) {
-                        if (this.toggleSelectors[i].index === -1) {
-                            this.currentToggle = this.toggleSelectors[i];
-                            this.disableButtons(undefined);
-                        }
+            if (this.currentToggle.name === undefined && this.toggleSelectors[0] !== undefined) {
+                for (var i = 0; i < this.toggleSelectors.length; i++) {
+                    if (this.toggleSelectors[i].index === -1) {
+                        this.currentToggle = this.toggleSelectors[i];
+                        this.disableButtons(undefined);
                     }
                 }
-            },
-            getAllButtons: function() {
-                return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-            },
-            toggleTapped: function (e) {
-                if (this.debug) {
-                    console.log('toggleTapped: ', e);
-                }
+            }
+        },
+        getAllButtons: function () {
+            return Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+        },
+        toggleTapped: function (e) {
+            if (this.debug) {
+                console.log('toggleTapped: ', e);
+            }
 //                console.log('toggle tapped');
-                if (this.currentToggle !== undefined) {
+            if (this.currentToggle !== undefined) {
 
 //                    if( this.currentToggle.index === -1) {
 //                        this.shift('toggleSelectors');
 //                    }
 
-                    //clear all the selections
-                    for (var i = 0; i < this.selectedItems.length; i++) {
-                        this.splice('selectedItems', i);
-                    }
-                    this.selectedItems = [];
-                    //clear highlighted
-                    this.inactivateButtons();
-
-
-                    var previousIndex = this.currentToggle.index;
-                    var newIndex = previousIndex + 1;
-
-                    var nextToggle = this.findToggle(newIndex);
-
-                    if (nextToggle !== undefined) {
-                        this.currentToggle = nextToggle;
-                        this.disableButtons(nextToggle.items);
-
-
-                    } else {
-                        //restarts numbering
-                        this.currentToggle = this.findToggle(0);
-                        this.disableButtons(this.findToggle(0).items);
-                    }
-
+                //clear all the selections
+                for (var i = 0; i < this.selectedItems.length; i++) {
+                    this.splice('selectedItems', i);
                 }
-            },
-            inactivateButtons: function () {
-                if (this.debug) {
-                    console.log('inactivateButtons: ');
-                }
-                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                if (buttons !== undefined && buttons[0] !== undefined) {
-                    for (var i = 0; i < buttons.length; i++) {
-                        var b = buttons[i];
-                        b.active = false;
-                        this.switchIconTo('active', i);
-                    }
-                }
-            },
-            disableButtons: function (buttonIndexes) {
-
-                if (buttonIndexes === undefined || buttonIndexes.length === 0) {
-
-
-                    //disable all array
-                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                    for (var i = 0; i < buttons.length; i++) {
-                        var b = buttons[i];
-                        this.switchIconTo('active', i);
-                        b.disabled = true;
-                    }
-                } else {
-//                    console.log('indexs to disable', buttonIndexes);
-                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                    for (var i = 0; i < buttons.length; i++) {
-                        var b = buttons[i];
-                        var doesContain = predicates.in(buttonIndexes);
-                        var bIndex = parseInt(b.id);
-                        var truth = doesContain(bIndex);
-                        if (truth) {
-                            b.disabled = false;
-                        } else {
-                            b.disabled = true;
-                        }
-
-                    }
-                }
-            },
-            buttonTapped: function (e) {
-                if (this.debug) {
-                    console.log('buttonTapped: ', e);
-                }
-                if (!this.hasMaxSelections()) {
-                    var selectedItem = e.model.item;
-
-                    if (e.currentTarget.active) {
-                        //make hightlighted
-
-                        var index = e.model.index;
-
-                        this.switchIconTo('highlighted', index);
-                        this.push('selectedItems', selectedItem);
-                    } else {
-                        //make active
-
-                        var index = e.model.index;
-
-                        this.switchIconTo('active', index);
-                        this.splice('selectedItems', this.selectedItems.indexOf(selectedItem), 1);
-                        console.log('debug');
-                    }
-                } else {
-                    console.log('TOO MANY SELECTIONS');
-                    e.currentTarget.active = false;
-                }
-            },
-            switchIconTo: function(state, index) {
-                if (this.debug) {
-                    console.log('switchIconTo: ', state, index);
-                }
-                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                var b = buttons[index];
-                if( state === 'active') {
-                    b.src = this.buttonSelectors[index].activeUrl;
-                } else if( state === 'highlighted' ) {
-                    b.src = this.buttonSelectors[index].highlightUrl;
-                }
-            },
-            switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
-                if (this.debug) {
-                    console.log('switchToggleAndButtonSelectors: ', toggleIndex, buttonIndexes);
-                }
-                //do the toggle
-                var toggle = this.findToggle(toggleIndex);
-                this.currentToggle = toggle;
-
-                this.disableButtons(this.currentToggle.items);
-
-                //do the buttons
                 this.selectedItems = [];
+                //clear highlighted
+                this.inactivateButtons();
 
-                if (buttonIndexes.length > 0) {
-                    var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                    for (var i = 0; i < buttons.length; i++) {
-                        var b = buttons[i];
-                        if (buttonIndexes.lastIndexOf(i) !== -1) {
-                            //b.disabled = false;
-                            b.active = true;
-                            this.push('selectedItems', this.buttonSelectors[i]);
-                        } else {
-                            b.active = false;
-                            //b.disabled = true;
-                        }
-                    }
+
+                var previousIndex = this.currentToggle.index;
+                var newIndex = previousIndex + 1;
+
+                var nextToggle = this.findToggle(newIndex);
+
+                if (nextToggle !== undefined) {
+                    this.currentToggle = nextToggle;
+                    this.disableButtons(nextToggle.items);
+
+
+                } else {
+                    //restarts numbering
+                    this.currentToggle = this.findToggle(0);
+                    this.disableButtons(this.findToggle(0).items);
                 }
-            },
-            hasMaxSelections: function () {
-                if (this.debug) {
-                    console.log('hasMaxSelections:');
-                }
-                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
-                var active = 0;
+
+            }
+        },
+        inactivateButtons: function () {
+            if (this.debug) {
+                console.log('inactivateButtons: ');
+            }
+            var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            if (buttons !== undefined && buttons[0] !== undefined) {
                 for (var i = 0; i < buttons.length; i++) {
                     var b = buttons[i];
-                    if (b.active) {
-                        active++;
-                    }
-                }
-
-                if (active > this.maxSelections) {
-                    console.log('max selections' + this.maxSelections);
-                    return true;
-                }
-                return false;
-            },
-            findToggle: function (index) {
-                if (this.debug) {
-                    console.log('findToggle:', index);
-                }
-                for (var i = 0; i < this.toggleSelectors.length; i++) {
-                    if (index === this.toggleSelectors[i].index) {
-                        return this.toggleSelectors[i];
-                    }
-                }
-                return undefined;
-            },
-            ready: function () {
-                this.currentToggle = {};
-                this.selectedItems = [];
-            },
-            created: function () {
-                if( this.debug ) {
-                    console.log(this.localName + '#' + this.id + ' was created');
-                }
-            },
-
-            attached: function () {
-                if( this.debug ) {
-                    console.log(this.localName + '#' + this.id + ' was attached');
-                }
-            },
-
-            detached: function () {
-                if( this.debug ) {
-                    console.log(this.localName + '#' + this.id + ' was detached');
-                }
-            },
-
-            attributeChanged: function (name, type) {
-                if( this.debug ) {
-                    console.log(this.localName + '#' + this.id + ' attribute ' + name +
-                            ' was changed to ' + this.getAttribute(name));
+                    b.active = false;
+                    this.switchIconTo('active', i);
                 }
             }
-        });
-    </script>
+        },
+        disableButtons: function (buttonIndexes) {
+
+            if (buttonIndexes === undefined || buttonIndexes.length === 0) {
+
+
+                //disable all array
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                for (var i = 0; i < buttons.length; i++) {
+                    var b = buttons[i];
+                    this.switchIconTo('active', i);
+                    b.disabled = true;
+                }
+            } else {
+//                    console.log('indexs to disable', buttonIndexes);
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                for (var i = 0; i < buttons.length; i++) {
+                    var b = buttons[i];
+                    var doesContain = predicates.in(buttonIndexes);
+                    var bIndex = parseInt(b.id);
+                    var truth = doesContain(bIndex);
+                    if (truth) {
+                        b.disabled = false;
+                    } else {
+                        b.disabled = true;
+                    }
+
+                }
+            }
+        },
+        buttonTapped: function (e) {
+            if (this.debug) {
+                console.log('buttonTapped: ', e);
+            }
+            if (!this.hasMaxSelections()) {
+                var selectedItem = e.model.item;
+
+                if (e.currentTarget.active) {
+                    //make hightlighted
+
+                    var index = e.model.index;
+
+                    this.switchIconTo('highlighted', index);
+                    this.push('selectedItems', selectedItem);
+                } else {
+                    //make active
+
+                    var index = e.model.index;
+
+                    this.switchIconTo('active', index);
+                    this.splice('selectedItems', this.selectedItems.indexOf(selectedItem), 1);
+                    console.log('debug');
+                }
+            } else {
+                console.log('TOO MANY SELECTIONS');
+                e.currentTarget.active = false;
+            }
+        },
+        switchIconTo: function (state, index) {
+            if (this.debug) {
+                console.log('switchIconTo: ', state, index);
+            }
+            var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            var b = buttons[index];
+            if (state === 'active') {
+                b.src = this.buttonSelectors[index].activeUrl;
+            } else if (state === 'highlighted') {
+                b.src = this.buttonSelectors[index].highlightUrl;
+            }
+        },
+        switchToggleAndButtonSelectors: function (toggleIndex, buttonIndexes) {
+            if (this.debug) {
+                console.log('switchToggleAndButtonSelectors: ', toggleIndex, buttonIndexes);
+            }
+            //do the toggle
+            var toggle = this.findToggle(toggleIndex);
+            this.currentToggle = toggle;
+
+            this.disableButtons(this.currentToggle.items);
+
+            //do the buttons
+            this.selectedItems = [];
+
+            if (buttonIndexes.length > 0) {
+                var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+                for (var i = 0; i < buttons.length; i++) {
+                    var b = buttons[i];
+                    if (buttonIndexes.lastIndexOf(i) !== -1) {
+                        //b.disabled = false;
+                        b.active = true;
+                        this.push('selectedItems', this.buttonSelectors[i]);
+                    } else {
+                        b.active = false;
+                        //b.disabled = true;
+                    }
+                }
+            }
+        },
+        hasMaxSelections: function () {
+            if (this.debug) {
+                console.log('hasMaxSelections:');
+            }
+            var buttons = Polymer.dom(this.$.key).querySelectorAll('paper-icon-button');
+            var active = 0;
+            for (var i = 0; i < buttons.length; i++) {
+                var b = buttons[i];
+                if (b.active) {
+                    active++;
+                }
+            }
+
+            if (active > this.maxSelections) {
+                console.log('max selections' + this.maxSelections);
+                return true;
+            }
+            return false;
+        },
+        findToggle: function (index) {
+            if (this.debug) {
+                console.log('findToggle:', index);
+            }
+            for (var i = 0; i < this.toggleSelectors.length; i++) {
+                if (index === this.toggleSelectors[i].index) {
+                    return this.toggleSelectors[i];
+                }
+            }
+            return undefined;
+        },
+        ready: function () {
+            this.currentToggle = {};
+            this.selectedItems = [];
+        },
+        created: function () {
+            if (this.debug) {
+                console.log(this.localName + '#' + this.id + ' was created');
+            }
+        },
+
+        attached: function () {
+            if (this.debug) {
+                console.log(this.localName + '#' + this.id + ' was attached');
+            }
+        },
+
+        detached: function () {
+            if (this.debug) {
+                console.log(this.localName + '#' + this.id + ' was detached');
+            }
+        },
+
+        attributeChanged: function (name, type) {
+            if (this.debug) {
+                console.log(this.localName + '#' + this.id + ' attribute ' + name +
+                        ' was changed to ' + this.getAttribute(name));
+            }
+        }
+    });
+</script>
 <dom-module id="nutella-connector" assetpath="../bower_components/nutella-connector/">
 
     <template>
@@ -29788,13 +29842,28 @@ paper-calendar {
       }
 
       paper-button.colorful {
+        border: 1px solid #0e4f69 !important;
         color: white;
-        background: #237599;
+        background-color: #135b78 !important;
+        /*background: #237599;*/
         margin-top: 3px;
         font-size: 12px;
       }
 
 
+      /*.habitat-selector {*/
+        /*border: 1px solid #0e4f69 !important;*/
+        /*!*left: -20px;*!*/
+        /*margin-top: 2px;*/
+        /*!*height: 40px;*!*/
+        /*background-color: #135b78 !important;*/
+        /*!*height: 40px;*!*/
+        /*!*width: 130px;*!*/
+        /*color: #fff;*/
+      /*}*/
+      /*.habitat-selector:hover {*/
+        /*background-color: #0d4d66 !important;*/
+      /*}*/
 
     </style>
 
@@ -29805,7 +29874,7 @@ paper-calendar {
       <div class="start">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful habitat-selector" noink=""><span>{{formatButtonSDate(startDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -29819,13 +29888,14 @@ paper-calendar {
 
           <div class="horizontal-section">
             <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}" max-selections="4" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
+
           </div>
         </div>
       </div>
       <div class="end">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction" noink=""><span>{{formatButtonEDate(endDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -30319,7 +30389,7 @@ paper-calendar {
           if (e.target.id === 'startDateDialog') {
             var ts = moment(this.tempStartDate).format().valueOf();
             var ee = moment(this.endDate).format().valueOf();
-            if ( ee > ts) {
+            if ( ee > ts || ts === ee) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
             } else {
@@ -30328,7 +30398,7 @@ paper-calendar {
           } else if (e.target.id === 'endDateDialog') {
             var te = moment(this.tempEndDate).format().valueOf();
             var ss = moment(this.startDate).format().valueOf();
-            if ( te > ss ) {
+            if ( te > ss || te === ss ) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
             } else {

@@ -71,13 +71,28 @@
       }
 
       paper-button.colorful {
+        border: 1px solid #0e4f69 !important;
         color: white;
-        background: #237599;
+        background-color: #135b78 !important;
+        /*background: #237599;*/
         margin-top: 3px;
         font-size: 12px;
       }
 
 
+      /*.habitat-selector {*/
+        /*border: 1px solid #0e4f69 !important;*/
+        /*!*left: -20px;*!*/
+        /*margin-top: 2px;*/
+        /*!*height: 40px;*!*/
+        /*background-color: #135b78 !important;*/
+        /*!*height: 40px;*!*/
+        /*!*width: 130px;*!*/
+        /*color: #fff;*/
+      /*}*/
+      /*.habitat-selector:hover {*/
+        /*background-color: #0d4d66 !important;*/
+      /*}*/
 
     </style>
 
@@ -90,7 +105,7 @@
       <div class="start">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful habitat-selector" noink><span>{{formatButtonSDate(startDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -106,13 +121,14 @@
             <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
                                  max-selections="4" selected-items="{{selectedItems}}"
                                  current-toggle="{{currentToggle}}"></wallcology-selector>
+
           </div>
         </div>
       </div>
       <div class="end">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction" noink><span>{{formatButtonEDate(endDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -611,7 +627,7 @@
           if (e.target.id === 'startDateDialog') {
             var ts = moment(this.tempStartDate).format().valueOf();
             var ee = moment(this.endDate).format().valueOf();
-            if ( ee > ts) {
+            if ( ee > ts || ts === ee) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
             } else {
@@ -620,7 +636,7 @@
           } else if (e.target.id === 'endDateDialog') {
             var te = moment(this.tempEndDate).format().valueOf();
             var ss = moment(this.startDate).format().valueOf();
-            if ( te > ss ) {
+            if ( te > ss || te === ss ) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
             } else {
