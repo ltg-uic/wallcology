@@ -1,10 +1,9 @@
-
 <!DOCTYPE html>
 <html>
 <head>
 	<meta charset="utf-8">
 	<!-- Your interface name here  MY CHANGE HERE-->
-	<title>WallCologyModel Editor</title>
+	<title>WallCology Model Editor</title>
 	<!-- The description of this interfaces here -->
 	<meta name="description" content="">
 	<!-- Your CSS here -->
@@ -26,39 +25,112 @@
 	// Get an instance of nutella.
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
-	</script>
-
-Ecosystem: 
-
-<input type="radio" name="ecosystem" id="e0" value="0"> Pipe collapse
-<input type="radio" name="ecosystem" id="e1" value="1"> Resource invasion
-<input type="radio" name="ecosystem" id="e2" value="2"> Predator invasion
-<input type="radio" name="ecosystem" id="e3" value="3"> Some like it hot<br>
-
-
-<script>
-	
 	var model;
+	var selectedEcosystem = 0;
+
+	var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.svg', 
+ 					'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+ 					'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+	 			 ];
+
+	var confirmer = 'Are you sure?';
 
 	nutella.net.request('read_model', {}, function(message) {
-			model=message;
-			console.log(Number(model['K'][0][0]));			
-			drawModel();
-			// nutella.net.publish('write_model',model);
-		});
+		model=message;
+		document.write('<form name=firstForm>Ecosystem:<input type="radio" checked name="ecosystem" id="e0" value="0" onClick="selectedEcosystem=0;document.modelForm.reset();loadEcosystem(0);"> 1. Pipe collapse  <input type="radio" name="ecosystem" id="e1" value="1" onClick="selectedEcosystem=1;document.modelForm.reset();loadEcosystem(1);"> 2. Resource invasion&nbsp<input type="radio" name="ecosystem" id="e2" value="2" onClick="selectedEcosystem=2;document.modelForm.reset();loadEcosystem(2);"> 3. Predator invasion&nbsp<input type="radio" name="ecosystem" id="e3" value="3" onClick="selectedEcosystem=3;document.modelForm.reset();loadEcosystem(3);"> 4. Some like it hot</form><br>');
+		document.write('<button value="SAVE" onClick="if(confirm(confirmer))saveEcosystem(selectedEcosystem);"> Save </button><form name="modelForm">');
+		drawTable();
+		loadEcosystem(0);
+});
+
+
+// throw new Error("Something went badly wrong!");
+
+	function loadEcosystem(ecosystem) {
+
+		loadRow(ecosystem, 'resourceIndex');
+		loadRow(ecosystem, 'herbivoreIndex');
+		loadRow(ecosystem, 'predatorIndex');
+		loadRow(ecosystem, 'r');
+		loadRow(ecosystem, 'K');
+		loadMatrix(ecosystem, 'alpha', 'resourceIndex');
+		loadRow(ecosystem, 'b');
+		loadMatrix(ecosystem, 'a', 'resourceIndex');
+		loadRow(ecosystem, 'q');
+		loadRow(ecosystem, 'd');
+		loadRow(ecosystem, 'beta');
+		loadRow(ecosystem, 's');
+		loadRow(ecosystem, 'delta');
+		loadMatrix(ecosystem, 'm', 'herbivoreIndex');
+	}
+	
+		function saveEcosystem(ecosystem) {
+
+		saveRow(ecosystem, 'resourceIndex');
+		saveRow(ecosystem, 'herbivoreIndex');
+		saveRow(ecosystem, 'predatorIndex');
+		saveRow(ecosystem, 'r');
+		saveRow(ecosystem, 'K');
+		saveMatrix(ecosystem, 'alpha');
+		saveRow(ecosystem, 'b');
+		saveMatrix(ecosystem, 'a');
+		saveRow(ecosystem, 'q');
+		saveRow(ecosystem, 'd');
+		saveRow(ecosystem, 'beta');
+		saveRow(ecosystem, 's');
+		saveRow(ecosystem, 'delta');
+		saveMatrix(ecosystem, 'm');
+		nutella.net.publish('write_model',model);
+
+
+	}
+
+
+	function loadRow(ecosystem, variable) {
+		for (var col=0; col<model[variable][ecosystem].length; col++)
+				document.getElementById(variable + '.' + col).value = model[variable][ecosystem][col];
+	}
+
+	function saveRow(ecosystem, variable) {
+		for (var col=0; col<model[variable][ecosystem].length; col++)
+				model[variable][ecosystem][col] = document.getElementById(variable + '.' + col).value;
+	}
+
+	function loadMatrix(ecosystem, variable, typo) {
+		for (var row=0; row<model[variable][ecosystem].length; row++){
+					console.log(model[typo]);
+					document.getElementById(variable + '.P.' + row).src = images[model[typo][ecosystem][row]];
+			// index = model['resourceIndex'][ecosystem][row]
+
+			// imageURL = 
+
+			// document.getElementById(variable + '.P.' + row).src=
+			for (var col=0; col<model[variable][ecosystem][row].length; col++)
+				document.getElementById(variable + '.' + row + '.' + col).value = model[variable][ecosystem][row][col];
+			
+		}
+	}
+
+	function saveMatrix(ecosystem, variable) {
+		for (var row=0; row<model[variable][ecosystem].length; row++){
+			for (var col=0; col<model[variable][ecosystem][row].length; col++)
+				model[variable][ecosystem][row][col] = Number(document.getElementById(variable + '.' + row + '.' + col).value);
+		};
+	}
 
 
 
-function getModel(){};
 
 
-function selectedEcosystem() {
-	return (document.getElementById('ecosystem').selected.value);
-}
 
-function onChangeModel() {saveModel();}
-
-function saveModel() {}
 
 
 function drawButtons() {
@@ -66,75 +138,69 @@ function drawButtons() {
 }
 
 
-function drawModel() {
+function drawTable() {
 	drawHeader();
+	drawRow("resourceIndex"); drawBlankRow();
+	drawRow("herbivoreIndex"); drawBlankRow();
+	drawRow("predatorIndex"); drawBlankRow();
 	drawRow("r"); drawBlankRow();
-	// drawRow("K"); drawBlankRow();
-	// drawMatrix("alpha"); drawBlankRow();
-	// drawRow("b"); drawBlankRow();
-	// drawMatrix("a"); drawBlankRow();
-	// drawRow("q"); drawBlankRow();
-	// drawRow("d"); drawBlankRow();
-	// drawRow("beta"); drawBlankRow();
-	// drawRow("S"); drawBlankRow();
-	// drawRow("delta"); drawBlankRow();
-	// drawMatrix("m"); drawBlankRow();
+	drawRow("K"); drawBlankRow();
+	drawMatrix("alpha"); drawBlankRow();
+	drawRow("b"); drawBlankRow();
+	drawMatrix("a"); drawBlankRow();
+	drawRow("q"); drawBlankRow();
+	drawRow("d"); drawBlankRow();
+	drawRow("beta"); drawBlankRow();
+	drawRow("s"); drawBlankRow();
+	drawRow("delta"); drawBlankRow();
+	drawMatrix("m"); drawBlankRow();
 	drawFooter();
 }
 
-function drawFooter() { document.write("</TABLE>");}
+function drawFooter() { 
+	document.write("</TABLE><br></form>");
+}
+
 
 function drawHeader() {
 
-	document.write("<TABLE border>");
+	document.write("<TABLE border=0>");
 }
 
 function drawRow (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
-	document.write('<tr><td>' + parameter + '</td><td>                 </td>');
-	for (col=0;col<4;col++) document.write ('<td> <input type="text" id="' + parameter + '.' + col + '" size=6 value="' + model[selectedEcosystem()][parameter][col] + '"></td>');
+	document.write('<tr><td>' + parameter + '</td><td></td>');
+	for (col=0;col<4;col++)
+		document.write ('<td> <input type="text" id="' + parameter + '.' + col + '" size=6></td>');
 	document.write('</tr>');
 }
 
 function drawBlankRow() {
-	document.write('<tr><td>&nbsp</td></tr>');
+	// document.write('<tr><td>&nbsp</td></tr>');
 }
 
 function drawMatrix (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
 	for (var row=0; row<4; row++) {
-		document.write('<tr><td>' + parameter + '</td><td>                 </td>');
-		for (col=0;col<4;col++) document.write ('<td> <input type="text" id="p.' + parameter + '.' + row + '.' + col + '" size=6 value="' + model[selectedEcosystem()][parameter][row][col] + '"></td>');
+		if (row == 0) {
+			document.write('<tr><td>' + parameter + '</td>');
+		} else {
+			document.write('<tr><td>' + ' ' + '</td>');
+		}
+		document.write('<td><IMG ID="' + parameter + '.P.' + row + '" SRC="blank.png" HEIGHT="25" WIDTH="25"></td>');
+		for (col=0;col<4;col++) 
+			document.write ('<td> <input type="text" id="' + parameter + '.' + row + '.' + col + '" size=6></td>');
 		document.write('</tr>');
 	}
 }
 
-function test() {
-		nutella.net.request('read_model', {}, function(response) {
-			model=response;
-			nutella.net.publish('write_model',model);
-		});
-	}
+// value="' + model[selectedEcosystem()][parameter][row][col]
 
+// function test() {
+// 		nutella.net.request('read_model', {}, function(response) {
+// 			model=response;
+// 			nutella.net.publish('write_model',model);
+// 		});
+// 	}
 
-
-
-
-//const resourceIndex = [ [4,10,9], 
-//                        [4,5], 
-//                        [10,5], 
-//                        [4,10,5] 
-//                      ] ; // which indexes in the species array correspond to resources
-//
-//const herbivoreIndex =  [   [6,2], 
-//                            [6,7,0], 
- //                           [6,2], 
-//                            [7,0] 
-//                        ]; // etc. ORDER MATTERS in all 3, because constants above are based on them
-//
-//const predatorIndex = [ [1,8], 
-//                        [8], 
-//                        [1,3], 
-//                        [8] 
-//                      ]; // ditto
 </script>
 
 

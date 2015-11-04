@@ -93,6 +93,25 @@ function init() {
             return(model);           
         });
 
+    nutella.net.subscribe('write_model', function(message, from) {
+        console.log(message['K']);
+        model['resourceIndex']=message['resourceIndex'];
+        model['herbivoreIndex']=message['herbivoreIndex'];
+        model['predatorIndex']=message['predatorIndex'];
+        model['r']=message['r'];
+        model['K']=message['K'];
+        model['alpha']=message['alpha'];
+        model['b']=message['b'];
+        model['a']=message['a'];
+        model['q']=message['q'];
+        model['d']=message['d'];
+        model['beta']=message['beta'];
+        model['s']=message['s'];
+        model['delta']=message['delta'];
+        model['m']=message['m'];
+        model.save();
+    });
+
     // channel: species_event
     //
     //  message = {habitat: 0, species: 3, action: <event>} <event> := "remove" | "increase" | "decrease" | "insert"
@@ -131,6 +150,7 @@ function init() {
                         model['defaultPopulations'][model['species'][message.species]['trophicLevel']];
             break;
         };
+        broadcastCount = 0;
         cycleStateOnce();
     });
 
@@ -164,6 +184,7 @@ function init() {
                 }
                 break;
             };
+            broadcastCount = 0;
             cycleStateOnce();
         });
     });
@@ -186,7 +207,7 @@ function cycleStateOnce () {
     var tempState; 
     // convert to History population magnitudes and report to history bot
     // but only every frequencyOfUpdate * BroadcastFrequency milliseconds
-    for (var h=0; h<4; h++) adjustForPressures(h);
+    for (var h=0; h<4; h++) adjustForPressures(h); // 4 =number of ecosystems
 
 
     if (broadcastCount == 0) {
