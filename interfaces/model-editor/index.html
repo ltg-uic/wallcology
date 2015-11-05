@@ -26,6 +26,7 @@
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
 	var model;
+	var COLS;
 	var selectedEcosystem = 0;
 
 	var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.svg', 
@@ -57,9 +58,9 @@
 	function loadEcosystem(ecosystem) {
 
 		// loadGraphicRow(ecosystem, 'resourceIndex','resourceIndex');
+		COLS=4;
 		loadRow(ecosystem, 'resourceIndex');
 		loadRow(ecosystem, 'herbivoreIndex');
-		loadRow(ecosystem, 'predatorIndex');
 		loadRow(ecosystem, 'r');
 		loadRow(ecosystem, 'K');
 		loadGraphicRow(ecosystem, 'resourceIndex','alpha');
@@ -69,18 +70,19 @@
 		loadMatrix(ecosystem, 'a', 'resourceIndex');
 		loadRow(ecosystem, 'q');
 		loadRow(ecosystem, 'd');
+		COLS=3;
+		loadGraphicRow(ecosystem, 'predatorIndex','m');
+		loadRow(ecosystem, 'predatorIndex');
+		loadRow(ecosystem, 'delta');
 		loadRow(ecosystem, 'beta');
 		loadRow(ecosystem, 's');
-		loadRow(ecosystem, 'delta');
-		loadGraphicRow(ecosystem, 'predatorIndex','m');
 		loadMatrix(ecosystem, 'm', 'herbivoreIndex');
 	}
 	
 		function saveEcosystem(ecosystem) {
-
+		COLS=4;
 		saveRow(ecosystem, 'resourceIndex');
 		saveRow(ecosystem, 'herbivoreIndex');
-		saveRow(ecosystem, 'predatorIndex');
 		saveRow(ecosystem, 'r');
 		saveRow(ecosystem, 'K');
 		saveMatrix(ecosystem, 'alpha');
@@ -88,10 +90,13 @@
 		saveMatrix(ecosystem, 'a');
 		saveRow(ecosystem, 'q');
 		saveRow(ecosystem, 'd');
+		COLS=3;
+		saveRow(ecosystem, 'predatorIndex');
+		saveRow(ecosystem, 'delta');
 		saveRow(ecosystem, 'beta');
 		saveRow(ecosystem, 's');
-		saveRow(ecosystem, 'delta');
 		saveMatrix(ecosystem, 'm');
+		console.log(model);
 		nutella.net.publish('write_model',model);
 
 
@@ -99,12 +104,12 @@
 
 
 	function loadRow(ecosystem, variable) {
-		for (var col=0; col<model[variable][ecosystem].length; col++)
+		for (var col=0; col<COLS; col++)
 				document.getElementById(variable + '.' + col).value = model[variable][ecosystem][col];
 	}
 
 	function loadGraphicRow(ecosystem, variable, matrix) {
-		for (var col=0; col<model[variable][ecosystem].length; col++){
+		for (var col=0; col<COLS; col++){
 				console.log(model[variable][ecosystem]);
 				document.getElementById(matrix + '.Q.' + col).src = images[model[variable][ecosystem][col]];
 				var descriptor = model[variable][ecosystem][col];
@@ -124,13 +129,15 @@
 
 
 	function saveRow(ecosystem, variable) {
-		for (var col=0; col<4; col++)
-			if (document.getElementById(variable + '.' + col).value != '')
-				model[variable][ecosystem][col] = document.getElementById(variable + '.' + col).value;
+		console.log(ecosystem);
+		console.log(variable);
+
+		for (var col=0; col<COLS; col++) {console.log(col);
+				model[variable][ecosystem][col] = document.getElementById(variable + '.' + col).value;}
 	}
 
 	function loadMatrix(ecosystem, variable, matrix) {
-		for (var row=0; row<model[matrix][ecosystem].length; row++){
+		for (var row=0; row<4; row++){
 //					console.log(model[matrix]);
 			document.getElementById(variable + '.P.' + row).src = images[model[matrix][ecosystem][row]];
 			var descriptor = model[matrix][ecosystem][row];
@@ -148,15 +155,15 @@
 
 
 
-			for (var col=0; col<model[variable][ecosystem][row].length; col++)
+			for (var col=0; col<COLS; col++)
 				document.getElementById(variable + '.' + row + '.' + col).value = model[variable][ecosystem][row][col];
 			
 		}
 	}
 
 	function saveMatrix(ecosystem, variable) {
-		for (var row=0; row<model[variable][ecosystem].length; row++){
-			for (var col=0; col<model[variable][ecosystem][row].length; col++)
+		for (var row=0; row<4; row++){
+			for (var col=0; col<COLS; col++)
 				model[variable][ecosystem][row][col] = Number(document.getElementById(variable + '.' + row + '.' + col).value);
 		};
 	}
@@ -172,9 +179,11 @@ function drawButtons() {
 	document.write('<input type=button id="revert" value="revert" onClick="model=getModel();") Revert </input><input type=button id="save" value="save" onClick="save();") Save </input>');
 }
 
+var COLS;
 
 function drawTable() {
 	drawHeader();
+	COLS=4; 
 	drawGraphicRow("resourceIndex","alpha");
 	drawRow("resourceIndex"); drawBlankRow();
 	drawRow("r"); drawBlankRow();
@@ -186,6 +195,7 @@ function drawTable() {
 	drawRow("b"); drawBlankRow();
 	drawRow("d"); drawBlankRow();
 	drawMatrix("a"); drawBlankRow();
+	COLS=3;
 	drawGraphicRow("predatorIndex","m");
 	drawRow("predatorIndex"); drawBlankRow();
 	drawRow("delta"); drawBlankRow();
@@ -207,14 +217,14 @@ function drawHeader() {
 
 function drawRow (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
 	document.write('<tr><td>' + parameter + '</td><td></td>');
-	for (col=0;col<4;col++)
+	for (col=0;col<COLS;col++)
 		document.write ('<td> <input type="text" size=8 id="' + parameter + '.' + col + '" size=6></td>');
 	document.write('</tr>');
 }
 
 function drawGraphicRow (parameter,matrix) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
 	document.write('<tr><td>' + ' ' + '</td><td></td>');
-	for (col=0;col<4;col++) {
+	for (col=0;col<COLS;col++) {
 		document.write ('<td><IMG ID="' + matrix + '.Q.' + col + '" SRC="blank.png" HEIGHT="25" WIDTH="25">');
 		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + matrix + '.R.' + col + '"></td>');
 	}
@@ -235,7 +245,7 @@ function drawMatrix (parameter) {  // parameter = 0,1,2,3. it's the model parame
 		}
 		document.write('<td><IMG ID="' + parameter + '.P.' + row + '" SRC="blank.png" HEIGHT="25" WIDTH="25">');
 		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + parameter + '.S.' + row + '"></td>');
-		for (col=0;col<4;col++) 
+		for (col=0;col<COLS;col++) 
 			document.write ('<td> <input type="text" size=8 id="' + parameter + '.' + row + '.' + col + '" size=6></td>');
 		document.write('</tr>');
 	}
