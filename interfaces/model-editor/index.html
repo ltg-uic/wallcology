@@ -56,19 +56,23 @@
 
 	function loadEcosystem(ecosystem) {
 
+		// loadGraphicRow(ecosystem, 'resourceIndex','resourceIndex');
 		loadRow(ecosystem, 'resourceIndex');
 		loadRow(ecosystem, 'herbivoreIndex');
 		loadRow(ecosystem, 'predatorIndex');
 		loadRow(ecosystem, 'r');
 		loadRow(ecosystem, 'K');
+		loadGraphicRow(ecosystem, 'resourceIndex','alpha');
 		loadMatrix(ecosystem, 'alpha', 'resourceIndex');
 		loadRow(ecosystem, 'b');
+		loadGraphicRow(ecosystem, 'herbivoreIndex','a');
 		loadMatrix(ecosystem, 'a', 'resourceIndex');
 		loadRow(ecosystem, 'q');
 		loadRow(ecosystem, 'd');
 		loadRow(ecosystem, 'beta');
 		loadRow(ecosystem, 's');
 		loadRow(ecosystem, 'delta');
+		loadGraphicRow(ecosystem, 'predatorIndex','m');
 		loadMatrix(ecosystem, 'm', 'herbivoreIndex');
 	}
 	
@@ -99,20 +103,51 @@
 				document.getElementById(variable + '.' + col).value = model[variable][ecosystem][col];
 	}
 
+	function loadGraphicRow(ecosystem, variable, matrix) {
+		for (var col=0; col<model[variable][ecosystem].length; col++){
+				console.log(model[variable][ecosystem]);
+				document.getElementById(matrix + '.Q.' + col).src = images[model[variable][ecosystem][col]];
+				var descriptor = model[variable][ecosystem][col];
+				var h = model['species'][model[variable][ecosystem][col]]['habitat'];
+				if (h == 'pipe') descriptor = descriptor + 'P';
+				if (h == 'brick') descriptor = descriptor + 'B';
+				if (h == 'generalist') descriptor = descriptor + 'G';
+				var t = model['species'][model[variable][ecosystem][col]]['temperature'];
+				if (t == 'lowTemp') descriptor = descriptor + 'L';
+				if (t == 'mediumTemp') descriptor = descriptor + 'M';
+				if (t == 'highTemp') descriptor = descriptor + 'H';
+				var r = model['species'][model[variable][ecosystem][col]]['resistance'];
+				if (r == 'yes') descriptor = descriptor + '*';
+				document.getElementById(matrix + '.R.' + col).value = descriptor;
+		}
+	}
+
+
 	function saveRow(ecosystem, variable) {
-		for (var col=0; col<model[variable][ecosystem].length; col++)
+		for (var col=0; col<4; col++)
+			if (document.getElementById(variable + '.' + col).value != '')
 				model[variable][ecosystem][col] = document.getElementById(variable + '.' + col).value;
 	}
 
-	function loadMatrix(ecosystem, variable, typo) {
-		for (var row=0; row<model[variable][ecosystem].length; row++){
-					console.log(model[typo]);
-					document.getElementById(variable + '.P.' + row).src = images[model[typo][ecosystem][row]];
-			// index = model['resourceIndex'][ecosystem][row]
+	function loadMatrix(ecosystem, variable, matrix) {
+		for (var row=0; row<model[matrix][ecosystem].length; row++){
+//					console.log(model[matrix]);
+			document.getElementById(variable + '.P.' + row).src = images[model[matrix][ecosystem][row]];
+			var descriptor = model[matrix][ecosystem][row];
+			var h = model['species'][model[matrix][ecosystem][row]]['habitat'];
+			if (h == 'pipe') descriptor = descriptor + 'P';
+			if (h == 'brick') descriptor = descriptor + 'B';
+			if (h == 'generalist') descriptor = descriptor + 'G';
+			var t = model['species'][model[matrix][ecosystem][row]]['temperature'];
+			if (t == 'lowTemp') descriptor = descriptor + 'L';
+			if (t == 'mediumTemp') descriptor = descriptor + 'M';
+			if (t == 'highTemp') descriptor = descriptor + 'H';
+			var r = model['species'][model[matrix][ecosystem][row]]['resistance'];
+			if (r == 'yes') descriptor = descriptor + '*';
+			document.getElementById(variable + '.S.' + row).value = descriptor;
 
-			// imageURL = 
 
-			// document.getElementById(variable + '.P.' + row).src=
+
 			for (var col=0; col<model[variable][ecosystem][row].length; col++)
 				document.getElementById(variable + '.' + row + '.' + col).value = model[variable][ecosystem][row][col];
 			
@@ -140,19 +175,22 @@ function drawButtons() {
 
 function drawTable() {
 	drawHeader();
+	drawGraphicRow("resourceIndex","alpha");
 	drawRow("resourceIndex"); drawBlankRow();
-	drawRow("herbivoreIndex"); drawBlankRow();
-	drawRow("predatorIndex"); drawBlankRow();
 	drawRow("r"); drawBlankRow();
 	drawRow("K"); drawBlankRow();
 	drawMatrix("alpha"); drawBlankRow();
-	drawRow("b"); drawBlankRow();
-	drawMatrix("a"); drawBlankRow();
+	drawGraphicRow("herbivoreIndex","a");
+	drawRow("herbivoreIndex"); drawBlankRow();
 	drawRow("q"); drawBlankRow();
+	drawRow("b"); drawBlankRow();
 	drawRow("d"); drawBlankRow();
+	drawMatrix("a"); drawBlankRow();
+	drawGraphicRow("predatorIndex","m");
+	drawRow("predatorIndex"); drawBlankRow();
+	drawRow("delta"); drawBlankRow();
 	drawRow("beta"); drawBlankRow();
 	drawRow("s"); drawBlankRow();
-	drawRow("delta"); drawBlankRow();
 	drawMatrix("m"); drawBlankRow();
 	drawFooter();
 }
@@ -170,9 +208,19 @@ function drawHeader() {
 function drawRow (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
 	document.write('<tr><td>' + parameter + '</td><td></td>');
 	for (col=0;col<4;col++)
-		document.write ('<td> <input type="text" id="' + parameter + '.' + col + '" size=6></td>');
+		document.write ('<td> <input type="text" size=8 id="' + parameter + '.' + col + '" size=6></td>');
 	document.write('</tr>');
 }
+
+function drawGraphicRow (parameter,matrix) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
+	document.write('<tr><td>' + ' ' + '</td><td></td>');
+	for (col=0;col<4;col++) {
+		document.write ('<td><IMG ID="' + matrix + '.Q.' + col + '" SRC="blank.png" HEIGHT="25" WIDTH="25">');
+		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + matrix + '.R.' + col + '"></td>');
+	}
+	document.write('</tr>');
+}
+
 
 function drawBlankRow() {
 	// document.write('<tr><td>&nbsp</td></tr>');
@@ -185,9 +233,10 @@ function drawMatrix (parameter) {  // parameter = 0,1,2,3. it's the model parame
 		} else {
 			document.write('<tr><td>' + ' ' + '</td>');
 		}
-		document.write('<td><IMG ID="' + parameter + '.P.' + row + '" SRC="blank.png" HEIGHT="25" WIDTH="25"></td>');
+		document.write('<td><IMG ID="' + parameter + '.P.' + row + '" SRC="blank.png" HEIGHT="25" WIDTH="25">');
+		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + parameter + '.S.' + row + '"></td>');
 		for (col=0;col<4;col++) 
-			document.write ('<td> <input type="text" id="' + parameter + '.' + row + '.' + col + '" size=6></td>');
+			document.write ('<td> <input type="text" size=8 id="' + parameter + '.' + row + '.' + col + '" size=6></td>');
 		document.write('</tr>');
 	}
 }
