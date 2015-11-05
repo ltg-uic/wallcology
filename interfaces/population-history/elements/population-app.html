@@ -71,13 +71,28 @@
       }
 
       paper-button.colorful {
+        border: 1px solid #0e4f69 !important;
         color: white;
-        background: #237599;
+        background-color: #135b78 !important;
+        /*background: #237599;*/
         margin-top: 3px;
         font-size: 12px;
       }
 
 
+      /*.habitat-selector {*/
+        /*border: 1px solid #0e4f69 !important;*/
+        /*!*left: -20px;*!*/
+        /*margin-top: 2px;*/
+        /*!*height: 40px;*!*/
+        /*background-color: #135b78 !important;*/
+        /*!*height: 40px;*!*/
+        /*!*width: 130px;*!*/
+        /*color: #fff;*/
+      /*}*/
+      /*.habitat-selector:hover {*/
+        /*background-color: #0d4d66 !important;*/
+      /*}*/
 
     </style>
 
@@ -90,7 +105,7 @@
       <div class="start">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful"><span>{{formatButtonSDate(startDate)}}</span>
+            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful habitat-selector" noink><span>{{formatButtonSDate(startDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -106,13 +121,14 @@
             <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}"
                                  max-selections="4" selected-items="{{selectedItems}}"
                                  current-toggle="{{currentToggle}}"></wallcology-selector>
+
           </div>
         </div>
       </div>
       <div class="end">
         <div class="vertical-section-container">
           <div class="vertical-section">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction"><span>{{formatButtonEDate(endDate)}}</span>
+            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction" noink><span>{{formatButtonEDate(endDate)}}</span>
             </paper-button>
           </div>
           <div class="vertical-section center">
@@ -611,7 +627,7 @@
           if (e.target.id === 'startDateDialog') {
             var ts = moment(this.tempStartDate).format().valueOf();
             var ee = moment(this.endDate).format().valueOf();
-            if ( ee > ts) {
+            if ( ee > ts || ts === ee) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
             } else {
@@ -620,7 +636,7 @@
           } else if (e.target.id === 'endDateDialog') {
             var te = moment(this.tempEndDate).format().valueOf();
             var ss = moment(this.startDate).format().valueOf();
-            if ( te > ss ) {
+            if ( te > ss || te === ss ) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
             } else {
@@ -827,41 +843,6 @@
 
               });
 
-
-
-//              for (var i2 = 0; i2 < r.length; i2++) {
-//                var d2 = 'Date(' + moment(r[i2].timestamp).valueOf() + ')';
-//                t.push([d2, r[i2].population, sSpecies.color]);
-//              }
-//
-//              var hisMax = me.findMaxValue(t);
-//              me.setGraphMax(sSpecies, hisMax);
-//
-//              var foundHISGraphs = me.graphs.filter(function (el) {
-//                return (el.index === sSpecies.index);
-//              });
-//
-//              if (foundHISGraphs.length > 0) {
-//
-//                var foundHisGraph = foundHISGraphs[0];
-//
-//                me.recomputeScale(foundHisGraph);
-//
-//
-//                foundHisGraph.data = t;
-//                var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
-//                //el.options = me.chartOptions;
-//                me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
-//                me.redrawChart(foundHisGraph);
-//
-//
-//              } else {
-//                //we have a new one
-//                hisMax = me.findMaxValue(t);
-//                me.setGraphMax(sSpecies, hisMax);
-//                me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
-//
-//              }
             }
 
 
@@ -1088,6 +1069,12 @@
             else if(dataPointMax === 1){
               tickMax = 1.0;
               someGraph.options.vAxis.format = '0.0';
+            }
+
+            if( someGraph.type === 'r') {
+//              tickMax = tickMax * 100;
+//              dataPointMax = dataPointMax * 100;
+              someGraph.options.vAxis.format = '#%';
             }
             someGraph.options.vAxis.maxValue = dataPointMax;
             someGraph.options.vAxis.ticks = [{v:0, f:'0'},tickMax];
