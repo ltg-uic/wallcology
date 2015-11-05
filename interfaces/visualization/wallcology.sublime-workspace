@@ -363,7 +363,7 @@
 			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/EnvController/NutellaInterface.cs",
 			"settings":
 			{
-				"buffer_size": 13450,
+				"buffer_size": 13454,
 				"line_ending": "Unix"
 			}
 		},
@@ -379,7 +379,7 @@
 			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 			"settings":
 			{
-				"buffer_size": 4530,
+				"buffer_size": 4762,
 				"line_ending": "Unix"
 			}
 		},
@@ -387,7 +387,7 @@
 			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/EnterState.cs",
 			"settings":
 			{
-				"buffer_size": 4878,
+				"buffer_size": 4895,
 				"line_ending": "Unix"
 			}
 		},
@@ -435,7 +435,23 @@
 			"file": "unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/WanderState.cs",
 			"settings":
 			{
-				"buffer_size": 8462,
+				"buffer_size": 8117,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/krbalmryde/.bash_aliases",
+			"settings":
+			{
+				"buffer_size": 8037,
+				"line_ending": "Unix"
+			}
+		},
+		{
+			"file": "/Users/krbalmryde/.bash_functions",
+			"settings":
+			{
+				"buffer_size": 22324,
 				"line_ending": "Unix"
 			}
 		}
@@ -837,10 +853,10 @@
 	],
 	"file_history":
 	[
+		"/Users/krbalmryde/.bash_profile",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/population-history/scripts/app.js",
 		"/Users/krbalmryde/.bash_functions",
 		"/Users/krbalmryde/.bash_aliases",
-		"/Users/krbalmryde/.bash_profile",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/EnvController/ScumController.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/Scripts/StateMachine/StatePatternCritter.cs",
 		"/Users/krbalmryde/Dropbox/Code-Projects/LTG/wallcology/interfaces/visualization/unity/Wallcology-Simulator/Simulation/Assets/BoundaryController.cs",
@@ -985,6 +1001,9 @@
 		"case_sensitive": true,
 		"find_history":
 		[
+			"critter.",
+			"growthRate",
+			"ReturnToOrigin",
 			"scaleLevel",
 			"GetPopulationCountDebug",
 			"Debug",
@@ -1109,9 +1128,6 @@
 			"url",
 			"LoadWallscope",
 			"initWallScopeStartState",
-			"LoadWallscope",
-			"InitializeSpawnPoints",
-			"LoadWallscopeScene",
 			"LoadWallscope"
 		],
 		"highlight": true,
@@ -1175,7 +1191,7 @@
 	"groups":
 	[
 		{
-			"selected": 0,
+			"selected": 2,
 			"sheets":
 			[
 				{
@@ -1184,15 +1200,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 13450,
+						"buffer_size": 13454,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3667,
-								3667
+								1127,
+								1127
 							]
 						],
 						"settings":
@@ -1202,10 +1218,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 29.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
@@ -1235,7 +1251,7 @@
 						"translation.y": 4040.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 1,
+					"stack_index": 11,
 					"type": "text"
 				},
 				{
@@ -1244,15 +1260,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4530,
+						"buffer_size": 4762,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3328,
-								3328
+								3606,
+								3606
 							]
 						],
 						"settings":
@@ -1262,10 +1278,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 970.0,
+						"translation.y": 867.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
+					"stack_index": 0,
 					"type": "text"
 				},
 				{
@@ -1274,15 +1290,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 4878,
+						"buffer_size": 4895,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								4661,
-								4661
+								389,
+								401
 							]
 						],
 						"settings":
@@ -1292,10 +1308,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1909.0,
+						"translation.y": 1500.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 4,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -1325,7 +1341,7 @@
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 7,
+					"stack_index": 5,
 					"type": "text"
 				},
 				{
@@ -1352,10 +1368,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1479.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 5,
+					"stack_index": 8,
 					"type": "text"
 				},
 				{
@@ -1382,10 +1398,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 0.0,
+						"translation.y": 1948.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 8,
+					"stack_index": 7,
 					"type": "text"
 				},
 				{
@@ -1412,10 +1428,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1647.0,
+						"translation.y": 1982.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 9,
+					"stack_index": 6,
 					"type": "text"
 				},
 				{
@@ -1442,10 +1458,10 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
-						"translation.y": 1422.0,
+						"translation.y": 1147.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 4,
 					"type": "text"
 				},
 				{
@@ -1454,15 +1470,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 8462,
+						"buffer_size": 8117,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2518,
-								2518
+								6426,
+								6221
 							]
 						],
 						"settings":
@@ -1473,10 +1489,68 @@
 							"translate_tabs_to_spaces": true
 						},
 						"translation.x": 0.0,
+						"translation.y": 2643.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 3,
+					"type": "text"
+				},
+				{
+					"buffer": 10,
+					"file": "/Users/krbalmryde/.bash_aliases",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 8037,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								0,
+								0
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage"
+						},
+						"translation.x": 0.0,
 						"translation.y": 0.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 6,
+					"stack_index": 10,
+					"type": "text"
+				},
+				{
+					"buffer": 11,
+					"file": "/Users/krbalmryde/.bash_functions",
+					"semi_transient": false,
+					"settings":
+					{
+						"buffer_size": 22324,
+						"regions":
+						{
+						},
+						"selection":
+						[
+							[
+								22322,
+								22322
+							]
+						],
+						"settings":
+						{
+							"syntax": "Packages/ShellScript/Shell-Unix-Generic.tmLanguage",
+							"tab_size": 4,
+							"translate_tabs_to_spaces": true
+						},
+						"translation.x": 0.0,
+						"translation.y": 11610.0,
+						"zoom_level": 1.0
+					},
+					"stack_index": 9,
 					"type": "text"
 				}
 			]
