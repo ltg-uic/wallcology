@@ -30524,6 +30524,7 @@ paper-calendar {
 //                }
 
                 var d1 = 'Date(' + moment(d.timestamp).valueOf() + ')';
+                me.setGraphMax(species, d.value);
                 t.push([d1, d.value, sSpecies.color]);
 
 
@@ -30532,8 +30533,8 @@ paper-calendar {
               }, function(err){
 
 
-                var envMax = me.findMaxValue(t);
-                me.setGraphMax(sSpecies, envMax);
+                //var envMax = me.findMaxValue(t);
+               // me.setGraphMax(sSpecies, envMax);
 
                 var foundENVGraphs = me.graphs.filter(function (el) {
                   return (el.index === sSpecies.index);
@@ -30551,7 +30552,7 @@ paper-calendar {
                 } else {
                   //we have a new one
                   //envMax = me.findMaxValue(t);
-                  me.setGraphMax(sSpecies, envMax);
+                 // me.setGraphMax(sSpecies, envMax);
                   me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
                 }
               });
@@ -30564,6 +30565,8 @@ paper-calendar {
 
               async.each(r, function(d, callback) {
                 var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
+
+                me.setGraphMax(species, d.population);
                 t.push([d2, d.population, sSpecies.color]);
 
 
@@ -30572,8 +30575,8 @@ paper-calendar {
                 callback();
               }, function(err){
 
-                var hisMax = me.findMaxValue(t);
-                me.setGraphMax(sSpecies, hisMax);
+                //var hisMax = me.findMaxValue(t);
+               // me.setGraphMax(sSpecies, hisMax);
 
 
                 var foundHISGraphs = me.graphs.filter(function (el) {
@@ -30597,8 +30600,8 @@ paper-calendar {
 
                 } else {
                   //we have a new one
-                  hisMax = me.findMaxValue(t);
-                  me.setGraphMax(sSpecies, hisMax);
+                 // hisMax = me.findMaxValue(t);
+                  //me.setGraphMax(sSpecies, hisMax);
                   me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
 
                 }
@@ -30665,15 +30668,11 @@ paper-calendar {
       },
       findMaxValue: function (numbers) {
         //because the first el is the graph heading
-        var low = numbers[1][1]; // first number in array
         var high = numbers[1][1]; // first number in array
 
         for (var i = 1; i < numbers.length; i++) {
           if (numbers[i][1] > high) {
             high = numbers[i][1];
-          }
-          if (numbers[i][1] < low) {
-            low = numbers[i][1];
           }
         }
 
