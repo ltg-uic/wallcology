@@ -760,23 +760,12 @@
 
 
               async.each(r, function(d, callback) {
-//                for (var i1 = 0; i1 < r.length; i1++) {
-//                  var d1 = 'Date(' + moment(r[i1].timestamp).valueOf() + ')';
-//                  t.push([d1, r[i1].value, sSpecies.color]);
-//                }
-
                 var d1 = 'Date(' + moment(d.timestamp).valueOf() + ')';
-                me.setGraphMax(species, d.value);
+                console.log('TEMP VALUE', d.value);
+                me.setGraphMax(sSpecies, d.value);
                 t.push([d1, d.value, sSpecies.color]);
-
-
-
-                 callback();
+                callback();
               }, function(err){
-
-
-                //var envMax = me.findMaxValue(t);
-               // me.setGraphMax(sSpecies, envMax);
 
                 var foundENVGraphs = me.graphs.filter(function (el) {
                   return (el.index === sSpecies.index);
@@ -784,23 +773,18 @@
 
                 if (foundENVGraphs.length > 0) {
                   var foundEnvGraph = foundENVGraphs[0];
+                  me.recomputeScale(foundEnvGraph);
+
+
                   foundEnvGraph.data = t;
                   var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
-                  //el.options = me.chartOptions;
-                  var envGraphMax = me.getGraphMax(foundEnvGraph);
-                  foundEnvGraph.options.vAxis.maxValue = envGraphMax;
+
                   me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
                   me.redrawChart(foundEnvGraph);
                 } else {
-                  //we have a new one
-                  //envMax = me.findMaxValue(t);
-                 // me.setGraphMax(sSpecies, envMax);
                   me.drawGraph(sSpecies, t, 'environment_history', sdate, edate);
                 }
               });
-
-
-
 
             } else if (messageType === 'population_history') {
 
@@ -821,10 +805,6 @@
                 callback();
               }, function(err){
 
-                //var hisMax = me.findMaxValue(t);
-               // me.setGraphMax(sSpecies, hisMax);
-
-
                 var foundHISGraphs = me.graphs.filter(function (el) {
                   return (el.index === sSpecies.index);
                 });
@@ -839,15 +819,9 @@
 
                   foundHisGraph.data = t;
                   var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
-                  //el.options = me.chartOptions;
                   me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
                   me.redrawChart(foundHisGraph);
-
-
                 } else {
-                  //we have a new one
-                 // hisMax = me.findMaxValue(t);
-                  //me.setGraphMax(sSpecies, hisMax);
                   me.drawGraph(sSpecies, t, 'population_history', sdate, edate);
 
                 }
@@ -959,7 +933,6 @@
       },
       setGraphMax: function (species, newMax) {
         var index = this.currentToggle.index;
-        var max = this.maxes[index];
         if (species.type === 'r') {
           if (newMax > this.maxes[index].r) {
             this.maxes[index].r = newMax;
@@ -973,14 +946,17 @@
             this.maxes[index].p = newMax;
           }
         } else if (species.type === 'et') {
-          this.maxes[index].et = newMax;
+          if (newMax > this.maxes[index].et) {
+            this.maxes[index].et = newMax;
+          }
         }else if (species.type === 'ep') {
-          this.maxes[index].ep = newMax;
+          if (newMax > this.maxes[index].ep) {
+            this.maxes[index].ep = newMax;
+          }
         }
       },
       getGraphMax: function (graph) {
         var index = this.currentToggle.index;
-        var max = this.maxes[index];
         if (graph.type === 'r') {
           return this.maxes[index].r;
         } else if (graph.type === 'h') {
@@ -1024,29 +1000,9 @@
         };
 
 
-//        var t1 = moment(min).startOf('day').valueOf();
-//        var t2 = moment(max).endOf('day').valueOf();
-
-        var t1 = moment(min);
-        var t2 = moment(max);
-        var t3= t1.diff(t2,'days');
-
-        var timeTicks = [];
-        if( t3 === 0 ) {
-          var s = moment(min).startOf('day');
-          timeTicks.push(s.valueOf());
-
-          for(var k = 1; k < 23; k++){
-            s.add(k,'h');
-            timeTicks.push(s.valueOf());
-          }
-
-          timeTicks.push(moment(max).endOf('day').valueOf());
-        }
-
         if (min !== undefined && max !== undefined) {
-          someGraph.options.hAxis.minValue = t1;
-          someGraph.options.hAxis.maxValue = t2;
+          someGraph.options.hAxis.minValue = min;
+          someGraph.options.hAxis.maxValue = max;
         }
 
         var dataPointMax = this.getGraphMax(someGraph);
