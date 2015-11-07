@@ -499,6 +499,10 @@
         debug: {
           type: Boolean,
           value: false
+        },
+        multiplier: {
+          type: Boolean,
+          value: false
         }
       },
 
@@ -804,12 +808,16 @@
               async.each(r, function(d, callback) {
                 var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
 
-                me.setGraphMax(species, d.population);
+                if( me.multiplier ) {
+                  if (sSpecies.type === 'h') {
+                    console.log('old pop', d.population);
+                    d.population = d.population * 6;
+                    console.log('new pop', d.population);
+                  }
+                }
+
+                me.setGraphMax(sSpecies, d.population);
                 t.push([d2, d.population, sSpecies.color]);
-
-
-
-
                 callback();
               }, function(err){
 
@@ -1138,6 +1146,18 @@
       connectedChanged: function (newValue, oldValue) {
       },
       ready: function () {
+
+        var query_parameters = NUTELLA.parseURLParameters();
+        console.log('query params: ', query_parameters.place);
+
+        var place = query_parameters.place;
+
+        if( place !== undefined && place === 'to') {
+          console.log('WE ARE TORONTO');
+          this.multiplier = true;
+        }
+
+
         this.startDate = new Date();
         this.endDate = this.startDate;
         this.tempStartDate = this.startDate;
