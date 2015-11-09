@@ -1,11 +1,8 @@
-
-
 <!--<link href="./bower_components/polymer/polymer.html" rel="import">-->
 
 <link href="../polymer/polymer.html" rel="import">
 
 <script src="nutella_lib.js" charset="utf-8"></script>
-
 
 
 <dom-module id="nutella-connector">
@@ -71,9 +68,11 @@
             ready: function () {
                 var me = this;
                 // Nutella initialization
-                if( this.roomcast ) {
+                //we are coming from params
+                if (!me.runid || !me.appid || !me.hostname) {
+                    // Nutella initialization
                     var query_parameters = NUTELLA.parseURLParameters();
-
+                    
                     console.log('query params: broker', query_parameters.broker);
                     console.log('query params: app_id', query_parameters.app_id);
                     console.log('query params: run_id', query_parameters.run_id);
@@ -89,11 +88,17 @@
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
                                 }
-                            }, {secure:true});
+                            }, {secure: true});
 
 
                 } else {
                     console.log('using nutella static');
+
+                    console.log('brokerid:', me.hostname);
+                    console.log('appid:', me.appid);
+                    console.log('runid:', me.runid);
+                    console.log('me.componentid:', me.componentid);
+
                     me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
                             function (success) {
                                 if (success) {
@@ -104,12 +109,13 @@
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
                                 }
-                            },{secure:true});
+                            }, {secure: true});
 
 
                 }
 
             }
+
         })
         ;
     </script>

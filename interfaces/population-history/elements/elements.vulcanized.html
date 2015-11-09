@@ -10006,7 +10006,7 @@ if (!window.Promise) {
         notify: true,
         readOnly: true,
         value: function() {
-         return null;
+          return null;
         }
       },
 
@@ -10127,6 +10127,7 @@ if (!window.Promise) {
      *   body: (ArrayBuffer|ArrayBufferView|Blob|Document|FormData|null|string|undefined|Object),
      *   headers: (Object|undefined),
      *   handleAs: (string|undefined),
+     *   jsonPrefix: (string|undefined),
      *   withCredentials: (boolean|undefined)}} options -
      *     url The url to which the request is sent.
      *     method The HTTP method to use, default is GET.
@@ -10153,6 +10154,29 @@ if (!window.Promise) {
           total: progress.total
         });
       }.bind(this))
+
+      xhr.addEventListener('readystatechange', function () {
+        if (xhr.readyState === 2 && options.async !== false) {
+          // Headers have been received.
+          var jsonPrefix = xhr.getResponseHeader('X-JSON-Prefix') ||
+              options.jsonPrefix;
+          var handleAs = options.handleAs;
+
+          // If a JSON prefix is present, the responseType must be 'text' or the
+          // browser won’t be able to parse the response.
+          if (!!jsonPrefix || !handleAs) {
+            handleAs = 'text';
+          }
+          // In IE, `xhr.responseType` is an empty string when the response
+          // returns. Hence, caching it as `xhr._responseType`.
+          xhr.responseType = xhr._responseType = handleAs;
+
+          // Cache the JSON prefix, if it exists.
+          if (!!jsonPrefix) {
+            xhr._jsonPrefix = jsonPrefix;
+          }
+        }
+      }.bind(this));
 
       xhr.addEventListener('error', function (error) {
         this._setErrored(true);
@@ -10219,17 +10243,10 @@ if (!window.Promise) {
         );
       }, this);
 
-      var body = this._encodeBodyObject(options.body, headers['content-type']);
-
-      // In IE, `xhr.responseType` is an empty string when the response
-      // returns. Hence, caching it as `xhr._responseType`.
-      if (options.async !== false) {
-        xhr.responseType = xhr._responseType = (options.handleAs || 'text');
-      }
       xhr.withCredentials = !!options.withCredentials;
       xhr.timeout = options.timeout;
 
-
+      var body = this._encodeBodyObject(options.body, headers['content-type']);
 
       xhr.send(
         /** @type {ArrayBuffer|ArrayBufferView|Blob|Document|FormData|
@@ -10251,6 +10268,15 @@ if (!window.Promise) {
       var xhr = this.xhr;
       var responseType = xhr.responseType || xhr._responseType;
       var preferResponseText = !this.xhr.responseType;
+      var prefixHeader = xhr.getResponseHeader('X-JSON-Prefix');
+      if (prefixHeader) {
+        // If a JSON prefix header is set, the response must be interpretted as
+        // text so that the prefix can be stripped. Otherwise the browser will
+        // try and fail to.
+        responseType = 'text';
+      }
+      var prefixLen = (prefixHeader && prefixHeader.length) ||
+          (xhr._jsonPrefix && xhr._jsonPrefix.length) || 0;
 
       try {
         switch (responseType) {
@@ -10265,7 +10291,7 @@ if (!window.Promise) {
               // That is to say, we try to parse as JSON, but if anything goes
               // wrong return null.
               try {
-                return JSON.parse(xhr.responseText);;
+                return JSON.parse(xhr.responseText);
               } catch (_) {
                 return null;
               }
@@ -10279,8 +10305,20 @@ if (!window.Promise) {
           case 'arraybuffer':
             return xhr.response;
           case 'text':
-          default:
+          default: {
+            // If `prefixLen` is set, it implies the response should be parsed
+            // as JSON once the prefix of length `prefixLen` is stripped from
+            // it. Emulate the behavior above where null is returned on failure
+            // to parse.
+            if (prefixLen) {
+              try {
+                return JSON.parse(xhr.responseText.substring(prefixLen));
+              } catch (_) {
+                return null;
+              }
+            }
             return xhr.responseText;
+          }
         }
       } catch (e) {
         this.rejectCompletes(new Error('Could not parse response. ' + e.message));
@@ -10598,12 +10636,29 @@ if (!window.Promise) {
       },
 
       /**
-       * Length of time in milliseconds to debounce multiple requests.
+       * Length of time in milliseconds to debounce multiple automatically generated requests.
        */
       debounceDuration: {
         type: Number,
         value: 0,
         notify: true
+      },
+
+      /**
+       * Prefix to be stripped from a JSON response before parsing it.
+       *
+       * In order to prevent an attack using CSRF with Array responses
+       * (http://haacked.com/archive/2008/11/20/anatomy-of-a-subtle-json-vulnerability.aspx/)
+       * many backends will mitigate this by prefixing all JSON response bodies
+       * with a string that would be nonsensical to a JavaScript parser.
+       *
+       * In the case where the server returns a prefix via the `X-JSON-Prefix`
+       * header, this attribute can be omitted as the value of the header will
+       * supercede the value passed here.
+       */
+      jsonPrefix: {
+        type: String,
+        value: ''
       },
 
       _boundHandleResponse: {
@@ -10615,8 +10670,8 @@ if (!window.Promise) {
     },
 
     observers: [
-      '_requestOptionsChanged(url, method, params.*, headers,' +
-        'contentType, body, sync, handleAs, withCredentials, timeout, auto)'
+      '_requestOptionsChanged(url, method, params.*, headers, contentType, ' +
+          'body, sync, handleAs, jsonPrefix, withCredentials, timeout, auto)'
     ],
 
     /**
@@ -10703,6 +10758,7 @@ if (!window.Promise) {
      *   body: (ArrayBuffer|ArrayBufferView|Blob|Document|FormData|null|string|undefined|Object),
      *   headers: (Object|undefined),
      *   handleAs: (string|undefined),
+     *   jsonPrefix: (string|undefined),
      *   withCredentials: (boolean|undefined)}}
      */
     toRequestOptions: function() {
@@ -10713,6 +10769,7 @@ if (!window.Promise) {
         body: this.body,
         async: !this.sync,
         handleAs: this.handleAs,
+        jsonPrefix: this.jsonPrefix,
         withCredentials: this.withCredentials,
         timeout: this.timeout
       };
@@ -22009,7 +22066,6 @@ module.exports.version = '0.6.12';
 
 
 
-
 <script>
 
   Polymer({
@@ -27854,6 +27910,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       return null;
     },
 
+    /**
+     * Returns the chart serialized as an image URI.
+     *
+     * Call this after the chart is drawn (google-chart-render event).
+     *
+     * @return {string} Returns image URI.
+     */
+    getImageURI: function() {
+      return this._chartObject.getImageURI();
+    },
+
     _loadChartTypes: function() {
       this._chartTypes = {
         'area': google.visualization.AreaChart,
@@ -28592,9 +28659,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             ready: function () {
                 var me = this;
                 // Nutella initialization
-                if( this.roomcast ) {
+                //we are coming from params
+                if (!me.runid || !me.appid || !me.hostname) {
+                    // Nutella initialization
                     var query_parameters = NUTELLA.parseURLParameters();
-
+                    
                     console.log('query params: broker', query_parameters.broker);
                     console.log('query params: app_id', query_parameters.app_id);
                     console.log('query params: run_id', query_parameters.run_id);
@@ -28610,11 +28679,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + query_parameters.broker + ' appId: ' + query_parameters.app_id + ' runId: ' + query_parameters.run_id + ' componentId: ' + query_parameters.NUTELLA.NUTELLA.parseComponentId());
                                 }
-                            }, {secure:true});
+                            }, {secure: true});
 
 
                 } else {
                     console.log('using nutella static');
+
+                    console.log('brokerid:', me.hostname);
+                    console.log('appid:', me.appid);
+                    console.log('runid:', me.runid);
+                    console.log('me.componentid:', me.componentid);
+
                     me.nutella = NUTELLA.init(me.hostname, me.appid, me.runid, me.componentid,
                             function (success) {
                                 if (success) {
@@ -28625,12 +28700,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                                     console.log('Error connecting!');
                                     alert('Error connecting to nutella! host: ' + me.hostname + ' appId: ' + me.appid + ' runId: ' + me.runid + ' componentId: ' + me.componentid);
                                 }
-                            },{secure:true});
+                            }, {secure: true});
 
 
                 }
 
             }
+
         })
         ;
     </script>
@@ -29850,107 +29926,84 @@ paper-calendar {
         font-size: 12px;
       }
 
-
-      /*.habitat-selector {*/
-        /*border: 1px solid #0e4f69 !important;*/
-        /*!*left: -20px;*!*/
-        /*margin-top: 2px;*/
-        /*!*height: 40px;*!*/
-        /*background-color: #135b78 !important;*/
-        /*!*height: 40px;*!*/
-        /*!*width: 130px;*!*/
-        /*color: #fff;*/
-      /*}*/
-      /*.habitat-selector:hover {*/
-        /*background-color: #0d4d66 !important;*/
-      /*}*/
-
     </style>
 
     <section>
-    <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="ltg.evl.uic.edu" appid="wallcology" runid="default" componentid="wallcology_admin" roomcast=""></nutella-connector>
-    <paper-toolbar>
+      <nutella-connector connected="{{connected}}" id="nutellaConn" hostname="{{brokerid}}" appid="{{appid}}" runid="{{runid}}" componentid="wallcology_admin" roomcast=""></nutella-connector>
+      <paper-toolbar>
 
-      <div class="start">
-        <div class="vertical-section-container">
-          <div class="vertical-section">
-            <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful habitat-selector" noink=""><span>{{formatButtonSDate(startDate)}}</span>
-            </paper-button>
-          </div>
-          <div class="vertical-section center">
-            <div class="button-title">START</div>
-          </div>
-        </div>
-      </div>
-      
-      <div class="center flex">
-        <div class="horizontal-section-container">
-
-          <div class="horizontal-section">
-            <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}" max-selections="4" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
-
-          </div>
-        </div>
-      </div>
-      <div class="end">
-        <div class="vertical-section-container">
-          <div class="vertical-section">
-            <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction" noink=""><span>{{formatButtonEDate(endDate)}}</span>
-            </paper-button>
-          </div>
-          <div class="vertical-section center">
-            <div class="button-title">END</div>
-          </div>
-        </div>
-      </div>
-    </paper-toolbar>
-
-    <div class="vertical-section-container">
-      <template is="dom-repeat" items="{{graphs}}">
-        <section>
-          <div class="vertical-section center">
-
-            <div class="horizontal layout center graph-icon">
-              <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
-
-              <div class="center flex rightpadder">
-                <google-chart auto-fit-on-attach="" id="{{chartName(item.index)}}" type="column" options="{{item.options}}" data="{{item.data}}">
-                </google-chart>
-
-              </div>
+        <div class="start">
+          <div class="vertical-section-container">
+            <div class="vertical-section">
+              <paper-button id="startDateButton" on-tap="showStartDateDialogAction" class="colorful habitat-selector" noink=""><span>{{formatButtonSDate(startDate)}}</span>
+              </paper-button>
             </div>
-
+            <div class="vertical-section center">
+              <div class="button-title">START</div>
+            </div>
           </div>
-        </section>
-      </template>
-    </div>
-
-    
-    <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
-      <paper-date-picker id="startDatePicker" date="{{tempStartDate}}" min-date="{{endDate}}"></paper-date-picker>
-      <div class="buttons">
-        <paper-button dialog-dismiss="">Cancel</paper-button>
-        <paper-button dialog-confirm="" autofocus="">OK</paper-button>
-      </div>
-    </paper-dialog>
-
-    <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
-      <paper-date-picker id="endDatePicker" date="{{tempEndDate}}" min-date="2015-10-12"></paper-date-picker>
-      <div class="buttons">
-        <paper-button dialog-dismiss="">Cancel</paper-button>
-        <paper-button dialog-confirm="" autofocus="">OK</paper-button>
-      </div>
-    </paper-dialog>
-
-    
-      
-
-      
+        </div>
         
-      
-    
+        <div class="center flex">
+          <div class="horizontal-section-container">
 
-</section>
+            <div class="horizontal-section">
+              <wallcology-selector id="ws" toggle-selectors="{{toggleSelectors}}" button-selectors="{{buttonSelectors}}" max-selections="{{maxSelections}}" selected-items="{{selectedItems}}" current-toggle="{{currentToggle}}"></wallcology-selector>
+
+            </div>
+          </div>
+        </div>
+        <div class="end">
+          <div class="vertical-section-container">
+            <div class="vertical-section">
+              <paper-button id="endDateButton" class="colorful" on-tap="showEndDateDialogAction" noink=""><span>{{formatButtonEDate(endDate)}}</span>
+              </paper-button>
+            </div>
+            <div class="vertical-section center">
+              <div class="button-title">END</div>
+            </div>
+          </div>
+        </div>
+      </paper-toolbar>
+
+      <div class="vertical-section-container">
+        <template is="dom-repeat" items="{{graphs}}">
+          <section>
+            <div class="vertical-section center">
+
+              <div class="horizontal layout center graph-icon">
+                <iron-icon src="{{item.highlightUrl}}" style="width: 60px;"></iron-icon>
+
+                <div class="center flex rightpadder">
+                  <google-chart auto-fit-on-attach="" id="{{chartName(item.index)}}" type="column" options="{{item.options}}" data="{{item.data}}">
+                  </google-chart>
+
+                </div>
+              </div>
+
+            </div>
+          </section>
+        </template>
+      </div>
+
+      
+      <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
+        <paper-date-picker id="startDatePicker" date="{{tempStartDate}}" min-date="{{endDate}}"></paper-date-picker>
+        <div class="buttons">
+          <paper-button dialog-dismiss="">Cancel</paper-button>
+          <paper-button dialog-confirm="" autofocus="">OK</paper-button>
+        </div>
+      </paper-dialog>
+
+      <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
+        <paper-date-picker id="endDatePicker" date="{{tempEndDate}}" min-date="2015-10-12"></paper-date-picker>
+        <div class="buttons">
+          <paper-button dialog-dismiss="">Cancel</paper-button>
+          <paper-button dialog-confirm="" autofocus="">OK</paper-button>
+        </div>
+      </paper-dialog>
+
+    </section>
   </template>
 
   <script>
@@ -30265,7 +30318,28 @@ paper-calendar {
         multiplier: {
           type: Boolean,
           value: false
+        },
+        runid: {
+          type: String,
+          notify: true,
+        },
+        placeid: {
+          type: String,
+          notify: true
+        },
+        brokerid: {
+          type: String,
+          notify: true
+        },
+        appid: {
+          type: String,
+          notify: true
+        },
+        maxSelections: {
+          type: Number,
+          notify: true
         }
+
       },
 
       //{r: 0.025, h: 1.0, p: 1.0, e: 1.0}
@@ -30280,7 +30354,7 @@ paper-calendar {
           console.log('graphsChanged', changeRecord);
         }
 
-        var maxSelect = this.$.ws.maxSelections;
+        //var maxSelect = this.$.ws.maxSelections;
 
 
         //console.log('THIS SELECTED ITEMS: ' + this.graphs + ' max ' + maxSelect);
@@ -30293,12 +30367,9 @@ paper-calendar {
       },
       selectedItemsChanged: function (changeRecord) {
 
-        var maxSelect = this.$.ws.maxSelections;
+        console.log('MAX SELECTIONS: ' + this.maxSelections);
 
-
-        //console.log('THIS SELECTED ITEMS: ' + this.selectedItems + ' max ' + maxSelect);
-
-        if( this.selectedItems.length > maxSelect ) {
+        if (this.selectedItems.length > this.maxSelections) {
           alert('HEY! Why are you clicking so fast! The bug counters need enough time to give you a result!\n Refresh the Page');
           return;
         }
@@ -30393,7 +30464,7 @@ paper-calendar {
           if (e.target.id === 'startDateDialog') {
             var ts = moment(this.tempStartDate).format().valueOf();
             var ee = moment(this.endDate).format().valueOf();
-            if ( ee > ts || ts === ee) {
+            if (ee > ts || ts === ee) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
             } else {
@@ -30402,14 +30473,14 @@ paper-calendar {
           } else if (e.target.id === 'endDateDialog') {
             var te = moment(this.tempEndDate).format().valueOf();
             var ss = moment(this.startDate).format().valueOf();
-            if ( te > ss || te === ss ) {
+            if (te > ss || te === ss) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
             } else {
               this.showEndDateDialogAction();
             }
           }
-        } else if(e.detail.canceled) {
+        } else if (e.detail.canceled) {
           if (e.target.id === 'startDateDialog') {
             this.tempStartDate = this.startDate;
           }
@@ -30504,7 +30575,7 @@ paper-calendar {
         this.$.nutellaConn.nutella.net.request(type, message, function (response) {
           var r = response;
           console.log('Response: ' + sSpecies.r + sSpecies.index + ': ');
-          console.log('R: ',r);
+          console.log('R: ', r);
           var t = [
             [{label: 'Days', type: 'date'}, {label: 'Counts', type: 'number'}, {type: 'string', role: 'style'}]
           ];
@@ -30521,13 +30592,13 @@ paper-calendar {
               }
 
 
-              async.each(r, function(d, callback) {
+              async.each(r, function (d, callback) {
                 var d1 = 'Date(' + moment(d.timestamp).valueOf() + ')';
                 console.log('TEMP VALUE', d.value);
                 me.setGraphMax(sSpecies, d.value);
                 t.push([d1, d.value, sSpecies.color]);
                 callback();
-              }, function(err){
+              }, function (err) {
 
                 var foundENVGraphs = me.graphs.filter(function (el) {
                   return (el.index === sSpecies.index);
@@ -30535,10 +30606,9 @@ paper-calendar {
 
                 if (foundENVGraphs.length > 0) {
                   var foundEnvGraph = foundENVGraphs[0];
+                  foundEnvGraph.data = t;
                   me.recomputeScale(foundEnvGraph);
 
-
-                  foundEnvGraph.data = t;
                   var envTextPosition = foundEnvGraph.options.hAxis.textPosition;
 
                   me.updateGraphAxis(foundEnvGraph, envTextPosition, min, max);
@@ -30551,10 +30621,10 @@ paper-calendar {
             } else if (messageType === 'population_history') {
 
 
-              async.each(r, function(d, callback) {
+              async.each(r, function (d, callback) {
                 var d2 = 'Date(' + moment(d.timestamp).valueOf() + ')';
 
-                if( me.multiplier ) {
+                if (me.multiplier) {
                   if (sSpecies.type === 'h') {
                     console.log('old pop', d.population);
                     d.population = d.population * 6;
@@ -30565,7 +30635,7 @@ paper-calendar {
                 me.setGraphMax(sSpecies, d.population);
                 t.push([d2, d.population, sSpecies.color]);
                 callback();
-              }, function(err){
+              }, function (err) {
 
                 var foundHISGraphs = me.graphs.filter(function (el) {
                   return (el.index === sSpecies.index);
@@ -30575,11 +30645,11 @@ paper-calendar {
                 if (foundHISGraphs.length > 0) {
 
                   var foundHisGraph = foundHISGraphs[0];
-
+                  foundHisGraph.data = t;
                   me.recomputeScale(foundHisGraph);
 
 
-                  foundHisGraph.data = t;
+
                   var hisTextPosition = foundHisGraph.options.hAxis.textPosition;
                   me.updateGraphAxis(foundHisGraph, hisTextPosition, min, max);
                   me.redrawChart(foundHisGraph);
@@ -30605,12 +30675,10 @@ paper-calendar {
 
             me.drawGraph(sSpecies, t, messageType, sdate, edate);
 
-            setTimedOut(function(){
+            setTimedOut(function () {
               selectorButtons[sSpecies.index].disabled = false;
             }, 1000);
           }
-
-
 
 
         });
@@ -30619,22 +30687,23 @@ paper-calendar {
       },
       recomputeScale: function (graph) {
         if (graph !== undefined) {
-          var type = graph.type;
 
           //reset
-          this.resetScale(type);
+          this.resetScale(graph.type);
 
           for (var i = 0; i < this.graphs.length; i++) {
             var a = this.graphs[i];
-            if (type === a.type) {
-              this.setGraphMax(a, this.findMaxValue(a.data));
+            if (graph.type === a.type) {
+              var newMax = this.findMaxValue(a.data);
+              console.log('new max', newMax);
+              this.setGraphMax(a, newMax);
             }
           }
 
           //set the new max
           for (var k = 0; k < this.graphs.length; k++) {
             var b = this.graphs[k];
-            if (type === b.type && b.index !== graph.index) {
+            if (graph.type === b.type && b.index !== graph.index) {
 
               var textPosition = b.options.hAxis.textPosition;
               //el.options = me.chartOptions;
@@ -30711,7 +30780,7 @@ paper-calendar {
           if (newMax > this.maxes[index].et) {
             this.maxes[index].et = newMax;
           }
-        }else if (species.type === 'ep') {
+        } else if (species.type === 'ep') {
           if (newMax > this.maxes[index].ep) {
             this.maxes[index].ep = newMax;
           }
@@ -30733,22 +30802,22 @@ paper-calendar {
       },
       updateGraphAxis: function (someGraph, type, min, max) {
 
-        someGraph.options.vAxis =  {
+        someGraph.options.vAxis = {
           minValue: 0,
-            maxValue: 0.1,
-            textStyle: {
+          maxValue: 0.1,
+          textStyle: {
             fontSize: 14
           }
         };
 
         someGraph.options.xAxis = {
           textPosition: 'out',
-            textStyle: {
-          fontSize: 14
-        },
+          textStyle: {
+            fontSize: 14
+          },
           gridlines: {
             count: -1,
-              units: {
+            units: {
               days: {format: ['M/d']},
               hours: {format: ['h a']},
             }
@@ -30771,7 +30840,7 @@ paper-calendar {
 
         someGraph.options.hAxis.textPosition = type;
 
-       // someGraph.options.hAxis.ticks = ['12 AM', '12 AM'];
+        // someGraph.options.hAxis.ticks = ['12 AM', '12 AM'];
 
         var pat = '';
 
@@ -30781,77 +30850,75 @@ paper-calendar {
 //
 //          if Ymax > 1, no decimal places.
 
-          var tickMax = 0;
-          if( dataPointMax <= 1 ) {
+        var tickMax = 0;
+        if (dataPointMax <= 1) {
 
-            if( dataPointMax === 0 || dataPointMax <  0.1 ) {
-              tickMax = 1.0;
-              someGraph.options.vAxis.format = '0.0';
-            } else if( dataPointMax > 0.1 && dataPointMax <  1){
-              tickMax = this.round_up(dataPointMax, 1.0);
-              someGraph.options.vAxis.format = '0.#';
-            }
-            else if(dataPointMax === 1){
-              tickMax = 1.0;
-              someGraph.options.vAxis.format = '0.0';
-            }
-
-            if( someGraph.type === 'r' || someGraph.type === 'ep') {
-//              tickMax = tickMax * 100;
-//              dataPointMax = dataPointMax * 100;
-              someGraph.options.vAxis.format = '#%';
-            }
-            someGraph.options.vAxis.maxValue = dataPointMax;
-            someGraph.options.vAxis.ticks = [{v:0, f:'0'},tickMax];
-            someGraph.options.vAxis.minorGridlines = {count: 3};
-            //someGraph.options.vAxis.gridlines = {count: 0};
-          } else if( dataPointMax > 1) {
-            //find how many digits we have before the decimal
-            var vstring = dataPointMax.toString().split('.')[0];
-            for( var i = 0; i < vstring.length; i++ ) {
-              pat = pat + '#';
-            }
-            someGraph.options.vAxis.format = pat;
-            someGraph.options.vAxis.maxValue = dataPointMax;
-           // someGraph.options.vAxis.minorGridlines = {count: 3};
-           // someGraph.options.vAxis.majorGridlines = {count: 5};
+          if (dataPointMax === 0 || dataPointMax < 0.1) {
+            tickMax = 1.0;
+            someGraph.options.vAxis.format = '0.0';
+          } else if (dataPointMax > 0.1 && dataPointMax < 1) {
+            tickMax = this.round_up(dataPointMax, 1.0);
+            someGraph.options.vAxis.format = '0.#';
+          }
+          else if (dataPointMax === 1) {
+            tickMax = 1.0;
+            someGraph.options.vAxis.format = '0.0';
           }
 
-          console.log('drawing graph: ' + someGraph.type + someGraph.index + ' with max datapoint of: ' + dataPointMax + ' and max tick ' + tickMax);
+          if (someGraph.type === 'r' || someGraph.type === 'ep') {
+//              tickMax = tickMax * 100;
+//              dataPointMax = dataPointMax * 100;
+            someGraph.options.vAxis.format = '#%';
+          }
+          someGraph.options.vAxis.maxValue = dataPointMax;
+          someGraph.options.vAxis.ticks = [{v: 0, f: '0'}, tickMax];
+          someGraph.options.vAxis.minorGridlines = {count: 3};
+          //someGraph.options.vAxis.gridlines = {count: 0};
+        } else if (dataPointMax > 1) {
+          //find how many digits we have before the decimal
+          var vstring = dataPointMax.toString().split('.')[0];
+          for (var i = 0; i < vstring.length; i++) {
+            pat = pat + '#';
+          }
+          someGraph.options.vAxis.format = pat;
+          someGraph.options.vAxis.maxValue = dataPointMax;
+          // someGraph.options.vAxis.minorGridlines = {count: 3};
+          // someGraph.options.vAxis.majorGridlines = {count: 5};
+        }
 
+        console.log('drawing graph: ' + someGraph.type + someGraph.index + ' with max datapoint of: ' + dataPointMax + ' and max tick ' + tickMax);
 
 
         someGraph.options.hAxis.gridlines.count = -1;
 
 
-          switch (type) {
-            case 'out':
+        switch (type) {
+          case 'out':
 //              someGraph.options.hAxis.minorGridlines.units.hours = {format: ['h a']};
 
-              someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
-              someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
-              break;
-            case 'none':
-              someGraph.options.hAxis.gridlines.units.hours = {format: [' ']};
-              someGraph.options.hAxis.gridlines.units.days = {format: [' ']};
-              someGraph.options.hAxis.minorGridlines.units.hours = {format: [' ']};
-              someGraph.options.hAxis.minorGridlines.units.minutes = {format: [' ']};
+            someGraph.options.hAxis.gridlines.units.hours = {format: ['h a']};
+            someGraph.options.hAxis.gridlines.units.days = {format: ['M/d']};
+            break;
+          case 'none':
+            someGraph.options.hAxis.gridlines.units.hours = {format: [' ']};
+            someGraph.options.hAxis.gridlines.units.days = {format: [' ']};
+            someGraph.options.hAxis.minorGridlines.units.hours = {format: [' ']};
+            someGraph.options.hAxis.minorGridlines.units.minutes = {format: [' ']};
 
-              break;
-            default:
-              console.log('no switch type');
-          }
+            break;
+          default:
+            console.log('no switch type');
+        }
 
       },
-      round_up: function(val, precision) {
-      power = Math.pow (10, precision);
-      poweredVal = Math.ceil (val * power);
-      result = poweredVal / power;
+      round_up: function (val, precision) {
+        power = Math.pow (10, precision);
+        poweredVal = Math.ceil (val * power);
+        result = poweredVal / power;
 
         return result;
       },
       redrawChart: function (graph) {
-
 
 
         var chartId = this.chartName(graph.index);
@@ -30868,12 +30935,19 @@ paper-calendar {
         var query_parameters = NUTELLA.parseURLParameters();
         console.log('query params: ', query_parameters.place);
 
-        var place = query_parameters.place;
+        //check if we have a place id either via a url or api
+        if( this.placeid === undefined ) {
+          var place = query_parameters.place;
 
-        if( place !== undefined && place === 'to') {
+          if (place !== undefined && place === 'to') {
+            console.log('WE ARE TORONTO');
+            this.multiplier = true;
+          }
+        } else if( this.placeid === 'to') {
           console.log('WE ARE TORONTO');
           this.multiplier = true;
         }
+
 
 
         this.startDate = new Date();
@@ -30890,16 +30964,22 @@ paper-calendar {
           'index': -1
         }];
         this.toggleSelectors = start.concat(this.toggleSelectors);
-        this.maxes = [{r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
-          ep: this.defaultE}, {r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
-          ep: this.defaultE}, {
+        this.maxes = [{
+          r: this.defaultR, h: this.defaultH, p: this.defaultP, et: this.defaultE,
+          ep: this.defaultE
+        }, {
+          r: this.defaultR, h: this.defaultH, p: this.defaultP, et: this.defaultE,
+          ep: this.defaultE
+        }, {
           r: this.defaultR,
           h: this.defaultH,
           p: this.defaultP,
           et: this.defaultE,
           ep: this.defaultE
-        }, {r: this.defaultR, h: this.defaultH, p: this.defaultP,  et: this.defaultE,
-          ep: this.defaultE}];
+        }, {
+          r: this.defaultR, h: this.defaultH, p: this.defaultP, et: this.defaultE,
+          ep: this.defaultE
+        }];
       },
       chartName: function (index) {
         return 'chart' + index;
