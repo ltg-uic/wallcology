@@ -790,7 +790,8 @@
                 if (me.multiplier) {
                   if (sSpecies.type === 'h') {
                     console.log('old pop', d.population);
-                    d.population = d.population * 6;
+                    var newVal = d.population * 6;
+                    d.population = newVal;
                     console.log('new pop', d.population);
                   }
                 }
@@ -1099,7 +1100,7 @@
         console.log('query params: ', query_parameters.place);
 
         //check if we have a place id either via a url or api
-        if( this.placeid === undefined ) {
+        if( !this.placeid ) {
           var place = query_parameters.place;
 
           if (place !== undefined && place === 'to') {
