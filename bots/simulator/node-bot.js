@@ -25,7 +25,7 @@ console.log("Simulator version 1.1");
 const waitForHistoryToLoad = 10 * 1000; //(1000 = 1 second)
 // const frequencyOfUpdate = 4 * 60 * 1000; //(1000 = 1 second)
 // const broadcastFrequency = 5; // every update. increase to "speed up" model
-const frequencyOfUpdate = 4 * 1 * 100; //(1000 = 1 second. send to animation every 4 min)
+const frequencyOfUpdate = 4 * 60 * 1000; //(1000 = 1 second. send to animation every 4 min)
 const broadcastFrequency = 5; // (save in history every 5 cycles (minimizing size))
 
 var broadcastCount; //cyclic clock controls broadcast frequency
