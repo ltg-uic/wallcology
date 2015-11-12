@@ -29,7 +29,7 @@ var endTime;
 // because the existing history needs to be loaded
 // before any of the other handlers can fire
 //
-console.log("History version 1.01");
+console.log("History version 1.1");
 
 history.load(function(){
         // console.log(history);
@@ -347,12 +347,9 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 //          returns the most recent state (support restart in case of failure). used by simulation bot
 
 nutella.net.handle_requests('last_state',function(JSONmessage, from) {
-        // console.log(history['states'].length); // comes up zero (that's right)
         var last = history['states'].length-1;
         if (last < 0) {return ('new');} else {return (history['states'][last]);};
-        // console.log(history['states'][last]);
-            // throw new Error("Something went badly wrong!");
-});
+ });
 
 nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {
         var state = deepCopy(history['states'][history['states'].length-1]);
