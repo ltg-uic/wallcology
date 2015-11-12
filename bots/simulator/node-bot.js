@@ -119,10 +119,14 @@ function init() {
     nutella.net.subscribe('species_event', function(message, from){
         switch (message.action) {
             case "remove": 
-                state['populations'][message.habitat][message.species] = 0; 
+                state['populations'][message.habitat][message.species] = 0;
+                nutella.net.publish('action_confirmed', 
+                    {'habitat': message.habitat, 'species': message.species, 'action': message.action});
                 break;
             case "decrease": //unlimited decreasing
                 state['populations'][message.habitat][message.species] *= 0.25; //model['decreaseFactor']; 
+                nutella.net.publish('action_confirmed', 
+                    {'habitat': message.habitat, 'species': message.species, 'action': message.action});
                 break;
             case "increase": // constrained increasing, can only effectively double population once
                 var t = new Date();
@@ -141,6 +145,8 @@ function init() {
                             nutella.net.publish ('too_soon',{'habitat': message.habitat, 'species': message.species});
                         } else {
                             state['populations'][message.habitat][message.species] *= 4.0; 
+                            nutella.net.publish('action_confirmed', 
+                                {'habitat': message.habitat, 'species': message.species, 'action': message.action});
                         };
                 });
                 break;
@@ -148,6 +154,8 @@ function init() {
             if (state['populations'][message.habitat][message.species] < .001) 
                     state['populations'][message.habitat][message.species]= 
                         model['defaultPopulations'][model['species'][message.species]['trophicLevel']];
+            nutella.net.publish('action_confirmed', 
+                {'habitat': message.habitat, 'species': message.species, 'action': message.action});
             break;
         };
         broadcastCount = 0;
