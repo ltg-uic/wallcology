@@ -188,3 +188,17 @@ function cancel() {
         deselectAction(action);
     });
 }
+
+// Listen for the error message
+nutella.net.subscribe('too_soon', function(message) {
+    if(getSelectedHabitat() == message.habitat) {
+        alert('You can not do so many changes');
+    }
+});
+
+// Listen for the confirmation message
+nutella.net.subscribe('action_confirmed', function(message) {
+    if(getSelectedHabitat() == message.habitat) {
+        alert('You succesfully ' + message.action + ' the species');
+    }
+});
