@@ -29988,7 +29988,7 @@ paper-calendar {
 
       
       <paper-dialog id="startDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
-        <paper-date-picker id="startDatePicker" date="{{tempStartDate}}" min-date="{{endDate}}"></paper-date-picker>
+        <paper-date-picker id="startDatePicker" date="{{tempStartDate}}"></paper-date-picker>
         <div class="buttons">
           <paper-button dialog-dismiss="">Cancel</paper-button>
           <paper-button dialog-confirm="" autofocus="">OK</paper-button>
@@ -29996,7 +29996,7 @@ paper-calendar {
       </paper-dialog>
 
       <paper-dialog id="endDateDialog" class="paper-date-picker-dialog" modal="" on-iron-overlay-closed="dismissDialog">
-        <paper-date-picker id="endDatePicker" date="{{tempEndDate}}" min-date="2015-10-12"></paper-date-picker>
+        <paper-date-picker id="endDatePicker" date="{{tempEndDate}}"></paper-date-picker>
         <div class="buttons">
           <paper-button dialog-dismiss="">Cancel</paper-button>
           <paper-button dialog-confirm="" autofocus="">OK</paper-button>
@@ -30460,23 +30460,71 @@ paper-calendar {
         this.$.endDateDialog.toggle();
       },
       dismissDialog: function (e) {
+
+
+        var minBadDate = moment('10-24-15', 'MM-DD-YYYY');
+        var badDate111215 = moment('11-12-2015', 'MM-DD-YYYY');
+        var badDate111315 = moment('11-13-2015', 'MM-DD-YYYY');
+        var date111115 = moment('11-11-2015', 'MM-DD-YYYY');
+        var date111415 = moment('11-14-2015', 'MM-DD-YYYY');
+
+
+        console.log('dates', this.tempStartDate, this.endDate, minBadDate);
         if (e.detail.confirmed) {
           if (e.target.id === 'startDateDialog') {
-            var ts = moment(this.tempStartDate).format().valueOf();
-            var ee = moment(this.endDate).format().valueOf();
-            if (ee > ts || ts === ee) {
+            var ts = moment(this.tempStartDate);
+            var ee = moment(this.endDate);
+
+            if( ts.valueOf() < minBadDate.valueOf() ) {
+              this.tempStartDate = minBadDate.toDate();
+              this.showStartDateDialogAction();
+              return;
+            }
+            //If a kid chooses Nov. 12 or Nov. 13 as a start date, force it to Nov. 11
+            if( ts.isSame(badDate111215, 'day') || ts.isSame(badDate111315, 'day') ){
+              this.tempStartDate = date111115.toDate();
+              this.showStartDateDialogAction();
+              return;
+            }
+
+            if( ts.isSame(ee,'day') ) {
               this.startDate = this.$.startDatePicker.date;
               this.updateAllGraphs();
+              return;
+            }
+
+            if (ee.valueOf() > ts.valueOf()) {
+              this.startDate = this.$.startDatePicker.date;
+              this.updateAllGraphs();
+              return;
             } else {
+              this.tempStartDate = ee.toDate();
               this.showStartDateDialogAction();
             }
           } else if (e.target.id === 'endDateDialog') {
-            var te = moment(this.tempEndDate).format().valueOf();
-            var ss = moment(this.startDate).format().valueOf();
-            if (te > ss || te === ss) {
+
+            var te = moment(this.tempEndDate);
+            var ss = moment(this.startDate);
+
+            //If a kid chooses Nov. 12 or Nov. 13 as an end date, force it to Nov. 14
+            if( te.isSame(badDate111215,'day') || te.isSame(badDate111315,'day') ){
+              this.tempEndDate = date111415.toDate();
+              this.showEndDateDialogAction();
+              return;
+            }
+
+            if( te.isSame(ss,'day') ) {
               this.endDate = this.$.endDatePicker.date;
               this.updateAllGraphs();
+              return;
+            }
+
+            if (te.valueOf() > ss.valueOf()) {
+              this.endDate = this.$.endDatePicker.date;
+              this.updateAllGraphs();
+              return;
             } else {
+              this.tempEndDate = ss.toDate();
               this.showEndDateDialogAction();
             }
           }
