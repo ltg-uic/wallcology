@@ -30343,6 +30343,11 @@ paper-calendar {
           type: Boolean,
           notify: true,
           value: false
+        },
+        is6DF: {
+          type: Boolean,
+          notify: true,
+          value: false
         }
 
       },
@@ -30473,6 +30478,14 @@ paper-calendar {
         var date111115 = moment('11-11-2015', 'MM-DD-YYYY');
         var date111415 = moment('11-14-2015', 'MM-DD-YYYY');
 
+        var date111615 = moment('11-16-2015', 'MM-DD-YYYY');
+
+        var date111715 = moment('11-17-2015', 'MM-DD-YYYY');
+        var date111815 = moment('11-18-2015', 'MM-DD-YYYY');
+        var date111915 = moment('11-19-2015', 'MM-DD-YYYY');
+        var date112015 = moment('11-20-2015', 'MM-DD-YYYY');
+        var date112115 = moment('11-21-2015', 'MM-DD-YYYY');
+
 
 
 
@@ -30489,15 +30502,26 @@ paper-calendar {
               return;
             }
 
+            if( this.is6DF ) {
+              //anyway, can you make november 17-20 blackout days
+             //just for 6DF?
+
+
+              if( ts.isSame(date111715, 'day') || ts.isSame(date111815, 'day') || ts.isSame(date111915, 'day') || ts.isSame(date112015, 'day') ){
+                this.tempStartDate = date111615.toDate();
+                this.showStartDateDialogAction();
+                console.log('force ben date start');
+                return;
+              }
+            }
+
             if( this.isBen ) {
               //just in Ben’s
               //don’t let them select either Wed Nov 18 or Thurs Nov 19.
               //Otherwise the kids are going to see gaps.
-              var badDate111815 = moment('11-18-2015', 'MM-DD-YYYY');
-              var badDate111915 = moment('11-19-2015', 'MM-DD-YYYY');
-              var date111715 = moment('11-17-2015', 'MM-DD-YYYY');
 
-              if( ts.isSame(badDate111815, 'day') || ts.isSame(badDate111915, 'day') ){
+
+              if( ts.isSame(date111815, 'day') || ts.isSame(date111915, 'day') ){
                 this.tempStartDate = date111715.toDate();
                 this.showStartDateDialogAction();
                 console.log('force ben date start');
@@ -30531,22 +30555,35 @@ paper-calendar {
             var te = moment(this.tempEndDate);
             var ss = moment(this.startDate);
 
+            if( this.is6DF ) {
+
+              //anyway, can you make november 17-20 blackout days
+              //just for 6DF?
+
+              if( te.isSame(date111715, 'day') || te.isSame(date111815, 'day') || te.isSame(date111915, 'day') || te.isSame(date112015, 'day')){
+                this.tempEndDate = date112115.toDate();
+                this.showEndDateDialogAction();
+                console.log('force ben date end');
+                return;
+              }
+            }
+
+
             if( this.isBen ) {
 
               //just in Ben’s
               //don’t let them select either Wed Nov 18 or Thurs Nov 19.
               //Otherwise the kids are going to see gaps.
-              var badDate111815 = moment('11-18-2015', 'MM-DD-YYYY');
-              var badDate111915 = moment('11-19-2015', 'MM-DD-YYYY');
-              var date111715 = moment('11-17-2015', 'MM-DD-YYYY');
 
-              if( te.isSame(badDate111815, 'day') || te.isSame(badDate111915, 'day') ){
+              if( te.isSame(date111815, 'day') || te.isSame(date111915, 'day') ){
                 this.tempEndDate = date111715.toDate();
                 this.showEndDateDialogAction();
                 console.log('force ben date end');
                 return;
               }
             }
+
+
 
             //If a kid chooses Nov. 12 or Nov. 13 as an end date, force it to Nov. 14
             if( te.isSame(badDate111215,'day') || te.isSame(badDate111315,'day') ){
@@ -31043,6 +31080,10 @@ paper-calendar {
 
         if( rId !== undefined && rId === 'Ben') {
           this.isBen = true;
+        }
+
+        if( rId !== undefined && rId === '6DF') {
+          this.is6DF = true;
         }
 
 
