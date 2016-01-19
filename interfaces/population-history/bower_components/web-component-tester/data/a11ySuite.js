@@ -8,7 +8,7 @@
  * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
  */
 
-(function(Mocha, axs) {
+(function(Mocha, chai, axs) {
 
   Object.keys(Mocha.interfaces).forEach(function(iface) {
     var orig = Mocha.interfaces[iface];
@@ -21,27 +21,24 @@
 
       suite.on('pre-require', function(context, file, mocha) {
 
-        // build an audit config to disable certain ignorable tests
-        var axsConfig = new axs.AuditConfiguration();
-        axsConfig.scope = document.body;
-        axsConfig.showUnsupportedRulesWarning = false;
-
-        // filter out rules that only run in the extension
-        var rules = axs.AuditRules.getRules().filter(function(rule) {
-          return !rule.requiresConsoleAPI;
-        });
-
         /**
           * Runs the Chrome Accessibility Developer Tools Audit against a test-fixture
           *
           * @param {String} fixtureId ID of the fixture element in the document to use
+          * @param {Array?} ignoredRules Array of rules to ignore for this suite
           */
-        context.a11ySuite = function(fixtureId) {
+        context.a11ySuite = function(fixtureId, ignoredRules) {
           // capture a reference to the fixture element early
           var fixtureElement = document.getElementById(fixtureId);
           if (!fixtureElement) {
             return;
           }
+
+          // build an audit config to disable certain ignorable tests
+          var axsConfig = new axs.AuditConfiguration();
+          axsConfig.scope = document.body;
+          axsConfig.showUnsupportedRulesWarning = false;
+          axsConfig.auditRulesToIgnore = ignoredRules;
 
           // build mocha suite
           var a11ySuite = Suite.create(suite, 'A11y Audit - Fixture: ' + fixtureId);
@@ -61,7 +58,7 @@
             auditResults.forEach(function(result, index) {
               // only show applicable tests
               if (result.result !== 'NA') {
-                var title = rules[index].heading;
+                var title = result.rule.heading;
                 // fail test if audit result is FAIL
                 var error = result.result === 'FAIL' ? axs.Audit.accessibilityErrorMessage(result) : null;
                 var test = new Test(title, function() {
@@ -86,4 +83,37 @@
       });
     };
   });
-})(window.Mocha, window.axs);
+
+  chai.use(function(chai, util) {
+    var Assertion = chai.Assertion;
+
+    // assert
+    chai.assert.a11yLabel = function(node, exp, msg){
+      new Assertion(node).to.have.a11yLabel(exp, msg);
+    };
+
+    // expect / should
+    Assertion.addMethod('a11yLabel', function(str, msg) {
+      if (msg) {
+        util.flag(this, 'message', msg);
+      }
+
+      var node = this._obj;
+
+      // obj must be a Node
+      new Assertion(node).to.be.instanceOf(Node);
+
+      // vind the text alternative with the help of accessibility dev tools
+      var textAlternative = axs.properties.findTextAlternatives(node, {});
+
+      this.assert(
+        textAlternative === str,
+        'expected #{this} to have text alternative #{exp} but got #{act}',
+        'expected #{this} to not have text alternative #{act}',
+        str,
+        textAlternative,
+        true
+      );
+    });
+  });
+})(window.Mocha, window.chai, window.axs);

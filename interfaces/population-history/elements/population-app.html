@@ -635,7 +635,7 @@
       dismissDialog: function (e) {
 
 
-        var minBadDate = moment('10-24-15', 'MM-DD-YYYY');
+        var minBadDate = moment('09-30-15', 'MM-DD-YYYY');
         var badDate111215 = moment('11-12-2015', 'MM-DD-YYYY');
         var badDate111315 = moment('11-13-2015', 'MM-DD-YYYY');
         var date111115 = moment('11-11-2015', 'MM-DD-YYYY');
@@ -1250,13 +1250,14 @@
         }
 
 
-        this.startDate = new Date();
-        this.endDate = this.startDate;
+        this.startDate = new Date(1443675600000);
+        this.endDate = new Date(1451541600000);
         this.tempStartDate = this.startDate;
-        this.tempEndDate = this.startDate;
+        this.tempEndDate = this.endDate;
         this.selectedItems = [];
         this.graphs = [];
         this.envEventHistories = [];
+
 
         var start = [{
           'items': [],
