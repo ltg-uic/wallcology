@@ -1,7 +1,7 @@
 {
   "name": "wallcology",
   "version": "0.1.0",
-  "nutella_version": "0.6.1",
+  "nutella_version": "0.6.2",
   "type": "application",
   "description": "A quick description of your application"
 }
