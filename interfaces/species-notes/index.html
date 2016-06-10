@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here-->
+	<title></title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+	<!-- Your CSS here -->
+</head>
+<body>
+	<!-- Your markup here -->
+	<p>Hello world! This is a nutella basic web interface</p>
+				
+	<!-- Scripts -->
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<!-- Your scripts here -->
+				
+	<script type="text/javascript">
+	
+	// Parse the query parameters
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	// Get an instance of nutella. 
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+	
+	// (Optional) Set the resourceId
+	// nutella.setResourceId('my_resource_id');
+	
+	
+	// Your code that uses the nutella instance here
+	
+	
+	// EXAMPLES
+	// You can do stuff like:
+	
+	// 1. Subscribing to a channel
+	nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
+		// Your code to handle messages received on this here
+	});
+	
+	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
+	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
+	nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
+		// Your code to handle messages received by this channel here
+	});
+	
+	// 3. Publish a message to a channel
+	nutella.net.publish('demo_channel', 'demo_message');
+	
+	// 3a The cool thing is that the message can be any Javascript variable or object
+	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
+	
+	// 4. Make requests on a certain channel...
+	nutella.net.request('demo_channel', 'my_request', function(response) {
+		// Your code to handle the response here
+	});
+	
+	// 4a ... and, guess what, we can send anything in a request, like in publish!
+	// Requests can even be empty, kind of like a GET
+	nutella.net.request('demo_channel', function(response) {
+		// Your code to handle the response here
+	});
+	
+	// 5. Handle requests from other components
+	nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
+		/// Your code to handle each request here
+		// Anything this function returns (string, integer, object,...) is going to be sent as the response
+		var response = 'this is my response';
+		// Or...
+		// var response = {};
+		// var response = 12345;
+		// var response = {a: 'proper', key: 'value'};
+		return response;
+	});
+	
+	// 6. Access the variables that uniquely identify this instance of this component
+	nutella.runId;
+	nutella.componentId;
+	nutella.resourceId;
+	
+	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
+	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
+	
+	// HAVE FUN WITH nutella!
+	
+	</script>
+				
+</body>
+</html>
