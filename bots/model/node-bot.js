@@ -10,7 +10,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var model = nutella.persist.getMongoObjectStore('populationModel');
 model.load(function(){
-    nutella.net.handle_requests('read_population_model', function(message, from) {
+        console.log(model['r']);
+        nutella.net.handle_requests('read_population_model', function(message, from) {
         return(model);
     });
 });
