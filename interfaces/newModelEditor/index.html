@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here  MY CHANGE HERE-->
+	<title>WallCology Model Editor</title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+	<!-- Your CSS here -->
+</head>
+
+<body style="background-color:LightSteelBlue">
+
+	<script src="Chart.min.js"></script>
+
+	<!-- Scripts -->
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<!-- Your scripts here -->
+
+	<script type="text/javascript">
+
+
+	// Parse the query parameters
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	// Get an instance of nutella.
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+
+	var model = {};
+	var COLS;
+	var selectedEcosystem = 0;
+
+	var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.svg', 
+ 					'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
+ 					'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
+	 				'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+	 			 ];
+
+	var confirmer = 'Are you sure?';
+
+	var population_history = []; // currently shown on graphs
+	for (var i=0; i<2*72; i++) {
+		population_history[i] = [];
+		for (var j=0; j<11; j++) population_history[i][j] = 0;
+	};
+	
+
+
+	nutella.net.request('read_population_model', 'populationModel', function(message) {
+		model=message; 
+		drawButtons();
+		drawEnvironmentalVariables();
+		document.write('<table><tr><td style="background-color:#ebebe0">');
+		drawTable();
+		document.write('</td><td style="background-color:#f5f5f0"><table>');
+		for (var i=0; i<11; i++) {
+			document.write('<tr><td style="text-align:center;"><img src="' + images[i] + '" HEIGHT="35" WIDTH="35" style="vertical-align:middle"><br><input type=text size=4 id="init.' + i + '" style="vertical-align:middle"></td>');
+			document.write('<td><canvas id="myChart' + i + '" width="800" height="80"></canvas></td></tr>');
+		}
+		document.write('</table></td></tr></table>');
+		loadModel();
+		// for (var i=0; i<72; i++) {
+		// 	last_population_history[i] = [];
+		// 	for (var j=0; j<11; j++)
+		// 		last_population_history[i][j] = 0;
+		// }
+
+	});
+
+
+
+// throw new Error("Something went badly wrong!");
+
+	function loadModel() {
+
+		// loadGraphicRow(ecosystem, 'resourceIndex','resourceIndex');
+		COLS=4;
+		loadRow('r'); 
+		loadRow('K'); 
+		loadGraphicRow('resources');
+		loadMatrix('alpha', 'resources');
+		loadRow('b');
+		loadGraphicRow('herbivores');
+		loadMatrix('a', 'resources');
+		loadRow('q');
+		loadRow('d');
+		COLS=3;
+		loadGraphicRow('predators');
+		loadRow('delta');
+		loadRow('beta');
+		loadRow('s');
+		loadMatrix('m', 'herbivores');
+	}
+	
+	function saveModel() {
+		COLS=4;
+		saveRow('r');
+		saveRow('K');
+		saveMatrix('alpha');
+		saveRow('b');
+		saveMatrix('a');
+		saveRow('q');
+		saveRow('d');
+		COLS=3;
+		saveRow('delta');
+		saveRow('beta');
+		saveRow('s');
+		saveMatrix('m');
+		nutella.net.request('write_population_model',model,function(){});
+	}
+
+
+	function loadRow(variable) {
+		for (var col=0; col<COLS; col++)
+				document.getElementById(variable + '.' + col).value = model[variable][col];
+	}
+
+	function loadGraphicRow(trophicLevel) {
+		for (var col=0; col<COLS; col++){
+				var d = model['community'][trophicLevel][col];
+				document.getElementById(trophicLevel + '.Q.' + col).src = images[d];
+				var descriptor = d;
+				var h = model['species'][d]['habitat'];
+				if (h == 'brick') descriptor = descriptor + 'B';
+				if (h == 'wood') descriptor = descriptor + 'W';
+				if (h == 'generalist') descriptor = descriptor + 'G';
+				var t = model['species'][d]['temperature'];
+				if (t == 'low') descriptor = descriptor + 'L';
+				if (t == 'generalist') descriptor = descriptor + 'G';
+				if (t == 'high') descriptor = descriptor + 'H';
+				var r = model['species'][d]['resistance'];
+				if (r == 'yes') descriptor = descriptor + '*';
+				document.getElementById(trophicLevel + '.R.' + col).value = descriptor;
+
+		}
+	}
+
+
+	function saveRow(variable) {
+		for (var col=0; col<COLS; col++) 
+				model[variable][col] = document.getElementById(variable + '.' + col).value;
+	}
+
+	function loadMatrix(variable, trophicLevel) {
+		for (var row=0; row<4; row++){
+			var d = model['community'][trophicLevel][row];
+			document.getElementById(variable + '.P.' + row).src = images[d];
+			var descriptor = d;
+			var h = model['species'][d]['habitat'];
+			if (h == 'brick') descriptor = descriptor + 'B';
+			if (h == 'wood') descriptor = descriptor + 'W';
+			if (h == 'generalist') descriptor = descriptor + 'G';
+			var t = model['species'][d]['temperature'];
+			if (t == 'low') descriptor = descriptor + 'L';
+			if (t == 'generalist') descriptor = descriptor + 'G';
+			if (t == 'high') descriptor = descriptor + 'H';
+			var r = model['species'][d]['resistance'];
+			if (r == 'yes') descriptor = descriptor + '*';
+			document.getElementById(variable + '.S.' + row).value = descriptor;
+			for (var col=0; col<COLS; col++)
+				document.getElementById(variable + '.' + row + '.' + col).value = model[variable][row][col];
+			
+		}
+	}
+
+	function saveMatrix(variable) {
+		for (var row=0; row<4; row++){
+			for (var col=0; col<COLS; col++)
+				model[variable][row][col] = document.getElementById(variable + '.' + row + '.' + col).value;
+		};
+	}
+
+
+
+
+
+
+
+
+function drawButtons() {
+	document.write('<div style=""font-family:verdana;"><input type=button id="revert" value="revert" onClick="model=getModel();"></input><input type=button id="save" value="save" onClick="saveModel();"></input>');
+}
+
+function drawEnvironmentalVariables() {
+	document.write('&nbsp&nbsp&nbsp&nbspt<sub>0</sub>&nbsp<input type=text id="t0" value=20 size=3>&nbspt<sub>f</sub>&nbsp<input type=text id="tf" value=20 size=3>&nbsph<sub>0</sub> &nbsp<input type=text id="h0" value=20 size=3>&nbsph<sub>f</sub>&nbsp<input type=text id="hf" value=20 size=4>&nbspw<sub>0</sub>&nbsp<input type=text id="w0" value=20 size=3>&nbspw<sub>f</sub>&nbsp<input type=text id="wf" value=20 size=3>&nbspb<sub>0</sub> &nbsp<input type=text id="b0" value=20 size=3>&nbspb<sub>f</sub>&nbsp<input type=text id="bf" value=20 size=4>&nbsp&nbspcycles &nbsp<input type=text id="cycles" value=72 size=4 onblur="clr(); prepCycles()">&nbsp&nbsp|&nbsp&nbsp<input type=button id="clear" value="clear" onClick="clr();"> </input>&nbsp<input type=button id="default" value="default" onClick="df();"></input>&nbsp<input type=button id="graph" value="simulate" onClick="graph();"></input>&nbsp&nbsp&nbsp<input type=checkbox id="normalize">normalize&nbsp&nbsp');
+	document.write('<input type=radio name="graphic" value="male" id="dots" checked> Dots <input type=radio name="graphic" value="male" id="bars" checked> Bars <input type=radio name="graphic" value="male" id="line"> Line</div>');
+}
+
+function clr() {
+	for (var i=0; i<11; i++) {
+		document.getElementById('init.' + i).value = 0;
+		var ctx = document.getElementById('myChart' + i).getContext('2d');
+		ctx.clearRect(0, 0, 800, 80);
+		prepCycles();
+	}
+}
+
+function df(){
+	for (var i=0; i<11; i++) document.getElementById('init.' + i).value = model['initialPopulation'][i];
+}
+
+function prepCycles(){
+	var c = Number(document.getElementById('cycles').value);
+	population_history = [];
+	for (var i=0; i<2*c; i++) {
+		population_history[i] = [];
+		for (var j=0; j<11; j++) population_history[i][j] = 0;
+	}
+}
+
+function drawTable() {
+	drawHeader();
+	COLS=4; 
+	drawGraphicRow("resources");
+	drawRow("r"); 
+	drawRow("K"); 
+	drawMatrix("alpha"); 
+	drawBlankRow();
+	drawGraphicRow("herbivores");
+	drawRow("q"); 
+	drawRow("b"); 
+	drawRow("d"); 
+	drawMatrix("a"); 
+	COLS=3;
+	drawBlankRow();
+	drawGraphicRow("predators");
+	drawRow("delta"); 
+	drawRow("beta"); 
+	drawRow("s"); 
+	drawMatrix("m"); 
+	drawFooter();
+}
+
+function drawFooter() { 
+	document.write("</TABLE><br></form>");
+}
+
+
+function drawHeader() {
+
+	document.write("<TABLE border=0>");
+}
+
+function drawRow (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
+	var greek = parameter;
+	if (greek == "beta") greek = "β";
+	if (greek == "alpha") greek = "α";
+	if (greek == "delta") greek = "δ";
+	document.write('<tr><td style="font-family:verdana;">&nbsp&nbsp<b>' + greek + '</b></td><td></td>');
+	for (col=0;col<COLS;col++)
+		document.write ('<td> <input type="text" id="' + parameter + '.' + col + '" size=9></td>');
+	document.write('</tr>');
+}
+
+function drawGraphicRow (trophicLevel) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
+	document.write('<tr><td>' + ' ' + '</td><td style="font-family:verdana">' + trophicLevel + '</td>');
+	for (col=0;col<COLS;col++) {
+		document.write ('<td style="text-align:center;"><IMG ID="' + trophicLevel + '.Q.' + col + '" SRC="blank.png" HEIGHT="35" WIDTH="35" style="vertical-align:middle">');
+		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + trophicLevel + '.R.' + col + '" style="vertical-align:middle;background-color:#ebebe0;border-style:none;"></td>');
+	}
+	document.write('</tr>');
+}
+
+
+function drawBlankRow() {
+	document.write('<tr><td>&nbsp</td></tr>');
+}
+
+function drawMatrix (parameter) {  // parameter = 0,1,2,3. it's the model parameter to be displayed.
+	for (var row=0; row<4; row++) {
+		if (row == 0) {
+			var greek = parameter;
+			if (greek == "beta") greek = "β";
+			if (greek == "alpha") greek = "α";
+			if (greek == "delta") greek = "δ";
+			document.write('<tr><td style="font-family:verdana">&nbsp&nbsp<b>' + greek + '</b></td>');
+		} else {
+			document.write('<tr><td>' + ' ' + '</td>');
+		}
+		document.write('<td><IMG ID="' + parameter + '.P.' + row + '" SRC="blank.png" HEIGHT="35" WIDTH="35" style="vertical-align:middle">');
+		document.write ('<INPUT TYPE=TEXT READONLY SIZE=5 ID="' + parameter + '.S.' + row + '" style="vertical-align:middle;background-color:#ebebe0;border-style:none;"></td>');
+		for (col=0;col<COLS;col++) 
+			document.write ('<td> <input type="text" id="' + parameter + '.' + row + '.' + col + '" size=9></td>');
+		document.write('</tr>');
+	}
+}
+
+// value="' + model[selectedEcosystem()][parameter][row][col]
+
+// function test() {
+// 		nutella.net.request('read_model', {}, function(response) {
+// 			model=response;
+// 			nutella.net.publish('write_model',model);
+// 		});
+// 	}
+
+
+
+function graph() { 
+
+	// var population = [];
+
+	// set up initial populations
+
+	// for (var species=0; model['species'].length; species++) 
+	// 	population[species] = 
+	// 		environment.initial_community[species] ? model[initial_populations][model['species'][trophicLevel]] : 0;
+
+	// // run CYCLES steps, record hisory across species
+
+	// var population_history = [];
+	// for (t=0; t<CYCLES; t++) {
+	// 	population_history.push(population);
+	// 	population = cycleSimulation(environment,population);
+	// } 
+
+
+	var m = model;
+	var e0 = {	temperature:Number(document.getElementById('t0').value),
+				humidity:Number(document.getElementById('h0').value),
+				wood:Number(document.getElementById('w0').value),
+				brick:Number(document.getElementById('b0').value)
+			};
+	var ef = {	temperature:Number(document.getElementById('tf').value),
+				humidity:Number(document.getElementById('hf').value),
+				wood:Number(document.getElementById('wf').value),
+				brick:Number(document.getElementById('bf').value)
+			};
+	var p = [];
+	for (var i =0; i<11; i++) p[i] = document.getElementById('init.' + i).value;
+	var c = Number(document.getElementById('cycles').value);
+
+
+	nutella.net.request('simulation',{model:m, environment0:e0, environmentf:ef, populations:p, cycles:c},function(message) {
+
+
+		var	second_half = message;
+		var d = [];
+		for (var species=0; species<11; species++)  { 
+			for (var i=0; i<c; i++) {
+				population_history[i][species] = population_history[i+c][species];
+				population_history[i+c][species] = second_half[i][species];
+			};
+			d = [];
+			for (var k=0; k<2*c; k++) {
+				d[k] = population_history[k][species];
+			}
+			var ctx = document.getElementById('myChart' + species).getContext('2d');
+			ctx.clearRect(0, 0, 800, 80);
+
+			var max = Math.max.apply(Math, d);
+			if (document.getElementById('normalize').checked) {
+				if (model['species'][species]['trophicLevel'] == 'resource') max = 100;
+					else max = 10;
+			}		
+			var min = 0;
+			var WIDTH = 800;
+			var xOffset = 20;
+			var yOffset = 5;
+			var HEIGHT = 80;
+			var xUnit = (WIDTH - xOffset - xOffset)/(2*c);
+			var yUnit = (HEIGHT - yOffset - yOffset)/max;
+			var lastX = xOffset;
+			var lastY = HEIGHT - (yOffset + yUnit*d[0]);
+			ctx.clearRect(0, 0, WIDTH, HEIGHT);
+			for (var i=0; i<2*c; i++) {
+				if (document.getElementById('dots').checked) {
+					ctx.beginPath();
+					ctx.strokeStyle = i<c ? 'grey' : 'black';
+					ctx.arc(xOffset + i*xUnit, HEIGHT - (yOffset + yUnit*d[i]),1.5,0,2*Math.PI);
+					ctx.stroke();
+				} else if (document.getElementById('bars').checked) {
+					ctx.lineWidth = c<72 ? 2.8 : 0.4;
+					ctx.strokeStyle = i<c ? 'grey' : 'black';
+					ctx.beginPath();
+					ctx.moveTo(xOffset + i*xUnit,HEIGHT - yOffset);
+					ctx.lineTo(xOffset + i*xUnit, HEIGHT - (yOffset + yUnit*d[i]));
+					ctx.closePath();
+					ctx.stroke();
+				} else {
+					ctx.lineWidth = 0.4;
+					ctx.strokeStyle = i<c ? 'grey' : 'black';
+					ctx.beginPath();
+					ctx.moveTo(lastX,lastY);
+					ctx.lineTo(xOffset + i*xUnit, HEIGHT - (yOffset + yUnit*d[i]));
+					lastX = xOffset + i*xUnit;
+					lastY = HEIGHT - (yOffset + yUnit*d[i]);
+					ctx.closePath();
+					ctx.stroke();
+				}
+			}
+
+
+
+
+			// var myLineChart = new Chart(ctx).Line(data);
+			document.getElementById('init.' + species).value = population_history[population_history.length-1][species];
+		};
+	});
+
+}
+
+
+
+
+
+//utility functions
+
+function deepCopy(oldObj) {
+    var newObj = oldObj;
+    if (oldObj && typeof oldObj === 'object') {
+        newObj = Object.prototype.toString.call(oldObj) === "[object Array]" ? [] : {};
+        for (var i in oldObj) {
+            newObj[i] = deepCopy(oldObj[i]);
+        }
+    }
+    return newObj;
+}
+
+
+</script>
+
+
+
+</body>
+</HTML>
