@@ -338,7 +338,7 @@ function graph() {
 	var c = Number(document.getElementById('cycles').value);
 
 
-	nutella.net.request('simulation',{model:m, environment0:e0, environmentf:ef, populations:p, cycles:c},function(message) {
+	nutella.net.request('model-simulation',{model:m, environment0:e0, environmentf:ef, populations:p, cycles:c},function(message) {
 
 
 		var	second_half = message;

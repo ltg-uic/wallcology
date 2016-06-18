@@ -76,7 +76,7 @@ function cycleSimulation(Model,Environment,Populations) {
 }
 
 
-nutella.net.handle_requests('simulation', function(message, from) {
+nutella.net.handle_requests('model-simulation', function(message, from) {
     var m = message['model'];
     var e0 = message['environment0']; //{temperature:20, brickArea:.3, woodArea:.3, humidity:.5};
     var ef = message['environmentf']; //{temperature:20, brickArea:.3, woodArea:.3, humidity:.5};
@@ -95,6 +95,16 @@ nutella.net.handle_requests('simulation', function(message, from) {
 });
 
  
+nutella.net.handle_requests('enactment-simulation', function(message, from) {
+    console.log (message['model']);
+    var m = message['model'];
+    var e = [];
+    var e = message['environment'];
+    var p = [];
+    var p = message['populations'];
+    for (var i=0; i<5; i++) p[i] = cycleSimulation(m,e[i],p[i]);
+    return (p);
+});
 
 
 
