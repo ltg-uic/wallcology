@@ -5,7 +5,7 @@ var cliArgs = NUTELLA.parseArgs();
 var componentId = NUTELLA.parseComponentId();
 var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, componentId);
 
-var model; 
+// var model; 
 
 
 function cycleSimulation(Model,Environment,Populations) {
@@ -96,11 +96,8 @@ nutella.net.handle_requests('model-simulation', function(message, from) {
 
  
 nutella.net.handle_requests('enactment-simulation', function(message, from) {
-    console.log (message['model']);
     var m = message['model'];
-    var e = [];
     var e = message['environment'];
-    var p = [];
     var p = message['populations'];
     for (var i=0; i<5; i++) p[i] = cycleSimulation(m,e[i],p[i]);
     return (p);
