@@ -346,9 +346,25 @@ nutella.net.handle_requests('species_events_history', function(JSONmessage, from
 //
 //          returns the most recent state (support restart in case of failure). used by simulation bot
 
-nutella.net.handle_requests('last_state',function(JSONmessage, from) {
-        var last = history['states'].length-1;
-        if (last < 0) {return ('new');} else {return (history['states'][last]);};
+nutella.net.handle_requests('last_state',function(message, from) {
+
+  var e = [   {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 15, humidistat: 20},
+              {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
+              {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
+              {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
+              {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20}
+          ];
+  var p = [   [1,1,1,1,1,1,1,1,1,1,1],
+              [2,2,2,2,2,2,2,2,2,2,2],
+              [3,3,3,3,3,3,3,3,3,3,3],
+              [4,4,4,4,4,4,4,4,4,4,4],
+              [5,5,5,5,5,5,5,5,5,5,5]
+          ];
+  return ({abiotic_state: e, biotic_state: p});     
+
+
+        // var last = history['states'].length-1;
+        // if (last < 0) {return ('new');} else {return (history['states'][last]);};
  });
 
 nutella.net.handle_requests('last_animation_state',function(JSONmessage, from) {

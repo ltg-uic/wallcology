@@ -14,24 +14,18 @@ var tempDelta = .5;
 var humidityDelta = 2;
 
 var m = {};
-var e = [   {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 15, humidistat: 20},
-            {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
-            {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
-            {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20},
-            {temperature: 20, humidity: 20, brick:20, wood:20, thermostat: 20, humidistat: 20}
-        ];
-var p = [   [1,1,1,1,1,1,1,1,1,1,1],
-            [2,2,2,2,2,2,2,2,2,2,2],
-            [3,3,3,3,3,3,3,3,3,3,3],
-            [4,4,4,4,4,4,4,4,4,4,4],
-            [5,5,5,5,5,5,5,5,5,5,5]
-        ];
+var e = [];
+var p = [];
     
 
 nutella.net.subscribe('start_simulation', function(message, from) {
     nutella.net.request('read_population_model','populationModel', function(response){
         m = response;
-        crank();
+        nutella.net.request('last_state',{}, function(reply){
+            e = reply['abiotic_state'];
+            p = reply['biotic_state'];
+            crank();
+        });
     });
 });
 
@@ -40,11 +34,11 @@ function crank () {
     for (var i=0; i<n_ecosystems; i++) {
         p[i] = cycleSimulation(m,e[i],p[i]);
         if (e[i]['temperature'] < e[i]['thermostat']) e[i]['temperature'] += tempDelta;
-        else if (e[i]['temperature'] > e[i]['thermostat']) e[i]['temperature'] -= tempDelta;
+            else if (e[i]['temperature'] > e[i]['thermostat']) e[i]['temperature'] -= tempDelta;
         if (e[i]['humidity'] < e[i]['humidistat']) e[i]['humidity'] += humidityDelta;
-        else if (e[i]['humidity'] > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
+            else if (e[i]['humidity'] > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
     }
-    nutella.net.publish('state-update',{population:p,environment:e});
+    nutella.net.publish('state-update',{biotic_state:p,abiotic_state:e});
     setTimeout(crank, 10000);
 }
 
