@@ -22,8 +22,8 @@ nutella.net.subscribe('start_simulation', function(message, from) {
     nutella.net.request('read_population_model','populationModel', function(response){
         m = response;
         nutella.net.request('last_state',{}, function(reply){
-            e = reply['abiotic_state'];
-            p = reply['biotic_state'];
+            e = reply['abiotic'];
+            p = reply['biotic'];
             crank();
         });
     });
@@ -38,7 +38,7 @@ function crank () {
         if (e[i]['humidity'] < e[i]['humidistat']) e[i]['humidity'] += humidityDelta;
             else if (e[i]['humidity'] > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
     }
-    nutella.net.publish('state-update',{biotic_state:p,abiotic_state:e});
+    nutella.net.publish('state-update',{biotic:p,abiotic:e});
     setTimeout(crank, 10000);
 }
 
