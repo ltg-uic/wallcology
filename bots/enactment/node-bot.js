@@ -13,6 +13,8 @@ var n_ecosystems = 5;
 var tempDelta = .5;
 var humidityDelta = 2;
 
+
+
 var m = {};
 var e = [];
 var p = [];
@@ -29,14 +31,27 @@ nutella.net.subscribe('start_simulation', function(message, from) {
     });
 });
 
+nutella.net.subscribe('thermostat_change', function(message, from) {
+    e[message['ecosystem']]['thermostat']=message['value'];
+});
+
+nutella.net.subscribe('humidistat_change', function(message, from) {
+    e[message['ecosystem']]['humidity']=message['value'];
+});
+
+nutella.net.subscript('wall_change'), function(message, from) {
+    e[message['ecosystem']][message['wall']]=message['direction'];
+});
+
 
 function crank () {
     for (var i=0; i<n_ecosystems; i++) {
+        if (e[i]['temperature']+tempDelta < e[i]['thermostat']) e[i]['temperature'] += tempDelta;
+            else if (e[i]['temperature']-tempDelta > e[i]['thermostat']) e[i]['temperature'] -= tempDelta;
+        if (e[i]['humidity']+humidityDelta < e[i]['humidistat']) e[i]['humidity'] += humidityDelta;
+            else if (e[i]['humidity']-humidityDelta > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
         p[i] = cycleSimulation(m,e[i],p[i]);
-        if (e[i]['temperature'] < e[i]['thermostat']) e[i]['temperature'] += tempDelta;
-            else if (e[i]['temperature'] > e[i]['thermostat']) e[i]['temperature'] -= tempDelta;
-        if (e[i]['humidity'] < e[i]['humidistat']) e[i]['humidity'] += humidityDelta;
-            else if (e[i]['humidity'] > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
+
     }
     nutella.net.publish('state-update',{biotic:p,abiotic:e});
     setTimeout(crank, 10000);

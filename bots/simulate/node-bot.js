@@ -47,6 +47,7 @@ function cycleSimulation(Model,Environment,Populations) {
                 sum2 += ((M('a',i,k) * P('herbivores',k)) / (1 + M('q',k) * P('herbivores',k)));
         exponent = (M('K',i) - sum1)/(1 + M('K',i)) - sum2;
         nP('resources',i,P('resources',i) * Math.exp(exponent));
+        console.log (P('resources',i) * Math.exp(exponent));
     }
 
 //  do the herbivores
