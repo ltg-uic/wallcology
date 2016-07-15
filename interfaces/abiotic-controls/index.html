@@ -8,10 +8,27 @@
 	<meta name="description" content="">
 	<!-- Your CSS here -->
 </head>
-<body>
+<body background="nutella.jpg">
 	<!-- Your markup here -->
-	<p>Hello world! This is a nutella basic web interface</p>
-				
+	<H2>Abiotic Controls</H2>
+	Ecosystem: <input type=text id="ecosystem"><br><br>
+
+	<!-- The above is very temporary. We need to get ecosystem from URL PARAMETERS -->
+
+
+	Wall Controls: <br><br>
+	<button type="button" onclick="wall('left','in');" id="leftin">Left wall in</button><button type="button"onclick="wall('left','out');" id="leftout">Left wall out</button><br>
+	<button type="button" onclick="wall('top','in');" id="topin">Top wall in</button><button type="button"onclick="wall('top','out');" id="topout">Top wall out</button><br>
+	<button type="button" onclick="wall('right','in');" id="rightin">Right wall in</button><button type="button"onclick="wall('right','out');" id="rightout">Right wall out</button><br>
+	<button type="button" onclick="wall('bottom','in')" id="bottomin">Bottom wall in</button><button type="button"onclick="wall('bottom','out');" id="bottomout">Bottom wall out</button><br>
+	<br>
+	Thermostat: <br><br>
+	<input type=text id="thermostat"> <button type="button" onclick="thermostat(getElementById('thermostat').value);">Set thermostat</button><br><br>
+	Humidistat: <br><br>
+	<input type=text id="humidistat"> <button type="button" onclick="humidistat(getElementById('humidistat').value);">Set thermostat</button><br><br>
+
+
+
 	<!-- Scripts -->
 	<script src="nutella_lib.js" type="text/javascript"></script>
 	<!-- Your scripts here -->
@@ -27,62 +44,73 @@
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
 	
-	
+	function wall (side,direction) {
+		nutella.net.publish('wall',{ecosystem:getElementById('ecosystem').value, side:side, direction:direction});
+	}
+
+	function thermostat (target) {
+		nutella.net.publish('thermostat',{ecosystem:getElementById('ecosystem').value, value:target});
+	}
+
+	function humidistat (target) {
+		nutella.net.publish('humidistat',{ecosystem:getElementById('ecosystem').value, value:target});
+	}
+
 	// Your code that uses the nutella instance here
 	
 	
 	// EXAMPLES
 	// You can do stuff like:
 	
-	// 1. Subscribing to a channel
-	nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
-		// Your code to handle messages received on this here
-	});
+	// // 1. Subscribing to a channel
+	// nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
+	// 	// Your code to handle messages received on this here
+	// });
 	
-	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
-		// Your code to handle messages received by this channel here
-	});
+	// // 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
+	// // in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
+	// nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
+	// 	// Your code to handle messages received by this channel here
+	// });
 	
-	// 3. Publish a message to a channel
-	nutella.net.publish('demo_channel', 'demo_message');
+	// // 3. Publish a message to a channel
+	// nutella.net.publish('demo_channel', 'demo_message');
 	
-	// 3a The cool thing is that the message can be any Javascript variable or object
-	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
+	// // 3a The cool thing is that the message can be any Javascript variable or object
+	// nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
 	
-	// 4. Make requests on a certain channel...
-	nutella.net.request('demo_channel', 'my_request', function(response) {
-		// Your code to handle the response here
-	});
+	// // 4. Make requests on a certain channel...
+	// nutella.net.request('demo_channel', 'my_request', function(response) {
+	// 	// Your code to handle the response here
+	// });
 	
-	// 4a ... and, guess what, we can send anything in a request, like in publish!
-	// Requests can even be empty, kind of like a GET
-	nutella.net.request('demo_channel', function(response) {
-		// Your code to handle the response here
-	});
+	// // 4a ... and, guess what, we can send anything in a request, like in publish!
+	// // Requests can even be empty, kind of like a GET
+	// nutella.net.request('demo_channel', function(response) {
+	// 	// Your code to handle the response here
+	// });
 	
-	// 5. Handle requests from other components
-	nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
-		/// Your code to handle each request here
-		// Anything this function returns (string, integer, object,...) is going to be sent as the response
-		var response = 'this is my response';
-		// Or...
-		// var response = {};
-		// var response = 12345;
-		// var response = {a: 'proper', key: 'value'};
-		return response;
-	});
+	// // 5. Handle requests from other components
+	// nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
+	// 	/// Your code to handle each request here
+	// 	// Anything this function returns (string, integer, object,...) is going to be sent as the response
+	// 	var response = 'this is my response';
+	// 	// Or...
+	// 	// var response = {};
+	// 	// var response = 12345;
+	// 	// var response = {a: 'proper', key: 'value'};
+	// 	return response;
+	// });
 	
-	// 6. Access the variables that uniquely identify this instance of this component
-	nutella.runId;
-	nutella.componentId;
-	nutella.resourceId;
+	// // 6. Access the variables that uniquely identify this instance of this component
+	// nutella.runId;
+	// nutella.componentId;
+	// nutella.resourceId;
 	
-	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
+	// // 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
+	// // var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
 	
-	// HAVE FUN WITH nutella!
+	// // HAVE FUN WITH nutella!
 	
 	</script>
 				

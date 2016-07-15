@@ -7,53 +7,126 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 // Optionally you can set the resource Id
 nutella.setResourceId('my_resource_id');
 
-// gotta get these from somewhere
+//All these need to be in a Mongo configuration file.
 
-var n_ecosystems = 5;
-var tempDelta = .5;
-var humidityDelta = 2;
+var N_ECOSYSTEMS = 5;
+var TEMPERATURE_DELTA = .5;
+var HUMIDITY_DELTA = 2;
+var COLONIZER_EFFECT = 2.0;
+var TRAP_EFFECT = 0.5;
+var SEED_EFFECT = 1.25;
+var HERBICIDE_EFFECT = .5;
+var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
+var ANIMAL_POPULATION_MAXIMUM = 10000;
+var ANIMAL_EXTINCTION_THRESHHOLD = .1;
+
+var ot =    {   brick:  [
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25}
+                        ],
+                wood:   [
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25},
+                        {left:.25,top:.25,right:.25,bottom:.25}
+                        ]
+            };
 
 
 
-var m = {};
-var e = [];
-var p = [];
-    
+
+
+
+var m = {}; // model (constant)
+var a = []; // abiotic states (temperature, humidity, drywall, thermostat, humidistat, wood, brick)
+var b = []; // biotic states (populations)
+
+
 
 nutella.net.subscribe('start_simulation', function(message, from) {
     nutella.net.request('read_population_model','populationModel', function(response){
         m = response;
         nutella.net.request('last_state',{}, function(reply){
-            e = reply['abiotic'];
-            p = reply['biotic'];
+
+            // unpack the last state
+
+            a = reply['abiotic'];
+            b = reply['biotic'];
+
+            // subscribe to abiotic controls
+
+            nutella.net.subscribe('thermostat', function(message, from) {
+                a[message['ecosystem']]['thermostat']=message['target'];
+            });
+
+            nutella.net.subscribe('humidistat', function(message, from) {
+                a[message['ecosystem']]['humidistat']=message['target'];
+            });
+
+            nutella.net.subscribe('wall'), function(message, from) {
+                a[message['ecosystem']][message['side']]=message['direction'];
+                if ([message['direction']] == 'in') {
+                    a[message['ecosystem']]['wood']-=ot['wood'][message['ecosystem']][message['direction']];
+                    a[message['ecosystem']]['brick']-=ot['brick'][message['ecosystem']][message['direction']];
+                }
+                else if ([message['direction']] == 'out') {
+                    a[message['ecosystem']]['wood']+=ot['wood'][message['ecosystem']][message['direction']];
+                    a[message['ecosystem']]['brick']+=ot['brick'][message['ecosystem']][message['direction']];
+                }
+                else console.log("set-wall direction neither 'in' nor 'out': " + message['direction']);
+            });
+
+            // subscribe to biotic controls
+
+            nutella.net.subscribe('colonizer', function(message, from) {
+                b[message['ecosystem']]['species']*=COLONIZER_EFFECT;
+                if  (b[message['ecosystem']]['species'] > ANIMAL_POPULATION_MAXIMUM) b[message['ecosystem']]['species'] = ANIMAL_POPULATION_MAXIMUM; 
+            });
+
+            nutella.net.subscribe('trap', function(message, from) {
+                b[message['ecosystem']]['species']*=TRAP_EFFECT; 
+                if  (b[message['ecosystem']]['species'] < ANIMAL_EXTINCTION_THRESHHOLD) b[message['ecosystem']]['species'] = 0; 
+            });
+
+            nutella.net.subscribe('seed', function(message, from) {
+                b[message['ecosystem']]['species']*=SEED_EFFECT;
+                if  (b[message['ecosystem']]['species'] > 1.0) b[message['ecosystem']]['species'] = 1.0; 
+            });
+
+            nutella.net.subscribe('herbicide', function(message, from) {
+                b[message['ecosystem']]['species']*=HERBICIDE_EFFECT; 
+                if  (b[message['ecosystem']]['species'] < RESOURCE_EXTINCTION_THRESHHOLD) b[message['ecosystem']]['species'] = 0; 
+            });
+
+
+            // begin simulation
             crank();
         });
     });
 });
 
-nutella.net.subscribe('thermostat_change', function(message, from) {
-    e[message['ecosystem']]['thermostat']=message['value'];
-});
-
-nutella.net.subscribe('humidistat_change', function(message, from) {
-    e[message['ecosystem']]['humidity']=message['value'];
-});
-
-nutella.net.subscript('wall_change'), function(message, from) {
-    e[message['ecosystem']][message['wall']]=message['direction'];
-});
 
 
 function crank () {
-    for (var i=0; i<n_ecosystems; i++) {
-        if (e[i]['temperature']+tempDelta < e[i]['thermostat']) e[i]['temperature'] += tempDelta;
-            else if (e[i]['temperature']-tempDelta > e[i]['thermostat']) e[i]['temperature'] -= tempDelta;
-        if (e[i]['humidity']+humidityDelta < e[i]['humidistat']) e[i]['humidity'] += humidityDelta;
-            else if (e[i]['humidity']-humidityDelta > e[i]['humidistat']) e[i]['humidity'] -= humidityDelta;
-        p[i] = cycleSimulation(m,e[i],p[i]);
+    for (var i=0; i<N_ECOSYSTEMS; i++) {
+
+        // adjust temperatures as needed
+
+        if (a[i]['temperature']+TEMPERATURE_DELTA < a[i]['thermostat']) a[i]['temperature'] += TEMPERATURE_DELTA;
+            else if (a[i]['temperature']-TEMPERATURE_DELTA > a[i]['thermostat']) a[i]['temperature'] -= TEMPERATURE_DELTA;
+        if (a[i]['humidity']+HUMIDITY_DELTA < a[i]['humidistat']) a[i]['humidity'] += HUMIDITY_DELTA;
+            else if (a[i]['humidity']-HUMIDITY_DELTA > a[i]['humidistat']) a[i]['humidity'] -= HUMIDITY_DELTA;
+
+        // run the simulation cycle for ecosystem i
+
+        b[i] = cycleSimulation(m,a[i],b[i]);
 
     }
-    nutella.net.publish('state-update',{biotic:p,abiotic:e});
+    nutella.net.publish('state-update',{abiotic:a,biotic:b});
     setTimeout(crank, 10000);
 }
 
