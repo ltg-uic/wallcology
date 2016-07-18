@@ -19,6 +19,7 @@ var HERBICIDE_EFFECT = .5;
 var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
 var ANIMAL_POPULATION_MAXIMUM = 10000;
 var ANIMAL_EXTINCTION_THRESHHOLD = .1;
+var COLONIZE_MINUMUM = 1;
 
 var ot =    {   brick:  [
                         {left:.25,top:.25,right:.25,bottom:.25},
@@ -39,7 +40,7 @@ var ot =    {   brick:  [
 
 
 
-
+var RUNNING;
 
 var m = {}; // model (constant)
 var a = []; // abiotic states (temperature, humidity, drywall, thermostat, humidistat, wood, brick)
@@ -56,6 +57,7 @@ nutella.net.subscribe('start_simulation', function(message, from) {
 
             a = reply['abiotic'];
             b = reply['biotic'];
+            RUNNING = true;
 
             // subscribe to abiotic controls
 
@@ -82,28 +84,33 @@ nutella.net.subscribe('start_simulation', function(message, from) {
 
             // subscribe to biotic controls
 
-            nutella.net.subscribe('colonizer', function(message, from) {
-                b[message['ecosystem']]['species']*=COLONIZER_EFFECT;
-                if  (b[message['ecosystem']]['species'] > ANIMAL_POPULATION_MAXIMUM) b[message['ecosystem']]['species'] = ANIMAL_POPULATION_MAXIMUM; 
+            nutella.net.subscribe('colonize', function(message, from) {
+                b[message['ecosystem']][message['species']]*=COLONIZER_EFFECT;
+                if (b[message['ecosystem']][message['species']] == 0) b[message['ecosystem']][message['species']] = COLONIZE_MINUMUM;
+                if (b[message['ecosystem']][message['species']] > ANIMAL_POPULATION_MAXIMUM) b[message['ecosystem']][message['species']] = ANIMAL_POPULATION_MAXIMUM; 
             });
 
             nutella.net.subscribe('trap', function(message, from) {
-                b[message['ecosystem']]['species']*=TRAP_EFFECT; 
-                if  (b[message['ecosystem']]['species'] < ANIMAL_EXTINCTION_THRESHHOLD) b[message['ecosystem']]['species'] = 0; 
+                b[message['ecosystem']][message['species']]*=TRAP_EFFECT; 
+                if  (b[message['ecosystem']][message['species']] < ANIMAL_EXTINCTION_THRESHHOLD) b[message['ecosystem']][message['species']] = 0; 
             });
 
             nutella.net.subscribe('seed', function(message, from) {
-                b[message['ecosystem']]['species']*=SEED_EFFECT;
-                if  (b[message['ecosystem']]['species'] > 1.0) b[message['ecosystem']]['species'] = 1.0; 
+                b[message['ecosystem']][message['species']]*=SEED_EFFECT;
+                if  (b[message['ecosystem']][message['species']] > 1.0) b[message['ecosystem']][message['species']] = 1.0; 
             });
 
             nutella.net.subscribe('herbicide', function(message, from) {
-                b[message['ecosystem']]['species']*=HERBICIDE_EFFECT; 
-                if  (b[message['ecosystem']]['species'] < RESOURCE_EXTINCTION_THRESHHOLD) b[message['ecosystem']]['species'] = 0; 
+                b[message['ecosystem']][message['species']]*=HERBICIDE_EFFECT; 
+                if  (b[message['ecosystem']][message['species']] < RESOURCE_EXTINCTION_THRESHHOLD) b[message['ecosystem']][message['species']] = 0; 
             });
 
+            nutella.net.subscribe('stop_simulation', function(message, from) {
+                RUNNING = false;
+            });
 
             // begin simulation
+
             crank();
         });
     });
@@ -112,21 +119,22 @@ nutella.net.subscribe('start_simulation', function(message, from) {
 
 
 function crank () {
-    for (var i=0; i<N_ECOSYSTEMS; i++) {
+    if (RUNNING){
+        for (var i=0; i<N_ECOSYSTEMS; i++) {
 
-        // adjust temperatures as needed
+            // adjust temperatures as needed
 
-        if (a[i]['temperature']+TEMPERATURE_DELTA < a[i]['thermostat']) a[i]['temperature'] += TEMPERATURE_DELTA;
-            else if (a[i]['temperature']-TEMPERATURE_DELTA > a[i]['thermostat']) a[i]['temperature'] -= TEMPERATURE_DELTA;
-        if (a[i]['humidity']+HUMIDITY_DELTA < a[i]['humidistat']) a[i]['humidity'] += HUMIDITY_DELTA;
-            else if (a[i]['humidity']-HUMIDITY_DELTA > a[i]['humidistat']) a[i]['humidity'] -= HUMIDITY_DELTA;
+            if (a[i]['temperature']+TEMPERATURE_DELTA < a[i]['thermostat']) a[i]['temperature'] += TEMPERATURE_DELTA;
+                else if (a[i]['temperature']-TEMPERATURE_DELTA > a[i]['thermostat']) a[i]['temperature'] -= TEMPERATURE_DELTA;
+            if (a[i]['humidity']+HUMIDITY_DELTA < a[i]['humidistat']) a[i]['humidity'] += HUMIDITY_DELTA;
+                else if (a[i]['humidity']-HUMIDITY_DELTA > a[i]['humidistat']) a[i]['humidity'] -= HUMIDITY_DELTA;
 
-        // run the simulation cycle for ecosystem i
+            // run the simulation cycle for ecosystem i
 
-        b[i] = cycleSimulation(m,a[i],b[i]);
-
+            b[i] = cycleSimulation(m,a[i],b[i]);
+        }
+        nutella.net.publish('state-update',{abiotic:a,biotic:b});
     }
-    nutella.net.publish('state-update',{abiotic:a,biotic:b});
     setTimeout(crank, 10000);
 };
 
