@@ -10,8 +10,8 @@ nutella.setResourceId('my_resource_id');
 //All these need to be in a Mongo configuration file.
 
 var N_ECOSYSTEMS = 5;
-var TEMPERATURE_DELTA = .5;
-var HUMIDITY_DELTA = 2;
+var TEMPERATURE_DELTA = .5/24;
+var HUMIDITY_DELTA = .5/24;
 var COLONIZER_EFFECT = 2.0;
 var TRAP_EFFECT = 0.5;
 var SEED_EFFECT = 1.25;
@@ -60,22 +60,22 @@ nutella.net.subscribe('start_simulation', function(message, from) {
             // subscribe to abiotic controls
 
             nutella.net.subscribe('thermostat', function(message, from) {
-                a[message['ecosystem']]['thermostat']=message['target'];
+                a[message['ecosystem']]['thermostat']=message['value'];
             });
 
             nutella.net.subscribe('humidistat', function(message, from) {
-                a[message['ecosystem']]['humidistat']=message['target'];
+                a[message['ecosystem']]['humidistat']=message['value'];
             });
 
-            nutella.net.subscribe('wall'), function(message, from) {
+            nutella.net.subscribe('wall', function(message, from) {
                 a[message['ecosystem']][message['side']]=message['direction'];
                 if ([message['direction']] == 'in') {
-                    a[message['ecosystem']]['wood']-=ot['wood'][message['ecosystem']][message['direction']];
-                    a[message['ecosystem']]['brick']-=ot['brick'][message['ecosystem']][message['direction']];
+                    a[message['ecosystem']]['wood']-=ot['wood'][message['ecosystem']][message['side']];
+                    a[message['ecosystem']]['brick']-=ot['brick'][message['ecosystem']][message['side']];
                 }
                 else if ([message['direction']] == 'out') {
-                    a[message['ecosystem']]['wood']+=ot['wood'][message['ecosystem']][message['direction']];
-                    a[message['ecosystem']]['brick']+=ot['brick'][message['ecosystem']][message['direction']];
+                    a[message['ecosystem']]['wood']+=ot['wood'][message['ecosystem']][message['side']];
+                    a[message['ecosystem']]['brick']+=ot['brick'][message['ecosystem']][message['side']];
                 }
                 else console.log("set-wall direction neither 'in' nor 'out': " + message['direction']);
             });
@@ -128,7 +128,7 @@ function crank () {
     }
     nutella.net.publish('state-update',{abiotic:a,biotic:b});
     setTimeout(crank, 10000);
-}
+};
 
 
 

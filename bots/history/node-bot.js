@@ -21,7 +21,7 @@ history.load(function(){
   });
   nutella.net.subscribe('state-update',function(message, from) {
     var d = new Date();
-    history['states'].push({timestamp: d.getTime(), biotic: message['biotic'], abiotic: message['abiotic']});
+    history['states'].push({timestamp: d.getTime(), abiotic: message['abiotic'], biotic: message['biotic']});
     history.save();
   });
 
