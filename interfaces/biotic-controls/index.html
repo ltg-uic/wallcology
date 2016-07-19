@@ -3,9 +3,9 @@
 <head>
 	<meta charset="utf-8">
 	<!-- Your interface name here-->
-	<title></title>
+	<title>Biotic Controls</title>
 	<!-- The description of this interfaces here -->
-	<meta name="description" content="">
+	<meta name="description" content="Biotic Controls">
 	<!-- Your CSS here -->
 </head>
 <body>
@@ -33,6 +33,7 @@
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.ECOSYSTEM;
+	if (ecosystem === undefined) ecosystem = 0;
 
 
 	// Get an instance of nutella. 

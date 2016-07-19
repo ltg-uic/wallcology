@@ -27,10 +27,10 @@
 	<button type="button" onclick="wall('right','in');" id="rightin">Right wall in</button><button type="button"onclick="wall('right','out');" id="rightout">Right wall out</button><br>
 	<button type="button" onclick="wall('bottom','in')" id="bottomin">Bottom wall in</button><button type="button"onclick="wall('bottom','out');" id="bottomout">Bottom wall out</button><br>
 	<br>
-	Temperature &nbsp<input type=text id="temperature" size=3 READONLY><br>
-	Thermostat &nbsp&nbsp <input type=text id="thermostat" size=3> <button type="button" onclick="thermostat(document.getElementById('thermostat').value);">Set</button><br><br>
-	Humidity &nbsp&nbsp&nbsp&nbsp&nbsp <input type=text id="humidity" size=3 READONLY><br>
-	Humidistat &nbsp&nbsp <input type=text id="humidistat" size=3> <button type="button" onclick="humidistat(document.getElementById('humidistat').value);">Set</button><br><br>
+	Temperature &nbsp<input type=text id="temperature" size=3 READONLY>ºC<br>
+	Thermostat &nbsp&nbsp <input type=text id="thermostat" size=3>ºC <button type="button" onclick="thermostat(document.getElementById('thermostat').value);">Set</button><br><br>
+	Humidity &nbsp&nbsp&nbsp&nbsp&nbsp <input type=text id="humidity" size=3 READONLY>%<br>
+	Humidistat &nbsp&nbsp <input type=text id="humidistat" size=3>% <button type="button" onclick="humidistat(document.getElementById('humidistat').value);">Set</button><br><br>
 
 
 
@@ -41,6 +41,7 @@
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.ECOSYSTEM;
+	if (ecosystem === undefined) ecosystem = 0;
 
 
 	// Get an instance of nutella. 
@@ -68,12 +69,11 @@
 		if (state.abiotic[ecosystem].bottom == 'out') document.getElementById('bottomout').disabled=true;
 
 
-		document.getElementById('temperature').value = state.abiotic[ecosystem]['temperature'];
+		document.getElementById('temperature').value = Math.round(state.abiotic[ecosystem]['temperature']);
 		document.getElementById('thermostat').value = state.abiotic[ecosystem].thermostat;
-		document.getElementById('humidity').value = state.abiotic[ecosystem].humidity;
+		document.getElementById('humidity').value = Math.round(state.abiotic[ecosystem].humidity);
 		document.getElementById('humidistat').value = state.abiotic[ecosystem].humidistat;
-		document.getElementById('ecosystem').value = ecosystem[ecosystem];
-
+		document.getElementById('ecosystem').value = ecosystem;
 	
 	}
 
@@ -85,16 +85,19 @@
 		if (direction == 'out') document.getElementById(side + 'in').disabled=false;
 
 
-
 	}
 
 	function thermostat (value) {
-		nutella.net.publish('thermostat',{ecosystem:ecosystem, value:value});
+		if (value<10 || value>30) alert("Thermostat values must be in the range 10ºC to 30ºC");
+		else nutella.net.publish('thermostat',{ecosystem:ecosystem, value:tempToModel(value)});
 	}
 
 	function humidistat (value) {
-		nutella.net.publish('humidistat',{ecosystem:ecosystem, value:value});
+		if (value<0 || value>100) alert("Humidistat values must be in the range 0% to 100% Relative Humidity");
+		nutella.net.publish('humidistat',{ecosystem:ecosystem, value:humidityToModel(value)});
 	}
+
+
 
 	// Your code that uses the nutella instance here
 	

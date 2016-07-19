@@ -19,6 +19,21 @@ history.load(function(){
     var last_state_index = history['states'].length-1;
     return ({abiotic: history['states'][last_state_index]['abiotic'], biotic: history['states'][last_state_index]['biotic']});
   });
+  nutella.net.handle_requests('ecosystem_history',function(message, from) {
+      var a = [];
+      var b = [];
+      var index = 0;
+      var last_state_index = history['states'].length-1;
+      for (var i=0; i<last_state_index; i++) {
+//        if (history['states'].timestamp > message.start && history['states'].timestamp < message.stop) {
+          a[index] = history['states'][i]['abiotic'][message.ecosystem];
+          b[index] = history['states'][i]['biotic'][message.ecosystem];
+          index++;
+//        }
+      }
+    return ({abiotic: a, biotic: b});
+  });
+
   nutella.net.subscribe('state-update',function(message, from) {
     var d = new Date();
     history['states'].push({timestamp: d.getTime(), abiotic: message['abiotic'], biotic: message['biotic']});

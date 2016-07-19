@@ -20,7 +20,6 @@ var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
 var ANIMAL_POPULATION_MAXIMUM = 10000;
 var ANIMAL_EXTINCTION_THRESHHOLD = .1;
 var COLONIZE_MINUMUM = 1;
-
 var ot =    {   brick:  [
                         {left:.25,top:.25,right:.25,bottom:.25},
                         {left:.25,top:.25,right:.25,bottom:.25},
@@ -139,6 +138,22 @@ function crank () {
 };
 
 
+    function modelToTemp (t) {
+        return (10+t*20);
+    }
+
+    function modelToHumidity (h) {
+        return (h*100);
+    }
+
+    function humidityToModel (h) {
+        return (h/100);
+    }
+
+    function tempToModel (t) {
+        return ((t-10)/20);
+    }
+
 
 
 function cycleSimulation(Model,Environment,Populations) {
@@ -148,11 +163,12 @@ function cycleSimulation(Model,Environment,Populations) {
     var sum2;
     var exponent;
 
+
     function M(parameter,index1,index2,index3) {
-        var t = Environment['temperature'];
+        var t = tempToModel(Environment['temperature']);
         var b = Environment['brick'];
         var w = Environment['wood'];
-        var h = Environment['humidity'];
+        var h = humidityToModel(Environment['humidity']);
         if (M.arguments.length == 2) return (eval(Model[parameter][index1]));
         if (M.arguments.length == 3) return (eval(Model[parameter][index1][index2]));
         if (M.arguments.length == 4) return (eval(Model[parameter][index1][index2][index3]));
