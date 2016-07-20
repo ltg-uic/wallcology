@@ -132,7 +132,7 @@ function crank () {
 
             b[i] = cycleSimulation(m,a[i],b[i]);
         }
-        nutella.net.publish('state-update',{abiotic:a,biotic:b});
+        nutella.net.publish('state_update',{abiotic:a,biotic:b});
     }
     setTimeout(crank, 10000);
 };

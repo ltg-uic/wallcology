@@ -34,7 +34,7 @@ history.load(function(){
     return ({abiotic: a, biotic: b});
   });
 
-  nutella.net.subscribe('state-update',function(message, from) {
+  nutella.net.subscribe('state_update',function(message, from) {
     var d = new Date();
     history['states'].push({timestamp: d.getTime(), abiotic: message['abiotic'], biotic: message['biotic']});
     history.save();
