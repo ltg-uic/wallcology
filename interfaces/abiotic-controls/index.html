@@ -40,7 +40,7 @@
 	
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
-	var ecosystem = query_parameters.ECOSYSTEM;
+	var ecosystem = query_parameters.INSTANCE;
 	if (ecosystem === undefined) ecosystem = 0;
 
 
@@ -89,12 +89,12 @@
 
 	function thermostat (value) {
 		if (value<10 || value>30) alert("Thermostat values must be in the range 10ºC to 30ºC");
-		else nutella.net.publish('thermostat',{ecosystem:ecosystem, value:tempToModel(value)});
+		else nutella.net.publish('thermostat',{ecosystem:ecosystem, value:value});
 	}
 
 	function humidistat (value) {
 		if (value<0 || value>100) alert("Humidistat values must be in the range 0% to 100% Relative Humidity");
-		nutella.net.publish('humidistat',{ecosystem:ecosystem, value:humidityToModel(value)});
+		nutella.net.publish('humidistat',{ecosystem:ecosystem, value:value});
 	}
 
 
