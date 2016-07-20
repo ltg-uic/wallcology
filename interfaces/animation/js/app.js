@@ -46,7 +46,7 @@ function initNutellaComponents()
     // Parse the query parameters
     var query_parameters = NUTELLA.parseURLParameters();
     console.log(query_parameters);
-    WallscopeID = query_parameters.wallscope || 0;
+    WallscopeID = query_parameters.INSTANCE || 0;
 
     console.log('wallscope: ' + WallscopeID)
 
@@ -146,7 +146,7 @@ function State_Update_Handler( response )
 
     console.log("\tSpecies Record Updated! ");
     Unity.SetThermostatText(lastState['abiotic'][WallscopeID]['thermostat']);
-    Unity.SetTemperatureText(lastState['abiotic'][WallscopeID]['temperature')];
+    Unity.SetTemperatureText(lastState['abiotic'][WallscopeID]['temperature']);
     // Wait on these for now...
     // lastState['abiotic'][WallscopeID]['humidistat']
     // lastState['abiotic'][WallscopeID]['humidity']
