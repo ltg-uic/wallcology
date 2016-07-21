@@ -135,11 +135,11 @@ function State_Update_Handler( response )
     console.log("\tlast_state!", Date(lastState["timestamp"]), lastState);
      // Send messages to Unity
 
-    for (var i = 0; i < lastState['abiotic'][WallscopeID].length; i++) {
+    for (var i = 0; i < lastState['biotic'][WallscopeID].length; i++) {
 
-        var count = lastState['abiotic'][WallscopeID][i] * 25;
+        var count = lastState['biotic'][WallscopeID][i] * 25;
         var packaged = i.toString() + " " + count.toString();
-
+        console.log("state_update", packaged);
         Unity.SetSpeciesRecordCount( packaged );
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
