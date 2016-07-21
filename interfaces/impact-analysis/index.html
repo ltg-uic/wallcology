@@ -95,32 +95,46 @@ ul.tab li a:focus, .active {
 
 	if (query_parameters.INSTANCE === undefined) { 
 
-		// nutella.net.request('roster',{},function(roster, from) {
-		// 	document.write("Groups: ");
-		// 	for (var i=0; i<roster.group.length) {
-		// 		document.write('<button onClick="groupLogin(${i});">${roster.group[i].login}</button>');
-		// 	}
-		// 	document.write("<br>");
-		// 	document.write("Teachers: ");
-		// 	for (var i=0; i<roster.teacher.length) {
-		// 		document.write('<button onClick="teacherLogin(${i});">${roster.teacher[i].login}</button>');
-		// 	}
-		// 	document.write("<br>");
-		// 	document.write("Public devices: <br>");
-		// 	for (var j=0; j<roster.public.length; j++) {
-		// 		document.write ('  ' + roster.public[j].login + ': ');
-		// 		for (var i=0; i<roster.public[j].count; i++) {
-		// 			document.write('<button onClick="publicLogin(${j},${i});">${roster.teacher[i].login}</button>');
-		// 		}
-		// 		document.write("<br");
-		// 	}
-		// });
-
-		// function grouplogin (index) {
+//		nutella.net.request('roster',{},function(roster, from) {
 			
-		// }
+			var roster = {group:[{login:"Red Team",instance:0},{login:"Blue Team",instance:1}],teacher:[],ecosystem:[{login:"Ecosystem 1",instance:0},{login:"Ecosystem 2",instance:1}],speciesPlace:[]};
+			
+			document.write("<H2>Log in by clicking on the appropriate button</H2><br>");
+			document.write("Groups: ");
+			for (var i=0; i<roster.group.length; i++) {
+				document.write('<button onClick="groupLogin(' + i + ');">' + roster.group[i].login + '</button>');
+			}
+			document.write("<br>");
 
-		document.write('Class: <input type=text id="class"> &nbsp&nbspRole: <input type=text id="role">&nbsp&nbspInstance: <input type=text id="instance">&nbsp&nbsp<button onClick="run();">Set</button><br><br>');
+			document.write("Teachers: ");
+			for (var i=0; i<roster.teacher.length; i++) {
+				document.write('<button onClick="teacherLogin(' + i + ');">' + roster.teacher[i].login + '</button>');
+			}
+			document.write("<br>");
+			document.write("Public places<br>");
+
+			document.write("&nbsp&nbspEcosystems: ");
+			for (var i=0; i<roster.ecosystem.length; i++) {
+				document.write('<button onClick="ecosystemLogin(' + i + ');">' + roster.ecosystem[i].login + '</button>');
+			}
+			document.write("<br>");
+
+			document.write("&nbsp&nbspSpecies Places: ");
+			for (var i=0; i<roster.speciesPlace.length; i++) {
+				document.write('<button onClick="speciesPlaceLogin(' + i + ');">' + roster.speciesPlace[i].login + '</button>');
+			}
+			document.write("<br>");
+
+
+//		});
+
+		function groupLogin (index) {
+			// look up class activity
+
+			nutella.net.request('channel_lineup',roster.group[index].login, function (channelLineup, from) {
+
+			});
+		
 
 	} else {
 
@@ -133,7 +147,6 @@ ul.tab li a:focus, .active {
 	function run() {
 		location.href = location.href + '&INSTANCE=' + document.getElementById('instance').value;
 	}
-
 
 
 	function construct_user_interface (channel_lineup) {
