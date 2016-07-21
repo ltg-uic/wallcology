@@ -301,22 +301,22 @@ var Unity = {
         }
     },
 
-    // Accesses the Unity GameObject called 'Habitat' and executes the
+    // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // PositionCritterTrap method, supplying the Trap ID #
     PlaceTrap : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat", "PositionCritterTrap", uID);
+        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterTrap", uID);
     },
 
-    // Accesses the Unity GameObject called 'Habitat' and executes the
+    // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // PositionCritterColony method, supplying the Colony ID #
     PlaceColony : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat", "PositionCritterColony", uID);
+        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterColony", uID);
     },
 
-    // Accesses the Unity GameObject called 'Habitat' and executes the
+    // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // CallCropDuster method, supplying the CropDuster ID #
     CallCropDuster : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat", "CallCropDuster", uID);
+        unity3d.getUnity().SendMessage("Habitat_Events", "CallCropDuster", uID);
     },
 
     /* Decprecated Function */
