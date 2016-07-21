@@ -304,30 +304,36 @@ var Unity = {
     // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // PositionCritterTrap method, supplying the Trap ID #
     PlaceTrap : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterTrap", uID);
+        var id = parseInt(uID)
+        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterTrap", id);
     },
 
     // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // PositionCritterColony method, supplying the Colony ID #
     PlaceColony : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterColony", uID);
+        var id = Number(uID)
+        console.log("PositionCritterColony", id);
+        unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterColony", id);
     },
 
     // Accesses the Unity GameObject called 'Habitat_Events' and executes the
     // CallCropDuster method, supplying the CropDuster ID #
     CallCropDuster : function(uID) {
-        unity3d.getUnity().SendMessage("Habitat_Events", "CallCropDuster", uID);
+        var id = parseInt(uID)
+        unity3d.getUnity().SendMessage("Habitat_Events", "CallCropDuster", id);
     },
 
     /* Decprecated Function */
     StartPopulationTracker : function() {
+        var id = parseInt(uID)
         unity3d.getUnity().SendMessage("Habitat", "UpdatePopulationCounts", "" );
     },
 
     /* Decprecated Function */
     RequestPopulationCount : function ( uID ) {
         // Calls UNITY requesting Population
-        unity3d.getUnity().SendMessage("Habitat", "GetPopulationCount", uID);
+        var id = parseInt(uID)
+        unity3d.getUnity().SendMessage("Habitat", "GetPopulationCount", id);
     },
 
     /* Decprecated Function */
