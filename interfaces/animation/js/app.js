@@ -137,7 +137,7 @@ function State_Update_Handler( response )
 
     for (var i = 0; i < lastState['biotic'][WallscopeID].length; i++) {
 
-        var count = lastState['biotic'][WallscopeID][i] * 25;
+        var count = parseInt(lastState['biotic'][WallscopeID][i]) * 25;
         var packaged = i.toString() + " " + count.toString();
         console.log("state_update", packaged);
         Unity.SetSpeciesRecordCount( packaged );
