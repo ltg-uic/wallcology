@@ -119,7 +119,6 @@ function initWebPlayer()
 
 
 
-
 /*==============================================================================
  #                       NUTELLA MESSAGE HANDLERS
  #=============================================================================*/
@@ -211,7 +210,7 @@ var TellJs = {
             console.log( 'channel-seed', response);
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
-                Unity.CallCropDuster(cleaned['species'])
+                Unity.CallCropSeeder(cleaned['species'])
         })
 
         nutella.net.subscribe( 'herbicide', function(response) {
