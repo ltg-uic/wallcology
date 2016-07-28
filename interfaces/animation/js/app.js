@@ -322,6 +322,11 @@ var Unity = {
         unity3d.getUnity().SendMessage("Habitat_Events", "CallCropDuster", id);
     },
 
+    CallCropSeeder : function(uID) {
+        var id = parseInt(uID)
+        unity3d.getUnity().SendMessage("Habitat_Events", "CallCropSeeder", id);
+    },
+
     /* Decprecated Function */
     StartPopulationTracker : function() {
         var id = parseInt(uID)
