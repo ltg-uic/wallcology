@@ -17,8 +17,8 @@ function cycleSimulation(Model,Environment,Populations) {
 
     function M(parameter,index1,index2,index3) {
         var t = Environment['temperature'];
-        var b = Environment['brick'];
-        var w = Environment['wood'];
+        var b = Environment['brick']*4/9;
+        var w = Environment['wood']*4/9;
         var h = Environment['humidity'];
         if (M.arguments.length == 2) return (eval(Model[parameter][index1]));
         if (M.arguments.length == 3) return (eval(Model[parameter][index1][index2]));

@@ -10,15 +10,15 @@ nutella.setResourceId('my_resource_id');
 //All these need to be in a Mongo configuration file.
 
 var N_ECOSYSTEMS = 5;
-var TEMPERATURE_DELTA = .5/24;
-var HUMIDITY_DELTA = .5/24;
+var TEMPERATURE_DELTA;
+var HUMIDITY_DELTA;
 var COLONIZER_EFFECT = 2.0;
 var TRAP_EFFECT = 0.5;
 var SEED_EFFECT = 1.25;
 var HERBICIDE_EFFECT = .5;
 var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
 var ANIMAL_POPULATION_MAXIMUM = 10000;
-var ANIMAL_EXTINCTION_THRESHHOLD = .1;
+var ANIMAL_EXTINCTION_THRESHHOLD = .05;
 var COLONIZE_MINUMUM = 1;
 
 // the "ot" table specifies the fraction of total habitat that is
@@ -47,7 +47,7 @@ var ot =    {   brick:  [
 
 
 var delayBetweenSteps;
-var RUNNING;
+var RUNNING = false;
 
 var m = {}; // model (constant)
 var a = []; // abiotic states (temperature, humidity, drywall, thermostat, humidistat, wood, brick)
@@ -55,8 +55,19 @@ var b = []; // biotic states (populations)
 
 var subscribe = true;
 
+nutella.net.handle_requests('running', function(request) {
+    return RUNNING;
+});
+
+
 nutella.net.subscribe('start_simulation', function(interval, from) {
     delayBetweenSteps = interval;
+
+    // amortize effects over 24 hours
+    
+    TEMPERATURE_DELTA = 10/((24*60*60)/interval);
+    HUMIDITY_DELTA = 30/((24*60*60)/interval);
+
     nutella.net.request('read_population_model','populationModel', function(response){
         m = response;
         nutella.net.request('last_state',{}, function(reply){
@@ -148,8 +159,8 @@ function crank () {
             b[i] = cycleSimulation(m,a[i],b[i]);
         }
         nutella.net.publish('state_update',{abiotic:a,biotic:b});
+        setTimeout(crank, delayBetweenSteps*1000);
     }
-    setTimeout(crank, delayBetweenSteps*1000);
 };
 
 
