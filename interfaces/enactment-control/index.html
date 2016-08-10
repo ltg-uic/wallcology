@@ -13,7 +13,7 @@
 	<p>Enactment control interface</p>
 	<button id="start" onclick="startSimulation();">Start simulation</button>
 	<button id="stop" onclick="stopSimulation();">Stop simulation</button>
-	<button id="reset" onclick="resetSimulation();">Reset simulation</button>
+	<button id="reset" onclick="resetSimulation();">Reset history</button>
 	&nbsp&nbspInterval (seconds): <input type=text id="interval">
 	<!-- Scripts -->
 	<script src="nutella_lib.js" type="text/javascript"></script>
@@ -30,7 +30,10 @@
 	document.getElementById('stop').disabled = true;
 
 	function startSimulation() {
-		nutella.net.publish('start_simulation',document.getElementById('interval').value);
+		var i = document.getElementById('interval').value;
+		if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
+		if (i<1) {alert('Interval must be a positive integer'); return;}
+		nutella.net.publish('start_simulation',i);
 		document.getElementById('start').disabled = true;
 		document.getElementById('stop').disabled = false;
 		document.getElementById('reset').disabled = true;
@@ -44,11 +47,10 @@
 	}
 
 	function resetSimulation() {
-		nutella.net.request('reset_simulation'),{},function(message,from) {
+		nutella.net.publish('reset_history',{});
 			document.getElementById('stop').disabled = true;
 			document.getElementById('start').disabled = false;
 			document.getElementById('reset').disabled = false;
-		});
 	}
 
 	
