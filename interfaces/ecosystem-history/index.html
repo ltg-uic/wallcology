@@ -9,10 +9,11 @@
 	<!-- Your CSS here -->
 </head>
 <body>
+
 	<!-- Your markup here -->
 	<H2>Ecosystem <input type=text size=1 id="ecosystem"> History</H2>
-	Start: 
-	<select id="startMonth">
+	From: 
+	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
 	  <option value="March">March</option>
@@ -26,17 +27,17 @@
 	  <option value="November">November</option>
 	  <option value="December">December</option>
 	</select>
-	<select id="startDay">
+	<select id="startDay" onChange="query();">
 		<script type="text/javascript">
 			for(i=1;i<=31;i++) document.write('<option value ="' + i + '">' + i + '</option>');
 		</script>
 	</select>
-	<select id="startYear">
+<!-- 	<select id="startYear">
 			  <option value="2016">2016</option>
 	  <option value="2017">2017</option>
 	</select>
-	&nbsp&nbspEnd: 
-	<select id="endMonth">
+ -->	&nbsp&nbspTo: 
+	<select id="endMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
 	  <option value="March">March</option>
@@ -50,16 +51,16 @@
 	  <option value="November">November</option>
 	  <option value="December">December</option>
 	</select>
-	<select id="endDay">
+	<select id="endDay" onChange="query();">
 		<script type="text/javascript">
 			for(i=1;i<=31;i++) document.write('<option value ="' + i + '">' + i + '</option>');
 		</script>
 	</select>
-	<select id="endYear">
+<!-- 	<select id="endYear">
 			  <option value="2016">2016</option>
 	  <option value="2017">2017</option>
 	</select>
-	<button id="draw" onclick="query();">Draw</button>
+ -->	<!-- <button id="draw" onclick="query();">Draw</button> -->
 
 
 	<table style="border-spacing:0px;padding:0;">
@@ -84,7 +85,7 @@
 
 			for (i=0; i<11; i++) {
 				document.write('<tr><td><img src=' + images[i] + ' height=50 width=50></td>');
-				document.write('<td><canvas id="myChart' + i + '" width="400" height="50"></td></tr>');
+				document.write('<td><canvas id="myChart' + i + '" width="600" height="50"></td></tr>');
 				if (label) {
 					document.write('<tr><td></td><td><input type=text size=2 READONLY name="month1"><input type=text size=2 READONLY name="day1"><input type=text size=4 READONLY name="year1"></td></tr>');
 				}
@@ -101,27 +102,51 @@
 	<canvas id="myChart" width="400" height="50"></canvas>
 			
 	<script type="text/javascript">
+
+
+	var d = new Date();
+	var month = d.getMonth();
+	var day = d.getDate();
+
+	document.getElementById('startMonth').selectedIndex = month;
+	document.getElementById('startDay').selectedIndex = day-1;
+	document.getElementById('endMonth').selectedIndex = month;
+	document.getElementById('endDay').selectedIndex = day-1;
+
+
 	
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.INSTANCE;
 	if (ecosystem === undefined) ecosystem = 0;
-	document.getElementById('ecosystem').value = ecosystem;
+	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 
 	// Get an instance of nutella. 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 	
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
-	
+	query();
 	
 	// Your code that uses the nutella instance here
 	
 	function query(){
+		var sm = document.getElementById('startMonth').selectedIndex+1;
+		var sd = document.getElementById('startDay').selectedIndex+1;
+		// var sy = document.getElementById('startYear').value;
+		var sy = (sm > 7) ? 2016 : 2017;
+		var em = document.getElementById('endMonth').selectedIndex+1;
+		var ed = document.getElementById('endDay').selectedIndex+1;
+		// var ey = document.getElementById('endYear').value;
+		var ey = (em > 7) ? 2016 : 2017;
 
+		var lower = Date.parse(sm + '/' + sd + '/' + sy);
+		var upper = Date.parse(em + '/' + ed + '/' + ey) + (24 * 60 * 60 * 1000);
 
+		if (lower >= upper) { alert('End date must be after start date'); return; }
+		// var sT = 
 
-
+		// document.getElementById('startMonth').selectedIndex
 
 		// var m =	document.getElementsByName('month1');
 		// for(var i=0; i<m.length; i++){
@@ -135,38 +160,60 @@
 		// for(var i=0; i<y.length; i++){
 		// 	y[i].value=document.getElementById('startYear').value;
 		// }
-	};
 
 
 
 	
-	nutella.net.request('ecosystem_history', {ecosystem:ecosystem}, function(response) {
-		var c = response.biotic.length; 
-		var max=1;
-		var min = 0;
-		var WIDTH = 400;
-		var xOffset = 20;
-		var yOffset = 5;
-		var HEIGHT = 50;
-		var xUnit = (WIDTH - xOffset - xOffset)/c;
-		var yUnit = (HEIGHT - yOffset - yOffset)/max;
-		for (var i=0; i<11; i++){
-			var ctx = document.getElementById('myChart' + i).getContext('2d');
-			ctx.clearRect(0, 0, 800, 50);
-			ctx.clearRect(0, 0, WIDTH, HEIGHT);
-			ctx.lineWidth = 1.5;
-			ctx.strokeStyle = 'black';
-			for (var j=0; j<c; j++) {
+		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
+			var c = response.biotic.length; 
+			var max=[5,2,5,2,100,100,5,5,2,100,100];
+			var min = 0;
+			var WIDTH = 600;
+			var xOffset = 20;
+			var yOffset = 5;
+			var HEIGHT = 50;
+			var xUnit = (WIDTH - xOffset - xOffset)/c;
+			var howManyDays = Math.round((upper-lower)/(24*60*60*1000));
+			for (var i=0; i<11; i++){
+				var yUnit = (HEIGHT - yOffset - yOffset)/max[i];
+				var ctx = document.getElementById('myChart' + i).getContext('2d');
+				ctx.clearRect(0, 0, 800, 50);
+				ctx.clearRect(0, 0, WIDTH, HEIGHT);
+				ctx.strokeStyle = 'gray';
+				ctx.lineWidth = 1;
 				ctx.beginPath();
-				ctx.moveTo(xOffset + j*xUnit,HEIGHT - yOffset);
-				ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));
-				ctx.closePath();
+				ctx.moveTo(xOffset-5,yOffset);
+				ctx.lineTo(xOffset-5, HEIGHT - yOffset);
+				ctx.lineTo(WIDTH,HEIGHT - yOffset);
 				ctx.stroke();
+
+
+				// draw the day tick marks
+
+				var tickInterval = Math.round(WIDTH / howManyDays);
+				ctx.strokeStyle = 'light';
+
+				for (var j=1; j<howManyDays;j++){
+					ctx.beginPath();
+					ctx.moveTo(xOffset-10 + j*tickInterval,HEIGHT-yOffset-5);
+					ctx.lineTo(xOffset-10 + j*tickInterval,HEIGHT-yOffset+15);
+					ctx.stroke();
+				}
+
+				ctx.lineWidth = 1.5;
+				ctx.strokeStyle = 'teal';
+				for (var j=0; j<c; j++) {
+					ctx.beginPath();
+					ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
+					ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));
+					ctx.closePath();
+					ctx.stroke();
+				}
 			}
-		}
 
-	});
+		});
 
+	};
 
 
 	

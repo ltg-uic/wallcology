@@ -9,6 +9,8 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var history = nutella.persist.getMongoObjectStore('newHistory');
 
+GRAPH_RESOLUTION = 50; // Number of lines in graphical displays. always return longitudinal arrays of this length.
+
 history.load(function(){
 
   if (!history.hasOwnProperty('states')){
@@ -20,20 +22,37 @@ history.load(function(){
     return ({abiotic: history['states'][last_state_index]['abiotic'], biotic: history['states'][last_state_index]['biotic']});
   });
 
-  nutella.net.handle_requests('ecosystem_history',function(message, from) {
+
+   nutella.net.handle_requests('ecosystem_history',function(message, from) {
       var a = [];
       var b = [];
-      var index = 0;
-      var last_state_index = history['states'].length-1;
-      for (var i=0; i<last_state_index; i++) {
-//        if (history['states'].timestamp > message.start && history['states'].timestamp < message.stop) {
-          a[index] = history['states'][i]['abiotic'][message.ecosystem];
-          b[index] = history['states'][i]['biotic'][message.ecosystem];
-          index++;
-//        }
+      var i=0;
+      var timeUnit = (message.stop - message.start)/GRAPH_RESOLUTION;
+      var time;
+      var zeroPop = [0,0,0,0,0,0,0,0,0,0,0];
+
+      for (var j=0; j<GRAPH_RESOLUTION; j++) { 
+        time = message.start + j * timeUnit;
+        while (history.states[i].timestamp < time && i<history.states.length-1) i++;
+        var beforeGap = (i!=0)? time - history.states[i-1].timestamp: Number.POSITIVE_INFINITY;
+        var afterGap = (i<history.states.length-1)? history.states[i].timestamp - time: Number.POSITIVE_INFINITY;
+        if (beforeGap < afterGap) {
+          a[j]= history.states[i-1].abiotic[message.ecosystem];
+          b[j]= (i>=history.states.length-1)? zeroPop : history.states[i-1].biotic[message.ecosystem];
+        } else {
+          a[j]= history.states[i].abiotic[message.ecosystem];
+          b[j]= (i==0)? zeroPop : history.states[i].biotic[message.ecosystem];
+        };
       }
-    return ({abiotic: a, biotic: b});
+      return ({abiotic: a, biotic: b});
   });
+
+
+
+
+
+
+
 
   nutella.net.subscribe('reset_history',function(message,from) {
     reset_history();
