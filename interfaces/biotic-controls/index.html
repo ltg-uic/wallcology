@@ -34,6 +34,8 @@
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.INSTANCE;
 	if (ecosystem === undefined) ecosystem = 0;
+	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
+
 
 
 	// Get an instance of nutella. 
