@@ -75,7 +75,7 @@
 		document.getElementById('thermostat').value = state.abiotic[ecosystem].thermostat;
 		document.getElementById('humidity').value = Math.round(state.abiotic[ecosystem].humidity);
 		document.getElementById('humidistat').value = state.abiotic[ecosystem].humidistat;
-		document.getElementById('ecosystem').value = ecosystem;
+		document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 	
 	}
 
