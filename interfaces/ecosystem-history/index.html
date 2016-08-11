@@ -179,7 +179,7 @@
 				var ctx = document.getElementById('myChart' + i).getContext('2d');
 				ctx.clearRect(0, 0, 800, 50);
 				ctx.clearRect(0, 0, WIDTH, HEIGHT);
-				ctx.strokeStyle = 'gray';
+				ctx.strokeStyle = 'Silver';
 				ctx.lineWidth = 1;
 				ctx.beginPath();
 				ctx.moveTo(xOffset-5,yOffset);
@@ -191,7 +191,7 @@
 				// draw the day tick marks
 
 				var tickInterval = Math.round(WIDTH / howManyDays);
-				ctx.strokeStyle = 'light';
+				ctx.strokeStyle = 'Silver';
 
 				for (var j=1; j<howManyDays;j++){
 					ctx.beginPath();

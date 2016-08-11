@@ -9,7 +9,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var history = nutella.persist.getMongoObjectStore('newHistory');
 
-GRAPH_RESOLUTION = 50; // Number of lines in graphical displays. always return longitudinal arrays of this length.
+GRAPH_RESOLUTION = 75; // Number of lines in graphical displays. always return longitudinal arrays of this length.
 
 history.load(function(){
 

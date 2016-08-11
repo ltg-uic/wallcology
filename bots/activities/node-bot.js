@@ -14,9 +14,9 @@ var currentActivity;
 var activity = nutella.persist.getMongoObjectStore('currentActivity');
 
 activity.load(function(){
-    currentActivity = activity.currentActivity;
+    activity.currentActivity;
     nutella.net.handle_requests('currentActivity', function (message, from){
-        return currentActivity;
+        return activity.currentActivity;
     });
     var roster = nutella.persist.getMongoObjectStore('roster');
     roster.load(function(){
