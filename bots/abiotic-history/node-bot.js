@@ -11,6 +11,10 @@ var history = nutella.persist.getMongoObjectStore('abioticHistory');
 
 history.load(function(){
 
+  if (!history.hasOwnProperty('ecosystem')){
+    reset_history();
+  };
+
 
   nutella.net.subscribe('thermostat',function(message, from) {
     var d = new Date();
@@ -30,6 +34,20 @@ history.load(function(){
     history.ecosystem[message.ecosystem].push({timestamp: timestamp, action:'wall', side: message.side, direction: message.direction});
     history.save();
   });
+  nutella.net.handle_requests('abiotic-history',function(message, from) {
+    return (history.ecosystem[message.ecosystem]);
+  });
+
+
+
+function reset_history () {
+  history['ecosystem']=[];
+  for (var i=0; i<5; i++) {
+    history.ecosystem[i] = [{timestamp:0, action: 'null'}];
+  }
+  history.save();
+};
+
 
 });
 
