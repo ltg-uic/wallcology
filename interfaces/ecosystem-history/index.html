@@ -77,12 +77,12 @@
 
 
 
-				document.write('<tr><td><img src="thermometer.jpg" height=50 width=50></td>');
-				document.write('<td><canvas id="temperature" width="600" height="50"></td></tr>');
+				document.write('<tr><td><img id="abioticImage" src="temperature.jpg" onclick="toggleAbiotic();" height=40 width=40></td>');
+				document.write('<td><canvas id="abioticCanvas" width="600" height="50"></td></tr>');
 
 
 			for (i=0; i<11; i++) {
-				document.write('<tr><td><img src=' + images[i] + ' height=50 width=50></td>');
+				document.write('<tr><td><img src=' + images[i] + ' height=40 width=40></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="600" height="50"></td></tr>');
 			}
 		</script>
@@ -97,6 +97,8 @@
 			
 	<script type="text/javascript">
 
+	var abioticDisplay = 0;
+	var abioticOptions = ['temperature','brick','wood'];
 
 	var d = new Date();
 	var month = d.getMonth();
@@ -134,6 +136,14 @@
 	}
 	//gather all the manipulations on this ecosystem into two arrays
 	
+	function toggleAbiotic() {
+		abioticDisplay++;
+		if (abioticDisplay==abioticOptions.length) abioticDisplay=0;
+		document.getElementById('abioticImage').src=abioticOptions[abioticDisplay]+'.jpg';
+		query();
+	}
+
+
 	function updateGraphs() {
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
@@ -192,7 +202,7 @@
 	
 		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
 			var c = response.biotic.length; 
-			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,30];
+			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,1];
 			var max=[];
 			var min = 0;
 			var WIDTH = 600;
@@ -213,7 +223,7 @@
 				}
 
 				var yUnit = (HEIGHT - yOffset - yOffset)/max[i];
-				var ident = (i==11)? 'temperature'  :  'myChart' + i;
+				var ident = (i==11)? 'abioticCanvas'  :  'myChart' + i;
 				
 				var ctx = document.getElementById(ident).getContext('2d');
 				ctx.clearRect(0, 0, 800, 50);
@@ -257,13 +267,17 @@
 				ctx.strokeStyle = 'teal'; 
 				for (var j=0; j<c; j++) {
 					ctx.beginPath();
-					if (i==11 && response.abiotic[j]!=0) {
-						ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.abiotic[j]), 1, 0, 2 * Math.PI, false);
-						      ctx.fillStyle = 'black';
-						      ctx.fill();
-						      ctx.lineWidth = 0;
-						      ctx.lineWidth = 1;
-						      ctx.strokeStyle = 'black';
+					if (i==11) { 
+						var t = response.abiotic[j][abioticOptions[abioticDisplay]];
+						if (abioticOptions[abioticDisplay]=='temperature') t = t/30;
+						if(t!=0) {
+							ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*t), 1, 0, 2 * Math.PI, false);
+					      	ctx.fillStyle = 'black';
+					      	ctx.fill();
+					      	ctx.lineWidth = 0;
+					      	ctx.lineWidth = 1;
+					      	ctx.strokeStyle = 'black';
+						 };
 					} else {
 						ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
 						ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));

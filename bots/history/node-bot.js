@@ -37,10 +37,16 @@ history.load(function(){
         var beforeGap = (i!=0)? time - history.states[i-1].timestamp: Number.POSITIVE_INFINITY;
         var afterGap = (i<history.states.length-1)? history.states[i].timestamp - time: Number.POSITIVE_INFINITY;
         if (beforeGap < afterGap) {
-          a[j]= (i>=history.states.length-1)? 0 :history.states[i-1].abiotic[message.ecosystem].temperature;
+          if (i>=history.states.length-1) a[j] = {temperature:0, brick:0, wood:0};
+            else a[j]= {  temperature: history.states[i-1].abiotic[message.ecosystem].temperature,
+                          brick: history.states[i-1].abiotic[message.ecosystem].brick,
+                          wood: history.states[i-1].abiotic[message.ecosystem].wood};
           b[j]= (i>=history.states.length-1)? zeroPop : history.states[i-1].biotic[message.ecosystem];
         } else {
-          a[j]= (i==0)? 0 :history.states[i].abiotic[message.ecosystem].temperature;
+          if (i==0) a[j] = {temperature:0, brick:0, wood:0};
+            else a[j]= {  temperature: history.states[i].abiotic[message.ecosystem].temperature,
+                          brick: history.states[i].abiotic[message.ecosystem].brick,
+                          wood: history.states[i].abiotic[message.ecosystem].wood};
           b[j]= (i==0)? zeroPop : history.states[i].biotic[message.ecosystem];
         };
       }
