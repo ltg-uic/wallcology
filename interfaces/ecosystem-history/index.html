@@ -11,7 +11,7 @@
 <body>
 
 	<!-- Your markup here -->
-	<H2>Ecosystem <input type=text READONLY size=1 id="ecosystem"> History</H2>
+	Ecosystem <input type=text READONLY size=1 id="ecosystem"> History<br>
 	From: 
 	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
@@ -56,11 +56,8 @@
 			for(i=1;i<=31;i++) document.write('<option value ="' + i + '">' + i + '</option>');
 		</script>
 	</select>
-<!-- 	<select id="endYear">
-			  <option value="2016">2016</option>
-	  <option value="2017">2017</option>
-	</select>
- -->	<!-- <button id="draw" onclick="query();">Draw</button> -->
+	&nbsp&nbsp
+	<input type=checkbox id='normalize' onClick='query();'>normalized<br>
 
 
 	<table style="border-spacing:0px;padding:0;">
@@ -80,16 +77,13 @@
 
 
 
+				document.write('<tr><td><img src="thermometer.jpg" height=50 width=50></td>');
+				document.write('<td><canvas id="temperature" width="600" height="50"></td></tr>');
 
-			 var label = false;
 
 			for (i=0; i<11; i++) {
 				document.write('<tr><td><img src=' + images[i] + ' height=50 width=50></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="600" height="50"></td></tr>');
-				if (label) {
-					document.write('<tr><td></td><td><input type=text size=2 READONLY name="month1"><input type=text size=2 READONLY name="day1"><input type=text size=4 READONLY name="year1"></td></tr>');
-				}
-//				label = !label;
 			}
 		</script>
 	</table>
@@ -99,7 +93,7 @@
 	<script src="Chart.min.js"></script>
 
 	<!-- Your scripts here -->
-	<canvas id="myChart" width="400" height="50"></canvas>
+	<canvas id="myChart" width="600" height="50"></canvas>
 			
 	<script type="text/javascript">
 
@@ -124,13 +118,45 @@
 	// Get an instance of nutella. 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 	
-	// (Optional) Set the resourceId
-	// nutella.setResourceId('my_resource_id');
-	query();
+	var bioticActions = [];
+	var abioticActions = [];
+
+	updateGraphs();
+
+	nutella.net.subscribe('state_update', function(message, from) {
+		updateGraphs(); 
+	});
+
+	setInterval(ping, 5*60*1000); //ping every five minutes
+
+	function ping () {
+		nutella.net.publish('ping');
+	}
+	//gather all the manipulations on this ecosystem into two arrays
+	
+	function updateGraphs() {
+		bioticActions = []; // array of biotic actions, one for each species
+		for (var i=0; i<11; i++) bioticActions[i]=[];
+		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){ 
+			for (var i=1; i<message.length; i++) {
+				if (message[i].species >0) { 
+					var last = bioticActions[message[i].species].length;
+					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
+				}
+			}
+			abioticActions = []; // array of biotic actions, one for each species
+			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
+				for (var i=1; i<message.length; i++) {
+					abioticActions.push(message[i]);
+				}
+				query();
+			});
+		})
+	}
 	
 	// Your code that uses the nutella instance here
 	
-	function query(){
+	function query(){ 
 		var sm = document.getElementById('startMonth').selectedIndex+1;
 		var sd = document.getElementById('startDay').selectedIndex+1;
 		// var sy = document.getElementById('startYear').value;
@@ -166,7 +192,8 @@
 	
 		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
 			var c = response.biotic.length; 
-			var max=[5,2,5,2,100,100,5,5,2,100,100];
+			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,30];
+			var max=[];
 			var min = 0;
 			var WIDTH = 600;
 			var xOffset = 20;
@@ -174,9 +201,21 @@
 			var HEIGHT = 50;
 			var xUnit = (WIDTH - xOffset - xOffset)/c;
 			var howManyDays = Math.round((upper-lower)/(24*60*60*1000));
-			for (var i=0; i<11; i++){
+			for (var i=0; i<12; i++){
+				if (document.getElementById('normalize').checked || i==11) {
+					max[i] = normalizedMax[i];
+				} else {
+					var yMax = response.biotic[0][i];
+					for (var m=1; m<response.biotic.length; m++){
+						if (response.biotic[m][i] > yMax) yMax = response.biotic[m][i];
+					}
+					max[i]=yMax;
+				}
+
 				var yUnit = (HEIGHT - yOffset - yOffset)/max[i];
-				var ctx = document.getElementById('myChart' + i).getContext('2d');
+				var ident = (i==11)? 'temperature'  :  'myChart' + i;
+				
+				var ctx = document.getElementById(ident).getContext('2d');
 				ctx.clearRect(0, 0, 800, 50);
 				ctx.clearRect(0, 0, WIDTH, HEIGHT);
 				ctx.strokeStyle = 'Silver';
@@ -186,7 +225,6 @@
 				ctx.lineTo(xOffset-5, HEIGHT - yOffset);
 				ctx.lineTo(WIDTH,HEIGHT - yOffset);
 				ctx.stroke();
-
 
 				// draw the day tick marks
 
@@ -200,12 +238,36 @@
 					ctx.stroke();
 				}
 
+				if (i!=11) {
+					for (var k=0; k<bioticActions[i].length; k++) {
+						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) { 
+						      ctx.beginPath();
+						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset), HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
+						      var action = bioticActions[i][k].action;
+						      if (action == 'herbicide' || action == 'trap') color='red'; else color='green';
+						      ctx.fillStyle = color;
+						      ctx.fill();
+						      ctx.lineWidth = 1;
+						      ctx.strokeStyle = color;
+						      ctx.stroke();
+						}
+					}
+				}
 				ctx.lineWidth = 1.5;
-				ctx.strokeStyle = 'teal';
+				ctx.strokeStyle = 'teal'; 
 				for (var j=0; j<c; j++) {
 					ctx.beginPath();
-					ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
-					ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));
+					if (i==11 && response.abiotic[j]!=0) {
+						ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.abiotic[j]), 1, 0, 2 * Math.PI, false);
+						      ctx.fillStyle = 'black';
+						      ctx.fill();
+						      ctx.lineWidth = 0;
+						      ctx.lineWidth = 1;
+						      ctx.strokeStyle = 'black';
+					} else {
+						ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
+						ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));
+					}
 					ctx.closePath();
 					ctx.stroke();
 				}
@@ -213,7 +275,7 @@
 
 		});
 
-	};
+};
 
 
 	

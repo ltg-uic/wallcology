@@ -37,10 +37,10 @@ history.load(function(){
         var beforeGap = (i!=0)? time - history.states[i-1].timestamp: Number.POSITIVE_INFINITY;
         var afterGap = (i<history.states.length-1)? history.states[i].timestamp - time: Number.POSITIVE_INFINITY;
         if (beforeGap < afterGap) {
-          a[j]= history.states[i-1].abiotic[message.ecosystem];
+          a[j]= (i>=history.states.length-1)? 0 :history.states[i-1].abiotic[message.ecosystem].temperature;
           b[j]= (i>=history.states.length-1)? zeroPop : history.states[i-1].biotic[message.ecosystem];
         } else {
-          a[j]= history.states[i].abiotic[message.ecosystem];
+          a[j]= (i==0)? 0 :history.states[i].abiotic[message.ecosystem].temperature;
           b[j]= (i==0)? zeroPop : history.states[i].biotic[message.ecosystem];
         };
       }

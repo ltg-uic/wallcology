@@ -15,7 +15,7 @@ var HUMIDITY_DELTA;
 var COLONIZER_EFFECT = 2.0;
 var TRAP_EFFECT = 0.5;
 var SEED_EFFECT = 1.25;
-var HERBICIDE_EFFECT = .5;
+var HERBICIDE_EFFECT = .1;
 var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
 var ANIMAL_POPULATION_MAXIMUM = 10000;
 var ANIMAL_EXTINCTION_THRESHHOLD = .05;
@@ -121,7 +121,7 @@ nutella.net.subscribe('start_simulation', function(interval, from) {
                 nutella.net.subscribe('seed', function(message, from) {
                     b[message['ecosystem']][message['species']]*=SEED_EFFECT;
                     if  (b[message['ecosystem']][message['species']] > 1.0) b[message['ecosystem']][message['species']] = 1.0; 
-                });
+               });
 
                 nutella.net.subscribe('herbicide', function(message, from) {
                     b[message['ecosystem']][message['species']]*=HERBICIDE_EFFECT; 
