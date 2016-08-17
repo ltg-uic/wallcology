@@ -9,7 +9,7 @@
 	<!-- Your CSS here -->
 </head>
 <body>
-	<H2>Group notes</H2>
+	<H2>Species notes</H2>
 
 				
 	<!-- Scripts -->
@@ -33,19 +33,18 @@
 	changeSpecies();
 
 	function changeSpecies(){ 
-		nutella.net.request('combo_notes',{group:group, species: Number(document.getElementById('species').value)}, function (note){ 
-				if (note.length > 0) {
-					for (var i=0; i<note[0].relationships.length; i++) {
-						var s = note[0].relationships[i].type;
+		nutella.net.request('note_with_species_group',{group:group, species: Number(document.getElementById('species').value)}, function (note){ 
+				if (note.hasOwnProperty('relationships')) {
+					for (var i=0; i<note.relationships.length; i++) {
+						var s = note.relationships[i].type;
 						s += ' , ';
-						s += note[0].relationships[i].species;
+						s += note.relationships[i].species;
 						s += '\n';
 						document.getElementById('notedump').value += s;
 					}
 				}
-			
-			document.getElementById('notedump').value += '\n---------------------\n\n';		
-		});
+				document.getElementById('notedump').value += '\n---------------------\n\n';		
+			});
 	};
 
 	
