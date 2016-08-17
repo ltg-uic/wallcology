@@ -108,14 +108,12 @@ Notes.load(function(){
     Notes.notes = [];
     Notes.save();
   }
-
   //for testing
   // console.log("Notes:" + Notes.notes);
 
   // Notes.notes.forEach(function(element) {
   //   console.log("element " + element.group);
   // }, this);
-
 });
 
 
