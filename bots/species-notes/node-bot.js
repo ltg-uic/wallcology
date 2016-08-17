@@ -6,48 +6,117 @@ var cliArgs = NUTELLA.parseArgs();
 var componentId = NUTELLA.parseComponentId();
 var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, componentId);
 
-
 var Notes = nutella.persist.getMongoObjectStore('speciesNotes');
 
-Notes.load(function(){
+console.log("species-note bot started");
 
+Notes.load(function(){
+  console.log('species-notes load');
   if (!Notes.hasOwnProperty('notes')){
     resetNotes();
-  };
+  }
 
-  nutella.net.handle_requests('group_notes',function(group, from) {
-    return(Notes.notes.filter(function(note){return (note.group == group)}));
+  //returns all_notes for every group
+  nutella.net.handle_requests('all_notes',function(from) {
+    console.log('request all_notes');
+    return Notes.notes;
   });
 
-
-  nutella.net.handle_requests('species_notes',function(species, from) {
-    return(Notes.notes.filter(function(note){return (note.species == species)}));
+  //returns all notes for from a group index, e.g.,  group == 1
+  nutella.net.handle_requests('all_notes_with_group',function(message, from) {
+    if (message !== null && message !== undefined) {
+      var parsedNote = JSON.parse(message);
+      console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
+      return (
+        Notes.notes.filter(
+        function(note){
+          return (note.group == parsedNote.group);
+        }));
+    } else {
+      return {};
+    }
   });
 
-  nutella.net.handle_requests('combo_note',function(selector, from) {
-    return(Notes.notes.filter(function(note){return (note.species == selector.species && note.group == selector.group)}));
+  //returns all the species from a group index e.g., species == 2
+  nutella.net.handle_requests('all_notes_with_species',function(message, from) {
+    if (message !== null && message !== undefined) {
+      var parsedNote = JSON.parse(message);
+      console.log('request all_notes_with_species speciesIndex: ' + parsedNote.species);
+      return (
+        Notes.notes.filter(
+        function(note){
+          return (note.species == parsedNote.species);
+        }));
+    } else {
+      return {};
+    }
   });
- 
-  nutella.net.subscribe('update_note',function(note){
+
+  //returns a note with species and group index
+  nutella.net.handle_requests('note_with_species_group',function(message, from) {
+    if (message !== null && message !== undefined) {
+      var parsedNote = JSON.parse(message);
+      console.log('request note_with_species_group speciesIndex: ' + parsedNote.species + ' groupIndex: ' + parsedNote.group);
+      return (
+        Notes.notes.filter(
+        function(note){
+          return (note.species == parsedNote.species && note.group == parsedNote.group);
+        }));
+    } else {
+      return {};
+    }
+  });
+
+  //returns a note with species and group index
+  nutella.net.handle_requests('save_note',function(message, from) {
     // replace the var n declaration below with this one to maintain full history of species note updates, at performance cost
     // var n=Notes.notes;
-    var n = Notes.notes.filter(function(item){return (!(note.species == item.species && notes.group == item.group))});
-    var d = new Date();
-    note['timestamp'] = d.getTime();
-    Notes.notes = n.push(note);
-    Notes.save();
+    if (message !== null && message !== undefined) {
+      var parsedNote = JSON.parse(message);
+      console.log('request save_note: ' + parsedNote.group);
+
+       Notes.notes.forEach(function(foundNote, index) {
+          if (foundNote.species == parsedNote.species && foundNote.group == parsedNote.group) {
+            parsedNote.timestamp = new Date().getTime();
+            Notes.notes[index] = parsedNote;
+            Notes.save();
+
+            //now publish the note to all the clients
+            pushNotifcation(parsedNote);
+          }
+       }, this);
+    }
   });
 
+  //sends a message to all the clients listening
+  function pushNotifcation(note) {
+    var message = {'group':note.group, 'species':note.species, 'note':note};
+    nutella.net.publish('note_changes',message);
+  }
+  //note changes is a channel that client use to listen for changes
+  // message format {"group":0,"species":1,note:{}}
+
+  //saves a note
+
+  //a client can request a reset
   nutella.net.subscribe('reset_notes',function(message,from) {
     resetNotes();
   });
 
+  //clear the notes DB
   function resetNotes () {
-    Notes.notes=[];
+    Notes.notes = [];
     Notes.save();
-  };
+  }
 
-});   
+  //for testing
+  // console.log("Notes:" + Notes.notes);
+
+  // Notes.notes.forEach(function(element) {
+  //   console.log("element " + element.group);
+  // }, this);
+
+});
 
 
 
