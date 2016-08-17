@@ -15,20 +15,70 @@ Notes.load(function(){
     resetNotes();
   };
 
-  nutella.net.handle_requests('group_notes',function(group, from) {
-    return(Notes.notes.filter(function(note){return (note.group == group)}));
+
+  //returns all_notes for every group
+  nutella.net.handle_requests('all_notes',function(from) {
+    console.log('request all_notes');
+    return Notes.notes;
+  });
+
+  //returns all notes for from a group index, e.g.,  group == 1
+  nutella.net.handle_requests('all_notes_with_group',function(message, from) {
+    if (message !== null && message !== undefined) {
+      // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
+      console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
+      return (
+        Notes.notes.filter(
+        function(note){
+          return (note.group == parsedNote.group);
+        }));
+    } else {
+      return {};
+    }
   });
 
 
-  nutella.net.handle_requests('species_notes',function(species, from) {
-    return(Notes.notes.filter(function(note){return (note.species == species)}));
+  //returns all the species from a group index e.g., species == 2
+  nutella.net.handle_requests('all_notes_with_species',function(message, from) {
+    if (message !== null && message !== undefined) {
+      // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
+      console.log('request all_notes_with_species speciesIndex: ' + parsedNote.species);
+      return (
+        Notes.notes.filter(
+        function(note){
+          return (note.species == parsedNote.species);
+        }));
+    } else {
+      return {};
+    }
   });
 
-  nutella.net.handle_requests('combo_notes',function(selector, from) { 
+  nutella.net.handle_requests('note_with_species_group',function(selector, from) { 
      return(Notes.notes.filter(function(note){return (note.species == selector.species && note.group == selector.group)}));
   });
  
-  nutella.net.subscribe('update_note',function(note){ 
+  // nutella.net.handle_requests('note_with_species_group',function(message, from) {
+  //   if (message !== null && message !== undefined) {
+  //     // if coming from the debugger
+  //     //var parsedNote = JSON.parse(message);
+  //     var parsedNote = message;
+  //     console.log('request note_with_species_group speciesIndex: ' + parsedNote.species + ' groupIndex: ' + parsedNote.group);
+  //     return (
+  //       Notes.notes.filter(
+  //       function(note){
+  //         return (note.species == parsedNote.species && note.group == parsedNote.group);
+  //       }));
+  //   } else {
+  //     return {};
+  //   }
+  // });
+
+
+  nutella.net.subscribe('save_note',function(note){ 
     // replace the var n declaration below with this one to maintain full history of species note updates, at performance cost
     // var n=Notes.notes;
     var n = Notes.notes.filter(function(item){return (!(note.species == item.species && note.group == item.group))});
@@ -37,6 +87,7 @@ Notes.load(function(){
     Notes.notes = n.push(note);
     Notes.save();
   });
+
 
   nutella.net.subscribe('reset_notes',function(message,from) {
     resetNotes();
@@ -50,4 +101,64 @@ Notes.load(function(){
 });   
 
 
+  //returns a note with species and group index
+//   nutella.net.handle_requests('save_note',function(message, from) {
+//     // replace the var n declaration below with this one to maintain full history of species note updates, at performance cost
+//     // var n=Notes.notes;
+//     if (message !== null && message !== undefined) {
+//   // if coming from the debugger
+//       //var parsedNote = JSON.parse(message);
+//       var parsedNote = message;
+//       console.log('request save_note: ' + parsedNote.group);
+
+//       var found = false;
+//       Notes.notes.forEach(function(foundNote, index) {
+//           if (foundNote.species == parsedNote.species && foundNote.group == parsedNote.group) {
+//             found = true;
+//             updateNoteWithTimestamp(parsedNote);
+//           }
+//        }, this);
+
+//       if (found === false) {
+//             updateNoteWithTimestamp(parsedNote);
+//       }
+//     }
+// >>>>>>> origin/master
+//   });
+
+//   function updateNoteWithTimestamp(note) {
+//     note.timestamp = new Date().getTime();
+//     Notes.notes[index] = note;
+//     Notes.save();
+//             //now publish the note to all the clients
+//     pushNotifcation(note);
+//   }
+
+//   //sends a message to all the clients listening
+//   function pushNotifcation(note) {
+//     var message = {'group':note.group, 'species':note.species, 'note':note};
+//     nutella.net.publish('note_changes',message);
+//   }
+//   //note changes is a channel that client use to listen for changes
+//   // message format {"group":0,"species":1,note:{}}
+
+//   //saves a note
+
+//   //a client can request a reset
+//   nutella.net.subscribe('reset_notes',function(message,from) {
+//     resetNotes();
+//   });
+
+//   //clear the notes DB
+//   function resetNotes () {
+//     Notes.notes = [];
+//     Notes.save();
+//   }
+//   //for testing
+//   // console.log("Notes:" + Notes.notes);
+
+//   // Notes.notes.forEach(function(element) {
+//   //   console.log("element " + element.group);
+//   // }, this);
+// });
 
