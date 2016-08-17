@@ -9,7 +9,7 @@
 	<!-- Your CSS here -->
 </head>
 <body>
-	<p>Group notes</p>
+	<H2>Group notes</H2>
 
 				
 	<!-- Scripts -->
@@ -23,43 +23,32 @@
 
 	// Get an instance of nutella. 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+
+	var group = query_parameters.INSTANCE;
+
+	document.write('Species <input type=text size=2 value=0 id="species">&nbsp');
+	document.write('<BUTTON onClick="changeSpecies();"> Change Species </BUTTON><br>');
+	document.write('<br>Notes<br><TEXTAREA rows="20" cols="80" id="notedump">Text</TEXTAREA>');
 	
-	document.write('Ecosystem: <input type=text id="ecosystem" READONLY size=1><br>');
-	document.write('Species <input type=text value="0" id="species" onChange="changeSpecies();"><br>');
+	changeSpecies();
 
-	// changeSpecies();
-
-	// function changeSpecies(){
-	// 	nutella.net.request('combo_notes',{group:query_parameters.INSTANCE, species: document.getElementById('species').value}, function (note, from){
-	// 		for (var i=0; i<note.relationships.length)
-	// 			document.write(note.relationships[i].type)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-		// });
+	function changeSpecies(){ 
+		nutella.net.request('combo_notes',{group:group, species: Number(document.getElementById('species').value)}, function (note){ 
+				if (note.length > 0) {
+					for (var i=0; i<note[0].relationships.length; i++) {
+						var s = note[0].relationships[i].type;
+						s += ' , ';
+						s += note[0].relationships[i].species;
+						s += '\n';
+						document.getElementById('notedump').value += s;
+					}
+				}
+			
+			document.getElementById('notedump').value += '\n---------------------\n\n';		
+		});
+	};
 
 	
-
-
-
-
-
-	// (Optional) Set the resourceId
-	// nutella.setResourceId('my_resource_id');
-
 
 
 	
