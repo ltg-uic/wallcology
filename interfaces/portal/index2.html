@@ -116,9 +116,7 @@ ul.tab li a:focus, .active {
 		s += 'index.html' + '?';
 		s += 'broker=' + query_parameters.broker + '&';
 		s += 'app_id=' + query_parameters.app_id + '&';
-		s += 'run_id=' + query_parameters.run_id + '&';
-		s += 'TYPE=' + type + '&';
-		s += 'INSTANCE=' + instance;
+		s += 'run_id=' + query_parameters.run_id;
 
 		location.href = s;
 	}
@@ -137,6 +135,7 @@ ul.tab li a:focus, .active {
 			s += 'broker=' + query_parameters.broker + '&';
 			s += 'app_id=' + query_parameters.app_id + '&';
 			s += 'run_id=' + query_parameters.run_id + '&';
+			s += 'TYPE=' + type + '&';
 			s += 'INSTANCE=' + instance;
 
 			channel_lineup[i] = {name: channelList[i], URL: s};
@@ -145,12 +144,14 @@ ul.tab li a:focus, .active {
 	}
 
 	function construct_user_interface (channel_lineup) {
-	window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 		document.write('<ul class="tab">'); 
 
-		for (var i=0; i<channel_lineup.length ; i++){
-				document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + channel_lineup[i].name + '</a></li>');
-			};
+		for (var i=0; i<channel_lineup.length; i++){
+			document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + channel_lineup[i].name + '</a></li>');
+		}
+		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'logout' + '</a></li>');
+
 
 //	   document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'enactment-control\')">enactment-control</a></li>');
 	  // <li><a href="#" class="tablinks" onclick="openCity(event, 'MSNBC')">MSNBC</a></li>
