@@ -25,7 +25,9 @@ Notes.load(function(){
   //returns all notes for from a group index, e.g.,  group == 1
   nutella.net.handle_requests('all_notes_with_group',function(message, from) {
     if (message !== null && message !== undefined) {
-      var parsedNote = JSON.parse(message);
+      // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
       console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
       return (
         Notes.notes.filter(
@@ -40,7 +42,9 @@ Notes.load(function(){
   //returns all the species from a group index e.g., species == 2
   nutella.net.handle_requests('all_notes_with_species',function(message, from) {
     if (message !== null && message !== undefined) {
-      var parsedNote = JSON.parse(message);
+      // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
       console.log('request all_notes_with_species speciesIndex: ' + parsedNote.species);
       return (
         Notes.notes.filter(
@@ -55,7 +59,9 @@ Notes.load(function(){
   //returns a note with species and group index
   nutella.net.handle_requests('note_with_species_group',function(message, from) {
     if (message !== null && message !== undefined) {
-      var parsedNote = JSON.parse(message);
+      // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
       console.log('request note_with_species_group speciesIndex: ' + parsedNote.species + ' groupIndex: ' + parsedNote.group);
       return (
         Notes.notes.filter(
@@ -72,21 +78,32 @@ Notes.load(function(){
     // replace the var n declaration below with this one to maintain full history of species note updates, at performance cost
     // var n=Notes.notes;
     if (message !== null && message !== undefined) {
-      var parsedNote = JSON.parse(message);
+  // if coming from the debugger
+      //var parsedNote = JSON.parse(message);
+      var parsedNote = message;
       console.log('request save_note: ' + parsedNote.group);
 
-       Notes.notes.forEach(function(foundNote, index) {
+      var found = false;
+      Notes.notes.forEach(function(foundNote, index) {
           if (foundNote.species == parsedNote.species && foundNote.group == parsedNote.group) {
-            parsedNote.timestamp = new Date().getTime();
-            Notes.notes[index] = parsedNote;
-            Notes.save();
-
-            //now publish the note to all the clients
-            pushNotifcation(parsedNote);
+            found = true;
+            updateNoteWithTimestamp(parsedNote);
           }
        }, this);
+
+      if (found === false) {
+            updateNoteWithTimestamp(parsedNote);
+      }
     }
   });
+
+  function updateNoteWithTimestamp(note) {
+    note.timestamp = new Date().getTime();
+    Notes.notes[index] = note;
+    Notes.save();
+            //now publish the note to all the clients
+    pushNotifcation(note);
+  }
 
   //sends a message to all the clients listening
   function pushNotifcation(note) {
