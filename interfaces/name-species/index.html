@@ -39,7 +39,8 @@
 	}
 	document.write('</TABLE>');
 	document.write('<BUTTON onClick="saveNames();">Save Names</BUTTON>');
-	nutella.net.request('get_species_names',{},function(message,from){  
+	nutella.net.request('get_species_names',{},function(message,from){
+		for (var i=0; i<11; i++) {
 			document.getElementById('img' + i).value = message[i];
        	};
 	});
