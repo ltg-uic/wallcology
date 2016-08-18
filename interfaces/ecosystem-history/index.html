@@ -271,7 +271,7 @@
 						var t = response.abiotic[j][abioticOptions[abioticDisplay]];
 						if (abioticOptions[abioticDisplay]=='temperature') t = t/30;
 						if(t!=0) {
-							ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*t), 1, 0, 2 * Math.PI, false);
+							ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*t)), 1, 0, 2 * Math.PI, false);
 					      	ctx.fillStyle = 'black';
 					      	ctx.fill();
 					      	ctx.lineWidth = 0;
@@ -280,7 +280,7 @@
 						 };
 					} else {
 						ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
-						ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + yUnit*response.biotic[j][i]));
+						ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*response.biotic[j][i])));
 					}
 					ctx.closePath();
 					ctx.stroke();
@@ -291,6 +291,19 @@
 
 };
 
+// function fudge (x) {
+// 	return Math.floor((((Math.random()-.5)*.03)+1)*x);
+
+// }
+
+function fudge (x) {
+	return (((gaussian()*.06)+1)*x);
+
+}
+
+function gaussian() {
+    return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
+}
 
 	
 	</script>

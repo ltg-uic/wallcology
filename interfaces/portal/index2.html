@@ -102,9 +102,11 @@ ul.tab li a:focus, .active {
 		type = query_parameters.TYPE;
 		nutella.net.request('currentActivity', {}, function (currentActivity, from){
 			nutella.net.request('channel_list',{activity:currentActivity,type:type}, function (channelList, from) {
-				var channel_lineup = buildLineup (channelList, instance); 
-				construct_user_interface(channel_lineup);
-				if (channel_lineup.length != 0) document.getElementById('button0').click();
+				nutella.net.request('channel_print_names',{}, function (prettyNames, from){
+						var channel_lineup = buildLineup (channelList, instance); 
+						construct_user_interface(channel_lineup,prettyNames);
+						if (channel_lineup.length != 0) document.getElementById('button0').click();
+				});
 			});
 		});
 	};
@@ -148,14 +150,17 @@ ul.tab li a:focus, .active {
 		return (channel_lineup);
 	}
 
-	function construct_user_interface (channel_lineup) {
+	function construct_user_interface (channel_lineup,prettyNames) {
 		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 		document.write('<ul class="tab">'); 
 
 		for (var i=0; i<channel_lineup.length; i++){
-			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + channel_lineup[i].name + '</a></li>');
+
+			var match = prettyNames.filter(function(arg){return (arg.name == channel_lineup[i].name)}); 
+
+			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + match[0].printName + '</a></li>');
 		}
-		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'logout' + '</a></li>');
+		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
 
 
 //	   document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'enactment-control\')">enactment-control</a></li>');
