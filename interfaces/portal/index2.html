@@ -100,10 +100,11 @@ ul.tab li a:focus, .active {
 			nutella.net.request('channel_list',{activity:currentActivity,type:type}, function (channelList, from) {
 				var channel_lineup = buildLineup (channelList, instance); 
 				construct_user_interface(channel_lineup);
+				if (channel_lineup.length != 0) document.getElementById('button0').click();
 			});
 		});
 	};
-
+	// 
 
 	function login (type,instance) {
 		// look up class activity alert()
@@ -148,7 +149,7 @@ ul.tab li a:focus, .active {
 		document.write('<ul class="tab">'); 
 
 		for (var i=0; i<channel_lineup.length; i++){
-			document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + channel_lineup[i].name + '</a></li>');
+			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + channel_lineup[i].name + '</a></li>');
 		}
 		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'logout' + '</a></li>');
 
