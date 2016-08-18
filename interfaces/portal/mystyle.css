@@ -14,7 +14,9 @@ body {font-family: "Lato", sans-serif; width:100% ;
     overflow:hidden ;}
 
 button {
-	color: #2c7;
+	color: black; /* button font color */
+        background-color: #ddd;
+        border-radius: 15px;
 }
 
 ul.tab {
