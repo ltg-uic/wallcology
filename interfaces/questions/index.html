@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here-->
+	<title></title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+	<!-- Your CSS here -->
+</head>
+<body>
+	<!-- Your markup here -->
+
+	<!-- Scripts -->
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<!-- Your scripts here -->
+				
+	<script type="text/javascript">
+	
+	// Parse the query parameters
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	// Get an instance of nutella. 
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+	
+	var q = [];
+	var teams = [];
+
+	nutella.net.request('roster',{},function(logins, from) { 	
+		teams = logins[0].printNames; // one checkbox for each team
+
+
+
+
+	  nutella.net.request('get_questions',{},function(message,from){
+		q = message; 
+		document.write('<select id="question" onchange="updateForm();">');
+		// var menu = document.createElement('select');
+		// menu.id='question';
+//		document.appendChild(menu); 
+
+
+		document.write('</select>');
+		document.write('<TABLE>');
+		document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="questionField" type=text></TD></TR>');
+		document.write('<TR><TD>Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
+		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
+		document.write('<TR><TD>Answer</TD><TD><INPUT size=40 id="answerField" type=text></TD></TR>');
+		document.write('<TR><TD>Confidence</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
+		document.write('<TR><TD>Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
+		// document.write('<TR><TD>Notes</TD><TD><INPUT size=40 id="notesField" type=text></TD></TR>');
+		document.write('<TR><TD>Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
+		// document.write('<TR><TD>Team</TD><TD><INPUT size=40 id="ownerField" type=text></TD></TR>');
+		document.write('</TABLE>');
+		document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
+		document.write('<BUTTON onclick="revert();"> Revert </BUTTON>');
+		document.write('<BUTTON onclick="zap();"> Delete question </BUTTON>');
+		document.write('<BUTTON onclick="create();"> New question  </BUTTON>');
+		buildMenu();
+
+//==========
+
+
+
+//============
+
+
+		// function addItems(q) {
+		// 	for (var i=0; i<q.length; i++) { 
+		// 		s += '<OPTION value="';
+		// 		s += q[i].question;
+		// 		s += '">';
+		// 		if (q[i].status == "open") s+= 'O: ';
+		// 		if (q[i].status == "resolved") s+= 'R: ';
+		// 		if (q[i].status == "under investigation") s+= 'I: ';
+		// 		s += q[i].question;
+		// 		s += '</OPTION>';
+		// 	}
+		// }
+	});
+});
+
+
+///////////////////////////////////////
+
+
+	function buildMenu () { 
+		var open = q.filter(function(item){return (item.status == "open");});
+		var investigations = q.filter(function(item){return (item.status == "under investigation");});
+		var resolved = q.filter(function(item){return (item.status == "resolved");});
+
+		q = open.concat(investigations).concat(resolved);
+
+		deleteAllOptions(); 
+		for (i=0; i<q.length; i++) {
+			addOption(q[i].question, q[i].status, -1);
+		}
+		updateForm();
+	}
+
+	function addOption(question,status,position) {
+		var opt = document.createElement('option');
+		opt.appendChild(document.createTextNode(question));
+		opt.value = question; 
+		document.getElementById('question').add(opt,position); 
+		if (status == "open") opt.style='color:red;'; 
+		if (status == "resolved") opt.style='color:green;';
+		if (status == "under investigation") opt.style='color:yellow;';
+	}
+
+
+	function deleteAllOptions () {
+		document.getElementById('question').options.length = 0;
+	}
+
+
+///////////////////////////////////////
+
+
+	function updateForm(){
+		var index = document.getElementById('question').selectedIndex; 
+		document.getElementById('questionField').value = q[index].question;
+		document.getElementById(q[index].status).checked=true;
+		// document.getElementById('statusField').value = q[index].status;
+		document.getElementById('answerField').value = q[index].answer;
+		document.getElementById('confidenceField').value = q[index].confidence;
+		document.getElementById('notesField').value = q[index].notes;
+		document.getElementById('ownerField').value = q[index].owner;
+	}
+
+    	function save() {
+    		var index = document.getElementById('question').selectedIndex;
+    		var stat;
+    		if (document.getElementById('open').checked) stat='open';
+    		if (document.getElementById('under investigation').checked) stat='under investigation';
+    		if (document.getElementById('resolved').checked) stat='resolved';
+    		var m = [{
+    			question: document.getElementById('questionField').value,
+    			status: stat,
+    			answer: document.getElementById('answerField').value,
+    			confidence: document.getElementById('confidenceField').value,
+    			notes: document.getElementById('notesField').value,
+    			owner: document.getElementById('ownerField').value
+    			}];
+    		if (index > -1) q[index] = m[0]; else q = m.concat(q);
+    		buildMenu();
+    		for (i=0; i<q.length; i++) if (q[i].question == m[0].question) {
+    			document.getElementById('question').selectedIndex = i;
+    			updateForm();
+    		};
+    		nutella.net.request('set_questions',q,function(message,from){     		
+    			
+    		});
+    	}
+
+    	function revert() {
+
+    	}
+		
+    	function zap() {
+			var index = document.getElementById('question').selectedIndex;
+			if (index > -1) {
+			    q.splice(index, 1); 
+			    buildMenu();
+    			nutella.net.request('set_questions',q,function(message,from){ 
+    		    		});
+			}
+    	}
+		
+    	function create() {
+    		document.getElementById('question').selectedIndex = -1;
+    		document.getElementById('questionField').value = '';
+    		document.getElementById('open').checked = true;
+    		document.getElementById('answerField').value = '';
+    		document.getElementById('confidenceField').value = '';
+    		document.getElementById('notesField').value = '';
+    		document.getElementById('ownerField').value = '';
+    	}
+		
+	</script>
+				
+</body>
+</html>
