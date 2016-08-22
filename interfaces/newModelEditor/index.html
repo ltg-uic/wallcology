@@ -325,13 +325,13 @@ function graph() {
 	var m = model;
 	var e0 = {	temperature:Number(document.getElementById('t0').value),
 				humidity:Number(document.getElementById('h0').value),
-				wood:Number(document.getElementById('w0').value),
-				brick:Number(document.getElementById('b0').value)
+				wood:Number(document.getElementById('w0').value*4/9),
+				brick:Number(document.getElementById('b0').value*4/9)
 			};
 	var ef = {	temperature:Number(document.getElementById('tf').value),
 				humidity:Number(document.getElementById('hf').value),
-				wood:Number(document.getElementById('wf').value),
-				brick:Number(document.getElementById('bf').value)
+				wood:Number(document.getElementById('wf').value*4/9),
+				brick:Number(document.getElementById('bf').value*4/9)
 			};
 	var p = [];
 	for (var i =0; i<11; i++) p[i] = document.getElementById('init.' + i).value;

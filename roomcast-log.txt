@@ -4,5 +4,20 @@
 	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
 Initializing RoomCast...
 Initialization complete.
+<<<<<<< HEAD
+/Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:244:in `initialize': Connection refused - connect(2) for "127.0.0.1" port 1883 (Errno::ECONNREFUSED)
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:244:in `new'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:244:in `connect'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:93:in `connect'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/nutella_lib-0.4.26/lib/simple_mqtt_client/simple_mqtt_client.rb:17:in `initialize'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/nutella_framework-0.6.20/nutella_lib/framework_core.rb:30:in `new'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/nutella_framework-0.6.20/nutella_lib/framework_core.rb:30:in `init'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/nutella_framework-0.6.20/framework_components/roomcast-bot/roomcast_bot.rb:6:in `<main>'
+/Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/moher/.rvm/gems/ruby-2.2.1/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+=======
+>>>>>>> origin/master
 Initializing RoomCast...
 Initialization complete.

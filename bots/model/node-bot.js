@@ -10,13 +10,10 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 var model = nutella.persist.getMongoObjectStore('populationModel');
 model.load(function(){
-        nutella.net.handle_requests('read_population_model', function(message, from) {
+    nutella.net.handle_requests('read_population_model', function(message, from) {
         return(model);
     });
-});
-
-
-nutella.net.handle_requests('write_population_model', function(message, from) {
+    nutella.net.handle_requests('write_population_model', function(message, from) {
         model['r']=message['r']; 
         model['K']=message['K']; 
         model['alpha']=message['alpha'];
@@ -30,7 +27,25 @@ nutella.net.handle_requests('write_population_model', function(message, from) {
         model['m']=message['m'];
         model.save();
         nutella.net.publish('population_model_update');
+    });
+    nutella.net.handle_requests('get_species_names', function(message, from){ 
+        var nameList = []; console.log(model['species']);
+        for (var i=0; i<11; i++) { 
+            nameList.push(model['species'][i].printName);
+        }
+        console.log(nameList);
+        return (nameList);
+    });
+    nutella.net.subscribe('set_species_names', function(message){
+        for (var i=0; i<11; i++) {
+            model['species'][i].printName = message[i];
+        };
+        model.save();
+    });
 });
+
+
+
 
 
 

@@ -1,0 +1,37 @@
+{
+   "_id" : "default/speciesNotes",
+   "notes" : [ 
+       {
+           "species" : 2,
+           "group" : 1,
+           "relationships" : [ 
+               {
+                   "type" : "eatenBy",
+                   "species" : 3,
+                   "note" : "I saw 3 eat 2",
+                   "attachmentURLs" : []
+               }, 
+               {
+                   "type" : "competesWith",
+                   "species" : 4,
+                   "note" : "when one goes up the other goes down",
+                   "attachmentURLs" : []
+               }
+           ],
+           "preferences" : [ 
+               {
+                   "type" : "habitat",
+                   "value" : "wood",
+                   "note" : "2 likes to hang out on wood",
+                   "attachmentURLs" : []
+               }, 
+               {
+                   "type" : "temperature",
+                   "value" : "generalist",
+                   "note" : "doesnt seem to care",
+                   "attachmentURLs" : []
+               }
+           ]
+       }
+   ]
+}
