@@ -1,7 +1,8 @@
 {
   "name": "wallcology",
-  "version": "0.1.0",
+  "version": "4.0",
   "nutella_version": "0.6.2",
   "type": "application",
-  "description": "A quick description of your application"
+  "description": "WallCology",
+  "app_bots": ["master"]
 }

@@ -86,6 +86,8 @@ ul.tab li a:focus, .active {
 	var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
 	
 	// Get an instance of nutella
+	
+
 
 	var query_parameters = NUTELLA.parseURLParameters();
 
@@ -102,7 +104,7 @@ ul.tab li a:focus, .active {
 		type = query_parameters.TYPE;
 		nutella.net.request('currentActivity', {}, function (currentActivity, from){
 			nutella.net.request('channel_list',{activity:currentActivity,type:type}, function (channelList, from) {
-				nutella.net.request('channel_print_names',{}, function (prettyNames, from){
+				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
 						construct_user_interface(channel_lineup,prettyNames);
 						if (channel_lineup.length != 0) document.getElementById('button0').click();
