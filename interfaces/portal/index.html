@@ -92,10 +92,10 @@ ul.tab li a:focus, .active {
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
 
-	var tempNames = ['Ecologists','Teachers','Ecosystems','Species Places'];
+	var tempNames = ['Team Tablets','Teacher Tablets','Ecosystems','Species Places','Pervasive Displays', 'Developers'];
 
 	nutella.net.request('roster',{},function(logins, from) { 	window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-		document.write('<H2> WallCology Login </H2>');
+		document.write('<H2> WallCology: How would you like to use this device? </H2>');
 		document.write('<TABLE width=750 cellpadding="10">');
 		for (var i=0; i<logins.length; i++) {
 			document.write('<TR>');

@@ -27,10 +27,7 @@
 	var teams = [];
 
 	nutella.net.request('roster',{},function(logins, from) { 	
-		teams = logins[0].printNames; // one checkbox for each team
-
-
-
+	  teams = logins[0].printNames; // one checkbox for each team
 
 	  nutella.net.request('get_questions',{},function(message,from){
 		q = message; 
@@ -46,17 +43,30 @@
 		document.write('<TR><TD>Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
 		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
 		document.write('<TR><TD>Answer</TD><TD><INPUT size=40 id="answerField" type=text></TD></TR>');
-		document.write('<TR><TD>Confidence</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
+		document.write('<TR><TD>Uncertainty</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
 		document.write('<TR><TD>Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
 		// document.write('<TR><TD>Notes</TD><TD><INPUT size=40 id="notesField" type=text></TD></TR>');
 		document.write('<TR><TD>Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
 		// document.write('<TR><TD>Team</TD><TD><INPUT size=40 id="ownerField" type=text></TD></TR>');
+
+		if (query_parameters.TYPE != 'group') {
+			document.write('<TR><TD></TD><TD>');
+			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
+			document.write('<BUTTON onclick="revert();"> Revert </BUTTON>');
+			document.write('<BUTTON onclick="zap();"> Delete question </BUTTON>');
+			document.write('<BUTTON onclick="create();"> New question  </BUTTON>');
+			document.write('</TD></TR>');
+
+		}
 		document.write('</TABLE>');
-		document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
-		document.write('<BUTTON onclick="revert();"> Revert </BUTTON>');
-		document.write('<BUTTON onclick="zap();"> Delete question </BUTTON>');
-		document.write('<BUTTON onclick="create();"> New question  </BUTTON>');
+
 		buildMenu();
+		if (q.length == 0) {
+			create(); 
+		} else {
+			document.getElementById('question').selectedIndex = 0; updateForm();
+		}
+
 
 //==========
 
@@ -95,7 +105,7 @@
 		for (i=0; i<q.length; i++) {
 			addOption(q[i].question, q[i].status, -1);
 		}
-		updateForm();
+		
 	}
 
 	function addOption(question,status,position) {
@@ -111,6 +121,7 @@
 
 	function deleteAllOptions () {
 		document.getElementById('question').options.length = 0;
+		document.getElementById('question').selectedIndex = -1;
 	}
 
 
@@ -119,13 +130,19 @@
 
 	function updateForm(){
 		var index = document.getElementById('question').selectedIndex; 
-		document.getElementById('questionField').value = q[index].question;
-		document.getElementById(q[index].status).checked=true;
-		// document.getElementById('statusField').value = q[index].status;
-		document.getElementById('answerField').value = q[index].answer;
-		document.getElementById('confidenceField').value = q[index].confidence;
-		document.getElementById('notesField').value = q[index].notes;
-		document.getElementById('ownerField').value = q[index].owner;
+		if (index > -1) {
+			document.getElementById('questionField').value = q[index].question;
+			document.getElementById(q[index].status).checked=true;
+			// document.getElementById('statusField').value = q[index].status;
+			document.getElementById('answerField').value = q[index].answer;
+			document.getElementById('confidenceField').value = q[index].confidence;
+			document.getElementById('notesField').value = q[index].notes;
+			for (var i=0; i<5; i++) { //hack alert: hard-coded #of wallscopes
+				document.getElementById('team' + i).checked=false;
+				if (q[index].owner[i]) document.getElementById('team' + i).checked=true;
+			}
+		}
+
 	}
 
     	function save() {
@@ -134,13 +151,18 @@
     		if (document.getElementById('open').checked) stat='open';
     		if (document.getElementById('under investigation').checked) stat='under investigation';
     		if (document.getElementById('resolved').checked) stat='resolved';
+    		var ownerList = [];
+    		for (var i=0; i<5; i++) {  //hack alert: hard wired 5 = nuber of wallscopes
+    			ownerList[i] = document.getElementById('team'+i).checked;
+    		}
     		var m = [{
     			question: document.getElementById('questionField').value,
     			status: stat,
     			answer: document.getElementById('answerField').value,
     			confidence: document.getElementById('confidenceField').value,
     			notes: document.getElementById('notesField').value,
-    			owner: document.getElementById('ownerField').value
+    			owner: ownerList
+    			// owner: document.getElementById('ownerField').value
     			}];
     		if (index > -1) q[index] = m[0]; else q = m.concat(q);
     		buildMenu();
@@ -171,10 +193,13 @@
     		document.getElementById('question').selectedIndex = -1;
     		document.getElementById('questionField').value = '';
     		document.getElementById('open').checked = true;
+    		document.getElementById('under investigation').checked = false;
+    		document.getElementById('resolved').checked = false;
     		document.getElementById('answerField').value = '';
     		document.getElementById('confidenceField').value = '';
     		document.getElementById('notesField').value = '';
-    		document.getElementById('ownerField').value = '';
+    		for (var i=0; i<5; i++) document.getElementById('team' + i).checked=false;
+    		// document.getElementById('ownerField').value = '';
     	}
 		
 	</script>

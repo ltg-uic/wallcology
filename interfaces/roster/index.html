@@ -29,7 +29,7 @@
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
 
-	nutella.net.request('roster',{},function(logins, from){ alert(logins[1].printNames); alert(logins[1].printNames[2]);
+	nutella.net.request('roster',{},function(logins, from){ 
 		document.getElementById('roster').value = '';	
 		var s = '';
 		for (var i=0; i<logins.length; i++) { 
@@ -50,15 +50,14 @@
 		for (var i=0; i<s.length; i++){
 			if (s[i].length > 0) {
 				var v = [];
-				v = s[i].split(","); alert('v length: ' + v.length);
-				if (v.length>0) { alert('got here  i = ' + i);
+				v = s[i].split(","); 
+				if (v.length>0) { 
 					var type = v[0];
 					var owner = v[1];
 					var printNames = [];
 					for (var j=0; j<v.length-2; j++) {
 						printNames[j] = v[j+2];
 					};
-					alert(printNames);
 					r[i] = {type: type, owner: owner, printNames: printNames};
 				}
 			}	
