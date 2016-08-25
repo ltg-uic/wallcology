@@ -44,25 +44,28 @@
 
 
 	nutella.net.request('get_predictions',query_parameters.INSTANCE,function(predictions, from) { 
-		exp = predictions;
-		document.write('<select id="predictions" onchange="updateForm();">');
-		document.write('</select>');
-		document.write('<TABLE>');
-		document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threat" READONLY type=text></TD></TR>');
-		document.write('<TR><TD>Prediction</TD><TD><TEXTAREA rows=5 cols=40 id="prediction"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD></TD><TD>');
-		document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
-		document.write('</TD></TR>');
-		document.write('</TABLE>');
-		buildMenu();
-		updateForm();
+		if (predictions.length > 0) {
+			exp = predictions;
+			document.write('<select id="predictions" onchange="updateForm();">');
+			document.write('</select>');
+			document.write('<TABLE>');
+			document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threat" READONLY type=text></TD></TR>');
+			document.write('<TR><TD>Prediction</TD><TD><TEXTAREA rows=5 cols=40 id="prediction"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD></TD><TD>');
+			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
+			document.write('</TD></TR>');
+			document.write('</TABLE>');
+			buildMenu();
+			updateForm();
+		} else {
+			document.write('No predictions to make yet.')
+		}
 		nutella.net.subscribe('create_prediction',function(message){
 			if (message.ecosystem == query_parameters.INSTANCE) document.reload();
 		})
-		// nutella.net.request('create_prediction',{ecosystem:0,threat:'What is your favorite color'},function(message, from){});
 	});
 
 

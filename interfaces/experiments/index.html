@@ -42,27 +42,30 @@
 	
 	var exp = [];
 
-	nutella.net.subscribe('create_experiment',function(message){
-		if (message.ecosystem == query_parameters.INSTANCE) document.reload();
-	})
 
 	nutella.net.request('get_experiments',query_parameters.INSTANCE,function(experiments, from) {
-		exp = experiments;
-		document.write('<select id="experiments" onchange="updateForm();">');
-		document.write('</select>');
-		document.write('<TABLE>');
-		document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="question" READONLY type=text></TD></TR>');
-		document.write('<TR><TD>Manipulation(s)</TD><TD><INPUT size=40 id="manipulations" type=text></TD></TR>');
-		document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
-		document.write('<TR><TD></TD><TD>');
-		document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
-		document.write('</TD></TR>');
-		document.write('</TABLE>');
-		buildMenu();
-		updateForm();
-		// nutella.net.request('create_experiment',{ecosystem:0,question:'What is your favorite color'},function(message, from){});
+		if (experiments.length > 0) {
+			exp = experiments;
+			document.write('<select id="experiments" onchange="updateForm();">');
+			document.write('</select>');
+			document.write('<TABLE>');
+			document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="question" READONLY type=text></TD></TR>');
+			document.write('<TR><TD>Manipulation(s)</TD><TD><INPUT size=40 id="manipulations" type=text></TD></TR>');
+			document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD></TD><TD>');
+			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
+			document.write('</TD></TR>');
+			document.write('</TABLE>');
+			buildMenu();
+			updateForm();
+		} else {
+			document.write('No experiments to conduct yet.')
+		}
+		nutella.net.subscribe('create_experiment',function(message){
+			if (message.ecosystem == query_parameters.INSTANCE) document.reload();
+		})
 	});
 
 
