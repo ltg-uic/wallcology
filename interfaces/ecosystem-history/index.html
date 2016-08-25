@@ -275,7 +275,7 @@
 					}
 				}
 				ctx.lineWidth = 1.5;
-				ctx.strokeStyle = 'white'; 
+				ctx.strokeStyle = 'teal'; 
 				for (var j=0; j<c; j++) {
 					ctx.beginPath();
 					if (i==11) { 
@@ -283,7 +283,7 @@
 						if (abioticOptions[abioticDisplay]=='temperature') t = t/30;
 						if(t!=0) {
 							ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*t)), 1, 0, 2 * Math.PI, false);
-					      	ctx.fillStyle = 'teal';
+					      	ctx.fillStyle = 'black';
 					      	ctx.fill();
 					      	ctx.lineWidth = 0;
 					      	ctx.lineWidth = 1;
