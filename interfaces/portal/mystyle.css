@@ -1,22 +1,50 @@
+
+.color-primary-0 { color: #AA3939 } /* Main Primary color */
+.color-primary-1 { color: #FFAAAA }
+.color-primary-2 { color: #D46A6A }
+.color-primary-3 { color: #801515 }
+.color-primary-4 { color: #550000 }
+
+
 html { width:100% ;
     height:100% ;
     overflow:hidden ;
+    
 }
 
 iframe { width:100% ;
         height:100% ;
-    border:none ;
+        border:none ; 
+        
 }
+
+td { font-size: 120%; }
+
+
+H2 { color:#FFAAAA; font-style: plain;}
+
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
 
 
 body {font-family: "Lato", sans-serif; width:100% ;
+/*    background-image: url("bg.jpg"); */
+    background-color: white;
+    color: #801515;
+    text-align:center;
     height:100% ;
-    overflow:hidden ;}
+    overflow:hidden ;
+}
+
+
 
 button {
-	color: black; /* button font color */
-        background-color: #ddd;
+	color: white; /* button font color */
+        background-color: darkCyan;
         border-radius: 15px;
+        font-size: 110%;
 }
 
 ul.tab {

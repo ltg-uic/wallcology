@@ -1,10 +1,10 @@
 <!-- {
-    "_id" : "default/experiments",
+    "_id" : "default/predictions",
     "data" : [ 
         {   "group" : 2,
             "timestamp" : 1,
-		  "question": "do blue bugs eat green scum?",
-            "manipulations" : "we bumped up the blue bug population",
+		  "threat": "do blue bugs eat green scum?",
+            "prediction" : "we bumped up the blue bug population",
 		 "reasoning": "if green scum goes down, blue bug eats green scum",
 		 "results": "the green scum didn't go down, but the yellow flowers did",
             "figures": [],
@@ -42,17 +42,14 @@
 	
 	var exp = [];
 
-	nutella.net.subscribe('create_experiment',function(message){
-		if (message.ecosystem == query_parameters.INSTANCE) document.reload();
-	})
 
-	nutella.net.request('get_experiments',query_parameters.INSTANCE,function(experiments, from) {
-		exp = experiments;
-		document.write('<select id="experiments" onchange="updateForm();">');
+	nutella.net.request('get_predictions',query_parameters.INSTANCE,function(predictions, from) { 
+		exp = predictions;
+		document.write('<select id="predictions" onchange="updateForm();">');
 		document.write('</select>');
 		document.write('<TABLE>');
-		document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="question" READONLY type=text></TD></TR>');
-		document.write('<TR><TD>Manipulation(s)</TD><TD><INPUT size=40 id="manipulations" type=text></TD></TR>');
+		document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threat" READONLY type=text></TD></TR>');
+		document.write('<TR><TD>Prediction</TD><TD><TEXTAREA rows=5 cols=40 id="prediction"></TEXTAREA></TD></TR>');
 		document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
 		document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
 		document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
@@ -62,7 +59,10 @@
 		document.write('</TABLE>');
 		buildMenu();
 		updateForm();
-		// nutella.net.request('create_experiment',{ecosystem:0,question:'What is your favorite color'},function(message, from){});
+		nutella.net.subscribe('create_prediction',function(message){
+			if (message.ecosystem == query_parameters.INSTANCE) document.reload();
+		})
+		// nutella.net.request('create_prediction',{ecosystem:0,threat:'What is your favorite color'},function(message, from){});
 	});
 
 
@@ -72,26 +72,26 @@
 
 	function buildMenu () {
 		for (i=0; i<exp.length; i++) {
-			addOption(exp[i].question);
+			addOption(exp[i].threat);
 		}
 		
 	}
 
-	function addOption(question) {
+	function addOption(threat) {
 		var opt = document.createElement('option');
-		opt.appendChild(document.createTextNode(question));
-		opt.value = question; 
-		document.getElementById('experiments').add(opt,-1); 
+		opt.appendChild(document.createTextNode(threat));
+		opt.value = threat; 
+		document.getElementById('predictions').add(opt,-1); 
 	}
 
 ///////////////////////////////////////
 
 
 	function updateForm(){
-		var index = document.getElementById('experiments').selectedIndex; 
+		var index = document.getElementById('predictions').selectedIndex; 
 		if (index > -1) {
-			document.getElementById('question').value = exp[index].question;
-			document.getElementById('manipulations').value = exp[index].manipulations;
+			document.getElementById('threat').value = exp[index].threat;
+			document.getElementById('prediction').value = exp[index].prediction;
 			document.getElementById('reasoning').value = exp[index].reasoning;
 			document.getElementById('results').value = exp[index].results;
 			document.getElementById('conclusions').value = exp[index].conclusions;
@@ -101,15 +101,15 @@
 
 
     function save() {
-		var index = document.getElementById('experiments').selectedIndex; 
+		var index = document.getElementById('predictions').selectedIndex; 
 		if (index > -1) {
 			exp[index].ecosystem = query_parameters.INSTANCE;
-			exp[index].question = document.getElementById('question').value;
-			exp[index].manipulations = document.getElementById('manipulations').value;
+			exp[index].threat = document.getElementById('threat').value;
+			exp[index].prediction = document.getElementById('prediction').value;
 			exp[index].reasoning = document.getElementById('reasoning').value;
 			exp[index].results = document.getElementById('results').value;
 			exp[index].conclusions = document.getElementById('conclusions').value;
-    		nutella.net.request('update_experiment',exp[index], function(){});
+    		nutella.net.request('update_prediction',exp[index], function(){});
 		}
 
 	}
@@ -121,18 +121,18 @@
    //  	}
 		
    //  	function zap() {
-			// var index = document.getElementById('question').selectedIndex;
+			// var index = document.getElementById('threat').selectedIndex;
 			// if (index > -1) {
 			//     q.splice(index, 1); 
 			//     buildMenu();
-   //  			nutella.net.request('set_questions',q,function(message,from){ 
+   //  			nutella.net.request('set_threats',q,function(message,from){ 
    //  		    		});
 			// }
    //  	}
 		
    //  	function create() {
-   //  		document.getElementById('question').selectedIndex = -1;
-   //  		document.getElementById('questionField').value = '';
+   //  		document.getElementById('threat').selectedIndex = -1;
+   //  		document.getElementById('threatField').value = '';
    //  		document.getElementById('open').checked = true;
    //  		document.getElementById('under investigation').checked = false;
    //  		document.getElementById('resolved').checked = false;
