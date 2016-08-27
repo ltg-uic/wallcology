@@ -42,13 +42,13 @@ function Start() {
 // Instantiate the Nutella components
 function initNutellaComponents()
 {
-    console.log("wcV5! Connecting Nutella");
+    alert("wcV5! Connecting Nutella");
     // Parse the query parameters
     var query_parameters = NUTELLA.parseURLParameters();
-    console.log(query_parameters);
+    alert(query_parameters);
     WallscopeID = query_parameters.INSTANCE || 0;
 
-    console.log('wallscope: ' + WallscopeID)
+    alert('wallscope: ' + WallscopeID)
 
     // Get an instance of nutella.
     nutella = NUTELLA.init(
@@ -79,7 +79,7 @@ function initWebPlayer()
     // var url = "build/wallscope" + WallscopeID.toString() + "/wallscope" + WallscopeID.toString() + ".unity3d";
     var url = "build/demo/demo.unity3d";
 
-    console.log("Start WebPlayer");
+    alert("Start WebPlayer");
     jQuery(function() {
 
         var $missingScreen = jQuery("#unityPlayer").find(".missing");
@@ -111,7 +111,7 @@ function initWebPlayer()
                 break;
             }
         });
-        console.log("url is", url);
+        alert("url is", url);
         // recieve wallscope #, grab appropriate program.
         unity3d.initPlugin(jQuery("#unityPlayer")[0], url);
     });
@@ -127,36 +127,69 @@ function initWebPlayer()
 
 function State_Update_Handler( response )
 {
-    console.log("State_Update_Handler called!");
+    alert("State_Update_Handler called!");
 
-    var lastState = sanitizeResponse(response);
+    var updatedState = sanitizeResponse(response);
 
-    console.log("\tlast_state!", Date(lastState["timestamp"]), lastState);
+    alert("\tlast_state!", Date(updatedState["timestamp"]), updatedState);
      // Send messages to Unity
 
-    for (var i = 0; i < lastState['biotic'][WallscopeID].length; i++) {
+    for (var i = 0; i < updatedState['biotic'][WallscopeID].length; i++) {
+        var count = 0,
+            rawPopulation = updatedState['biotic'][WallscopeID][i];
 
-        var count = parseInt(lastState['biotic'][WallscopeID][i]) * 25;
+        switch(i) {
+            case 1:
+            case 3:
+            case 8:
+                count = parseInt( Math.round(rawPopulation * 10) );
+                break;
+            case 0:
+            case 2:
+            case 6:
+            case 7:
+                count = parseInt( Math.round(rawPopulation * 5) );
+                break;
+            default:
+                count = ( rawPopulation / 100.0 );
+                break;
+        }
+        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
         var packaged = i.toString() + " " + count.toString();
-        console.log("state_update", packaged);
+        alert("state_update", packaged);
         Unity.SetSpeciesRecordCount( packaged );
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
 
-    console.log("\tSpecies Record Updated! ");
-    Unity.SetThermostatText(lastState['abiotic'][WallscopeID]['thermostat']);
-    Unity.SetTemperatureText(lastState['abiotic'][WallscopeID]['temperature']);
+    alert("\tSpecies Record Updated! ");
+
+    var Abiotic = updatedState['abiotic'][WallscopeID];
+    Unity.SetThermostatText( Abiotic['thermostat'] );
+    Unity.SetTemperatureText( Abiotic['temperature'] );
+    // Unity.SetHumidityText( Abiotic['humidity'] );
+        // "left": "out",
+        // "top": "out",
+        // "right": "out",
+        // "bottom": "out",
+        // "brick": 1,
+        // "wood": 1
+
     // Wait on these for now...
-    // lastState['abiotic'][WallscopeID]['humidistat']
-    // lastState['abiotic'][WallscopeID]['humidity']
-    // lastState['abiotic'][WallscopeID]['left']
-    // lastState['abiotic'][WallscopeID]['top']
-    // lastState['abiotic'][WallscopeID]['right']
-    // lastState['abiotic'][WallscopeID]['bottom']
-    // lastState['abiotic'][WallscopeID]['brick']
-    // lastState['abiotic'][WallscopeID]['wood']
+    // updatedState['abiotic'][WallscopeID]['humidistat']
+    // updatedState['abiotic'][WallscopeID]['humidity']
+    // updatedState['abiotic'][WallscopeID]['left']
+    // updatedState['abiotic'][WallscopeID]['top']
+    // updatedState['abiotic'][WallscopeID]['right']
+    // updatedState['abiotic'][WallscopeID]['bottom']
+    // updatedState['abiotic'][WallscopeID]['brick']
+    // updatedState['abiotic'][WallscopeID]['wood']
 }
 
+
+function Last_State_Handler( response )
+{
+    State_Update_Handler( response ); // at least until I can come up with a more thoughtful way of adding critters in place.
+}
 /*==============================================================================
  #                        MESSAGE HANDLERS
  #                       UNITY->Javascript
@@ -166,11 +199,11 @@ function State_Update_Handler( response )
 var TellJs = {
 
     ActivateWallScope: function() {  // Allows Unity to tell us its ready
-        console.log("TellJs.ActivateWallScope:  Unity is READY!! WOOOOOO");
+        alert("TellJs.ActivateWallScope:  Unity is READY!! WOOOOOO");
 
         // Make an Immediate request for the last state. This will let us update
         // the wallscope to its previous state should we suffer a crash.
-        nutella.net.request( 'last_state', {}, State_Update_Handler);
+        nutella.net.request( 'last_state', {}, Last_State_Handler);
 
         // Subscribe to the channel and wait for updates.
         //                      last_animation_state
@@ -178,13 +211,13 @@ var TellJs = {
     },
 
     SubscribeToEventsChannel: function() {
-        console.log("TellJs.SubscribeToEventsChannel was called from Unity!!");
+        alert("TellJs.SubscribeToEventsChannel was called from Unity!!");
 
         // nutella.net.subscribe( 'state-update', function(response) {}
         nutella.net.subscribe( 'thermostat', function(response) {
 
             var cleaned = sanitizeResponse(response);
-            console.log( 'channel-thermostat', cleaned);
+            alert( 'channel-thermostat', cleaned);
             Unity.SetThermostatText( cleaned['value'] )
 
         })
@@ -192,13 +225,13 @@ var TellJs = {
 
         nutella.net.subscribe( 'humidistat', function(response) {
             var cleaned = sanitizeResponse(response);
-            console.log( 'channel-humidistat', response);
+            alert( 'channel-humidistat', response);
             Unity.SetHumidityText( cleaned['value'] )
 
         })
 
         nutella.net.subscribe( 'wall', function(response) {
-            console.log( 'channel-wall', response);
+            alert( 'channel-wall', response);
 
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
@@ -207,28 +240,28 @@ var TellJs = {
         })
 
         nutella.net.subscribe( 'seed', function(response) {
-            console.log( 'channel-seed', response);
+            alert( 'channel-seed', response);
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
                 Unity.CallCropSeeder(cleaned['species'])
         })
 
         nutella.net.subscribe( 'herbicide', function(response) {
-            console.log( 'channel-herbicide', response);
+            alert( 'channel-herbicide', response);
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
                 Unity.CallCropDuster(cleaned['species'])
         })
 
         nutella.net.subscribe( 'colonize', function(response) {
-            console.log( 'channel-colonize', response);
+            alert( 'channel-colonize', response);
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
                 Unity.PlaceColony(cleaned['species'])
         })
 
         nutella.net.subscribe( 'trap', function(response) {
-            console.log( 'channel-trap', response);
+            alert( 'channel-trap', response);
             var cleaned = sanitizeResponse(response);
             if ( cleaned['ecosystem'] === WallscopeID )
                 Unity.PlaceTrap(cleaned['species'])
@@ -257,7 +290,7 @@ var Unity = {
     // Sets the Thermostat GUI Text display
     SetThermostatText : function( thermo ) {
         thermo = thermo.toString();
-        console.log("Thermostat is", thermo);
+        alert("Thermostat is", thermo);
         unity3d.getUnity().SendMessage("Thermostat", "SetText", thermo);
     },
 
@@ -266,7 +299,7 @@ var Unity = {
         // temp = Math.abs(Math.round(temp * 100) / 100);
         temp = temp.toString() + "˚C";
         // temp = "";
-        console.log("Temperature is", temp);
+        alert("Temperature is", temp);
         unity3d.getUnity().SendMessage("Temperature", "SetText", temp);
     },
 
@@ -275,7 +308,7 @@ var Unity = {
         // humid = Math.abs(Math.round(humid * 100) / 100);
         humid = humid.toString() + "RH";
         // humid = "";
-        console.log("Humidity is", humid);
+        alert("Humidity is", humid);
         unity3d.getUnity().SendMessage("Humidity", "SetText", humid);
     },
 
@@ -311,7 +344,7 @@ var Unity = {
     // PositionCritterColony method, supplying the Colony ID #
     PlaceColony : function(uID) {
         var id = Number(uID)
-        console.log("PositionCritterColony", id);
+        alert("PositionCritterColony", id);
         unity3d.getUnity().SendMessage("Habitat_Events", "PositionCritterColony", id);
     },
 
@@ -342,27 +375,27 @@ var Unity = {
 
     /* Decprecated Function */
     SpawnCritter : function( id ) {
-        console.log("Lets make a "+id.toString() +"! ", typeof id  );
+        alert("Lets make a "+id.toString() +"! ", typeof id  );
         unity3d.getUnity().SendMessage( "Habitat", "SpawnCritter", id );
     },
 
     /* Decprecated Function */
     KillCritter : function( id ) {
-        console.log("Killing " + id.toString() + " softly!");
+        alert("Killing " + id.toString() + " softly!");
         unity3d.getUnity().SendMessage("Habitat", "KillCritter", id);
     },
 
     /* Decprecated Function */
     RequestVegetationPresence: function( uID ) {
         var scaleLevel = Last_State['populations'][0][+uID];
-        console.log("RequestVegetationPresence!", uID, scaleLevel );
+        alert("RequestVegetationPresence!", uID, scaleLevel );
         var scaleString = scaleLevel = scaleLevel.toString();
 
         if (scaleString.includes('e')) {
             scaleLevel = 0.0001;
-            console.log("Made an adjustment!", scaleString);
+            alert("Made an adjustment!", scaleString);
         };
-        console.log("\tRequestVegetationPresence!", uID, scaleLevel );
+        alert("\tRequestVegetationPresence!", uID, scaleLevel );
         unity3d.getUnity().SendMessage("Habitat", "ScaleVegetation", scaleLevel.toString() + " " + uID.toString());
     }
 }
