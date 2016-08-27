@@ -44,16 +44,18 @@
 
 
 	nutella.net.request('get_predictions',query_parameters.INSTANCE,function(predictions, from) { 
+		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 		if (predictions.length > 0) {
 			exp = predictions;
-			document.write('<select id="predictions" onchange="updateForm();">');
-			document.write('</select>');
-			document.write('<TABLE>');
-			document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threat" READONLY type=text></TD></TR>');
-			document.write('<TR><TD>Prediction</TD><TD><TEXTAREA rows=5 cols=40 id="prediction"></TEXTAREA></TD></TR>');
-			document.write('<TR><TD>Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
-			document.write('<TR><TD>Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
-			document.write('<TR><TD>Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
+
+			document.write('<TABLE cellpadding=10>');
+			// document.write('<TR><TD></TD><TD><select id="predictions" onchange="updateForm();">');
+			// document.write('</select></TD></TR>');
+			document.write('<TR><TD align="right">Threat</TD><TD><select id="predictions" onchange="updateForm();"></select><INPUT HIDDEN size=40 id="threat" READONLY type=text></TD></TR>');
+			document.write('<TR><TD align="right">Prediction</TD><TD><TEXTAREA rows=5 cols=40 id="prediction"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD align="right">Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD align="right">Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
+			document.write('<TR><TD align="right">Conclusions</TD><TD><TEXTAREA rows=5 cols=40 id="conclusions"></TEXTAREA></TD></TR>');
 			document.write('<TR><TD></TD><TD>');
 			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
 			document.write('</TD></TR>');

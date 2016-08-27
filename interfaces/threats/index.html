@@ -31,20 +31,17 @@
 
 	  nutella.net.request('get_threats',{},function(message,from){
 		q = message; 
-		document.write('<select id="threat" onchange="updateForm();">');
-		// var menu = document.createElement('select');
-		// menu.id='threat';
-//		document.appendChild(menu); 
-
-
+		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+		document.write('<TABLE cellpadding=10><TR><TD align="right">Select</TD><TD>');
+		document.write('<select id="threat" onchange="updateForm();"></select>');
 		document.write('</select>');
-		document.write('<TABLE>');
-		document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threatField" type=text></TD></TR>');
-		document.write('<TR><TD>Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
+		document.write('</TD></TR>');
+		document.write('<TR><TD align="right">Threat</TD><TD><INPUT size=40 id="threatField" type=text></TD></TR>');
+		document.write('<TR><TD align="right">Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
 		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
-		document.write('<TR><TD>Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
+		document.write('<TR><TD align="right">Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
 		// document.write('<TR><TD>Notes</TD><TD><INPUT size=40 id="notesField" type=text></TD></TR>');
-		document.write('<TR><TD>Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
+		document.write('<TR><TD align="right">Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
 		// document.write('<TR><TD>Team</TD><TD><INPUT size=40 id="ownerField" type=text></TD></TR>');
 
 		if (query_parameters.TYPE != 'group') {

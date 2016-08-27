@@ -1,0 +1,170 @@
+<!doctype html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<!-- Your interface name here-->
+	<title></title>
+	<!-- The description of this interfaces here -->
+	<meta name="description" content="">
+</head>
+
+<body>
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<script type="text/javascript">
+
+
+	var MAX_TABS = 10;
+
+	var query_parameters = NUTELLA.parseURLParameters();
+
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+
+	var	instance = query_parameters.INSTANCE;
+	var	type = query_parameters.TYPE;
+	var channel_lineup=[];
+
+	window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+	var menu = document.createElement('ul');
+	menu.setAttribute("id","menu");
+	menu.setAttribute("class","tab");
+	document.body.appendChild(menu);
+
+	for (var i=0; i<MAX_TABS; i++) {
+		var div = document.createElement('div');
+		div.setAttribute("class","tabcontent");
+		div.setAttribute("id","div" + i)
+		var iframe = document.createElement('iframe');
+		iframe.setAttribute("width","1000");
+		iframe.setAttribute("height","800");
+		iframe.setAttribute("id","iframe" + i);
+		div.appendChild(iframe);
+		document.body.appendChild(div);
+	}
+
+
+
+		// document.write('<div id="channel' + i + '" class="tabcontent"><iframe id="iframe' + i + '" width="1000" height="800"></iframe> </div>');
+
+
+		var li = document.createElement('li');
+		li.appendChild(document.createTextNode("roster"));
+		li.value = 0;
+		li.setAttribute("class", "tablinks"); 
+		menu.appendChild(li); 
+		li.addEventListener('click',function(){openTab(0,'div0');});
+		document.getElementById('iframe0').setAttribute("src","http://localhost:57880/wallcology/default/runs/roster/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default");
+
+
+
+	// var li = document.createElement('li');
+	// li.appendChild(document.createTextNode("CNN"));
+	// li.value = 0;
+	// document.getElementById('menu').appendChild(li); 
+	// li.setAttribute("class", "tablinks"); 
+	// li.addEventListener('click',openTab(0,'channel0'));
+	// document.getElementById('iframe0').src="http://cnn.com";
+	// openTab(0,'channel0');
+
+
+
+// 	nutella.net.subscribe('change_activity', function(message, from){
+// 		location.reload(true);
+// 	})
+
+
+
+// 		nutella.net.request('currentActivity', {}, function (currentActivity, from){
+// 			nutella.net.request('channel_list',{activity:currentActivity,type:type}, function (channelList, from) {
+// 				nutella.net.request('channel_names',{}, function (prettyNames, from){
+// 						var channel_lineup = buildLineup (channelList, instance); 
+// 						construct_user_interface(channel_lineup,prettyNames);
+// 						if (channel_lineup.length != 0) document.getElementById('button0').click();
+// 				});
+// 			});
+// 		});
+	
+// 	// 
+
+// 	function login (type,instance) {
+// 		// look up class activity alert()
+// 		var s = 'http://';
+// 		s += window.location.host + '/';
+// 		s += query_parameters.app_id + '/';
+// 		s += query_parameters.run_id + '/';
+// 		s += 'runs/';
+// 		s += 'portal' + '/';
+// 		s += 'index.html' + '?';
+// 		s += 'broker=' + query_parameters.broker + '&';
+// 		s += 'app_id=' + query_parameters.app_id + '&';
+// 		s += 'run_id=' + query_parameters.run_id;
+
+// 		location.href = s;
+// 	}
+
+// 	function buildLineup (channelList, instance) {
+// 		var s;
+// 		var channel_lineup = [];
+// 		for (var i=0; i<channelList.length; i++) {
+// 			s = 'http://';
+// 			s += window.location.host + '/';
+// 			s += query_parameters.app_id + '/';
+// 			s += query_parameters.run_id + '/';
+// 			s += 'runs/';
+// 			s += channelList[i] + '/';
+// 			s += 'index.html' + '?';
+// 			s += 'broker=' + query_parameters.broker + '&';
+// 			s += 'app_id=' + query_parameters.app_id + '&';
+// 			s += 'run_id=' + query_parameters.run_id + '&';
+// 			s += 'TYPE=' + type + '&';
+// 			s += 'INSTANCE=' + instance;
+
+// 			channel_lineup[i] = {name: channelList[i], URL: s};
+// 		};
+// 		return (channel_lineup);
+// 	}
+
+// 	function construct_user_interface (channel_lineup,prettyNames) {
+// 		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+// 		document.write('<ul class="tab">'); 
+
+// 		for (var i=0; i<channel_lineup.length; i++){
+
+// 			var match = prettyNames.filter(function(arg){return (arg.name == channel_lineup[i].name)}); 
+
+// 			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + match[0].printName + '</a></li>');
+// 		}
+// 		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
+
+
+// //	   document.write('<li><a href="#" class="tablinks" onclick="openTab(event, \'enactment-control\')">enactment-control</a></li>');
+// 	  // <li><a href="#" class="tablinks" onclick="openCity(event, 'MSNBC')">MSNBC</a></li>
+// 	  // <li><a href="#" class="tablinks" onclick="openCity(event, 'FOX')">FOX</a></li>
+
+// 		document.writeln("</ul>");
+
+// 		for (var i=0; i<channel_lineup.length; i++) { 
+// 		  	document.writeln('<div id="channel' + i + '" class="tabcontent"><iframe width="1000" height="800" src="' + channel_lineup[i].URL + '"></iframe> </div>');
+// 		};
+
+// 	};
+
+	function openTab(index, channelName) { 
+	    var i, tabcontent, tablinks;
+	    tabcontent = document.getElementsByClassName("tabcontent"); 
+	    for (i = 0; i < tabcontent.length; i++) {
+	        tabcontent[i].style.display = "none";
+	    }
+	    tablinks = document.getElementsByClassName("tablinks");
+	    for (i = 0; i < tablinks.length; i++) { 
+	        tablinks[i].className = tablinks[i].className.replace(" active", "");
+	    }
+	    document.getElementById(channelName).style.display = "inline"; 
+	    tablinks[index].className += " active";
+	}
+
+</script>
+     
+</body>
+</html>
+
+

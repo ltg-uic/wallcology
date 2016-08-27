@@ -30,7 +30,9 @@
 	  teams = logins[0].printNames; // one checkbox for each team
 
 	  nutella.net.request('get_questions',{},function(message,from){
+		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 		q = message; 
+		document.write('<TABLE cellpadding=10><TR><TD align="right">Select</TD><TD>');
 		document.write('<select id="question" onchange="updateForm();">');
 		// var menu = document.createElement('select');
 		// menu.id='question';
@@ -38,15 +40,15 @@
 
 
 		document.write('</select>');
-		document.write('<TABLE>');
-		document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="questionField" type=text></TD></TR>');
-		document.write('<TR><TD>Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
+		document.write('</TD></TR>');
+		document.write('<TR><TD align="right">Question</TD><TD><INPUT size=40 id="questionField" type=text></TD></TR>');
+		document.write('<TR><TD align="right">Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
 		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
-		document.write('<TR><TD>Answer</TD><TD><INPUT size=40 id="answerField" type=text></TD></TR>');
-		document.write('<TR><TD>Uncertainty</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
-		document.write('<TR><TD>Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
+		document.write('<TR><TD align="right">Answer</TD><TD><INPUT size=40 id="answerField" type=text></TD></TR>');
+		document.write('<TR><TD align="right">Uncertainty</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
+		document.write('<TR><TD align="right">Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
 		// document.write('<TR><TD>Notes</TD><TD><INPUT size=40 id="notesField" type=text></TD></TR>');
-		document.write('<TR><TD>Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
+		document.write('<TR><TD align="right">Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
 		// document.write('<TR><TD>Team</TD><TD><INPUT size=40 id="ownerField" type=text></TD></TR>');
 
 		if (query_parameters.TYPE != 'group') {
@@ -66,7 +68,6 @@
 		} else {
 			document.getElementById('question').selectedIndex = 0; updateForm();
 		}
-
 
 //==========
 

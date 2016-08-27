@@ -53,7 +53,7 @@ body {font-family: "Lato", sans-serif; width:100% ;
 
 
 button {
-    color: black; /* button font color */
+	color: black; /* button font color */
     font-size:100%;
         background-color: lightgray;
         border-radius: 10px;

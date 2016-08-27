@@ -29,11 +29,11 @@ model.load(function(){
         nutella.net.publish('population_model_update');
     });
     nutella.net.handle_requests('get_species_names', function(message, from){ 
-        var nameList = []; console.log(model['species']);
+        var nameList = []; 
         for (var i=0; i<11; i++) { 
             nameList.push(model['species'][i].printName);
         }
-        console.log(nameList);
+        
         return (nameList);
     });
     nutella.net.subscribe('set_species_names', function(message){
