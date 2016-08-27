@@ -4,12 +4,12 @@
 	<meta charset="utf-8">
 	<!-- Your interface name here-->
 	<title></title>
-	<!-- The description of this interfaces here -->
+	<!-- The description of this interfaces here 
 	<meta name="description" content="">
 	<!-- Your CSS here -->
 </head>
 <body>
-	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
+	<!-- <script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>-->
 
 	<!-- Your markup here -->
 	<H2>Simulation control</H2>
@@ -45,11 +45,6 @@
 		}
 	});
 
-	nutella.net.request('currentActivity',{},function(message, from){ 
-		for (var i=0; i<document.getElementById('activity').options.length; i++) {
-			if (document.getElementById('activity').options[i].value == message) document.getElementById('activity').selectedIndex = i;
-		}
-	});
 
 	function activityChange() {
 		var a = document.getElementById('activity').selectedIndex; 
