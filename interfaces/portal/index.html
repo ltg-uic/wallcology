@@ -92,14 +92,14 @@ ul.tab li a:focus, .active {
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
 
-	var tempNames = ['Team Tablets','Teacher Tablets','Ecosystems','Species Places','Pervasive Displays', 'Developers'];
+	var tempNames = ['Team Tablet','Teacher Tablet','Ecosystem','Species Place','Pervasive Display', 'Developer'];
 
 	nutella.net.request('roster',{},function(logins, from) { 	window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-		document.write('<H2> WallCology: How would you like to use this device? </H2>');
-		document.write('<TABLE width=750 cellpadding="10">');
+		document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ': How would you like to use this device? </H2>');
+		document.write('<TABLE class="center" cellpadding="10">');
 		for (var i=0; i<logins.length; i++) {
 			document.write('<TR>');
-			document.write('<TD align="right"><b>' + tempNames[i] + '</b></TD>');
+			document.write('<TD align="right">' + tempNames[i] + '</TD>');
 			document.write('<TD>');
 			for (var j=0; j<logins[i].printNames.length; j++) {
 				document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + logins[i].printNames[j] + '</button>');

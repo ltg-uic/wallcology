@@ -29,21 +29,19 @@
 	nutella.net.request('roster',{},function(logins, from) { 	
 	  teams = logins[0].printNames; // one checkbox for each team
 
-	  nutella.net.request('get_questions',{},function(message,from){
+	  nutella.net.request('get_threats',{},function(message,from){
 		q = message; 
-		document.write('<select id="question" onchange="updateForm();">');
+		document.write('<select id="threat" onchange="updateForm();">');
 		// var menu = document.createElement('select');
-		// menu.id='question';
+		// menu.id='threat';
 //		document.appendChild(menu); 
 
 
 		document.write('</select>');
 		document.write('<TABLE>');
-		document.write('<TR><TD>Question</TD><TD><INPUT size=40 id="questionField" type=text></TD></TR>');
+		document.write('<TR><TD>Threat</TD><TD><INPUT size=40 id="threatField" type=text></TD></TR>');
 		document.write('<TR><TD>Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
 		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
-		document.write('<TR><TD>Answer</TD><TD><INPUT size=40 id="answerField" type=text></TD></TR>');
-		document.write('<TR><TD>Uncertainty</TD><TD><INPUT size=40 id="confidenceField" type=text></TD></TR>');
 		document.write('<TR><TD>Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
 		// document.write('<TR><TD>Notes</TD><TD><INPUT size=40 id="notesField" type=text></TD></TR>');
 		document.write('<TR><TD>Team</TD><TD>  <input type="checkbox" id="team0"> ' + teams[0] + '<input type="checkbox" id="team1"> ' + teams[1] + '<input type="checkbox" id="team2"> ' + teams[2] + '<input type="checkbox" id="team3"> ' + teams[3] + '<input type="checkbox" id="team4"> ' + teams[4] + '</TD></TR>');		
@@ -53,8 +51,8 @@
 			document.write('<TR><TD></TD><TD>');
 			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
 			document.write('<BUTTON onclick="revert();"> Revert </BUTTON>');
-			document.write('<BUTTON onclick="zap();"> Delete question </BUTTON>');
-			document.write('<BUTTON onclick="create();"> New question  </BUTTON>');
+			document.write('<BUTTON onclick="zap();"> Delete threat </BUTTON>');
+			document.write('<BUTTON onclick="create();"> New threat  </BUTTON>');
 			document.write('</TD></TR>');
 
 		}
@@ -64,7 +62,7 @@
 		if (q.length == 0) {
 			create(); 
 		} else {
-			document.getElementById('question').selectedIndex = 0; updateForm();
+			document.getElementById('threat').selectedIndex = 0; updateForm();
 		}
 
 
@@ -78,12 +76,12 @@
 		// function addItems(q) {
 		// 	for (var i=0; i<q.length; i++) { 
 		// 		s += '<OPTION value="';
-		// 		s += q[i].question;
+		// 		s += q[i].threat;
 		// 		s += '">';
 		// 		if (q[i].status == "open") s+= 'O: ';
 		// 		if (q[i].status == "resolved") s+= 'R: ';
 		// 		if (q[i].status == "under investigation") s+= 'I: ';
-		// 		s += q[i].question;
+		// 		s += q[i].threat;
 		// 		s += '</OPTION>';
 		// 	}
 		// }
@@ -103,16 +101,16 @@
 
 		deleteAllOptions(); 
 		for (i=0; i<q.length; i++) {
-			addOption(q[i].question, q[i].status, -1);
+			addOption(q[i].threat, q[i].status, -1);
 		}
 		
 	}
 
-	function addOption(question,status,position) {
+	function addOption(threat,status,position) {
 		var opt = document.createElement('option');
-		opt.appendChild(document.createTextNode(question));
-		opt.value = question; 
-		document.getElementById('question').add(opt,position); 
+		opt.appendChild(document.createTextNode(threat));
+		opt.value = threat; 
+		document.getElementById('threat').add(opt,position); 
 		if (status == "open") opt.style='color:red;'; 
 		if (status == "resolved") opt.style='color:green;';
 		if (status == "under investigation") opt.style='color:yellow;';
@@ -120,8 +118,8 @@
 
 
 	function deleteAllOptions () {
-		document.getElementById('question').options.length = 0;
-		document.getElementById('question').selectedIndex = -1;
+		document.getElementById('threat').options.length = 0;
+		document.getElementById('threat').selectedIndex = -1;
 	}
 
 
@@ -129,13 +127,11 @@
 
 
 	function updateForm(){
-		var index = document.getElementById('question').selectedIndex; 
+		var index = document.getElementById('threat').selectedIndex; 
 		if (index > -1) {
-			document.getElementById('questionField').value = q[index].question;
+			document.getElementById('threatField').value = q[index].threat;
 			document.getElementById(q[index].status).checked=true;
 			// document.getElementById('statusField').value = q[index].status;
-			document.getElementById('answerField').value = q[index].answer;
-			document.getElementById('confidenceField').value = q[index].confidence;
 			document.getElementById('notesField').value = q[index].notes;
 			for (var i=0; i<5; i++) { //hack alert: hard-coded #of wallscopes
 				document.getElementById('team' + i).checked=false;
@@ -146,7 +142,7 @@
 	}
 
     	function save() {
-    		var index = document.getElementById('question').selectedIndex;
+    		var index = document.getElementById('threat').selectedIndex;
     		var stat;
     		if (document.getElementById('open').checked) stat='open';
     		if (document.getElementById('under investigation').checked) stat='under investigation';
@@ -156,24 +152,23 @@
     			ownerList[i] = document.getElementById('team'+i).checked;
     		}
     		var m = [{
-    			question: document.getElementById('questionField').value,
+    			threat: document.getElementById('threatField').value,
     			status: stat,
-    			answer: document.getElementById('answerField').value,
-    			confidence: document.getElementById('confidenceField').value,
     			notes: document.getElementById('notesField').value,
     			owner: ownerList
     			// owner: document.getElementById('ownerField').value
     			}];
     		if (index > -1) q[index] = m[0]; else q = m.concat(q);
     		buildMenu();
-    		for (i=0; i<q.length; i++) if (q[i].question == m[0].question) {
-    			document.getElementById('question').selectedIndex = i;
+    		for (i=0; i<q.length; i++) if (q[i].threat == m[0].threat) {
+    			document.getElementById('threat').selectedIndex = i;
     			updateForm();
     		};
-    		nutella.net.request('set_questions',q,function(message,from){});
-    		//distribute questions to ecosystem groups
+    		nutella.net.request('set_threats',q,function(message,from){});
+    		//distribute threats to ecosystem groups
     		for (var i=0; i<5; i++) {
-    			if (document.getElementById('team' + i).checked) nutella.net.publish('create_experiment',{ecosystem:i,question:document.getElementById('questionField').value, notes:document.getElementById('notesField').value});
+    			if (document.getElementById('team' + i).checked) { 
+    				nutella.net.publish('create_prediction',{ecosystem:i,threat:document.getElementById('threatField').value, notes:document.getElementById('notesField').value});}
 
     		}
     	}
@@ -187,23 +182,21 @@
     	}
 		
     	function zap() {
-			var index = document.getElementById('question').selectedIndex;
+			var index = document.getElementById('threat').selectedIndex;
 			if (index > -1) {
 			    q.splice(index, 1); 
 			    buildMenu();
-    			nutella.net.request('set_questions',q,function(message,from){ 
+    			nutella.net.request('set_threats',q,function(message,from){ 
     		    		});
 			}
     	}
 		
     	function create() {
-    		document.getElementById('question').selectedIndex = -1;
-    		document.getElementById('questionField').value = '';
+    		document.getElementById('threat').selectedIndex = -1;
+    		document.getElementById('threatField').value = '';
     		document.getElementById('open').checked = true;
     		document.getElementById('under investigation').checked = false;
     		document.getElementById('resolved').checked = false;
-    		document.getElementById('answerField').value = '';
-    		document.getElementById('confidenceField').value = '';
     		document.getElementById('notesField').value = '';
     		for (var i=0; i<5; i++) document.getElementById('team' + i).checked=false;
     		// document.getElementById('ownerField').value = '';
