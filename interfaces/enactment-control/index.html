@@ -10,14 +10,7 @@
 </head>
 <body>
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
-
-	<!-- Your markup here -->
-	<p>Enactment control interface</p>
-	<button id="start" onclick="startSimulation();" DISABLED>Start simulation</button>
-	<button id="stop" onclick="stopSimulation();" DISABLED>Stop simulation</button>
-	<button id="reset" onclick="resetSimulation();" DISABLED>Reset history</button>
-	&nbsp&nbspInterval (seconds): <input type=text id="interval">
-	<br><br>
+	<H2>Enactment control</H2>
 	Activity 
 
 	<select id="activity" onChange="activityChange();">
@@ -43,17 +36,17 @@
 	
 	// var activityList = ["naturalist","abiotic experimentalist","biotic experimentalist","modeler","threat analyst","applied ecologist"];
 
-	nutella.net.request('running',{},function(RUNNING){
-		if (RUNNING) {
-			document.getElementById('start').disabled = true;
-			document.getElementById('stop').disabled = false;
-			document.getElementById('reset').disabled = true;
-		} else {
-			document.getElementById('start').disabled = false;
-			document.getElementById('stop').disabled = true;
-			document.getElementById('reset').disabled = false;			
-		}
-	});
+	// nutella.net.request('running',{},function(RUNNING){
+	// 	if (RUNNING) {
+	// 		document.getElementById('start').disabled = true;
+	// 		document.getElementById('stop').disabled = false;
+	// 		document.getElementById('reset').disabled = true;
+	// 	} else {
+	// 		document.getElementById('start').disabled = false;
+	// 		document.getElementById('stop').disabled = true;
+	// 		document.getElementById('reset').disabled = false;			
+	// 	}
+	// });
 
 	nutella.net.request('currentActivity',{},function(message, from){ 
 		for (var i=0; i<document.getElementById('activity').options.length; i++) {
@@ -66,29 +59,29 @@
 		nutella.net.publish('change_activity',document.getElementById('activity').options[a].value);
 	}
 
-	function startSimulation() {
-		var i = document.getElementById('interval').value;
-		if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
-		if (i<1) {alert('Interval must be a positive integer'); return;}
-		nutella.net.publish('start_simulation',i);
-		document.getElementById('start').disabled = true;
-		document.getElementById('stop').disabled = false;
-		document.getElementById('reset').disabled = true;
-	}
+	// function startSimulation() {
+	// 	var i = document.getElementById('interval').value;
+	// 	if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
+	// 	if (i<1) {alert('Interval must be a positive integer'); return;}
+	// 	nutella.net.publish('start_simulation',i);
+	// 	document.getElementById('start').disabled = true;
+	// 	document.getElementById('stop').disabled = false;
+	// 	document.getElementById('reset').disabled = true;
+	// }
 
-	function stopSimulation() {
-		nutella.net.publish('stop_simulation',{});
-		document.getElementById('stop').disabled = true;
-		document.getElementById('start').disabled = false;
-		document.getElementById('reset').disabled = false;
-	}
+	// function stopSimulation() {
+	// 	nutella.net.publish('stop_simulation',{});
+	// 	document.getElementById('stop').disabled = true;
+	// 	document.getElementById('start').disabled = false;
+	// 	document.getElementById('reset').disabled = false;
+	// }
 
-	function resetSimulation() {
-		nutella.net.publish('reset_history',{});
-		document.getElementById('stop').disabled = true;
-		document.getElementById('start').disabled = false;
-		document.getElementById('reset').disabled = false;
-	}
+	// function resetSimulation() {
+	// 	nutella.net.publish('reset_history',{});
+	// 	document.getElementById('stop').disabled = true;
+	// 	document.getElementById('start').disabled = false;
+	// 	document.getElementById('reset').disabled = false;
+	// }
 
 	
 	</script>
