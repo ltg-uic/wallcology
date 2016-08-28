@@ -22,8 +22,11 @@
 	<!-- The above is very temporary. We need to get ecosystem from URL PARAMETERS -->
 	Species: <input type=text id="species" size=2><br>
 
+
+	<table>
 	Population controls: <br><br>
-	<button type="button" onclick="seed(document.getElementById('species').value);" id="seed">Seed</button><br>
+	<tr><td><button type="button" onclick="seed(document.getElementById('species').value);" id="seed">Seed</button></td>
+		<td>
 	<button type="button" onclick="herbicide(document.getElementById('species').value);" id="herbicide">Herbicide</button><br>
 	<button type="button" onclick="colonize(document.getElementById('species').value);" id="colonize">Colonize</button><br>
 	<button type="button" onclick="trap(document.getElementById('species').value);" id="trap">Trap</button><br>
