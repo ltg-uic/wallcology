@@ -26,14 +26,19 @@ activity.load(function(){
     });
     var activities = nutella.persist.getMongoObjectStore('activities');
     activities.load(function(){
-        nutella.net.handle_requests('channel_list', function (message, from){ console.log(message);
+        nutella.net.handle_requests('get_activities', function (message,from) {
+            return(activities.data);
+        });
+        nutella.net.subscribe('set_activities', function (message,from) {
+            activities.data=message;
+            activities.save();
+        });
+        nutella.net.handle_requests('channel_list', function (message, from){ 
 
             for (var i=0; i<activities.data.length; i++) {
-                if (activities.data[i].name == message.activity) { console.log ('a ' + activities.data[i].name + '  ' + message.activity);
+                if (activities.data[i].name == message.activity) { 
                     for (var j=0; j<activities.data[i].lineup.length; j++) {
-                        console.log('b ' + activities.data[i].lineup[j].type+ '  ' +  message.type);
                         if (activities.data[i].lineup[j].type == message.type) { 
-                            console.log('c ' + activities.data[i].lineup[j].channels); 
                             return (activities.data[i].lineup[j].channels);
                         }; 
                     };  

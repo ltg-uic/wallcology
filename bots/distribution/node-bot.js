@@ -32,7 +32,6 @@ var roster = nutella.persist.getMongoObjectStore('roster');
     // 		reset_roster();
   		// };
   		nutella.net.handle_requests('roster', function (message, from){
-  			console.log('upon request: ' + roster.logins[1].printNames[2]);
   			var p = [];
   			var temp = [];
   			for (var i=0; i<roster.logins.length; i++){
