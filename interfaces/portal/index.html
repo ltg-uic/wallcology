@@ -80,51 +80,51 @@ ul.tab li a:focus, .active {
 	<script type="text/javascript">
 
 
-	var instance;
-	var type;
+	// var instance;
+	// var type;
 
-	var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
+	// var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
 	
-	// Get an instance of nutella
+	// // Get an instance of nutella
 
-	var query_parameters = NUTELLA.parseURLParameters();
+	// var query_parameters = NUTELLA.parseURLParameters();
 
-	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+	// var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
-	var type = '';
+	// var type = '';
 
-	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
+	// if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
 
-	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Developer','Researcher'];
+	// var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Developer','Researcher'];
 
-	nutella.net.request('roster',{},function(logins, from) { 
-		nutella.net.request('get_species_names',{}, function(message, from){ 
-			window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-			document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ': Login </H2>');
-			document.write('<TABLE class="center" cellpadding="10">');
-			for (var i=0; i<logins.length; i++) {
-				if (type == '' || type == logins[i].type) {
-					document.write('<TR>');
-					// if (i==0) document.write('<TD><IMG height=60 width=60 src="tabletGirls.png"></TD>');
-					// 	else 
-					document.write('<TD align="right">' + tempNames[i] + '</TD>');
-					document.write('<TD>');
-					for (var j=0; j<logins[i].printNames.length; j++) {
-						var str;
-						if (tempNames[i] == 'Species') str = message[j];
-						else str = logins[i].printNames[j];
-						document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + str + '</button>');
-					}
-					document.write('</TD>');
-					document.write('</TR>');
-					document.write('<TR></TR><TR></TR><TR></TR>');
-				}
-			}
-			document.write('</TABLE>');
-		})	
+	// nutella.net.request('roster',{},function(logins, from) { 
+	// 	nutella.net.request('get_species_names',{}, function(message, from){ 
+	// 		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+	// 		document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ': Login </H2>');
+	// 		document.write('<TABLE class="center" cellpadding="10">');
+	// 		for (var i=0; i<logins.length; i++) {
+	// 			if (type == '' || type == logins[i].type) {
+	// 				document.write('<TR>');
+	// 				// if (i==0) document.write('<TD><IMG height=60 width=60 src="tabletGirls.png"></TD>');
+	// 				// 	else 
+	// 				document.write('<TD align="right">' + tempNames[i] + '</TD>');
+	// 				document.write('<TD>');
+	// 				for (var j=0; j<logins[i].printNames.length; j++) {
+	// 					var str;
+	// 					if (tempNames[i] == 'Species') str = message[j];
+	// 					else str = logins[i].printNames[j];
+	// 					document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + str + '</button>');
+	// 				}
+	// 				document.write('</TD>');
+	// 				document.write('</TR>');
+	// 				document.write('<TR></TR><TR></TR><TR></TR>');
+	// 			}
+	// 		}
+	// 		document.write('</TABLE>');
+	// 	})	
 
-	});
+	// });
 
 	// } else { // lightCast tabbed page based on login
 	// 	instance = query_parameters.INSTANCE;
