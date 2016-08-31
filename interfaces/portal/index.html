@@ -95,12 +95,12 @@ ul.tab li a:focus, .active {
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
 
-	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Developer','Researcher'];
+	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
 
 	nutella.net.request('roster',{},function(logins, from) { 
 		nutella.net.request('get_species_names',{}, function(message, from){ 
 			window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-			document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ': Login </H2>');
+			document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
 			document.write('<TABLE class="center" cellpadding="10">');
 			for (var i=0; i<logins.length; i++) {
 				if (type == '' || type == logins[i].type) {
