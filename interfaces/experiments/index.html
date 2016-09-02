@@ -113,6 +113,7 @@
 			exp[index].results = document.getElementById('results').value;
 			exp[index].conclusions = document.getElementById('conclusions').value;
     		nutella.net.request('update_experiment',exp[index], function(){});
+    		// nutella.net.publish('update_species_account',{species: XXX, experiment: exp[index]});
 		}
 
 	}
