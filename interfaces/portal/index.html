@@ -90,39 +90,52 @@ ul.tab li a:focus, .active {
 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
+	nutella.net.subscribe('set_current_run', function (message,from){
+		if (message != query_parameters.run_id) {switchRuns(message);
+		}
+	});
+
+
 	var type = '';
 
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
-
 	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
 
-	nutella.net.request('roster',{},function(logins, from) { 
-		nutella.net.request('get_species_names',{}, function(message, from){ 
-			window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-			document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
-			document.write('<TABLE class="center" cellpadding="10">');
-			for (var i=0; i<logins.length; i++) {
-				if (type == '' || type == logins[i].type) {
-					document.write('<TR>');
-					// if (i==0) document.write('<TD><IMG height=60 width=60 src="tabletGirls.png"></TD>');
-					// 	else 
-					document.write('<TD align="right">' + tempNames[i] + '</TD>');
-					document.write('<TD>');
-					for (var j=0; j<logins[i].printNames.length; j++) {
-						var str;
-						if (tempNames[i] == 'Species') str = message[j];
-						else str = logins[i].printNames[j];
-						document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + str + '</button>');
-					}
-					document.write('</TD>');
-					document.write('</TR>');
-					document.write('<TR></TR><TR></TR><TR></TR>');
-				}
-			}
-			document.write('</TABLE>');
-		})	
 
+	nutella.net.request('get_current_run',{},function(message,from){ 
+		if (message == query_parameters.run_id) {
+
+			nutella.net.request('roster',{},function(logins, from) { 
+				nutella.net.request('get_species_names',{}, function(message, from){ 
+					window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+					document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
+					document.write('<TABLE class="center" cellpadding="10">');
+					for (var i=0; i<logins.length; i++) {
+						if (type == '' || type == logins[i].type) {
+							document.write('<TR>');
+							// if (i==0) document.write('<TD><IMG height=60 width=60 src="tabletGirls.png"></TD>');
+							// 	else 
+							document.write('<TD align="right">' + tempNames[i] + '</TD>');
+							document.write('<TD>');
+							for (var j=0; j<logins[i].printNames.length; j++) {
+								var str;
+								if (tempNames[i] == 'Species') str = message[j];
+								else str = logins[i].printNames[j];
+								document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + str + '</button>');
+							}
+							document.write('</TD>');
+							document.write('</TR>');
+							document.write('<TR></TR><TR></TR><TR></TR>');
+						}
+					}
+					document.write('</TABLE>');
+				})	
+
+			});
+		} else {
+			switchRuns(message);
+		}
 	});
 
 	// } else { // lightCast tabbed page based on login
@@ -136,6 +149,21 @@ ul.tab li a:focus, .active {
 	// 	});
 	// };
 
+
+	function switchRuns(newRun){
+		var s = 'http://';
+		s += window.location.host + '/';
+		s += query_parameters.app_id + '/';
+		s += newRun + '/';
+		s += 'runs/';
+		s += 'portal' + '/';
+		s += 'index.html' + '?';
+		s += 'broker=' + query_parameters.broker + '&';
+		s += 'app_id=' + query_parameters.app_id + '&';
+		s += 'run_id=' + newRun;
+		location.href = s;
+		
+	};
 
 	function login (type,instance) {
 		// look up class activity alert()

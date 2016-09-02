@@ -61,24 +61,26 @@ for (x in nutella.app.persist.main_nutella) {
 }
 
 
+
+
 var currentRun = nutella.app.persist.getMongoObjectStore('currentRun');
 
 currentRun.load(function(){
 
-	if (!(currentRun.hasOwnProperty('class') && currentRun.hasOwnProperty('room'))){
+	if (!(currentRun.hasOwnProperty('class')){
     	currentRun['class'] = "default";
-    	currentRun['room'] = "Dreesh"
     	currentRun.save();
 	};
 
 
 	nutella.app.handle_requests_on_all_runs('get_current_run',function(message, from) {
-    	return ({class: currentRun.class, room: currentRun.room});
+    	return (currentRun.class);
   	});
 
 	nutella.app.handle_requests_on_all_runs('set_current_run',function(message, from){
-    	currentRun['class'] = message.class;
-    	currentRun['room']  = message.room;
+    	currentRun['class'] = message;
     	currentRun.save();
 	})
 });
+
+

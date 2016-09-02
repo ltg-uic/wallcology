@@ -27,7 +27,7 @@ td { font-size: 140%; color: white; }
 select {
     -webkit-appearance: none;
     font-size:20px;
-    width:400px;
+/*    width:400px;*/
 }
 
 option {
