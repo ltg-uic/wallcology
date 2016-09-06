@@ -36,7 +36,7 @@
 		document.write('<select id="threat" onchange="updateForm();"></select>');
 		document.write('</select>');
 		document.write('</TD></TR>');
-		document.write('<TR><TD align="right">Threat</TD><TD><INPUT size=40 id="threatField" type=text></TD></TR>');
+		document.write('<TR><TD align="right">Threat</TD><TD><INPUT READONLY size=40 id="threatField" type=text></TD></TR>');
 		document.write('<TR><TD align="right">Status</TD><TD>  <input type="radio" id="open" name="stat" value="open"> Open <input type="radio" id="under investigation" name="stat" value="under investigation"> Under investigation <input type="radio" id="resolved" name="stat" value="resolved"> Resolved </TD></TR>');
 		// document.write('<TR><TD>Status</TD><TD><INPUT size=40 id="statusField" type=text></TD></TR>');
 		document.write('<TR><TD align="right">Notes</TD><TD><TEXTAREA rows=10 cols=40 id="notesField"></TEXTAREA></TD></TR>');
@@ -47,7 +47,6 @@
 		if (query_parameters.TYPE != 'group') {
 			document.write('<TR><TD></TD><TD>');
 			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
-			document.write('<BUTTON onclick="revert();"> Revert </BUTTON>');
 			document.write('<BUTTON onclick="zap();"> Delete threat </BUTTON>');
 			document.write('<BUTTON onclick="create();"> New threat  </BUTTON>');
 			document.write('</TD></TR>');
@@ -121,25 +120,34 @@
 
 
 ///////////////////////////////////////
+var startingChecks = [false,false,false,false,false];
+///////////////////////////////////////
 
 
 	function updateForm(){
 		var index = document.getElementById('threat').selectedIndex; 
 		if (index > -1) {
 			document.getElementById('threatField').value = q[index].threat;
+			document.getElementById('threatField').readOnly= true;
 			document.getElementById(q[index].status).checked=true;
 			// document.getElementById('statusField').value = q[index].status;
 			document.getElementById('notesField').value = q[index].notes;
 			for (var i=0; i<5; i++) { //hack alert: hard-coded #of wallscopes
 				document.getElementById('team' + i).checked=false;
 				if (q[index].owner[i]) document.getElementById('team' + i).checked=true;
+///////////////////////////////////////
+				startingChecks[i] = document.getElementById('team' + i).checked;
+///////////////////////////////////////
 			}
+		} else {
+			create();
 		}
 
 	}
 
     	function save() {
     		var index = document.getElementById('threat').selectedIndex;
+    		document.getElementById('threatField').readOnly=true;
     		var stat;
     		if (document.getElementById('open').checked) stat='open';
     		if (document.getElementById('under investigation').checked) stat='under investigation';
@@ -159,15 +167,17 @@
     		buildMenu();
     		for (i=0; i<q.length; i++) if (q[i].threat == m[0].threat) {
     			document.getElementById('threat').selectedIndex = i;
-    			updateForm();
     		};
     		nutella.net.request('set_threats',q,function(message,from){});
     		//distribute threats to ecosystem groups
     		for (var i=0; i<5; i++) {
-    			if (document.getElementById('team' + i).checked) { 
-    				nutella.net.publish('create_prediction',{ecosystem:i,threat:document.getElementById('threatField').value, notes:document.getElementById('notesField').value});}
+    			///////////////////////////////////////
+    			if (!startingChecks[i] && document.getElementById('team' + i).checked) nutella.net.publish('create_prediction',{ecosystem:i,threat:document.getElementById('threatField').value, notes:document.getElementById('notesField').value});
+	   			if (startingChecks[i] && !document.getElementById('team' + i).checked) { nutella.net.publish('delete_prediction',{ecosystem:i,threat:document.getElementById('threatField').value});}
+///////////////////////////////////////
 
     		}
+    		updateForm();
     	}
 
 
@@ -178,19 +188,23 @@
 
     	}
 		
+
     	function zap() {
-			var index = document.getElementById('threat').selectedIndex;
+			var index = document.getElementById('threat').selectedIndex; 
 			if (index > -1) {
-			    q.splice(index, 1); 
-			    buildMenu();
-    			nutella.net.request('set_threats',q,function(message,from){ 
-    		    		});
+				for (var i=0; i<5; i++)
+		   			if (startingChecks[i]) nutella.net.publish('delete_prediction',{ecosystem:i,threat:document.getElementById('threatField').value});
+				q.splice(index, 1); 
+    			nutella.net.request('set_threats',q,function(message,from){});
+				buildMenu(); updateForm();
 			}
     	}
+
+
 		
     	function create() {
     		document.getElementById('threat').selectedIndex = -1;
-    		document.getElementById('threatField').value = '';
+    		document.getElementById('threatField').value = '';document.getElementById('threatField').readOnly = false;
     		document.getElementById('open').checked = true;
     		document.getElementById('under investigation').checked = false;
     		document.getElementById('resolved').checked = false;

@@ -1,10 +1,17 @@
 function Relationship(){
-
+	//green, lime, yellow, orange, pink
 	this.arrows = [
-		{name:"zebra-lion", type:"eatenby"},
-		{name:"grass-zebra", type:"eatenby"},
-		{name:"grass-tree", type:"competition"},
-		{name:"zebra-leopard",type:"eatenby"}];
+		{name:"green-lime", type:"eatenby"},
+		{name:"green-yellow", type:"eatenby"},
+		{name:"green-orange", type:"eatenby"},
+		{name:"green-pink",type:"eatenby"},
+		{name:"lime-yellow", type:"eatenby"},
+		{name:"lime-orange", type:"eatenby"},
+		{name:"lime-pink", type:"eatenby"},
+		{name:"yellow-orange", type:"eatenby"},
+		{name:"yellow-pink", type:"eatenby"},
+		{name:"orange-pink", type:"eatenby"}
+		];
 	
 	this.graphs = [
 		{name:"lion", increase:[{name:"zebra", result: "laggeddecrease", connections:["zebra-lion"]}, 

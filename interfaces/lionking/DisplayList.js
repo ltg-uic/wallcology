@@ -41,6 +41,7 @@ function DisplayList() {
 	        if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
 	                && (mouseX >= to.x) && (mouseX <=
 	             to.x+to.width) ) {
+	        	 //console.log("target object: " + to.name);
 	             to.onMouseUp(mouseX,mouseY);
 	        }
 	    }

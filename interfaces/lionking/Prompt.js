@@ -5,8 +5,8 @@ function Prompt(context,x,y,l){
 
 	var promptsList = [
 	   	{level:1,
-		instruction:"Drag the species into the work area to get started.",
-		connection:"You've created a food chain. Lions eat zebras. When this happens, the zebra gives energy to the lion. When the population of one species increases, what happens to the other? Click on the 'arrow up' buttons to find out."
+		instruction:"Drag the circles into the work area to get started.",
+		connection:"See what happens when the population of one circle increase or decrease. Click on the 'arrow up' or 'arrow down' buttons to find out."
 		},
 		{level:2,
 		instruction:"In level 1, you created a food chain. Here you'll be creating an 'Interaction Web'. Drag the species into the work area.",
@@ -21,6 +21,7 @@ function Prompt(context,x,y,l){
 		connection:"Remember: An arrow with a + sign, means that when the population of one species increases, the other also increases. A \u2013 sign means the opposite. When the population of one species increases, the population of the other species decreases."
 		}
 	];
+
 	/*[
 		"Hello! Drag the species into the white area to get started.",
 		"In this food chain, the zebra gives energy to the lion. What happens to the lion population if the zebra population doubles? (A) Goes up, (B) Goes down, (C) Stays the same. Test your theory.",
@@ -33,26 +34,22 @@ function Prompt(context,x,y,l){
 	*/
 	this.level = l;
 	this.ctx = context;
+	this.name = "prompt";
 	this.x = x;
-	this.y = y; 
+	this.y = y;
+	this.height = 100;	//need x, y, height and width properties to be same as graphs and mouse to detect mouse up
+	this.width = this.ctx.canvas.width; 
 	this.message = "" ;
-	this.EVENT_CLICKED = "clicked";
-
-	//this.message = promptsList[ this.level-1 ];
+	this.EVENT_CLICKED = "clicked";	
+	
+	var itemList = [];
+	var mcMarginX = this.x + 100;
+	var mcMarginY = this.y + 10;
 	/*
-	switch(this.level){
-		case 1:
-			this.message = level1.instruction;
-			break;
-		case 2:
-			this.message = level2.instruction;
-			break;
-		case 3:
-			this.message = level3.instruction;
-			break;
-		default:
-			this.message = "Error";
-	}*/
+	var mc1 = new MultipleChoice("lion", mcMarginX, mcMarginY, context);
+	mc1.addEventListener(mc1.EVENT_CLICKED, onMultipleChoiceClick);
+	itemList.push( mc1 );
+	*/
 	if ( this.level ){
 		this.message = promptsList[ this.level-1 ].instruction;	
 	} else {
@@ -78,13 +75,34 @@ function Prompt(context,x,y,l){
 		}
 		context.fillText(line, x, y);
 	}
+	function onMultipleChoiceClick(e){
+		console.log("onMultipleChoiceClick");
+	}
 	this.setText = function(m){
 		this.message = m;
 	}
+	
 	this.onMouseUp = function (mouseX,mouseY) {
+		/*
+		//this is being called by DisplayList when the mouse/touch on canvas is UP
+		console.log("prompt clicked: "+mouseX+", "+mouseY);
+		mc1.onMouseUp();
+
+		//calls onPromptClicked in FoodWeb.js
 		//this.dispatch(this.EVENT_CLICKED);
-		//do nothing
+		
+		//runs through all the clickable items and see which one was clicked
+		for (i=0; i< itemList.length; i++) {
+		    var to = itemList[i];
+		    if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
+		            && (mouseX >= to.x) && (mouseX <=
+		         to.x+to.width) ) {
+		         to.onMouseUp(mouseX,mouseY);
+		    }
+		}
+		*/
 	}
+	
 	this.setConnectionPrompt = function(){
 
 		if ( this.level ){
@@ -92,21 +110,6 @@ function Prompt(context,x,y,l){
 		} else {
 			this.message = "Error";
 		}
-		/*
-		switch(this.level){
-		case 1:
-			this.message = level1.connection;
-			break;
-		case 2:
-			this.message = level2.connection;
-			break;
-		case 3:
-			this.message = level3.connection;
-			break;
-		default:
-			this.message = "Error";
-		}
-		*/
 	}
 	this.draw = function() {
 		/*
@@ -117,14 +120,20 @@ function Prompt(context,x,y,l){
         this.ctx.shadowOffsetY = 4
 		this.ctx.fillRect(0,960-h,this.ctx.canvas.width-150,h);
 		*/
+		//draws a square for testing mouse click propagation
+		//this.ctx.fillStyle = "#546e7a";
+		//this.ctx.fillRect(this.x,this.y,this.width,this.height);
+
 		this.ctx.shadowBlur=0;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0
 		this.ctx.font = "16pt Helvetica";
 		this.ctx.textAlign = "left";
-		this.ctx.textBaseline = "bottom";
-		this.ctx.fillStyle = "#263238";
+		this.ctx.textBaseline = "top";
+		this.ctx.fillStyle = "#263238"; //"#FFFFFF";
 		wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
+
+		//mc1.draw();
 		//this.ctx.fillText(this.message, this.x, this.y);
 	}
 }

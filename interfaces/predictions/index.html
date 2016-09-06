@@ -42,6 +42,9 @@
 	
 	var exp = [];
 
+		nutella.net.subscribe('refresh_predictions',function(message,from){ 
+			if (message == query_parameters.INSTANCE) {location.reload(true);}
+		})
 
 	nutella.net.request('get_predictions',query_parameters.INSTANCE,function(predictions, from) { 
 		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
@@ -65,9 +68,6 @@
 		} else {
 			document.write('No predictions to make yet.')
 		}
-		nutella.net.subscribe('create_prediction',function(message){
-			if (message.ecosystem == query_parameters.INSTANCE) document.reload();
-		})
 	});
 
 

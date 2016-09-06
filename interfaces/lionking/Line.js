@@ -1,17 +1,58 @@
 function Line(n,o1,o2,c,l,t){
-
     this.name=n;
     this.type = t;
     this.ctx = c;
-    this.level = l; //1 or 2, corresponds to level.num
+    this.level = 2;//l; //1 or 2, corresponds to level.num
     this.obj1 = o1;
     this.obj2 = o2;
     this.x1 = o1.x+o1.width/2;
     this.y1 = o1.y+o1.height/2;
     this.x2 = o2.x+o2.width/2;
     this.y2 = o2.y+o2.height/2;
-
+    this.height = Math.abs(this.y2 - this.y1)
+    this.x = 0;
+    this.y = 0;
+    this.height = this.ctx.canvas.height;
+    this.width = this.ctx.canvas.width;
+    if( this.level > 1 ){
+        if( this.type == "eatenby" ){
+            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx);
+            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx);
+        } else if ( this.type == "competition" ){
+            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx);
+            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx);
+        } else if ( this.type == "eats" ){
+            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx);
+            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx);
+        } else if ( this.type == "mutualism" ){
+            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx);
+            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx);            
+        }
+        
+    }
     //PRIVATE METHODS
+    function getLineType(source, destination){
+        var type = "";
+        if ( source == "plus" && destination == "minus" ){
+            type = "eatenby";
+        } else if ( source == "plus" && destination == "plus" ){
+            type = "mutualism";
+        } else if ( source == "minus" && destination == "plus" ){
+            type = "eats";
+        } else if ( source == "minus" && destination == "minus" ){
+            type = "competition";
+        }
+        return type;
+    }
+    function hitTest(mouseX, mouseY, to){
+        if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
+                    && (mouseX >= to.x) && (mouseX <=
+                 to.x+to.width) ) {
+                 return true;
+        } else {
+                return false;
+        }
+    }
     // Find all transparent/opaque transitions between two points
     // Uses http://en.wikipedia.org/wiki/Bresenham's_line_algorithm
     function edges(ctx,p1,p2,cutoff){
@@ -120,7 +161,7 @@ function Line(n,o1,o2,c,l,t){
         endRadians+=((p2.x>p1.x)?90:-90)*Math.PI/180;
         drawArrowhead(ctx,p2.x,p2.y,endRadians);
     }
-    function drawDoubleArrow(ctx,p1,p2,d,t){
+    function drawDoubleArrow(ctx,p1,p2,d,t,sb,db){
         var lineDiff = d;
         var lineType = t;
         // draw the line
@@ -140,30 +181,56 @@ function Line(n,o1,o2,c,l,t){
         //draw +/- competition arrow
         var plusXY = getLineXY(p1,p2,0.875);
         var minusXY = getLineXY(p1,p2,0.125);
-        var dy = 20;    //distance between '-' and line
-        lineDiff = 10;  //distance between '+' and line
-
-        ctx.font = "bold 24px sans"
-        ctx.textAlign = "center";
-        ctx.textBaseline = "middle";
-        ctx.globalAlpha = 1;
-        ctx.fillStyle = "#22B573";//"#009245";
-        ctx.shadowBlur=4;
-        ctx.shadowColor="#BFBFBF";
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 4;
-
-        console.log( "line type: "+ lineType );
-
+        var dy = 36;    //distance between '-' and line
+        lineDiff = -14;  //distance between '+' and line
+        
+        sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
+        db.updateXY( minusXY.x, minusXY.y-dy );
+        sb.draw();
+        db.draw();
+        /*
         if ( lineType == "eatenby" ){
-            ctx.fillText("\u2013", minusXY.x, minusXY.y-dy);
-            ctx.fillText("+", plusXY.x, plusXY.y+dy+lineDiff);
+            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
+            db.updateXY( minusXY.x, minusXY.y-dy );
+            sb.draw();
+            db.draw();
         } else if ( lineType == "competition" ){
-            ctx.fillText("\u2013", minusXY.x, minusXY.y-dy);
-            ctx.fillText("\u2013", plusXY.x, plusXY.y+dy+lineDiff);
+            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
+            db.updateXY( minusXY.x, minusXY.y-dy );
+            sb.draw();
+            db.draw();
+        } else if ( lineType == "eats" ){
+            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
+            db.updateXY( minusXY.x, minusXY.y-dy );
+            sb.draw();
+            db.draw();
         }
+        */
     }
     //PUBLIC METHODS
+    this.onMouseUp = function (mouseX,mouseY) {
+        if( hitTest(mouseX, mouseY, this.sourceBtn) ){
+            this.sourceBtn.onMouseUp(mouseX, mouseY);
+        } else if( hitTest(mouseX, mouseY, this.destinationBtn) ){
+            this.destinationBtn.onMouseUp(mouseX, mouseY);
+        }
+        this.type = getLineType( this.sourceBtn.symbol, this.destinationBtn.symbol );
+        console.log("source: "+this.obj1.name + ", destination: "+ this.obj2.name + ", type: "+ this.type );
+    }
+    this.getLength = function(){
+        var x1 = this.x1;
+        var x2 = this.x2;
+        var y1 = this.y1;
+        var y2 = this.y2;
+
+        // Determine line lengths
+        var xlen = x2 - x1;
+        var ylen = y2 - y1;
+
+        // Determine hypotenuse length
+        var hlen = Math.sqrt(Math.pow(xlen,2) + Math.pow(ylen,2));
+        return hlen;  
+    }
     this.updateXY = function(){
         var o1 = this.obj1;
         var o2 = this.obj2;
@@ -195,25 +262,9 @@ function Line(n,o1,o2,c,l,t){
             var p2b = {x:p2.x-dx, y:p2.y-dx};
             
             drawSingleArrow(this.ctx,p1a,p2a);
-            drawDoubleArrow(this.ctx,p1b,p2b,dy,this.type);
+            drawDoubleArrow(this.ctx,p1b,p2b,dy,this.type, this.sourceBtn, this.destinationBtn);
         } else {
             drawSingleArrow(this.ctx,p1,p2);
-            /*
-            // draw the line
-            this.ctx.shadowBlur=4;
-            this.ctx.shadowColor="#BFBFBF";
-            this.ctx.shadowOffsetX = 0;
-            this.ctx.shadowOffsetY = 2;
-            this.ctx.beginPath();
-            this.ctx.moveTo(p1.x,p1.y);
-            this.ctx.lineTo(p2.x,p2.y);
-            this.ctx.stroke();
-
-            // draw the ending arrowhead
-            var endRadians=Math.atan((p2.y-p1.y)/(p2.x-p1.x));
-            endRadians+=((p2.x>p1.x)?90:-90)*Math.PI/180;
-            drawArrowhead(this.ctx,p2.x,p2.y,endRadians);
-            */
         }   
     }   
 }

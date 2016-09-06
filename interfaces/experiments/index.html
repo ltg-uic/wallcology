@@ -42,11 +42,15 @@
 	
 	var exp = [];
 
+		nutella.net.subscribe('refresh_experiments',function(message,from){ 
+			if (message == query_parameters.INSTANCE) {location.reload(true);}
+		})
 
 	nutella.net.request('get_experiments',query_parameters.INSTANCE,function(experiments, from) {
 		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 		if (experiments.length > 0) {
 			exp = experiments;
+
 			document.write('<TABLE cellpadding=10>');
 
 			document.write('<TR><TD align="right">Question</TD><TD><select id="experiments" onchange="updateForm();"></select><INPUT HIDDEN size=40 id="question" READONLY type=text></TD></TR>');
@@ -63,9 +67,6 @@
 		} else {
 			document.write('No experiments to conduct yet.')
 		}
-		nutella.net.subscribe('create_experiment',function(message){
-			if (message.ecosystem == query_parameters.INSTANCE) document.reload();
-		})
 	});
 
 
@@ -98,7 +99,7 @@
 			document.getElementById('reasoning').value = exp[index].reasoning;
 			document.getElementById('results').value = exp[index].results;
 			document.getElementById('conclusions').value = exp[index].conclusions;
-			}
+			} 
 	}
 
 

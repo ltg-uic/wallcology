@@ -20,13 +20,13 @@
 	this.type = t;
 	if( this.type == "plus" ){
 		//console.log("plus");
-		dx = -2;
-		dy = 0;
+		dx = -50;
+		dy = 20;
 		this.symbol = "+";
 	} else if( this.type == "minus" ){
 		//console.log("minus");
-		dx = -2;
-		dy = -90;
+		dx = -50;
+		dy = -120;
 		this.symbol = "-";
 	}
 

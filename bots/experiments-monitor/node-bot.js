@@ -33,8 +33,19 @@ experiments.load(function(){
         experiments.data = [{ecosystem: message.ecosystem, timestamp: 0, question: message.question,  manipulations:'', 
                             reasoning: message.notes, results:'', figures: [], conclusions:''}].concat(experiments.data);
         experiments.save();                    
+        nutella.net.publish('refresh_experiments',message.ecosystem);                
 
     });
+
+///////////////////////
+    nutella.net.subscribe('delete_experiment',function(message, from) { 
+        experiments.data = experiments.data.filter(function(item){return !(item.ecosystem == message.ecosystem && item.question == message.question);});
+        experiments.save(); 
+        nutella.net.publish('refresh_experiments',message.ecosystem);                
+///////////////////////
+///////////////////////
+    });
+
 
 });
 

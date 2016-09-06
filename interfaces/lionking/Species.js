@@ -13,6 +13,8 @@ function Species ( n, x, y, h, w, c ){
     this.active = false;
     this.context = c;
     this.EVENT_CLICKED = "clicked";
+    this.EVENT_REDRAW = "redraw";
+    this.image = loadImage(this.file);
 
     this.onMouseUp = function (mouseX,mouseY) {
     	this.dispatch(this.EVENT_CLICKED);
@@ -26,17 +28,17 @@ function Species ( n, x, y, h, w, c ){
     	this.context.drawImage(this.image,this.x,this.y, this.width,this.height);
     }
     
-    this.loadImage = function (file) {
-    	this.image = new Image();
-    	this.image.onload = this.imageLoaded;
-    	this.image.src = file;
+    function loadImage(file) {
+    	var image = new Image();
+    	//image.onload = this.imageLoaded;
+    	image.src = file;
+        return image
     }
-    		
+    /*		
     this.imageLoaded = function() {
     	this.loaded = true;
     }
-    			
-    this.loadImage(this.file);
+    */
 }
 Species.prototype = new EventDispatcher();
 Species.prototype.constructor = Species;

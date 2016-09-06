@@ -1,5 +1,4 @@
 // Modified from code by William Malone 2011 (www.williammalone.com), 
-// Joe Walnes 2010-2013 and Drew Noakes 2013-2014 (http://smoothiecharts.org/)
 //
 // Malone's code is licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,9 +11,7 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-//
-// Smoothie Charts is licensed under the MIT license
-// Modifications made by Michelle Lui 2016
+
 
 function BarGraph(ctx, ico) {
 
@@ -29,6 +26,7 @@ function BarGraph(ctx, ico) {
 	var looping = false;
 	var yOffset = 0;
 	var remove = false;
+	var running = false;
 
 	// Public properties 
 	this.name = ico.name;
@@ -44,6 +42,12 @@ function BarGraph(ctx, ico) {
 	this.animationInterval = 100;
 	this.animationSteps = 10;
 	
+	function setRunning(v){
+		running = v;
+	}
+	this.getRunning = function(){
+		return running;
+	}
 
 	function loadImage(){
 		icon = new Image();
@@ -175,8 +179,10 @@ function BarGraph(ctx, ico) {
 			endLength = endArr.length;
 		}
 		if( endLength == 0 ){
+			//last data point to be drawn
 			looping = false;
 			draw(that.curArr);
+			setRunning(false);
 		} else {
 			//console.log("remove: "+remove);
 			if(!remove){
@@ -226,12 +232,14 @@ function BarGraph(ctx, ico) {
 			// Set the target array to the new array
 			endArr = newArr;
 			//console.log("looping: "+looping);
-			append();	
+			append();
+			running = true;
 		}
 	}
 	//Clear graph
 	this.clearGraph = function(){
 		//console.log("clearGraph");
 		remove = true;
+		running = false;
 	}
 }
