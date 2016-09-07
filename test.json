@@ -1,0 +1,256 @@
+
+{
+    "sections": [
+                 {
+                 "groups": [
+                            {
+                            "members": [
+                                        "Rena",
+                                        "Janine",
+                                        "Florence"
+                                        ],
+                            "name": "Team Red"
+                            },
+                            {
+                            "members": [
+                                        "Mccarty",
+                                        "Franklin",
+                                        "Josephine"
+                                        ],
+                            "name": "Team Blue"
+                            },
+                            {
+                            "members": [
+                                        "Beasley",
+                                        "Georgina",
+                                        "Regina"
+                                        ],
+                            "name": "Team Yellow"
+                            },
+                            {
+                            "members": [
+                                        "Shelton",
+                                        "Lindsay",
+                                        "Matthews"
+                                        ],
+                            "name": "Team Purple"
+                            },
+                            {
+                            "members": [
+                                        "Shari",
+                                        "Mollie",
+                                        "Carter"
+                                        ],
+                            "name": "Team Green"
+                            }
+                            ],
+                 "members": [
+                             "Rena",
+                             "Janine",
+                             "Florence",
+                             "Mccarty",
+                             "Franklin",
+                             "Josephine",
+                             "Beasley",
+                             "Georgina",
+                             "Regina",
+                             "Shelton",
+                             "Lindsay",
+                             "Matthews",
+                             "Shari",
+                             "Mollie",
+                             "Carter"
+                             ],
+                 "teacher": "Jonna",
+                 "name": "6DF"
+                 },{
+                 "groups": [
+                            {
+                            "members": [
+                                        "Rena",
+                                        "Janine",
+                                        "Florence"
+                                        ],
+                            "name": "Team URL"
+                            },
+                            {
+                            "members": [
+                                        "Mccarty",
+                                        "Franklin",
+                                        "Josephine"
+                                        ],
+                            "name": "Team Pipe"
+                            },
+                            {
+                            "members": [
+                                        "Beasley",
+                                        "Georgina",
+                                        "Regina"
+                                        ],
+                            "name": "Team Link"
+                            },
+                            {
+                            "members": [
+                                        "Shelton",
+                                        "Lindsay",
+                                        "Matthews"
+                                        ],
+                            "name": "Team File"
+                            },
+                            {
+                            "members": [
+                                        "Shari",
+                                        "Mollie",
+                                        "Carter"
+                                        ],
+                            "name": "Team Green"
+                            }
+                            ],
+                 "members": [
+                             "Rena",
+                             "Janine",
+                             "Florence",
+                             "Mccarty",
+                             "Franklin",
+                             "Josephine",
+                             "Beasley",
+                             "Georgina",
+                             "Regina",
+                             "Shelton",
+                             "Lindsay",
+                             "Matthews",
+                             "Shari",
+                             "Mollie",
+                             "Carter"
+                             ],
+                 "teacher": "Jonna",
+                 "name": "Default"
+                 },
+                 {
+                 "groups": [
+                            {
+                            "members": [
+                                        "Buckner",
+                                        "Swanson",
+                                        "Britney"
+                                        ],
+                            "name": "Team Tiger"
+                            },
+                            {
+                            "members": [
+                                        "Anna",
+                                        "Ebony",
+                                        "Oliver"
+                                        ],
+                            "name": "Team Squirel"
+                            },
+                            {
+                            "members": [
+                                        "Brandie",
+                                        "Sharron",
+                                        "Michael"
+                                        ],
+                            "name": "Team Eagle"
+                            },
+                            {
+                            "members": [
+                                        "Jaime",
+                                        "Doris",
+                                        "Cline"
+                                        ],
+                            "name": "Team Raccoon"
+                            },
+                            {
+                            "members": [
+                                        "Ernestine",
+                                        "Gwendolyn",
+                                        "Beck"
+                                        ],
+                            "name": "Team Gator"
+                            }
+                            ],
+                 "members": [
+                             "Buckner",
+                             "Swanson",
+                             "Britney",
+                             "Anna",
+                             "Ebony",
+                             "Oliver",
+                             "Brandie",
+                             "Sharron",
+                             "Michael",
+                             "Jaime",
+                             "Doris",
+                             "Cline",
+                             "Ernestine",
+                             "Gwendolyn",
+                             "Beck"
+                             ],
+                 "teacher": "Jonna",
+                 "name": "6EP"
+                 },
+                 {
+                 "groups": [
+                            {
+                            "members": [
+                                        "Rowland",
+                                        "Amelia",
+                                        "Martin"
+                                        ],
+                            "name": "Team Mars"
+                            },
+                            {
+                            "members": [
+                                        "Emily",
+                                        "Cornelia",
+                                        "Lancaster"
+                                        ],
+                            "name": "Team Jupiter"
+                            },
+                            {
+                            "members": [
+                                        "Beard",
+                                        "Sondra",
+                                        "Dollie"
+                                        ],
+                            "name": "Team Mercury"
+                            },
+                            {
+                            "members": [
+                                        "Tina",
+                                        "Bennett",
+                                        "Dominguez"
+                                        ],
+                            "name": "Team Titan"
+                            },
+                            {
+                            "members": [
+                                        "Elinor",
+                                        "Strong",
+                                        "Taylor"
+                                        ],
+                            "name": "Team Neptune"
+                            }
+                            ],
+                 "members": [
+                             "Emily",
+                             "Cornelia",
+                             "Lancaster",
+                             "Beard",
+                             "Sondra",
+                             "Dollie",
+                             "Tina",
+                             "Bennett",
+                             "Dominguez",
+                             "Elinor",
+                             "Strong",
+                             "Taylor",
+                             "Rowland",
+                             "Amelia",
+                             "Martin"
+                             ],
+                 "teacher": "Jonna",
+                 "name": "6LP"
+                 }
+                 ]
+}

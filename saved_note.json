@@ -1,0 +1,75 @@
+{
+        "fromSpecies": {
+            "imgUrl": "https://ltg.cs.uic.edu/WC/icons/species_00.svg",
+            "index": 1,
+            "name": "SquidWard",
+            "last_modified": 1.47284471540144E9,
+            "color": "#FFC91B"
+        },
+        "lastModified": 1.472844715727351E9,
+        "id": "T3CC374-A80D-4CF3-9DDD-E507D468A1E2",
+        "preferences": [
+            {
+                "value": "Not ready to report",
+                "lastModified": 1.472844715438361E9,
+                "id": "AA1BBA6D-0C58-4155-82E4-611BC7FB2C88",
+                "type": "trophic_level"
+            },
+            {
+                "value": "Not ready to report",
+                "lastModified": 1.472844715438365E9,
+                "id": "6D0EB709-AA9A-4584-89D2-50BC5EFCC12D",
+                "type": "behaviors"
+            },
+            {
+                "value": "Not ready to report",
+                "lastModified": 1.472844715438369E9,
+                "id": "6A0206B2-2DA4-4F73-9FFB-4C1CFD5EC911",
+                "type": "predation_resistence"
+            },
+            {
+                "value": "Not ready to report",
+                "lastModified": 1.472844715438372E9,
+                "id": "2BBFA1A7-56BD-404F-BBC9-35F6EDF9FC9B",
+                "type": "heat_sensitivity"
+            },
+            {
+                "value": "Not ready to report",
+                "lastModified": 1.472844715438375E9,
+                "id": "96BB9EC3-8FA2-403C-A9AC-2A3B4E7AE714",
+                "type": "humidity_sensitivity"
+            },
+            {
+                "value": "",
+                "lastModified": 1.472844715438377E9,
+                "id": "98EAA117-5297-4548-845A-0D67C03EE2DF",
+                "type": "habitat_preference"
+            }
+        ],
+        "groupIndex": 0,
+        "relationships": [
+            {
+                "lastModified": 1.472844715727377E9,
+                "ecosystem": {
+                    "temperature": 0,
+                    "pipelength": 0,
+                    "brickarea": 0,
+                    "name": "Ecosystem 4",
+                    "last_modified": 1.472844715401111E9,
+                    "index": 3
+                },
+                "note": "Real talk, real data.",
+                "id": "R3C39C8D99-34F3-45FC-AC7A-94553F1D32DE",
+                "relationshipType": "competes",
+                "attachments": "graph6",
+                "toSpecies": {
+                    "imgUrl": "http://ltg.cs.uic.edu/WC/icons/species_04.svg",
+                    "index": 4,
+                    "name": "Terminator",
+                    "last_modified": 1.472844715401611E9,
+                    "color": "#502B6E"
+                }
+            }
+        ],
+        "timestamp": 1.472844717405E12
+    }
