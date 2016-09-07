@@ -33,8 +33,19 @@ predictions.load(function(){
         predictions.data = [{ecosystem: message.ecosystem, timestamp: 0, threat: message.threat,  prediction:'', 
                             reasoning: message.notes, results:'', figures: [], conclusions:''}].concat(predictions.data);
         predictions.save();                    
+        nutella.net.publish('refresh_predictions',message.ecosystem);                
 
     });
+
+///////////////////////
+    nutella.net.subscribe('delete_prediction',function(message, from) { 
+        predictions.data = predictions.data.filter(function(item){return !(item.ecosystem == message.ecosystem && item.threat == message.threat);});
+        predictions.save(); 
+        nutella.net.publish('refresh_predictions',message.ecosystem);                
+///////////////////////
+///////////////////////
+    });
+
 
 });
 

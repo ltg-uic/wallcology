@@ -1,0 +1,103 @@
+
+.color-primary-0 { color: #AA3939 } /* Main Primary color */
+.color-primary-1 { color: #FFAAAA }
+.color-primary-2 { color: #D46A6A }
+.color-primary-3 { color: #801515 }
+.color-primary-4 { color: #550000 }
+
+
+html { width:100% ;
+    height:100% ;
+    overflow:hidden ;
+    background-color: rgb(60,81,105);
+    color:white;
+    
+}
+
+iframe { width:100% ;
+        height:100% ;
+        border:none ; 
+        color:white;
+
+ }
+
+td { font-size: 140%; color: white; }
+
+
+select {
+    -webkit-appearance: none;
+    font-size:20px;
+    width:400px;
+}
+
+option {
+    -webkit-appearance: none;
+    font-size:20px;
+}
+
+
+table.center {
+    margin-left:auto; 
+    margin-right:auto;
+  }
+
+
+body {font-family: "Lato", sans-serif; width:100% ;
+/*    background-image: url("bg.jpg"); */
+    color: white;
+    font-size: 100%;
+    height:100% ;
+    overflow:hidden ;
+}
+
+
+
+button {
+	color: black; /* button font color */
+    font-size:100%;
+        background-color: lightgray;
+        border-radius: 10px;
+        font-size: 80%;
+}
+
+ul.tab {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    border: 0px solid #ccc;
+    background-color: DarkCyan; /* tab bar background color */
+}
+
+/* Float the list items side by side */
+ul.tab li {float: left;}
+
+/* Style the links inside the list items */
+ul.tab li a {
+    display: inline;
+    color: white; /* menu item font color */
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* Change background color of links on hover */
+ul.tab li a:hover {
+    background-color: #777;
+}
+
+/* Create an active/current tablink class */
+ul.tab li a:focus, .active {
+    background-color: #222;
+}
+
+/* Style the tab content */
+.tabcontent {
+    display: none;
+    padding: 6px 12px;
+    border: 0px solid #ccc;
+    border-top: none;
+    color: white;
+}

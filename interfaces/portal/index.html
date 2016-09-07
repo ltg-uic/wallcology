@@ -61,7 +61,6 @@ ul.tab li a:hover {
 ul.tab li a:focus, .active {
     background-color: #ccc;
 }
-
 /* Style the tab content */
 .tabcontent {
     display: none;
@@ -75,7 +74,7 @@ ul.tab li a:focus, .active {
  <body>
 	<!-- <button>mybutton</button> -->
 	<script src="nutella_lib.js" type="text/javascript"></script>
-	<!-- Your scripts here -->
+
 
 	<script type="text/javascript">
 
@@ -91,24 +90,52 @@ ul.tab li a:focus, .active {
 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
-
-	var tempNames = ['Team Tablet','Teacher Tablet','Ecosystem','Species Place','Pervasive Display', 'Developer'];
-
-	nutella.net.request('roster',{},function(logins, from) { 	window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
-		document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ': How would you like to use this device? </H2>');
-		document.write('<TABLE class="center" cellpadding="10">');
-		for (var i=0; i<logins.length; i++) {
-			document.write('<TR>');
-			document.write('<TD align="right">' + tempNames[i] + '</TD>');
-			document.write('<TD>');
-			for (var j=0; j<logins[i].printNames.length; j++) {
-				document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + logins[i].printNames[j] + '</button>');
-			}
-			document.write('</TD>');
-			document.write('</TR>');
-			document.write('<TR></TR><TR></TR><TR></TR>')
+	nutella.net.subscribe('set_current_run', function (message,from){
+		if (message != query_parameters.run_id) {switchRuns(message);
 		}
-		document.write('</TABLE>');
+	});
+
+
+	var type = '';
+
+	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
+
+	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
+
+
+	nutella.net.request('get_current_run',{},function(message,from){ 
+		if (message == query_parameters.run_id) {
+
+			nutella.net.request('roster',{},function(logins, from) { 
+				nutella.net.request('get_species_names',{}, function(message, from){ 
+					window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
+					document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
+					document.write('<TABLE class="center" cellpadding="10">');
+					for (var i=0; i<logins.length; i++) {
+						if (type == '' || type == logins[i].type) {
+							document.write('<TR>');
+							// if (i==0) document.write('<TD><IMG height=60 width=60 src="tabletGirls.png"></TD>');
+							// 	else 
+							document.write('<TD align="right">' + tempNames[i] + '</TD>');
+							document.write('<TD>');
+							for (var j=0; j<logins[i].printNames.length; j++) {
+								var str;
+								if (tempNames[i] == 'Species') str = message[j];
+								else str = logins[i].printNames[j];
+								document.write('<button onClick="login(\'' + logins[i].type + '\',' + j + ');">' + str + '</button>');
+							}
+							document.write('</TD>');
+							document.write('</TR>');
+							document.write('<TR></TR><TR></TR><TR></TR>');
+						}
+					}
+					document.write('</TABLE>');
+				})	
+
+			});
+		} else {
+			switchRuns(message);
+		}
 	});
 
 	// } else { // lightCast tabbed page based on login
@@ -122,6 +149,21 @@ ul.tab li a:focus, .active {
 	// 	});
 	// };
 
+
+	function switchRuns(newRun){
+		var s = 'http://';
+		s += window.location.host + '/';
+		s += query_parameters.app_id + '/';
+		s += newRun + '/';
+		s += 'runs/';
+		s += 'portal' + '/';
+		s += 'index.html' + '?';
+		s += 'broker=' + query_parameters.broker + '&';
+		s += 'app_id=' + query_parameters.app_id + '&';
+		s += 'run_id=' + newRun;
+		location.href = s;
+		
+	};
 
 	function login (type,instance) {
 		// look up class activity alert()
@@ -201,76 +243,3 @@ ul.tab li a:focus, .active {
 </body>
 </html>
 
-
-
-
-
-
-
-
-
-
-<!-- 	// (Optional) Set the resourceId
-	// nutella.setResourceId('my_resource_id');
-	
-	
-	// Your code that uses the nutella instance here
-	
-	
-	// EXAMPLES
-	// You can do stuff like:
-	
-	// 1. Subscribing to a channel
-	nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
-		// Your code to handle messages received on this here
-	});
-	
-	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
-		// Your code to handle messages received by this channel here
-	});
-	
-	// 3. Publish a message to a channel
-	nutella.net.publish('demo_channel', 'demo_message');
-	
-	// 3a The cool thing is that the message can be any Javascript variable or object
-	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-	
-	// 4. Make requests on a certain channel...
-	nutella.net.request('demo_channel', 'my_request', function(response) {
-		// Your code to handle the response here
-	});
-	
-	// 4a ... and, guess what, we can send anything in a request, like in publish!
-	// Requests can even be empty, kind of like a GET
-	nutella.net.request('demo_channel', function(response) {
-		// Your code to handle the response here
-	});
-	
-	// 5. Handle requests from other components
-	nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
-		/// Your code to handle each request here
-		// Anything this function returns (string, integer, object,...) is going to be sent as the response
-		var response = 'this is my response';
-		// Or...
-		// var response = {};
-		// var response = 12345;
-		// var response = {a: 'proper', key: 'value'};
-		return response;
-	});
-	
-	// 6. Access the variables that uniquely identify this instance of this component
-	nutella.runId;
-	nutella.componentId;
-	nutella.resourceId;
-	
-	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-	
-	// HAVE FUN WITH nutella!
-	
-	</script>
-				
-</body>
-</html> -->

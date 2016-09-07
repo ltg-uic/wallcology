@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Food Web Modeler</title>
+<style>
+    body, canvas {
+        margin: 0;
+        padding: 0;
+    }
+    div.wrapper{
+        margin: 0;
+        width: 100%;
+        display: table;
+    }
+    div.draganddrop{
+        width: 880px;
+        float: left;
+        margin: 0;
+        padding: 0;
+    }
+    div.graphs {
+        margin-left: 880px;
+        padding: 0;
+    } 
+</style>
+<script src="nutella_lib.js" type="text/javascript"></script>
+<script src="EventDispatcher.js"></script>
+<script src="ActionButton.js"></script>
+<script src="BarGraph.js"></script>
+<script src="Choice.js"></script>
+<script src="DisplayList.js"></script>
+<script src="GenericButton.js"></script>
+<script src="GraphData.js"></script>
+<script src="Level.js"></script>
+<script src="Line.js"></script>
+<script src="MultipleChoice.js"></script>
+<script src="Prompt.js"></script>
+<script src="Relationship.js"></script>
+<script src="Species.js"></script>
+<script src="ToggleButton.js"></script>
+<script src="FoodWeb.js"></script>
+<script type="text/javascript">
+window.addEventListener("load", eventWindowLoaded, false);	
+function eventWindowLoaded () {
+	FoodWeb();
+}
+</script>
+</head>
+<body>
+<div class="wrapper">
+    <div class="draganddrop">
+        <canvas id="canvas" width="1280" height="960" style="cursor: default;">Your browser does not support the HTML 5 Canvas.</canvas>
+    </div>
+    <div class="graphs">
+        <canvas id="canvas2" width="400" height="400">Your browser does not support the HTML 5 Canvas.</canvas>
+    </div>
+</div>
+</body>
+</html>
