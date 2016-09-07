@@ -16,9 +16,9 @@ function cycleSimulation(Model,Environment,Populations) {
     var exponent;
 
     function M(parameter,index1,index2,index3) {
-        var t = Environment['temperature'];
-        var b = Environment['brick']*4/9;
-        var w = Environment['wood']*4/9;
+        var t = (Environment['temperature']-10)/20;
+        var b = Environment['brick'];
+        var w = Environment['wood'];
         var h = Environment['humidity'];
         if (M.arguments.length == 2) return (eval(Model[parameter][index1]));
         if (M.arguments.length == 3) return (eval(Model[parameter][index1][index2]));
@@ -60,7 +60,7 @@ function cycleSimulation(Model,Environment,Populations) {
                 sum2 += (M('m',i,k) * P('predators',k)) / (1 + M('s',k) * P('predators',k));
         exponent = M('b',i) * sum1 - M('d',i) - sum2;
         var next_index = M('community', 'resources',i);
-        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent));
+        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/2));
     }
 
 //  do the predators
@@ -70,7 +70,7 @@ function cycleSimulation(Model,Environment,Populations) {
         for (var j=0; j < M('community','herbivores').length; j++) 
             sum1 += (M('m',j,i) * P('herbivores',j))/(1 + M('s',i) * P('predators',i));
         exponent = M('beta',i) * sum1 - M('delta',i);
-        nP('predators',i,P('predators',i) * Math.exp(exponent));
+        nP('predators',i,P('predators',i) * Math.exp(exponent/.25));
     }
 
     return (next_population);

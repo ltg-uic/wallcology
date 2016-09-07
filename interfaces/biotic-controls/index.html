@@ -13,6 +13,7 @@
 
 		<!-- Scripts -->
 	<script src="nutella_lib.js" type="text/javascript"></script>
+	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
 <!-- Your markup here -->
 	<H2>Biotic Controls</H2>
@@ -21,6 +22,8 @@
 	<!-- The above is very temporary. We need to get ecosystem from URL PARAMETERS -->
 	Species: <input type=text id="species" size=2><br>
 
+
+	
 	Population controls: <br><br>
 	<button type="button" onclick="seed(document.getElementById('species').value);" id="seed">Seed</button><br>
 	<button type="button" onclick="herbicide(document.getElementById('species').value);" id="herbicide">Herbicide</button><br>

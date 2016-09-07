@@ -9,6 +9,7 @@
 	<!-- Your CSS here -->
 </head>
 <body>
+	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
 	<!-- Your markup here -->
 	Ecosystem <input type=text READONLY size=1 id="ecosystem"> History<br>
@@ -57,22 +58,23 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'>normalized<br>
+	<input type=checkbox id='normalize' onClick='query();'>normalized
+&nbsp<input type=checkbox id='hack' onClick='query();'>one day (at 10 second intervals)<br>
 
 
 	<table style="border-spacing:0px;padding:0;">
 		<script type="text/javascript">
-		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.svg', 
-				'https://ltg.cs.uic.edu/WC/icons/species_01.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_02.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_03.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_04.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_05.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_06.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_07.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_08.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_09.svg',
-				'https://ltg.cs.uic.edu/WC/icons/species_10.svg',
+		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.png', 
+				'https://ltg.cs.uic.edu/WC/icons/species_01.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_02.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_03.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_04.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_05.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_06.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_07.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_08.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_09.png',
+				'https://ltg.cs.uic.edu/WC/icons/species_10.png',
 			 ];
 
 
@@ -179,6 +181,16 @@
 		var lower = Date.parse(sm + '/' + sd + '/' + sy);
 		var upper = Date.parse(em + '/' + ed + '/' + ey) + (24 * 60 * 60 * 1000);
 
+
+		// HACK for debugging
+
+		if (document.getElementById('hack').checked) {
+			var d = new Date();
+  			upper=d.getTime();
+  			lower=upper-4*60*1000;
+
+		}
+
 		if (lower >= upper) { alert('End date must be after start date'); return; }
 		// var sT = 
 
@@ -264,7 +276,7 @@
 					}
 				}
 				ctx.lineWidth = 1.5;
-				ctx.strokeStyle = 'teal'; 
+				ctx.strokeStyle = 'white'; 
 				for (var j=0; j<c; j++) {
 					ctx.beginPath();
 					if (i==11) { 
@@ -272,11 +284,11 @@
 						if (abioticOptions[abioticDisplay]=='temperature') t = t/30;
 						if(t!=0) {
 							ctx.arc(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*t)), 1, 0, 2 * Math.PI, false);
-					      	ctx.fillStyle = 'black';
+					      	ctx.fillStyle = 'white';
 					      	ctx.fill();
 					      	ctx.lineWidth = 0;
 					      	ctx.lineWidth = 1;
-					      	ctx.strokeStyle = 'black';
+					      	ctx.strokeStyle = 'white';
 						 };
 					} else {
 						ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);

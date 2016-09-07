@@ -129,14 +129,32 @@ function State_Update_Handler( response )
 {
     console.log("State_Update_Handler called!");
 
-    var lastState = sanitizeResponse(response);
+    var updatedState = sanitizeResponse(response);
 
-    console.log("\tlast_state!", Date(lastState["timestamp"]), lastState);
+    console.log("\tlast_state!", Date(updatedState["timestamp"]), updatedState);
      // Send messages to Unity
 
-    for (var i = 0; i < lastState['biotic'][WallscopeID].length; i++) {
+    for (var i = 0; i < updatedState['biotic'][WallscopeID].length; i++) {
+        var count = 0,
+            rawPopulation = updatedState['biotic'][WallscopeID][i];
 
-        var count = parseInt(lastState['biotic'][WallscopeID][i]) * 25;
+        switch(i) {
+            case 1:
+            case 3:
+            case 8:
+                count = parseInt( Math.round(rawPopulation * 10) );
+                break;
+            case 0:
+            case 2:
+            case 6:
+            case 7:
+                count = parseInt( Math.round(rawPopulation * 5) );
+                break;
+            default:
+                count = ( rawPopulation / 100.0 );
+                break;
+        }
+        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
         var packaged = i.toString() + " " + count.toString();
         console.log("state_update", packaged);
         Unity.SetSpeciesRecordCount( packaged );
@@ -144,19 +162,34 @@ function State_Update_Handler( response )
     }
 
     console.log("\tSpecies Record Updated! ");
-    Unity.SetThermostatText(lastState['abiotic'][WallscopeID]['thermostat']);
-    Unity.SetTemperatureText(lastState['abiotic'][WallscopeID]['temperature']);
+
+    var Abiotic = updatedState['abiotic'][WallscopeID];
+    Unity.SetThermostatText( Abiotic['thermostat'] );
+    Unity.SetTemperatureText( Abiotic['temperature'] );
+    // Unity.SetHumidityText( Abiotic['humidity'] );
+        // "left": "out",
+        // "top": "out",
+        // "right": "out",
+        // "bottom": "out",
+        // "brick": 1,
+        // "wood": 1
+
     // Wait on these for now...
-    // lastState['abiotic'][WallscopeID]['humidistat']
-    // lastState['abiotic'][WallscopeID]['humidity']
-    // lastState['abiotic'][WallscopeID]['left']
-    // lastState['abiotic'][WallscopeID]['top']
-    // lastState['abiotic'][WallscopeID]['right']
-    // lastState['abiotic'][WallscopeID]['bottom']
-    // lastState['abiotic'][WallscopeID]['brick']
-    // lastState['abiotic'][WallscopeID]['wood']
+    // updatedState['abiotic'][WallscopeID]['humidistat']
+    // updatedState['abiotic'][WallscopeID]['humidity']
+    // updatedState['abiotic'][WallscopeID]['left']
+    // updatedState['abiotic'][WallscopeID]['top']
+    // updatedState['abiotic'][WallscopeID]['right']
+    // updatedState['abiotic'][WallscopeID]['bottom']
+    // updatedState['abiotic'][WallscopeID]['brick']
+    // updatedState['abiotic'][WallscopeID]['wood']
 }
 
+
+function Last_State_Handler( response )
+{
+    State_Update_Handler( response ); // at least until I can come up with a more thoughtful way of adding critters in place.
+}
 /*==============================================================================
  #                        MESSAGE HANDLERS
  #                       UNITY->Javascript
@@ -170,7 +203,7 @@ var TellJs = {
 
         // Make an Immediate request for the last state. This will let us update
         // the wallscope to its previous state should we suffer a crash.
-        nutella.net.request( 'last_state', {}, State_Update_Handler);
+        nutella.net.request( 'last_state', {}, Last_State_Handler);
 
         // Subscribe to the channel and wait for updates.
         //                      last_animation_state

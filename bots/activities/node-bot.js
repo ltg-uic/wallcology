@@ -13,10 +13,17 @@ var currentActivity;
 
 var activity = nutella.persist.getMongoObjectStore('currentActivity');
 
-activity.load(function(){
-    activity.currentActivity;
-    nutella.net.handle_requests('currentActivity', function (message, from){
-        return activity.currentActivity;
+activity.load(function(){ 
+    if (activity.currentActivity == undefined){
+        activity['currentActivity'] = "foodweb";
+        activity['currentRoom'] = "Dreesh";
+        activity.save();
+    }
+    // nutella.net.handle_requests('currentActivity', function (message, from){
+    //     return activity.currentActivity;
+    // });
+    nutella.net.handle_requests('currentActivityAndRoom', function (message, from){
+        return ({activity: activity.currentActivity, room: activity.currentRoom});
     });
     var roster = nutella.persist.getMongoObjectStore('roster');
     roster.load(function(){
@@ -25,15 +32,20 @@ activity.load(function(){
         });
     });
     var activities = nutella.persist.getMongoObjectStore('activities');
-    activities.load(function(){
-        nutella.net.handle_requests('channel_list', function (message, from){ console.log(message);
+    activities.load(function(){console.log('3');
+        nutella.net.handle_requests('get_activities', function (message,from) { console.log ('got here');
+            return(activities.data);
+        });
+        nutella.net.subscribe('set_activities', function (message,from) {
+            activities.data=message;
+            activities.save();
+        });
+        nutella.net.handle_requests('channel_list', function (message, from){ 
 
             for (var i=0; i<activities.data.length; i++) {
-                if (activities.data[i].name == message.activity) { console.log ('a ' + activities.data[i].name + '  ' + message.activity);
+                if (activities.data[i].name == message.activity) { 
                     for (var j=0; j<activities.data[i].lineup.length; j++) {
-                        console.log('b ' + activities.data[i].lineup[j].type+ '  ' +  message.type);
                         if (activities.data[i].lineup[j].type == message.type) { 
-                            console.log('c ' + activities.data[i].lineup[j].channels); 
                             return (activities.data[i].lineup[j].channels);
                         }; 
                     };  
@@ -41,8 +53,14 @@ activity.load(function(){
             };
         });
     });
-    nutella.net.subscribe('change_activity', function(a){
-        activity.currentActivity = a;
+    // nutella.net.subscribe('change_activity', function(a){
+    //     activity.currentActivity = a;
+    //     activity.save();
+    //     nutella.net.publish('activity_update');
+    // });
+    nutella.net.subscribe('change_activityAndRoom', function(message){
+        activity.currentActivity = message.activity;
+        activity.currentRoom = message.room;
         activity.save();
         nutella.net.publish('activity_update');
     });
