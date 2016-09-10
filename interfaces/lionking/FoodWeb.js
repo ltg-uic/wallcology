@@ -1,12 +1,24 @@
+//LION KING
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
+    var app = "lion king";
+    this.versionID = "20160808-2000"
+    
+    var query_parameters;
+    var nutella
 
     if ( mode == "deploy"){
-        var query_parameters = NUTELLA.parseURLParameters();
-        var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+        query_parameters = NUTELLA.parseURLParameters();
+        nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+    } else {
+        query_parameters = { INSTANCE: "null" };
     }
-
+    WebFont.load({
+        google: {
+          families: ['Droid Sans', 'Roboto']
+        }
+      });    
     //Canvas for graphs
     var gcanvas = document.getElementById("canvas2");
     var gctx = gcanvas.getContext("2d");
@@ -42,6 +54,7 @@ function FoodWeb(){
     var cW = window.innerWidth;
     var cH = window.innerHeight;
     
+    //console.log("cW: "+cW +", cH: "+cH);
 	//Drag related variables
 	var dragok = false;    //for mouse events
     var startX;
@@ -56,7 +69,8 @@ function FoodWeb(){
     var displayList = new DisplayList(canvas);
     var prompt;
 
-    //setup picker and active/work areas
+    //setup palette and work areas
+    var paletteColour = "#DBDADA";//"#2B323F";
     var pbpadding = 0;
     var pbwidth = 150;
     var pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
@@ -68,28 +82,28 @@ function FoodWeb(){
         height:canvas.height};
 
     //setup objects
-    var speciesNames = []; 
+    var speciesNames = []; //= ["lion", "zebra"];
     var speciesSize = 100;
     var speciesMargin = 25;
     var speciesSpacing = 50;
 
     var levels = [
-        ["green", "yellow", "orange", "pink"], 
+        ["lion", "zebra"], 
         ["lion", "zebra"],
         ["lion", "zebra", "leopard"],
         ["lion", "zebra", "grass", "tree"]];
     var level = new Level(1, ctx);
     var obj = [];
     var connections = [];
-    var movingConnections = [];
     var graphs = [];
     var plusButtons = [];
     var minusButtons = [];
     var multipleChoice = [];
-    
-    initalizeDataCollection();
+    var data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+
+    initDataCollection();
     setupSpecies();
-    setupLevel(1, true, levels[0]);
+    setupLevel(1, false, levels[0]);
     setTimeout(draw, 1000);
 
     // Add eventlistener to canvas
@@ -99,19 +113,24 @@ function FoodWeb(){
     canvas.addEventListener("touchstart", onTouchDown, false);
     canvas.addEventListener("touchmove", onTouchMove, true);
     canvas.addEventListener("touchend", onTouchUp, false);
+
+    level.addEventListener(level.EVENT_CLICKED, onLevelClick);
     
     document.body.addEventListener("mouseup", onMouseUp, false);
     document.body.addEventListener("touchcancel", onTouchUp, false);
 
     //SETUP
-    function initalizeDataCollection(){
+    function initDataCollection(){
+        data.save("INIT",this.versionID);
         //group: query_parameters.INSTANCE
+        /*
+        var t = Timestamp(); 
         if ( mode == "deploy"){
-            nutella.net.publish('add_to_lionking_log',['Group '+query_parameters.INSTANCE+': log entry 1']);
-            nutella.net.publish('add_to_lionking_log',['Group 2: log entry 2','Group 4: log entry 3']);
-        } else {
-            console.log("initalizeDataCollection");    
+            nutella.net.publish('add_to_lionking_log',['Group '+query_parameters.INSTANCE+' ;Start time ;'+t]);
+        } else {            
+            console.log("start_time: "+t);
         }
+        */
     }
     function setupLevel( num, minus, species ){
         clearListeners();
@@ -129,6 +148,7 @@ function FoodWeb(){
             minusButtons = setupButtons("minus");
         }
         prompt = new Prompt(ctx, pbwidth+20, 20, num);
+        //prompt = new Prompt(ctx, 0, 400, num);
         prompt.addEventListener(prompt.EVENT_CLICKED, onPromptClicked);
         displayList.addChild(prompt);
     }
@@ -142,6 +162,7 @@ function FoodWeb(){
             obj.push(tempObj);
             displayList.addChild(tempObj);
         }
+        draw();
     }
     //Set up action buttons
     function setupButtons(type){
@@ -149,13 +170,11 @@ function FoodWeb(){
         var t = type;
         for (var i = 0; i < obj.length; i++) {
             var tempBtn = new ActionButton(ctx, t, level.getColour() );
-            /*
             if( type == "plus"){
-                tempBtn.addEventListener(tempBtn.EVENT_CLICKED, onPlusButtonClicked);
+                tempBtn.addEventListener(tempBtn.EVENT_CLICKED, onActionButtonClicked);
             } else if (type == "minus"){
                 tempBtn.addEventListener(tempBtn.EVENT_CLICKED, onMinusButtonClicked);
             }
-            */
             tempBtn.index = i;
             tempArr.push( tempBtn );
             displayList.addChild(tempBtn);
@@ -168,21 +187,26 @@ function FoodWeb(){
             var o = obj[i];
             o.removeEventListener(o.EVENT_CLICKED, onSpeciesClicked);
         }
-        /*
         for (var j = 0; j<plusButtons; j++){
             var pb = plusButtons[j];
-            pb.removeEventListener(pb.EVENT_CLICKED, onPlusButtonClicked);
+            pb.removeEventListener(pb.EVENT_CLICKED, onActionButtonClicked);
         }
         for (var k = 0; k<minusButtons; k++){
             var mb = minusButtons[k];
             mb.removeEventListener(mb.EVENT_CLICKED, onMinusButtonClicked);
         }
-        */
+        
         for (var l=0; l<multipleChoice.length; l++){
             var mc = multipleChoice[l];
             mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
         }
+        /*
+        if ( mc.name ){
+            mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
+            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);    
+        }
+        */
        if( prompt ){
             prompt.removeEventListener(prompt.EVENT_CLICKED, onPromptClicked);
         }
@@ -195,8 +219,9 @@ function FoodWeb(){
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
     }
     //EVENTLISTENERS
-    /*
     function onLevelClick(e){
+        //console.log("e target: " + e.target );
+        //console.log("e type: " + e.type );
         //cycle through levels
         var oldlevel = level.num;
         var newlevel = oldlevel+1;
@@ -210,9 +235,10 @@ function FoodWeb(){
         }
         level.num = newlevel;
         setupLevel(newlevel, mb, levels[newlevel-1]);
+        //console.log("newlevel: "+newlevel);
     }
-    */
     function onMultipleChoiceClick(e){
+        //console.log("onMultipleChoiceClick: "+e);
         var sp;
         var num;
         var type;
@@ -221,7 +247,7 @@ function FoodWeb(){
             var arr = mc.getSelectionArray();
             for(var j=0; j<arr.length; j++){
                 var item = arr[j];
-                console.log("name: "+item.name+", selection: "+item.selection); 
+                console.log("name: "+item.name+", selection: "+item.selection);
                 sp = item.species;
                 num = item.num;
                 type = item.type;
@@ -235,6 +261,12 @@ function FoodWeb(){
         handlePopulationChange( sp, num, type );
         draw();
     }
+    /*
+    function handleSelectionIncomplete(e){
+        //update prompt
+        prompt.setText("Finish your selection, then click Run.");
+    }
+    */
     function handleRedraw(e){
         draw();   
     }
@@ -244,15 +276,13 @@ function FoodWeb(){
     function onSpeciesClicked(e){
         //console.log("onSpeciesClicked: "+e);
     }
-    /*
-    function onPlusButtonClicked(e){
-        console.log("onPlusButtonClicked: "+e);
+    function onActionButtonClicked(e){
+        //console.log("onActionButtonClicked: "+e);
         //prompt.advancePrompt();
     }
     function onMinusButtonClicked(e){
-        console.log("onMinusButtonClicked: "+e);
+        //console.log("onMinusButtonClicked: "+e);
     }
-    */
     function onTouchUp(e){
         endMove(e.changedTouches[0].pageX, e.changedTouches[0].pageY,true);
         displayList.onMouseUp(event);
@@ -313,11 +343,6 @@ function FoodWeb(){
                 if (r.isDragging) {
                     r.x += dx;
                     r.y += dy;
-                    //create function to make temporary lines, only if there are more than 2 active objects
-                    var activeObj = getActiveObj();
-                    if ( activeObj.length >= 1 && !r.active){
-                        setupMovingConnections(r);
-                    }
                 }
             }
             for (var j = 0; j < connections.length; j++) {
@@ -367,36 +392,83 @@ function FoodWeb(){
         var newx = x;
         var newy = y;
         mouseIsDown = 0;
-        // clear all the dragging flags
-        dragok = false;
-        for (var i = 0; i < obj.length; i++) {
-            obj[i].isDragging = false;
-        }
         //detectHit 
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
+
+        // clear all the dragging flags
+        dragok = false;
+        for (var i = 0; i < obj.length; i++) {
+            var o = obj[i];
+            if( obj[i].isDragging ){
+                if( detectHit(mx,my,activeHit)){
+                    if ( o.active ){
+                        //then just moving around
+                        var to = "active";
+                        var from = "active";
+                    } else {
+                        //then moving from palette to active
+                        var to = "active";
+                        var from = "palette";
+                    }
+                } else if( detectHit(mx,my,pickerHit)){
+                    if ( o.active ){
+                        //move from active to palette
+                        var to = "palette";
+                        var from = "active";
+                    } else {
+                        //then moving from palette to palette
+                        var to = "palette";
+                        var from = "palette";   
+                    }
+                }
+                data.save("MOVE","level ;"+level.num+" ;object ;"+o.name+" ;x: "+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+            }
+            obj[i].isDragging = false;
+        }
+        
         if(detectHit(mx,my,activeHit)){
-            console.log("active");
+            //console.log("active");
             setActiveProperty(activeHit, true);
             for (var j = 0; j < plusButtons.length; j++) {
+                //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
                 if( detectHit(mx,my,plusButtons[j])){
+                    //console.log(obj[j].name + " button");
                     setupPopulationChange(obj[j], j, "plus");
+                    //handlePopulationChange(obj[j], j, "plus");
                 }
             }
             for (var k = 0; k < minusButtons.length; k++) {
+                //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
                 if( detectHit(mx,my,minusButtons[k])){
+                    //console.log(obj[j].name + " button");
                     setupPopulationChange(obj[k], k, "minus");
+                    //handlePopulationChange(obj[k], k, "minus");
                 }
             }
+            /*
+            for (var l=0; l < multipleChoice.length; l++){
+                if( detectHit(mx,my,multipleChoice[l])){
+                    handleMultipleChoice(mx,my);
+                    //console.log("multipleChoice["+l+"]:"+multipleChoice[l].name);
+                }
+            }
+            */
         }else if (detectHit(mx,my,pickerHit)){
-            console.log("picker");
+            //console.log("picker");
             setActiveProperty(pickerHit, false);
-            resetObjPos();
+            
+             if(detectHit(mx,my,level)){
+             	level.changeLevel();
+             }
         } else {
-            console.log("nothing");
+            //console.log("nothing");
         }
-        setConnection();
+        //evaluate species - if both zebra and lion are on the map, then draw line
+        evalActiveObjs();
+        //if objects are on the map then draw graphs, buttons
         evalGraphs();
+        resetObjPos();
         mouseIsDown = 0;
         draw();
     }
@@ -429,6 +501,7 @@ function FoodWeb(){
             var mb = minusButtons[i];
             if(detectHit(s.x,s.y,h)){
                 //species active
+                //console.log(s.name + ".active: " + b);
                 s.active = b;
                 pb.active = b;
                 if( mb ){
@@ -437,82 +510,96 @@ function FoodWeb(){
             }
         }
     }
-    function getActiveObj(){
+    //evaluate which species are active and draws line between active ones
+    function evalActiveObjs(){
+        //create array of false flag items for each species in the level
+        /*
+        var speciesActiveFlag = [];
+        for (var i=0;i<speciesNames.length;i++){
+            var tempFlag = false;
+            speciesActiveFlag.push(tempFlag);
+        }
+        */
+        var r = new Relationship();
+        var connectionsList = r.arrows;
         var activeSpeciesList = [];
+
+        //run through object array and find active species, if active then see if any of the other active objects have direct relationship
         for (var i=0; i<obj.length; i++){
             var s = obj[i];
             if( s.active ){
                 activeSpeciesList.push( s );
             }
         }
-        return activeSpeciesList;
-    }
-    function setConnection(){
-        var activeObjList = getActiveObj();
-        for ( var i=0; i<movingConnections.length; i++){
-            var movingConnection = movingConnections[i];
-            connections.push( movingConnection );
-        }
-        movingConnections = [];
-    }
-    function setupMovingConnections( o ){
-        //console.log("moving: " + o.name);
-        var movingObj = o;
-        var activeObjList = getActiveObj();
-        //create a line between closest obj and moving obj
-        var closestObj = getClosestObj( movingObj, activeObjList );
-        if ( closestObj ){
-            if ( closestObj.name == movingObj.name ){
-                return;
-            }
-            var tempConnection = movingObj.name+"-"+closestObj.name;
-            var connectType = "eatenby"
-            var line = new Line( tempConnection, movingObj, closestObj, ctx, level.num, connectType );
-            for( var j=0; j<movingConnections.length;j++){
-                //console.log( "connection removed: "+movingConnections[j].name );
-                displayList.removeChild( movingConnections[j] );
-                movingConnections.splice(j, 1);
-            }
-            movingConnections.push(line);
-            displayList.addChild( line );
-            //console.log("closest: "+ closestObj.name );
-        }
-    }
-    function getClosestObj( moving, objList ){
-        var movingObj = moving;
-        var activeObjList = objList;
-        var shortestDist;
-        var closestObj;
-        //calculate distance from other active objects and moving object
-        for (var i=0; i<activeObjList.length; i++){
-            var activeObj = activeObjList[i];
-            var dist = getDistance( movingObj, activeObj );
-            if ( shortestDist ){
-                if ( dist < shortestDist ){
-                    shortestDist = dist;
-                    closestObj = activeObj;
+        //ADD CONNECTION
+        //first loop runs through all the active species
+        for (var j=0; j<activeSpeciesList.length; j++){
+            var s1 = activeSpeciesList[j];
+            var tempStr;
+            //second loop runs through all the active species again and creates a temporary string "X-Y" for all possibilities
+            for (var k=0; k<activeSpeciesList.length;k++){
+                var s2 = activeSpeciesList[k];
+                tempStr = s1.name.concat("-",s2.name);
+                //console.log("["+j+"]["+k+"]: "+tempStr);
+                //third loop runs through list of valid connections
+                for( var l=0; l<connectionsList.length;l++){
+                    var tempConnection = connectionsList[l].name;
+                    var connectType = connectionsList[l].type;
+                    if( tempStr == tempConnection ){
+                        //forth loop runs through list of established connections to see if a line has been created
+                        var connectionCreated = false;
+                        for( var m=0; m<connections.length; m++ ){
+                            if (connections[m].name == tempConnection){
+                                //no need to create connection
+                                connectionCreated = true;
+                            }
+                        }
+                        if (!connectionCreated){
+                            //create connection if flag is still false
+                            data.save("CONNECTION","level ;"+level.num+" ;object1 ;"+s1.name+" ;object2 ;"+s2.name+" ;connection ;"+tempConnection);
+                            //console.log("create connection: "+tempConnection+" between "+s1.name +" and "+s2.name);
+                            var line = new Line( tempConnection, s1, s2, ctx, level.num, connectType );
+                            prompt.setConnectionPrompt();
+                            connections.push( line );
+                            displayList.addChild( line );
+                        }
+                    }
                 }
-            } else {
-                shortestDist = dist;
-                closestObj = activeObj;
             }
         }
-        return closestObj;
+        //REMOVE CONNECTION
+        //for every connection, check to see if both species are active
+        //first loop runs through all the created connections
+        for( var j=0; j<connections.length;j++){
+            var tempConnection = connections[j].name;
+            var tempObj = tempConnection.split("-");
+            //second look runs through the names of species in each created connection
+            for (var k=0; k<tempObj.length; k++){
+                var s1 = tempObj[k];
+                var speciesActive = false;
+                //third loop runs through all the active species
+                for (var l=0; l<activeSpeciesList.length; l++){
+                    var s2 = activeSpeciesList[l].name;
+                    if ( s1 == s2 ){
+                        //active
+                        speciesActive = true;
+                    }
+                }
+                if(!speciesActive){
+                    //one of the objects in a created connection is no longer active
+                    console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
+                    for (var m = 0; m < connections.length; m++) {
+                        if( connections[m].name == tempConnection ){
+                            //remove
+                            displayList.removeChild( connections[j] );
+                            connections.splice(j, 1);
+                        }
+                    }
+                }
+            }
+        }
     }
-    function getDistance( o1, o2 ){
-        var obj1 = o1;
-        var obj2 = o2;
-        var x1 = obj1.x;
-        var x2 = obj2.x;
-        var y1 = obj1.y;
-        var y2 = obj2.y;
-        // Determine line lengths
-        var xlen = x2 - x1;
-        var ylen = y2 - y1;
-        // Determine hypotenuse length
-        var hlen = Math.sqrt(Math.pow(xlen,2) + Math.pow(ylen,2));
-        return hlen;  
-    }
+    
     //if objects are set to picker, place them in correct pos
     function resetObjPos(){
         for (var i = 0; i < obj.length; i++) {
@@ -550,6 +637,7 @@ function FoodWeb(){
                     var g = graphs[k];
                     if (s.name == g.name){
                         //then there is already a graph
+                        //console.log("remove graph: " + s.name );
                         graphs[k].clearGraph();
                         graphs.splice(k, 1);
                     }
@@ -557,7 +645,9 @@ function FoodWeb(){
             }
         }
         //draw graphs
-        //clear canvas
+        //console.log("graphs.length: " + graphs.length);
+        //if (graphs.length == 0){
+            //clear canvas
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
         var total = graphs.length
         resizeGraphCanvas( total );
@@ -565,10 +655,13 @@ function FoodWeb(){
         for (var m = 0; m < graphs.length; m++) {
             graphs[m].drawBarGraph(m);
         }
+        //}
     }
     function setupPopulationChange(  species, num, type  ){
         var direction = type; //"plus" or "minus"
         var newdata = new GraphData();
+        //var r = new Relationship();
+        //var rArr = [];
         
         //find out if graphs are running
         for(var i=0; i<graphs.length; i++){
@@ -581,14 +674,22 @@ function FoodWeb(){
             }
         }
         //find out if more than one species are on work area
-        var activeObjList = getActiveObj();
-        var activeObjNum = activeObjList.length;
+        var activeObjNum = 0;
+        for(var j=0; j<obj.length; j++){
+            var sp = obj[j];
+            if( sp.active ){
+                activeObjNum++
+            }
+        }
         //if there's only one species, then change population
         if ( activeObjNum == 1 ){
+        //console.log("Number of active species: "+activeObjNum);
+        //console.log("update graph: "+obj.name+" "+direction);
+        //get array of relationships for object clicked
             if ( type == "plus" ){
-                prompt.setText("What happens to the population of the other circles if the "+ species.name + " population increases? Drag another circle into the work area.");
+                prompt.setText("What happens to the other species' population if the "+ species.name + " population increases? Drag another species into the work area.");
             } else if ( type == "minus" ){
-                prompt.setText("What happens to the population of the other circles if the " + species.name + " population decreases? Drag another circle into the work area.");
+                prompt.setText("What happens to the other species' population if the " + species.name + " population decreases? Drag another species into the work area.");
             }
             for(var k=0; k<graphs.length; k++){
                 var graph = graphs[k];
@@ -602,11 +703,11 @@ function FoodWeb(){
                     }
                 }
             }
-        } else {    //if there are more than one species
+        } else {
             if ( type == "plus" ){
-                prompt.setText("What happens to the population of the other circle(s) if the "+ species.name + " population increases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
+                prompt.setText("What happens to the other species' population if the "+ species.name + " population increases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
             } else if ( type == "minus" ){
-                prompt.setText("What happens to the population of the other circle(s) if the " + species.name + " population decreases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
+                prompt.setText("What happens to the other species' population if the " + species.name + " population decreases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
             }
             var namesArr = [];
             for(var l=0; l<graphs.length; l++){
@@ -615,7 +716,17 @@ function FoodWeb(){
                     namesArr.push(graph.name)
                 }
             }
+            //clear mc first
+            for ( var i = 0; i<multipleChoice.length; i++){
+                var mc = multipleChoice[i];                
+                displayList.removeChild( mc );
+                mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
+                mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+                mc = {};
+                multipleChoice.splice(i, 1);
+            }
             //setup multple choice and prompts
+            //console.log("level: "+level+", "+level.getColour());
             var mc = new MultipleChoice( namesArr, pbwidth, cH, ctx, species, num, direction, level.getColour() );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
@@ -625,245 +736,104 @@ function FoodWeb(){
         //set delay to draw 1/2 second from now to load multiple choice items
         setTimeout(draw, 500);
     }
-    function handlePopulationChange( object, num, type ){
+    function handlePopulationChange( obj, num, type ){
         var direction = type; //"plus" or "minus"
-        var data1 = new GraphData();
+        var newdata = new GraphData();
+        var r = new Relationship();
+        var rArr = [];
+        /*
+        //find out if graphs are running
+        for(var o=0; o<graphs.length; o++){
+            var graphsRunning = graphs[o].getRunning();
+            //console.log("graphs["+o+"] running: "+ graphsRunning );
+            if( graphsRunning ){
+                //write a message to let users know that graphs are running
+                prompt.setText("Populations are in flux. Wait until they are stabilized to continue manipulation.")
+                return;
+            }
+        }
+        */
+        //console.log("update graph: "+obj.name+" "+direction);
+        //get array of relationships for object clicked
+        for( var j=0; j<r.graphs.length; j++){
+            if( obj.name == r.graphs[j].name){
+                if ( type == "plus" ){
+                    rArr = r.graphs[j].increase;
+                    //prompt.setText("What happens to the other species' population if the "+ obj.name + " population doubles? (A) Goes up, (B) Goes down, (C) Stays the same. Click 'run' to test your theory.");
+                } else if ( type == "minus" ){
+                    rArr = r.graphs[j].decrease;
+                    //prompt.setText("What happens to the other species' population if the " + obj.name + " population decreases? (A) Goes up, (B) Goes down, (C) Stays the same. Click 'run' to test your theory.");
+                }
+            }    
+        }
+        
         //loops through all the graphs being displayed
         for(var i=0; i<graphs.length; i++){
             var graph = graphs[i];
             //replace data for object clicked's graph
-            var id = i;
-            if( graph.name == object.name ){   
+            if( graph.name == obj.name ){   
+                var id = i;
                 if ( type == "plus" ){
-                    graph.replace( data1.increase, id );
+                    graph.replace( newdata.increase, id );
                 } else if ( type == "minus" ){
-                    graph.replace( data1.decrease, id );
+                    graph.replace( newdata.decrease, id );
                 }
             } else {
-                //find out relationship between object and graph target, should return
-                //"goes up", "goes down", or "same"
-                var r = getRelationship( object.name , graph.name, direction );
-                //console.log("r: "+ r);
-                var data2 = new GraphData();
-                var dataset;
-                switch (r){
-                    case "goes up":
-                        dataset = data2.laggedincrease;
-                        break;
-                    case "goes down":
-                        dataset = data2.laggeddecrease;
-                        break;
-                    case "same":
-                        dataset = data2.baseline;
-                        break;
-                    default:
-                        dataset = data2.baseline;
-                }
-                graph.replace( dataset, id );
-            }
-        }
-    }
-    //returns 1, -1, or 0
-    function getMultiplier( object, connection, direction ){
-        var c = connection;
-        var type = c.type;
-        var object = object;
-        var result;
-        //direct relationship, return connection
-        if ( object == c.obj1.name ){
-            if ( type == "eatenby" ){
-                if ( direction == "plus" ){
-                    result = 1;
-                } else {    //direction == "minus"
-                    result = -1;
-                }
-            } else if ( type == "competition" ){
-                if ( direction == "plus" ){
-                    result = -1;
-                } else {    //direction == "minus"
-                    result = 1;
-                }
-            } else if ( type == "eats" ){
-                if ( direction == "plus" ){
-                    result = -1;
-                } else {    //direction == "minus"
-                    result = 1;
-                }
-            } else if ( type == "mutualism" ){
-                if ( direction == "plus" ){
-                    result = 1;
-                } else {    //direction == "minus"
-                    result = -1;
-                }
-            }
-        } else if ( object == c.obj2.name ){
-            if ( type == "eatenby" ){
-                if ( direction == "plus" ){
-                    result = -1;
-                } else {    //direction == "minus"
-                    result = 1;
-                }
-            } else if ( type == "competition" ){
-                if ( direction == "plus" ){
-                    result = -1;
-                } else {    //direction == "minus"
-                    result = 1;
-                }
-            } else if ( type == "eats" ){
-                if ( direction == "plus" ){
-                    result = 1;
-                } else {    //direction == "minus"
-                    result = -1;
-                }
-            } else if ( type == "mutualism" ){
-                if ( direction == "plus" ){
-                    result = 1;
-                } else {    //direction == "minus"
-                    result = -1;
-                }
-            }
-        } 
-        return result;
-    }
-    //returns "goes up", "goes down", or "same" or 1, -1, 0
-    //direction: "plus" or "minus"
-    function getRelationship( name1, name2, direction ){
-        //var r = [];
-        var clicked = name1;
-        var graph = name2; 
-        var effects = [];
-        var result = ""; 
-        var index = 0;
-
-        var r = getDirectRelationship( clicked, graph );     
-        //console.log( name1 + " & " + name2 + ", direct: " + r.direct );
-        if ( r.direct ){
-            var c = r.connection;
-            effects.push( getMultiplier( clicked, c, direction ));
-            index =  getMultiplier( clicked, c, direction );
-            //console.log("if "+clicked+" "+ direction+" then "+graph+" "+effects[effects.length-1]);
-        } else {
-            //test for secondary connection
-            var r2;
-            var connectedList = r.connection;
-            for (var i=0; i<connectedList.length; i++){
-                var connected = connectedList[i];
-                var source = connected.obj1;
-                var destination = connected.obj2;
-                var testObj;
-                //one of the direct connections of clicked
-                if( clicked == source.name ){
-                    testObj = destination.name;         
-                } else if ( clicked == destination.name ){
-                    testObj = source.name;
-                }
-                var m = getMultiplier( clicked, connected, direction );
-                effects.push( m );
-                r2 = getDirectRelationship( testObj, graph );
-                //console.log( name1 + " & " + name2 + ", secondary: " + r2.direct );
-                if ( r2.direct ){
-                    //get multiplier and translate it into d2 (direction2)
-                    var d2 = translateMultiplier( m );
-                    effects.push( getMultiplier( testObj, r2.connection, d2 ));
-                    index = getMultiplier( testObj, r2.connection, d2 );
-                    //console.log("if "+testObj+" "+ d2+" then "+graph+" "+effects[effects.length-1]);
-                } else {                    
-                    //test for teritary connection
-                    var r3;
-                    var connectedList2 = r2.connection;
-                    for (var j=0; j<connectedList2.length; j++){
-                        var connected2 = connectedList2[j];
-                        var source2 = connected2.obj1;
-                        var destination2 = connected2.obj2;
-                        var testObj2;
-                        //one of the direct connections of testObj
-                        if( testObj == source2.name ){
-                            testObj2 = destination2.name;         
-                        } else if ( testObj == destination2.name ){
-                            testObj2 = source2.name;
+                //replace data for linked objects' graphs
+                for( var k=0; k<rArr.length; k++){
+                    if( rArr[k].name == graph.name ){
+                        //update graph only if species are connected, otherwise, add baseline data
+                        var connectionList = rArr[k].connections;
+                        var connectedList = [];
+                        //console.log("connectionList.length: "+connectionList.length);
+                        for( var l=0; l<connectionList.length; l++ ){
+                            var c = false;
+                            //console.log("checking "+connectionList[l]+" connection");
+                            for( var m=0; m<connections.length; m++ ){
+                                if( connectionList[l] == connections[m].name ){
+                                    //there is a connection
+                                    //console.log(connections[m].name+" is present");
+                                    c = true;
+                                }
+                            }
+                            connectedList.push(c);
                         }
-                        var d2 = translateMultiplier( m );
-                        var m2 = getMultiplier( testObj, connected2, d2 );
-                        effects.push( m2 );
-                        r3 = getDirectRelationship( testObj2, graph );
-                        //console.log( name1 + " & " + name2 + ", teritary: " + r3.direct );
-                        if ( r3.direct ){
-                            //get multiplier and translate it into d2 (direction2)
-                            var d3 = translateMultiplier( m2 ); //====> WRONG, but d3 and m2 wrong
-                            //console.log("testObj: " + testObj + ", connected2: "+connected2+" , d2: "+d2);
-                            effects.push( getMultiplier( testObj2, r3.connection, d3 ));
-                            index = getMultiplier( testObj2, r3.connection, d3 );
-                            //console.log("if "+testObj2+" "+ d3+" then "+graph+" "+effects[effects.length-1]);
+                        var connected = true;
+                        for ( var n=0; n<connectedList.length; n++ ){
+                            //if both are true then update graph according to relationship 
+                            if( !connectedList[n] ){
+                                connected = false;
+                            }
+                        }
+                        var result;
+                        var data2 = new GraphData();
+                        if ( connected ){
+                            //console.log(graph.name+"'s graph updated: " + rArr[k].result);
+                            //console.log("rArr.result: "+ rArr[k].result );
+                            if( rArr[k].result == "laggeddecrease" ){
+                                result = data2.laggeddecrease;
+                            } else if ( rArr[k].result == "laggedincrease" ){
+                                result = data2.laggedincrease;
+                            }
                         } else {
-                            //test for quartary connection
+                            result = data2.baseline; 
+                            //console.log(graph.name+"'s graph updated: baseline");
                         }
+                        graph.replace( result, i );
                     }
-                    
                 }
-            }
+            }             
         }
-        /*
-        var directEffect = effects[effects.length-1];
-        for (var k=0; k<effects.length; k++){
-            console.log("effects["+k+"]: "+effects[k]);
+    }
+    /*
+    function handleMultipleChoice(x,y){
+        for(var i=0;i<multipleChoice.length;i++){
+            var mc = multipleChoice[i];
+            mc.handleClick(x,y);
         }
 
-        console.log("index: "+index);*/
-        switch (index){
-            case 1:
-                result = "goes up";
-                break;
-            case -1:
-                result = "goes down";
-                break;
-            case 0:
-                result = "same";
-                break;
-            default:
-                result = "error";
-        }
-        console.log( "clicked "+clicked+" "+direction+": "+ graph + " " + result);
-        return result;
     }
-    function getDirectRelationship( name1, name2 ){
-        var relationship = {};
-        var directConnections = [];
-
-        for ( var i=0; i<connections.length; i++ ){
-            var c = connections[i];
-            var source = c.obj1;
-            var destination = c.obj2;
-            if( (name1 == source.name || name1 == destination.name) && 
-                (name2 == source.name || name2 == destination.name) ){
-                //direct relationship
-                relationship = {direct: true, connection: c};
-                return relationship;
-            } else {
-                //not direct, return direct relationships of obj1
-                if (name1 == source.name || name1 == destination.name){
-                    //it is a direct connection of obj1
-                    directConnections.push(c)
-                }
-            }
-        }
-        relationship = {direct: false, connection: directConnections};
-        return relationship;
-    }
-    function translateMultiplier( m ){
-        var direction = "";
-        //var multiplier = m;
-        switch ( m ){
-            case 1:
-                direction = "plus";
-                break;
-            case -1:
-                direction = "minus";
-                break;
-            default:
-                direction = "error";
-        }
-        return direction;
-    }
+    */
     function resizeGraphCanvas( total ){
         /*
         if( graphs.length > 0 ){
@@ -920,14 +890,14 @@ function FoodWeb(){
         ctx.fillRect(canX -5, canY -5, 10, 10);
         */
         //Draw picker box
-        ctx.fillStyle = "#DBDADA";
+        ctx.fillStyle = paletteColour; //"#DBDADA";
         ctx.shadowBlur=0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0
         ctx.fillRect(pickerbox.x,pickerbox.y,pickerbox.width,pickerbox.height);
         // Draw level badge
         ctx.globalAlpha = 1;
-        //level.draw();        
+        level.draw();        
         displayList.draw();
     }
 }

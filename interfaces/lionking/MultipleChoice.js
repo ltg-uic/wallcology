@@ -36,7 +36,7 @@ function MultipleChoice(n, x, y, c, sp, num, type, colour){
 
 	var btnX = x + marginLeft + padding + iconWidth + 3*(padding + graphWidth);
 	var btnY = y - this.height + yOffset + marginTop; //graphHeight/2-iconHeight/2; //this.y+yOffset+marginTop
-	this.button = new GenericButton("Run", btnX, btnY, btnHeight, btnWidth, c, this.colour, "#FFFFFF", "12pt Helvetica", 10);
+	this.button = new GenericButton("Run", btnX, btnY, btnHeight, btnWidth, c, this.colour);
 
 	//console.log("btnX: "+btnX+", btnY: "+btnY);
 	this.EVENT_CLICKED = "clicked";
@@ -161,7 +161,7 @@ function MultipleChoice(n, x, y, c, sp, num, type, colour){
 	    this.context.shadowBlur=0;
 	    this.context.shadowOffsetX = 0;
 	    this.context.shadowOffsetY = 0;
-	    this.context.font = "12pt Helvetica";
+	    this.context.font = "12pt 'Roboto'";
 	    this.context.textAlign = "left";
 	    this.context.textBaseline = "top";
 	    this.context.fillStyle = "#263238";
@@ -169,7 +169,7 @@ function MultipleChoice(n, x, y, c, sp, num, type, colour){
 	    this.context.fillText("Goes down", this.x + marginLeft + padding + iconWidth + padding + graphWidth, this.y+marginTop);
 	    this.context.fillText("Stays the same", this.x + marginLeft + padding + iconWidth + 2*(padding + graphWidth), this.y+marginTop);
 
-	    this.context.font = "8pt Helvetica";
+	    this.context.font = "8pt Roboto";
 	    this.context.textAlign = "right";
 	    this.context.fillStyle = "#666666";
 	    this.context.fillText(this.message, btnX+btnWidth, this.y+marginTop);

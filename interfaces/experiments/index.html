@@ -53,7 +53,12 @@
 
 			document.write('<TABLE cellpadding=10>');
 
-			document.write('<TR><TD align="right">Question</TD><TD><select id="experiments" onchange="updateForm();"></select><INPUT HIDDEN size=40 id="question" READONLY type=text></TD></TR>');
+			document.write('<TR><TD align="right">Question</TD><TD><select id="experiments" onchange="updateForm();"></select><INPUT HIDDEN size=40 id="question" READONLY type=text></TD>');
+			document.write('<TD rowspan=6>');
+			document.write('<input type="file" id="file-upload" onChange="doImage(this);"><br>');
+			document.write('<img id="newImage" width=200 height=200>');
+
+			document.write('</TD></TR>');
 			document.write('<TR><TD align="right">Manipulation(s)</TD><TD><INPUT size=40 id="manipulations" type=text></TD></TR>');
 			document.write('<TR><TD align="right">Reasoning</TD><TD><TEXTAREA rows=5 cols=40 id="reasoning"></TEXTAREA></TD></TR>');
 			document.write('<TR><TD align="right">Results</TD><TD><TEXTAREA rows=5 cols=40 id="results"></TEXTAREA></TD></TR>');
@@ -62,6 +67,33 @@
 			document.write('<BUTTON onclick="save();"> Save changes </BUTTON>');
 			document.write('</TD></TR>');
 			document.write('</TABLE>');
+			document.write('<div id="myModal" class="modal">');
+  			document.write('<span class="close">×</span>');
+  			document.write('<img class="modal-content" id="img01">');
+  			document.write('<div id="caption"></div>');
+			document.write('</div>');
+			
+			// $("input[type='image']").click(function() {
+			//     $("input[id='file-upload']").click();
+			// });
+			var modal = document.getElementById('myModal');
+
+			// Get the image and insert it inside the modal - use its "alt" text as a caption
+			var img = document.getElementById('newImage');
+			var modalImg = document.getElementById("img01");
+			var captionText = document.getElementById("caption");
+			img.onclick = function(){
+			    modal.style.display = "block";
+			    modalImg.src = this.src;
+			    captionText.innerHTML = this.alt;
+			};
+			// Get the <span> element that closes the modal
+			var span = document.getElementsByClassName("close")[0];
+
+			// When the user clicks on <span> (x), close the modal
+			span.onclick = function() {
+			    modal.style.display = "none";
+			}
 			buildMenu();
 			updateForm();
 		} else {
@@ -69,9 +101,17 @@
 		}
 	});
 
-
+var imageURL;
 
 ///////////////////////////////////////
+
+	function huh(){alert('you clicked me')};
+
+	function doImage(fileInput){ 
+        nutella.net.bin.uploadFile(fileInput.files[0], function(url) {
+			document.getElementById("newImage").src=url; imageURL=url;
+		});
+	}
 
 
 	function buildMenu () {
@@ -99,6 +139,7 @@
 			document.getElementById('reasoning').value = exp[index].reasoning;
 			document.getElementById('results').value = exp[index].results;
 			document.getElementById('conclusions').value = exp[index].conclusions;
+			document.getElementById('newImage').src = exp[index].figures[0];
 			} 
 	}
 
@@ -113,6 +154,7 @@
 			exp[index].reasoning = document.getElementById('reasoning').value;
 			exp[index].results = document.getElementById('results').value;
 			exp[index].conclusions = document.getElementById('conclusions').value;
+			exp[index].figures[0] = imageURL;
     		nutella.net.request('update_experiment',exp[index], function(){});
     		// nutella.net.publish('update_species_account',{species: XXX, experiment: exp[index]});
 		}

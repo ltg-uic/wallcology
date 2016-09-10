@@ -1,4 +1,5 @@
 // Modified from code by William Malone 2011 (www.williammalone.com), 
+// Joe Walnes 2010-2013 and Drew Noakes 2013-2014 (http://smoothiecharts.org/)
 //
 // Malone's code is licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,7 +12,9 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+//
+// Smoothie Charts is licensed under the MIT license
+// Modifications made by Michelle Lui 2016
 
 function BarGraph(ctx, ico) {
 

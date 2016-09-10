@@ -7,71 +7,7 @@
 	<!-- The description of this interfaces here -->
 	<meta name="description" content="">
 </head>
-<!-- 
-<style>
 
-html { width:100% ;
-    height:100% ;
-    overflow:hidden ;
-}
-
-iframe { width:100% ;
-        height:100% ;
-    border:none ;
-}
-
-
-body {font-family: "Lato", sans-serif; width:100% ;
-    height:100% ;
-    overflow:hidden ;}
-
-button {
-	color: #ca7;
-}
-
-ul.tab {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
-    border: 1px solid #ccc;
-    background-color: #f1f1f1;
-}
-
-/* Float the list items side by side */
-ul.tab li {float: left;}
-
-/* Style the links inside the list items */
-ul.tab li a {
-    display: inline;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    transition: 0.3s;
-    font-size: 17px;
-}
-
-/* Change background color of links on hover */
-ul.tab li a:hover {
-    background-color: #ddd;
-}
-
-/* Create an active/current tablink class */
-ul.tab li a:focus, .active {
-    background-color: #ccc;
-}
-
-/* Style the tab content */
-.tabcontent {
-    display: none;
-    padding: 6px 12px;
-    border: 1px solid #ccc;
-    border-top: none;
-}
-</style>
-
- -->
 <body>
 	<script src="nutella_lib.js" type="text/javascript"></script>
 	<!-- Your scripts here -->
@@ -208,7 +144,8 @@ ul.tab li a:focus, .active {
 			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + match[0].printName + '</a></li>');
 		}
 		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
-		document.write('<li>[' + query_parameters.run_id + ' ' + currentRoom + ' ' + currentActivity + ']</li>');
+		// document.write('<li>[' + query_parameters.run_id + ' ' + currentRoom + ' ' + currentActivity + ']</li>');
+		// document.write('<li> Team ' + (Number(query_parameters.INSTANCE)+1) + ' </li>');
 
 
 
@@ -239,76 +176,3 @@ ul.tab li a:focus, .active {
 </body>
 </html>
 
-
-
-
-
-
-
-
-
-
-<!-- 	// (Optional) Set the resourceId
-	// nutella.setResourceId('my_resource_id');
-	
-	
-	// Your code that uses the nutella instance here
-	
-	
-	// EXAMPLES
-	// You can do stuff like:
-	
-	// 1. Subscribing to a channel
-	nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
-		// Your code to handle messages received on this here
-	});
-	
-	// 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-	// in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
-		// Your code to handle messages received by this channel here
-	});
-	
-	// 3. Publish a message to a channel
-	nutella.net.publish('demo_channel', 'demo_message');
-	
-	// 3a The cool thing is that the message can be any Javascript variable or object
-	nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-	
-	// 4. Make requests on a certain channel...
-	nutella.net.request('demo_channel', 'my_request', function(response) {
-		// Your code to handle the response here
-	});
-	
-	// 4a ... and, guess what, we can send anything in a request, like in publish!
-	// Requests can even be empty, kind of like a GET
-	nutella.net.request('demo_channel', function(response) {
-		// Your code to handle the response here
-	});
-	
-	// 5. Handle requests from other components
-	nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
-		/// Your code to handle each request here
-		// Anything this function returns (string, integer, object,...) is going to be sent as the response
-		var response = 'this is my response';
-		// Or...
-		// var response = {};
-		// var response = 12345;
-		// var response = {a: 'proper', key: 'value'};
-		return response;
-	});
-	
-	// 6. Access the variables that uniquely identify this instance of this component
-	nutella.runId;
-	nutella.componentId;
-	nutella.resourceId;
-	
-	// 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-	// var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-	
-	// HAVE FUN WITH nutella!
-	
-	</script>
-				
-</body>
-</html> -->

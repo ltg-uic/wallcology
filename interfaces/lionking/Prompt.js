@@ -5,8 +5,8 @@ function Prompt(context,x,y,l){
 
 	var promptsList = [
 	   	{level:1,
-		instruction:"Drag the circles into the work area to get started.",
-		connection:"See what happens when the population of one circle increase or decrease. Click on the 'arrow up' or 'arrow down' buttons to find out."
+		instruction:"Drag the species into the work area to get started.",
+		connection:"You've created a food chain. Lions eat zebras. When this happens, the zebra gives energy to the lion. When the population of one species increases, what happens to the other? Click on the 'arrow up' buttons to find out."
 		},
 		{level:2,
 		instruction:"In level 1, you created a food chain. Here you'll be creating an 'Interaction Web'. Drag the species into the work area.",
@@ -127,7 +127,7 @@ function Prompt(context,x,y,l){
 		this.ctx.shadowBlur=0;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0
-		this.ctx.font = "16pt Helvetica";
+		this.ctx.font = "16pt 'Droid Sans'";
 		this.ctx.textAlign = "left";
 		this.ctx.textBaseline = "top";
 		this.ctx.fillStyle = "#263238"; //"#FFFFFF";
