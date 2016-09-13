@@ -21,7 +21,7 @@ iframe { width:100% ;
 
  }
 
-td { font-size: 140%; color: white; }
+td { font-size: 60%; color: white; }
 
 
 select {
@@ -45,8 +45,10 @@ table.center {
 body {font-family: "Lato", sans-serif; width:100% ;
 /*    background-image: url("bg.jpg"); */
     color: white;
-    font-size: 100%;
+    font-size: 250%;
     height:100% ;
+    text-align:center;
+
     overflow:hidden ;
 }
 
@@ -54,10 +56,9 @@ body {font-family: "Lato", sans-serif; width:100% ;
 
 button {
 	color: black; /* button font color */
-    font-size:100%;
         background-color: lightgray;
         border-radius: 10px;
-        font-size: 80%;
+        font-size: 200%;
 }
 
 button:disabled {
