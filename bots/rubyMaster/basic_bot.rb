@@ -24,17 +24,17 @@ nutella.app.net.handle_requests_on_run('default','get_current_run', lambda do |r
                                                 reply
                                                end)
 
-nutella.app.net.handle_requests_on_run('MT','get_current_run', lambda do |request, from|
+nutella.app.net.handle_requests_on_run('6MT','get_current_run', lambda do |request, from|
                                                 reply = currentRun ['class']
                                                 reply
                                                end)
 
-nutella.app.net.handle_requests_on_run('ADF','get_current_run', lambda do |request, from|
+nutella.app.net.handle_requests_on_run('6ADF','get_current_run', lambda do |request, from|
                                                 reply = currentRun ['class']
                                                 reply
                                                end)
 
-nutella.app.net.handle_requests_on_run('BM','get_current_run', lambda do |request, from|
+nutella.app.net.handle_requests_on_run('6BM','get_current_run', lambda do |request, from|
                                                 reply = currentRun ['class']
                                                 reply
                                                end)
@@ -49,15 +49,15 @@ nutella.app.net.subscribe_to_run('default','set_current_run', lambda do |request
                                                 currentRun ['class'] = request
                                                end)
 
-nutella.app.net.subscribe_to_run('MT','set_current_run', lambda do |request, from|
+nutella.app.net.subscribe_to_run('6MT','set_current_run', lambda do |request, from|
                                                 currentRun ['class'] = request
                                                end)
 
-nutella.app.net.subscribe_to_run('ADF','set_current_run', lambda do |request, from|
+nutella.app.net.subscribe_to_run('6ADF','set_current_run', lambda do |request, from|
                                                 currentRun ['class'] = request
                                                end)
 
-nutella.app.net.subscribe_to_run('BM','set_current_run', lambda do |request, from|
+nutella.app.net.subscribe_to_run('6BM','set_current_run', lambda do |request, from|
                                                 currentRun ['class'] = request
                                                end)
 
