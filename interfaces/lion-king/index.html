@@ -26,8 +26,6 @@
 	
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
-	nutella.net.publish ('add_to_lionking_log',['Group 1: log entry 1']);
-	nutella.net.publish ('add_to_lionking_log',['Group 2: log entry 2','Group 4: log entry 3']);
 	nutella.net.request('retrieve_lionking_log',{},function(message,from){ 
 		document.getElementById('log').value = '';
 		for(var i=0; i<message.length; i++) {
