@@ -43,7 +43,7 @@
 // <!-- 	<H2>Enactment control</H2>
 // 	Activity 
 	var currentRun;
-	nutella.net.request('get_current_run',{},function(message,from){ alert(message);
+	nutella.net.request('get_current_run',{},function(message,from){ 
 		currentRun = message; 
 		if (currentRun == 'default') document.getElementById('class').selectedIndex = 0;
 		if (currentRun == 'guest') document.getElementById('class').selectedIndex = 1;
