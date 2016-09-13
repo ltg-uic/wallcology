@@ -1,53 +1,90 @@
-function Level(n,c){
-	var radius = 40;
-	var centerX = 75;
-	var centerY = 75;
-	var colours = ["#FF5722", "#29ABE2", "#FF9800", "#00BCD4"]; // //22B573 - green
-
+function Level(n,c,cH){
+	var canvasHeight = cH;
+	var xOffset = 22;
+	var padding = 10;
+	var backBtnH = 48;
+	var backBtnW = 48;
+	var backBtnX = xOffset;
+	var backBtnY = canvasHeight-backBtnH-padding;
+	var nextBtnH = 48;
+	var nextBtnW = 48;
+	var nextBtnX = xOffset + padding + backBtnW;
+	var nextBtnY = canvasHeight-nextBtnH-padding;
+	var btnColour = "#2B323F";
+	
 	this.colour;
 	this.num = n;
 	this.ctx = c;
-	this.x = centerX - radius;
-	this.y = centerY - radius;
-	this.width = radius * 2;
-	this.height = radius * 2;
+	this.x = xOffset; //centerX - radius;
+	this.y = nextBtnY; //centerY - radius;
+	this.width = nextBtnW + backBtnW + padding;
+	this.height = nextBtnH;
 	this.EVENT_CLICKED = "clicked";
+	this.STATE = "A";
 
-	this.getColour = function(){
-		var colour = colours[ this.num-1 ];
-		return colour;
+	this.nextBtn = new ImageButton("next", nextBtnX, nextBtnY, nextBtnH, nextBtnW, c, btnColour);
+	this.backBtn = new ImageButton("back", backBtnX, backBtnY, backBtnH, backBtnW, c, btnColour);
+	this.backBtn.active = false;
+
+	function hitTest(mouseX, mouseY, to){
+		if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
+		            && (mouseX >= to.x) && (mouseX <=
+		         to.x+to.width) ) {
+		         return true;
+		} else {
+		    	return false;
+		}
 	}
 	this.onMouseUp = function (mouseX,mouseY) {
-	   	this.dispatch(this.EVENT_CLICKED);
+		/*
+		if ( hitTest(mouseX, mouseY, this.nextBtn) ){
+			console.log("nextBtn");
+			this.dispatch(this.EVENT_CLICKED);	
+		} else if ( hitTest(mouseX, mouseY, this.backBtn) ){
+			console.log("backBtn");
+		}
+	   	//this.dispatch(this.EVENT_CLICKED);
+	   	*/
 	}
-	this.changeLevel = function(){
-		this.dispatch(this.EVENT_CLICKED);	
+	this.updateCanvasHeight = function(cH){
+
+		canvasHeight = cH;
+		backBtnY = canvasHeight-backBtnH-padding;
+		nextBtnY = canvasHeight-nextBtnH-padding;
+		
+		this.x = xOffset;
+		this.y = nextBtnY;
+		this.width = nextBtnW + backBtnW + padding;
+		this.height = nextBtnH;
+
+		this.nextBtn.updateXY( nextBtnX, nextBtnY );
+		this.backBtn.updateXY( backBtnX, backBtnY ); 
+		
+		//console.log("canvasHeight: "+canvasHeight+", this.x: "+this.x+", this.y: "+this.y+"this.width: "+this.width+", this.height: "+this.height);
+	}
+	this.changeLevel = function(mouseX,mouseY,direction){
+		//console.log(direction+": "+this.num);
+		if( this.num <= 1 ){
+			this.backBtn.active = false;
+			this.nextBtn.active = true;
+		} else if( this.num > 1 && this.num < 4 ){
+			this.backBtn.active = true;
+			this.nextBtn.active = true;
+		} else if ( this.num >= 4){
+			this.backBtn.active = true;
+			this.nextBtn.active = false;
+		}
+		//this.dispatch(this.EVENT_CLICKED);	
+	}
+	this.drawButtons = function(){
+		this.ctx.save();
+		this.nextBtn.draw();
+		this.backBtn.draw();
+		this.ctx.restore();
 	}
 	this.draw = function(){
-		//this.colour = colour;
-		this.ctx.beginPath();
-		this.ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-		this.ctx.shadowBlur=4;
-		this.ctx.shadowColor="#BFBFBF";
-		this.ctx.shadowOffsetX = 0;
-		this.ctx.shadowOffsetY = 4;
-		this.ctx.globalAlpha = 1;
-		this.ctx.fillStyle = this.getColour();
-		this.ctx.fill();
-
-		this.ctx.font = "bold 36px Helvetica"
-		this.ctx.textAlign = "center";
-        this.ctx.textBaseline = "middle";
-		this.ctx.shadowBlur=0;
-		this.ctx.shadowOffsetX = 0;
-		this.ctx.shadowOffsetY = 0;
-		this.ctx.globalAlpha = 1;
-		this.ctx.fillStyle = "#FFFFFF";//"#009245";
-		this.ctx.shadowBlur=0;
-		this.ctx.shadowColor="#BFBFBF";
-		this.ctx.shadowOffsetX = 0;
-		this.ctx.shadowOffsetY = 0;
-		this.ctx.fillText (this.num, centerX, centerY);
+		this.nextBtn.draw();
+		this.backBtn.draw();
 	}
 }
 Level.prototype = new EventDispatcher();

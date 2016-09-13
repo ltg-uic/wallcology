@@ -23,10 +23,10 @@
 
 
 	Wall Controls: <br><br>
-	<button type="button" onclick="wall('left','in');" id="leftin">Left wall in</button><button type="button"onclick="wall('left','out');" id="leftout">Left wall out</button><br>
-	<button type="button" onclick="wall('top','in');" id="topin">Top wall in</button><button type="button"onclick="wall('top','out');" id="topout">Top wall out</button><br>
-	<button type="button" onclick="wall('right','in');" id="rightin">Right wall in</button><button type="button"onclick="wall('right','out');" id="rightout">Right wall out</button><br>
-	<button type="button" onclick="wall('bottom','in')" id="bottomin">Bottom wall in</button><button type="button"onclick="wall('bottom','out');" id="bottomout">Bottom wall out</button><br>
+	<button type="button" onclick="wall('left','in');" id="leftin">Left wall in</button><button type="button" onclick="wall('left','out');" id="leftout">Left wall out</button><br>
+	<button type="button" onclick="wall('top','in');" id="topin">Top wall in</button><button type="button" onclick="wall('top','out');" id="topout">Top wall out</button><br>
+	<button type="button" onclick="wall('right','in');" id="rightin">Right wall in</button><button type="button" onclick="wall('right','out');" id="rightout">Right wall out</button><br>
+	<button type="button" onclick="wall('bottom','in')" id="bottomin">Bottom wall in</button><button type="button" onclick="wall('bottom','out');" id="bottomout">Bottom wall out</button><br>
 	<br>
 	Temperature &nbsp<input type=text id="temperature" size=3 READONLY>ºC<br>
 	Thermostat &nbsp&nbsp <input type=text id="thermostat" size=3>ºC <button type="button" onclick="thermostat(document.getElementById('thermostat').value);">Set</button><br><br>
@@ -45,7 +45,7 @@
 	if (ecosystem === undefined) ecosystem = 0;
 	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 
-
+	var abiotic = [];
 
 	// Get an instance of nutella. 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
@@ -53,27 +53,43 @@
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
 
-	nutella.net.request('last_state',{},function(state,from){			
-		populateForm(state);
+	nutella.net.request('last_state',{},function(state,from){ 	abiotic = state.abiotic;		
+		populateForm();
 	});
 
-	nutella.net.subscribe('state_update', function(state, from) {
-		populateForm(state);
+	nutella.net.subscribe('state_update', function(state, from) {  abiotic = state.abiotic;
+		populateForm();
 	});
 
-	function populateForm(state){ 
-		if (state.abiotic[ecosystem].left == 'in') document.getElementById('leftin').disabled=true;
-		if (state.abiotic[ecosystem].left == 'out') document.getElementById('leftout').disabled=true;
-		if (state.abiotic[ecosystem].top == 'in') document.getElementById('topin').disabled=true;
-		if (state.abiotic[ecosystem].top == 'out') document.getElementById('topout').disabled=true;
-		if (state.abiotic[ecosystem].right == 'in') document.getElementById('rightin').disabled=true;
-		if (state.abiotic[ecosystem].right == 'out') document.getElementById('rightout').disabled=true;
-		if (state.abiotic[ecosystem].bottom == 'in') document.getElementById('bottomin').disabled=true;
-		if (state.abiotic[ecosystem].bottom == 'out') document.getElementById('bottomout').disabled=true;
+	function populateForm(){ 
+		if (abiotic[ecosystem].left == 'in') {
+			document.getElementById('leftin').disabled=true;
+			document.getElementById('topin').disabled=true;
+			document.getElementById('bottomin').disabled=true;
+		}
+		if (abiotic[ecosystem].left == 'out') document.getElementById('leftout').disabled=true;
+		if (abiotic[ecosystem].top == 'in') {
+			document.getElementById('topin').disabled=true;
+			document.getElementById('leftin').disabled=true;
+			document.getElementById('rightin').disabled=true;
+		}
+		if (abiotic[ecosystem].top == 'out') document.getElementById('topout').disabled=true;
+		if (abiotic[ecosystem].right == 'in') {
+			document.getElementById('rightin').disabled=true;
+			document.getElementById('topin').disabled=true;
+			document.getElementById('bottomin').disabled=true;
+		}
+		if (abiotic[ecosystem].right == 'out') document.getElementById('rightout').disabled=true;
+		if (abiotic[ecosystem].bottom == 'in') {
+			document.getElementById('bottomin').disabled=true;
+			document.getElementById('leftin').disabled=true;
+			document.getElementById('rightin').disabled=true;
+		}
+		if (abiotic[ecosystem].bottom == 'out') document.getElementById('bottomout').disabled=true;
 
 
-		document.getElementById('temperature').value = Math.round(state.abiotic[ecosystem]['temperature']);
-		document.getElementById('thermostat').value = state.abiotic[ecosystem].thermostat;
+		document.getElementById('temperature').value = Math.round(abiotic[ecosystem]['temperature']);
+		document.getElementById('thermostat').value = abiotic[ecosystem].thermostat;
 		// document.getElementById('humidity').value = Math.round(state.abiotic[ecosystem].humidity);
 		// document.getElementById('humidistat').value = state.abiotic[ecosystem].humidistat;
 		document.getElementById('ecosystem').value = Number(ecosystem) + 1;
@@ -81,13 +97,10 @@
 	}
 
 
-	function wall (side,direction) {
+	function wall (side,direction) { 
 		nutella.net.publish('wall',{ecosystem:ecosystem, side:side, direction:direction});
-		document.getElementById(side + direction).disabled=true;
-		if (direction == 'in') document.getElementById(side + 'out').disabled=false;
-		if (direction == 'out') document.getElementById(side + 'in').disabled=false;
-
-
+		abiotic[ecosystem][side] = direction;
+		populateForm();
 	}
 
 	function thermostat (value) {

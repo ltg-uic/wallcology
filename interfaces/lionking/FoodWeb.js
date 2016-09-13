@@ -3,11 +3,10 @@ function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
     var app = "lion king";
-    this.versionID = "20160808-2000"
+    this.versionID = "20160912-2348"
     
     var query_parameters;
     var nutella
-
     if ( mode == "deploy"){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
@@ -18,42 +17,23 @@ function FoodWeb(){
         google: {
           families: ['Droid Sans', 'Roboto']
         }
-      });    
-    //Canvas for graphs
-    var gcanvas = document.getElementById("canvas2");
-    var gctx = gcanvas.getContext("2d");
-    //Canvas for drag and drop
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
+      });
 
-    //Scaling a canvas with a backing store multipler
-    var scaleFactor = backingScale(ctx);  
-    var oldWidth = canvas.width;
-    var oldHeight = canvas.height;
-    var oldWidth2 = gcanvas.width;
-    var oldHeight2 = gcanvas.height;
+    var cW;
+    var cH;
+    var gcanvas;
+    var gctx;
+    var canvas;
+    var ctx;
+    var scaleFactor;
+    var oldWidth;   //canvas width before retina screen resize
+    var oldHeight;
+    var oldWidth2;
+    var oldHeight2;
 
-    if (scaleFactor > 1) {
-        canvas.width = canvas.width * scaleFactor;
-        canvas.height = canvas.height * scaleFactor;
-        canvas.style.width = oldWidth + "px";
-        canvas.style.height = oldHeight + "px";
-        // update the context for the new canvas scale
-        var ctx = canvas.getContext("2d");
-        ctx.scale( scaleFactor, scaleFactor );
-
-        gcanvas.width = gcanvas.width * scaleFactor;
-        gcanvas.height = gcanvas.height * scaleFactor;
-        gcanvas.style.width = oldWidth2 + "px";
-        gcanvas.style.height = oldHeight2 + "px";
-        // update the context for the new canvas scale
-        var gctx = gcanvas.getContext("2d");
-        gctx.scale( scaleFactor, scaleFactor );
-    }
-    
-    var cW = window.innerWidth;
-    var cH = window.innerHeight;
-    
+    onResizeWindow("init");
+    //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+    //console.log("canvas.height: "+canvas.height+", canvas.width: "+canvas.width);    
     //console.log("cW: "+cW +", cH: "+cH);
 	//Drag related variables
 	var dragok = false;    //for mouse events
@@ -70,7 +50,8 @@ function FoodWeb(){
     var prompt;
 
     //setup palette and work areas
-    var paletteColour = "#DBDADA";//"#2B323F";
+    var paletteColour = "#2B323F";//"#DBDADA";//"#2B323F";
+    var buttonColour = "#FF5722";
     var pbpadding = 0;
     var pbwidth = 150;
     var pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
@@ -86,13 +67,13 @@ function FoodWeb(){
     var speciesSize = 100;
     var speciesMargin = 25;
     var speciesSpacing = 50;
-
     var levels = [
-        ["lion", "zebra"], 
-        ["lion", "zebra"],
-        ["lion", "zebra", "leopard"],
-        ["lion", "zebra", "grass", "tree"]];
-    var level = new Level(1, ctx);
+        [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}], 
+        [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}],
+        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"leopard", height:100, width:100, up: true, down: true}],
+        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"grass", height:100, width:100, up: true, down: true},{name:"tree", height:100, width:125, up: true, down: true}]];
+
+    var level = new Level(1, ctx, oldHeight);
     var obj = [];
     var connections = [];
     var graphs = [];
@@ -103,8 +84,7 @@ function FoodWeb(){
 
     initDataCollection();
     setupSpecies();
-    setupLevel(1, false, levels[0]);
-    setTimeout(draw, 1000);
+    setupLevel(1, false, levels[0], oldWidth, oldHeight);
 
     // Add eventlistener to canvas
     canvas.addEventListener("mousemove", onMouseMove, false); 
@@ -114,25 +94,19 @@ function FoodWeb(){
     canvas.addEventListener("touchmove", onTouchMove, true);
     canvas.addEventListener("touchend", onTouchUp, false);
 
-    level.addEventListener(level.EVENT_CLICKED, onLevelClick);
+    //level.addEventListener(level.EVENT_CLICKED, onLevelClick);
     
     document.body.addEventListener("mouseup", onMouseUp, false);
     document.body.addEventListener("touchcancel", onTouchUp, false);
 
+    window.addEventListener("orientationchange", onResizeWindow);
+
     //SETUP
     function initDataCollection(){
-        data.save("INIT",this.versionID);
-        //group: query_parameters.INSTANCE
-        /*
-        var t = Timestamp(); 
-        if ( mode == "deploy"){
-            nutella.net.publish('add_to_lionking_log',['Group '+query_parameters.INSTANCE+' ;Start time ;'+t]);
-        } else {            
-            console.log("start_time: "+t);
-        }
-        */
+        data.save("INIT",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
     }
-    function setupLevel( num, minus, species ){
+    function setupLevel( num, minus, species, cw, ch ){
+        level.STATE = "A";
         clearListeners();
         removeGraphs();
         speciesNames = species;
@@ -147,18 +121,47 @@ function FoodWeb(){
         if( minus ){
             minusButtons = setupButtons("minus");
         }
-        prompt = new Prompt(ctx, pbwidth+20, 20, num);
-        //prompt = new Prompt(ctx, 0, 400, num);
-        prompt.addEventListener(prompt.EVENT_CLICKED, onPromptClicked);
+        prompt = new Prompt(ctx, pbwidth+20, 20, cw, ch, num);
         displayList.addChild(prompt);
+        setTimeout(draw, 500);
+    }
+    function setupBstate(){
+        displayList.removeChild( plusButtons[0] );
+        var tempBtn = new ActionButton(ctx, obj[1].name, "plus", buttonColour, obj[1].width, obj[1].height );
+        tempBtn.index = 1;
+        tempBtn.updateXY( obj[1].x, obj[1].y );
+        displayList.addChild(tempBtn);
+        plusButtons.push( tempBtn );
+        endMove( obj[1].x, obj[1].y, false);
+        //console.log("connections: "+connections.length);
+    }
+    function setupCstate(){
+        displayList.removeChild( plusButtons[1] );
+        var tempBtn = new ActionButton(ctx, obj[0].name, "minus", buttonColour, obj[0].width, obj[0].height );
+        tempBtn.index = 0;
+        tempBtn.updateXY( obj[0].x, obj[0].y );
+        displayList.addChild(tempBtn);
+        minusButtons.push( tempBtn );
+        endMove( obj[0].x, obj[0].y, false);
+    }
+    function setupDstate(){
+        displayList.removeChild( minusButtons[0] );
+        var tempBtn = new ActionButton(ctx, obj[1].name, "minus", buttonColour, obj[1].width, obj[1].height );
+        tempBtn.index = 1;
+        tempBtn.updateXY( obj[1].x, obj[1].y );
+        displayList.addChild(tempBtn);
+        minusButtons.push( tempBtn );
+        endMove( obj[1].x, obj[1].y, false);
     }
     function setupSpecies(){
         for(var i=0; i<speciesNames.length; i++){
-            var name = speciesNames[i];
-            var tempObj = new Species( name, 
-                speciesMargin, speciesMargin+((speciesSize+speciesMargin)*i), 
-                speciesSize, speciesSize, ctx );
-            tempObj.addEventListener(tempObj.EVENT_CLICKED, onSpeciesClicked );
+            var sp = speciesNames[i];
+            var tempObj = new Species( 
+                sp.name, 
+                pbwidth/2-sp.width/2, 
+                speciesMargin+((speciesSize+speciesMargin)*i), 
+                sp.height, 
+                sp.width, ctx, sp.up, sp.down );
             obj.push(tempObj);
             displayList.addChild(tempObj);
         }
@@ -169,46 +172,32 @@ function FoodWeb(){
         var tempArr = [];
         var t = type;
         for (var i = 0; i < obj.length; i++) {
-            var tempBtn = new ActionButton(ctx, t, level.getColour() );
+            var o = obj[i];
             if( type == "plus"){
-                tempBtn.addEventListener(tempBtn.EVENT_CLICKED, onActionButtonClicked);
+                if( o.up ){
+                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, obj[i].width, obj[i].height );    
+                    tempBtn.index = i;
+                    tempArr.push( tempBtn );
+                    displayList.addChild(tempBtn);
+                }
             } else if (type == "minus"){
-                tempBtn.addEventListener(tempBtn.EVENT_CLICKED, onMinusButtonClicked);
+                if( o.down ){
+                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, obj[i].width, obj[i].height );    
+                    tempBtn.index = i;
+                    tempArr.push( tempBtn );
+                    displayList.addChild(tempBtn);
+                }
             }
-            tempBtn.index = i;
-            tempArr.push( tempBtn );
-            displayList.addChild(tempBtn);
         }
         return tempArr;
     }
     //clear all the event listeners before removing object
     function clearListeners(){
-        for (var i = 0; i < obj.length; i++) {
-            var o = obj[i];
-            o.removeEventListener(o.EVENT_CLICKED, onSpeciesClicked);
-        }
-        for (var j = 0; j<plusButtons; j++){
-            var pb = plusButtons[j];
-            pb.removeEventListener(pb.EVENT_CLICKED, onActionButtonClicked);
-        }
-        for (var k = 0; k<minusButtons; k++){
-            var mb = minusButtons[k];
-            mb.removeEventListener(mb.EVENT_CLICKED, onMinusButtonClicked);
-        }
-        
         for (var l=0; l<multipleChoice.length; l++){
             var mc = multipleChoice[l];
             mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
-        }
-        /*
-        if ( mc.name ){
-            mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
-            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);    
-        }
-        */
-       if( prompt ){
-            prompt.removeEventListener(prompt.EVENT_CLICKED, onPromptClicked);
+            mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
         }
     }
     //remove all graphs
@@ -219,69 +208,169 @@ function FoodWeb(){
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
     }
     //EVENTLISTENERS
-    function onLevelClick(e){
-        //console.log("e target: " + e.target );
-        //console.log("e type: " + e.type );
-        //cycle through levels
-        var oldlevel = level.num;
-        var newlevel = oldlevel+1;
-        if( newlevel > levels.length ){
-            //reset
-            newlevel = 1;
+    function onResizeWindow( i ){
+        cW = window.innerWidth;
+        cH = window.innerHeight;
+        //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+        //Canvas for graphs
+        gcanvas = document.getElementById("graphs-layer");
+        gctx = gcanvas.getContext("2d");
+        //Canvas for drag and drop
+        canvas = document.getElementById("ui-layer");
+        ctx = canvas.getContext("2d");
+
+        canvas.width = cW;
+        canvas.height = cH
+        gcanvas.width = cW;
+        gcanvas.height = cH
+
+        //Scaling a canvas with a backing store multipler
+        scaleFactor = backingScale(ctx);  
+        oldWidth = canvas.width;
+        oldHeight = canvas.height;
+        oldWidth2 = gcanvas.width;
+        oldHeight2 = gcanvas.height;
+
+        if (scaleFactor > 1) {
+            canvas.width = canvas.width * scaleFactor;
+            canvas.height = canvas.height * scaleFactor;
+            canvas.style.width = oldWidth + "px";
+            canvas.style.height = oldHeight + "px";
+            // update the context for the new canvas scale
+            //var ctx = canvas.getContext("2d");
+            ctx.scale( scaleFactor, scaleFactor );
+
+            gcanvas.width = gcanvas.width * scaleFactor;
+            gcanvas.height = gcanvas.height * scaleFactor;
+            gcanvas.style.width = oldWidth2 + "px";
+            gcanvas.style.height = oldHeight2 + "px";
+            // update the context for the new canvas scale
+            //var gctx = gcanvas.getContext("2d");
+            gctx.scale( scaleFactor, scaleFactor );
         }
-        var mb = true;
+        if ( i != "init" ){
+            for( var j=0; j<graphs.length; j++ ){
+                var g = graphs[j];
+                g.x = oldWidth2 - g.width;
+                g.drawBarGraph(j);
+            }
+            if ( prompt ){
+                prompt.setMaxWidth( oldWidth );
+            }
+            for (var k=0; k<multipleChoice.length; k++){
+                var mc = multipleChoice[k];
+                mc.setCanvasWidthHeight( oldWidth, oldHeight );
+            }
+            level.updateCanvasHeight( oldHeight );
+            setTimeout(draw, 500);
+            data.save("ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+        } else {
+            return;
+        }
+    }
+    function onLevelClick(direction){
+        var oldlevel = level.num;
+        var newlevel;
+        if (direction == "next"){
+            newlevel = oldlevel+1;
+        } else if (direction == "back"){
+            newlevel = oldlevel-1;
+        }
+        //cycle through levels
+        if( newlevel > levels.length || newlevel < 1){
+            return;
+            //reset
+            //newlevel = 1;
+        }
+        var mb = true;  //minus buttons
         if( newlevel == 1 ){
             mb = false;
         }
         level.num = newlevel;
-        setupLevel(newlevel, mb, levels[newlevel-1]);
+        setupLevel(newlevel, mb, levels[newlevel-1], oldWidth, oldHeight);
         //console.log("newlevel: "+newlevel);
     }
+    function onMCcontinueClick(e){
+        //console.log("onMCcontinueClick");
+        for(var i=0; i<multipleChoice.length; i++){
+            var mc = multipleChoice[i];
+            displayList.removeChild( mc );
+            mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
+            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+            mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
+            mc = {};
+            multipleChoice.splice(i, 1);
+        }
+        //console.log("level.STATE: "+level.STATE);
+        if( level.num == 1 || level.num == 2 ){
+            var newState;
+            if (level.STATE == "A"){
+                newState = "B";
+                setupBstate();
+                prompt.setContinuePrompt(1);
+            } else if ( level.STATE == "B" ){
+                newState = "C";
+                setupCstate();
+                prompt.setContinuePrompt(2);
+            } else if ( level.STATE == "C" ){
+                newState = "D";
+                setupDstate();
+                prompt.setContinuePrompt(3);
+            } else if ( level.STATE == "D" ){
+                newState = "A";
+                //setupLevel1C();
+                //activate next button
+                prompt.setContinuePrompt(4);
+            }
+            level.STATE = newState;
+        } else if( level.num == 3 ){
+            var newState;
+            if (level.STATE == "A"){
+                newState = "B";
+                prompt.setContinuePrompt(1);
+                
+            } /*else if ( level.STATE == "B" ){
+                newState = "A";
+                prompt.setContinuePrompt(2);
+                ////activate next button
+
+            }
+        } else if( level.num == 4 ){
+            var newState;
+            if (level.STATE == "A"){
+                newState = "A";
+                prompt.setContinuePrompt(1);
+                //activate next button  
+            }*/
+        }
+        //prompt.setText("When you are ready, click \u2192 to continue.");
+        draw();
+    }
     function onMultipleChoiceClick(e){
-        //console.log("onMultipleChoiceClick: "+e);
+        //console.log("onMultipleChoiceClick");   
         var sp;
         var num;
         var type;
+        prompt.setText(" ");
         for(var i=0; i<multipleChoice.length; i++){
             var mc = multipleChoice[i];
+            //console.log("mc.STATE: "+mc.STATE);
             var arr = mc.getSelectionArray();
             for(var j=0; j<arr.length; j++){
                 var item = arr[j];
-                console.log("name: "+item.name+", selection: "+item.selection);
+                data.save("MC_RUN","object ;"+item.species.name+" ;direction ;"+item.type+" ;graph ;"+item.name+" ;select ;"+item.selection);
+                //console.log("name: "+item.name+", selection: "+item.selection); 
                 sp = item.species;
                 num = item.num;
                 type = item.type;
             }
-            displayList.removeChild( mc );
-            mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
-            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
-            mc = {};
-            multipleChoice.splice(i, 1);
+            handlePopulationChange( sp, num, type );
         }
-        handlePopulationChange( sp, num, type );
         draw();
     }
-    /*
-    function handleSelectionIncomplete(e){
-        //update prompt
-        prompt.setText("Finish your selection, then click Run.");
-    }
-    */
     function handleRedraw(e){
-        draw();   
-    }
-    function onPromptClicked(e){
-        //console.log("onPromptClicked: "+e);
-    }
-    function onSpeciesClicked(e){
-        //console.log("onSpeciesClicked: "+e);
-    }
-    function onActionButtonClicked(e){
-        //console.log("onActionButtonClicked: "+e);
-        //prompt.advancePrompt();
-    }
-    function onMinusButtonClicked(e){
-        //console.log("onMinusButtonClicked: "+e);
+        //setTimeout(draw, 500);
+        draw();
     }
     function onTouchUp(e){
         endMove(e.changedTouches[0].pageX, e.changedTouches[0].pageY,true);
@@ -400,66 +489,69 @@ function FoodWeb(){
         dragok = false;
         for (var i = 0; i < obj.length; i++) {
             var o = obj[i];
+            var to;
+            var from;
             if( obj[i].isDragging ){
                 if( detectHit(mx,my,activeHit)){
                     if ( o.active ){
                         //then just moving around
-                        var to = "active";
-                        var from = "active";
+                        to = "active";
+                        from = "active";
                     } else {
                         //then moving from palette to active
-                        var to = "active";
-                        var from = "palette";
+                        to = "active";
+                        from = "palette";
                     }
                 } else if( detectHit(mx,my,pickerHit)){
                     if ( o.active ){
                         //move from active to palette
-                        var to = "palette";
-                        var from = "active";
+                        to = "palette";
+                        from = "active";
                     } else {
                         //then moving from palette to palette
-                        var to = "palette";
-                        var from = "palette";   
+                        to = "palette";
+                        from = "palette";   
                     }
                 }
-                data.save("MOVE","level ;"+level.num+" ;object ;"+o.name+" ;x: "+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+                data.save("MOVE","level ;"+level.num+" ;object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             obj[i].isDragging = false;
         }
         
         if(detectHit(mx,my,activeHit)){
             //console.log("active");
-            setActiveProperty(activeHit, true);
-            for (var j = 0; j < plusButtons.length; j++) {
-                //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
-                if( detectHit(mx,my,plusButtons[j])){
-                    //console.log(obj[j].name + " button");
-                    setupPopulationChange(obj[j], j, "plus");
-                    //handlePopulationChange(obj[j], j, "plus");
+            //deactivate up and down buttons when mc on screen
+            if( multipleChoice.length == 0 ){
+                setActiveProperty(activeHit, true);
+                for (var j = 0; j < plusButtons.length; j++) {
+                    //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
+                    if( detectHit(mx,my,plusButtons[j])){
+                        //console.log(obj[j].name + " button");
+                        setupPopulationChange(obj[j], j, "plus");
+                        //handlePopulationChange(obj[j], j, "plus");
+                    }
+                }
+                for (var k = 0; k < minusButtons.length; k++) {
+                    //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
+                    if( detectHit(mx,my,minusButtons[k])){
+                        //console.log(obj[j].name + " button");
+                        setupPopulationChange(obj[k], k, "minus");
+                        //handlePopulationChange(obj[k], k, "minus");
+                    }
                 }
             }
-            for (var k = 0; k < minusButtons.length; k++) {
-                //console.log("mx: "+mx + ", my: " + my + ", button.x: "+plusButtons[j].x + ", button.y: " + plusButtons[j].y + ", button.width: "+plusButtons[j].width + ", button.height: "+plusButtons[j].height);
-                if( detectHit(mx,my,minusButtons[k])){
-                    //console.log(obj[j].name + " button");
-                    setupPopulationChange(obj[k], k, "minus");
-                    //handlePopulationChange(obj[k], k, "minus");
-                }
-            }
-            /*
-            for (var l=0; l < multipleChoice.length; l++){
-                if( detectHit(mx,my,multipleChoice[l])){
-                    handleMultipleChoice(mx,my);
-                    //console.log("multipleChoice["+l+"]:"+multipleChoice[l].name);
-                }
-            }
-            */
         }else if (detectHit(mx,my,pickerHit)){
             //console.log("picker");
             setActiveProperty(pickerHit, false);
             
              if(detectHit(mx,my,level)){
-             	level.changeLevel();
+                if( detectHit(mx,my,level.nextBtn) ){
+                    onLevelClick(level.nextBtn.name);
+                    level.changeLevel(mx,my,level.nextBtn.name);
+                } else if ( detectHit(mx,my,level.backBtn) ){
+                    onLevelClick(level.backBtn.name);
+                    level.changeLevel(mx,my,level.backBtn.name);
+                }
              }
         } else {
             //console.log("nothing");
@@ -503,7 +595,9 @@ function FoodWeb(){
                 //species active
                 //console.log(s.name + ".active: " + b);
                 s.active = b;
-                pb.active = b;
+                if( pb ){
+                    pb.active = b;    
+                }
                 if( mb ){
                     mb.active = b;
                 }
@@ -512,18 +606,10 @@ function FoodWeb(){
     }
     //evaluate which species are active and draws line between active ones
     function evalActiveObjs(){
-        //create array of false flag items for each species in the level
-        /*
-        var speciesActiveFlag = [];
-        for (var i=0;i<speciesNames.length;i++){
-            var tempFlag = false;
-            speciesActiveFlag.push(tempFlag);
-        }
-        */
         var r = new Relationship();
         var connectionsList = r.arrows;
         var activeSpeciesList = [];
-
+        //there is a function for below already - for later refactoring
         //run through object array and find active species, if active then see if any of the other active objects have direct relationship
         for (var i=0; i<obj.length; i++){
             var s = obj[i];
@@ -556,7 +642,7 @@ function FoodWeb(){
                         }
                         if (!connectionCreated){
                             //create connection if flag is still false
-                            data.save("CONNECTION","level ;"+level.num+" ;object1 ;"+s1.name+" ;object2 ;"+s2.name+" ;connection ;"+tempConnection);
+                            data.save("CONNECTION_MADE","level ;"+level.num+" ;object1 ;"+s1.name+" ;object2 ;"+s2.name+" ;connection ;"+tempConnection);
                             //console.log("create connection: "+tempConnection+" between "+s1.name +" and "+s2.name);
                             var line = new Line( tempConnection, s1, s2, ctx, level.num, connectType );
                             prompt.setConnectionPrompt();
@@ -587,7 +673,8 @@ function FoodWeb(){
                 }
                 if(!speciesActive){
                     //one of the objects in a created connection is no longer active
-                    console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
+                    //console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
+                    data.save("CONNECTION_REMOVED","level ;"+level.num+" ;inactive object ;"+s1+" ;connection ;"+tempConnection);
                     for (var m = 0; m < connections.length; m++) {
                         if( connections[m].name == tempConnection ){
                             //remove
@@ -626,7 +713,7 @@ function FoodWeb(){
                 }
                 if(!isGraph){
                     //addGraph
-                    var graph = new BarGraph(gctx, s);
+                    var graph = new BarGraph(gctx, s, oldWidth2);
                     var data = new GraphData();
                     graph.curArr = data.baseline;
                     graphs.push(graph);
@@ -650,7 +737,6 @@ function FoodWeb(){
             //clear canvas
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
         var total = graphs.length
-        resizeGraphCanvas( total );
 
         for (var m = 0; m < graphs.length; m++) {
             graphs[m].drawBarGraph(m);
@@ -660,9 +746,9 @@ function FoodWeb(){
     function setupPopulationChange(  species, num, type  ){
         var direction = type; //"plus" or "minus"
         var newdata = new GraphData();
-        //var r = new Relationship();
-        //var rArr = [];
-        
+        var promptText;
+        var headingText;
+                
         //find out if graphs are running
         for(var i=0; i<graphs.length; i++){
             var graphsRunning = graphs[i].getRunning();
@@ -705,15 +791,25 @@ function FoodWeb(){
             }
         } else {
             if ( type == "plus" ){
-                prompt.setText("What happens to the other species' population if the "+ species.name + " population increases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
+                //prompt.setText("What happens to the population of the other shape(s) if the "+ species.name + " population increases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
+                prompt.setText(" ");
+                var txt = species.name
+                var titleCase = txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                headingText = "Prediction: "+ titleCase + " goes up";
+                promptText = "What happens to the population of other species if the §b"+ species.name + "§r population §bincreases§r?<br>Make your prediction and click 'run' to test your theory.";
             } else if ( type == "minus" ){
-                prompt.setText("What happens to the other species' population if the " + species.name + " population decreases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
+                prompt.setText(" ");
+                var txt = species.name
+                var titleCase = txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+                headingText = "Prediction: "+ titleCase + " goes down";
+                promptText = "What happens to the population of other species if the §b"+ species.name + "§r population §bdecreases§r?<br>Make your prediction and click 'run' to test your theory.";
+                //prompt.setText("What happens to the population of the other shape(s) if the " + species.name + " population decreases? (A) Goes up, (B) Goes down, (C) Stays the same. Make your selection and click 'run' to test your theory.");
             }
             var namesArr = [];
             for(var l=0; l<graphs.length; l++){
                 var graph = graphs[l];
                 if ( graph.name != species.name ){
-                    namesArr.push(graph.name)
+                    namesArr.push({name: graph.name, height: graph.iconHeight, width: graph.iconWidth})
                 }
             }
             //clear mc first
@@ -722,14 +818,17 @@ function FoodWeb(){
                 displayList.removeChild( mc );
                 mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
                 mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+                mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
                 mc = {};
                 multipleChoice.splice(i, 1);
             }
             //setup multple choice and prompts
             //console.log("level: "+level+", "+level.getColour());
-            var mc = new MultipleChoice( namesArr, pbwidth, cH, ctx, species, num, direction, level.getColour() );
+            data.save("MC_START","level ;"+level.num+" ;object ;"+species.name+" ;direction ;"+direction);
+            var mc = new MultipleChoice( namesArr, pbwidth, cH, cW, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+            mc.addEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
             displayList.addChild(mc);
             multipleChoice.push(mc);
         }
@@ -825,49 +924,15 @@ function FoodWeb(){
             }             
         }
     }
-    /*
-    function handleMultipleChoice(x,y){
-        for(var i=0;i<multipleChoice.length;i++){
-            var mc = multipleChoice[i];
-            mc.handleClick(x,y);
-        }
-
-    }
-    */
-    function resizeGraphCanvas( total ){
-        /*
-        if( graphs.length > 0 ){
-            var totalGraphs = total;
-            var graphHeight = graphs[0].height;
-            
-            if ( gctx.canvas.height < graphHeight * scaleFactor * totalGraphs){
-                //gctx.canvas.height += graphHeight * totalGraphs;
-                console.log("gtx needs to be: " + (graphHeight * scaleFactor * totalGraphs)+ " but is: "+gctx.canvas.height);
-            }  
-            console.log("total: " + total+", graphHeight: "+graphs[0].height+" gctx.height: "+gctx.canvas.height);
-        } else {
-            gctx.canvas.height = 0;
-        }
-        /*        
-        if( total > 0 ){
-            var totalGraphs = total;
-            var graphHeight = graphs[0].height;
-            if ( gctx.canvas.height !== graphHeight * totalGraphs ){
-                gctx.canvas.height = graphHeight * totalGraphs;
-            }
-        } else {
-            gctx.canvas.height = 0;
-        }
-        */
-        
-    }
     function draw() {
-        canvas = document.getElementById("canvas");
-        var ctx = canvas.getContext('2d');
-        // Clear canvas
-        //ctx.clearRect(0, 0, canvas.width, canvas.height);
-        //ctx.fillStyle = "#FAF7F8";
-        //ctx.fillRect(0, 0, canvas.width, canvas.height);
+        //clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = "#FFFFFF";
+        //ctx.fillStyle = "red";
+        //ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
+        //clear area so graphs will show through
+        ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
+        //ctx.fillRect(oldWidth2-400,0,400,graphs.length*80);
         //showPos
         ctx.font = "24pt Helvetica";
         ctx.shadowBlur=0;

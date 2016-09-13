@@ -55,8 +55,9 @@
 
 			document.write('<TR><TD align="right">Question</TD><TD><select id="experiments" onchange="updateForm();"></select><INPUT HIDDEN size=40 id="question" READONLY type=text></TD>');
 			document.write('<TD rowspan=6>');
-			document.write('<input type="file" id="file-upload" onChange="doImage(this);"><br>');
-			document.write('<img id="newImage" width=200 height=200>');
+			document.write('<input type="file" id="file-upload" onclick="doImage(this);"><br>');
+			document.write('<img id="newImage" alt="hello" width=200 height=200><br>');
+			document.write('<input type=button value="New" onclick="document.getElementById(\'file-upload\').click();">');
 
 			document.write('</TD></TR>');
 			document.write('<TR><TD align="right">Manipulation(s)</TD><TD><INPUT size=40 id="manipulations" type=text></TD></TR>');
@@ -75,7 +76,7 @@
 			
 			// $("input[type='image']").click(function() {
 			//     $("input[id='file-upload']").click();
-			// });
+
 			var modal = document.getElementById('myModal');
 
 			// Get the image and insert it inside the modal - use its "alt" text as a caption
@@ -104,7 +105,9 @@
 var imageURL;
 
 ///////////////////////////////////////
+			// });
 
+			function blah(){document.getElementById('file-upload').click();}
 
 	function doImage(fileInput){ 
         nutella.net.bin.uploadFile(fileInput.files[0], function(url) {

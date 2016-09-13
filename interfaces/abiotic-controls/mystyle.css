@@ -60,6 +60,11 @@ button {
         font-size: 80%;
 }
 
+button:disabled {
+  opacity: 0.35; 
+  cursor: not-allowed;
+}
+
 ul.tab {
     list-style-type: none;
     margin: 0;

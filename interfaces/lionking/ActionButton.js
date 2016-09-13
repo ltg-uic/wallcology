@@ -1,12 +1,15 @@
-	function ActionButton(context, t, c){
+	function ActionButton(context, n, t, c, w, h){
 	var dx = 8;
 	var dy = 8;
 	var radius = 20;
-
 	var centerX = dx;
 	var centerY = dy;
 	var colour = c;
 	
+	this.xOffset = w/2;
+	this.yOffset = h/2;
+
+	this.name = n;
 	this.symbol;
 	this.ctx = context;
 	this.index = 0;
@@ -17,15 +20,18 @@
 	this.EVENT_CLICKED = "clicked";
 	this.active = false;
 
+	//console.log("xOffset: "+this.xOffset);
 	this.type = t;
 	if( this.type == "plus" ){
 		//console.log("plus");
-		dx = -50;
+		//this.xOffset = w/2;
+		//this.yOffset = h/2;
+		dx = -1 * this.xOffset; 
 		dy = 20;
 		this.symbol = "+";
 	} else if( this.type == "minus" ){
 		//console.log("minus");
-		dx = -50;
+		dx = -1 * this.xOffset;
 		dy = -120;
 		this.symbol = "-";
 	}
@@ -76,6 +82,14 @@
 			}
 		}
 	}
+	/*
+	this.drawButton = function(){
+		console.log("drawButton");
+		this.ctx.save();
+		this.draw();
+		this.ctx.restore();
+	}
+	*/
 	this.updateXY = function(x,y){
 		centerX = x - dx;
 		centerY = y - dy;
