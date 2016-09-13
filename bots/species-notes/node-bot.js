@@ -62,26 +62,27 @@ NOTES.load(function () {
     }
   });
 
-
   //returns all the species from a species index e.g., species == 2
   nutella.net.handle_requests('all_notes_with_species', function (message, from) {
-    console.log('request all_notes_with_species speciesIndex: ' + JSON.stringify(message, null, 4));
+    try {
+      //check the  index
 
-    // if coming from the debugger
-    var parsedNote = JSON.parse(message);
-    var speciesIndex = message.speciesIndex;
-    if (speciesIndex != undefined && !isNaN(speciesIndex) && (speciesIndex >= 0 && speciesIndex <= 10)) {
-      var query = (
-        NOTES.notes.filter(
-          function (note) {
-            return (note.fromSpecies.index == speciesIndex);
-          }));
-      console.log('RETURN all_notes_with_species with speciesIndex: ' + speciesIndex + ' notes: ' + query.length);
-      var header = { 'speciesIndex': parseInt(speciesIndex), 'groupIndex': -1 };
-      return { 'header': header, 'notes': query };
-    } else {
-      console.log('RETURNED all_notes_with_species speciesIndex: ' + speciesIndex + ' notes: 0');
-      return {};
+      //check species
+      var speciesIndex = message && message.speciesIndex;
+      if (isNaN(speciesIndex)) throw 'species index is not a number' + speciesIndex;
+      if (!speciesIndex.checkRange(0, 10)) throw 'speciesIndex out of bounds' + speciesIndex;
+
+      //we passed all the tests
+      console.log('making request for speciesIndex: ' + speciesIndex + ' for runId: ' + nutella.run_id);
+
+      var foundNotes = NOTES.notes.filter(
+        function (note) {
+          return (note.fromSpecies.index == speciesIndex);
+        });
+      return returnMessage(speciesIndex, -1, foundNotes);
+    } catch (err) {
+      console.log('all_notes_with_species error: ' + err);
+      return returnMessage(-1, -1, []);
     }
   });
 
@@ -180,11 +181,11 @@ NOTES.load(function () {
   };
 
 
-    function returnMessage(speciesIndex, groupIndex, notes) {
-      var header = { 'speciesIndex': speciesIndex, 'groupIndex': groupIndex };
-      var body = { 'header': header, 'notes': notes };
-      return body;
-    };
+  function returnMessage(speciesIndex, groupIndex, notes) {
+    var header = { 'speciesIndex': speciesIndex, 'groupIndex': groupIndex };
+    var body = { 'header': header, 'notes': notes };
+    return body;
+  };
 
 });
 
