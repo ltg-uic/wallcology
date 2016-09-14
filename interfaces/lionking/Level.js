@@ -47,7 +47,6 @@ function Level(n,c,cH){
 	   	*/
 	}
 	this.updateCanvasHeight = function(cH){
-
 		canvasHeight = cH;
 		backBtnY = canvasHeight-backBtnH-padding;
 		nextBtnY = canvasHeight-nextBtnH-padding;
@@ -59,11 +58,8 @@ function Level(n,c,cH){
 
 		this.nextBtn.updateXY( nextBtnX, nextBtnY );
 		this.backBtn.updateXY( backBtnX, backBtnY ); 
-		
-		//console.log("canvasHeight: "+canvasHeight+", this.x: "+this.x+", this.y: "+this.y+"this.width: "+this.width+", this.height: "+this.height);
 	}
 	this.changeLevel = function(mouseX,mouseY,direction){
-		//console.log(direction+": "+this.num);
 		if( this.num <= 1 ){
 			this.backBtn.active = false;
 			this.nextBtn.active = true;
@@ -73,8 +69,7 @@ function Level(n,c,cH){
 		} else if ( this.num >= 4){
 			this.backBtn.active = true;
 			this.nextBtn.active = false;
-		}
-		//this.dispatch(this.EVENT_CLICKED);	
+		}	
 	}
 	this.drawButtons = function(){
 		this.ctx.save();

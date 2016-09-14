@@ -1,10 +1,7 @@
-function Prompt(context, x, y, cw, ch, l){
+function Prompt(context, x, y, cw, ch, l, bg){
 	var canvasW = cw;
 	var canvasH = ch;
-	//var maxWidth = 700;
-	//console.log("canvasW: "+canvasW+", canvasH: "+canvasH);
 	this.maxWidth = cw - x - 400 - 10;	//400 as size of graphs	//10 = padding
-	//console.log("maxWidth: "+maxWidth);
 
 	var lineHeight = 18;
 	var breakHeight = 25;
@@ -47,29 +44,6 @@ function Prompt(context, x, y, cw, ch, l){
 		}
 	];
 
-	/*
-{level:2,
-instruction:"In level 1, you created a food chain. Here you'll be creating an 'Interaction Web'. Drag the species into the work area.",
-connection:"What do you think the arrows represent? In an 'Interaction Web' an arrow with a + sign, means that when the population of one species increases, the other also increases. A \u2013 sign means the opposite. When the population of one species increases, the population of the other species decreases."
-},
-{level:3,
-instruction:"There's a new species. How do they relate to one another? Drag the species into the work area.",
-connection:"Remember: An arrow with a + sign, means that when the population of one species increases, the other also increases. A \u2013 sign means the opposite. When the population of one species increases, the population of the other species decreases."
-},
-{level:4,
-instruction:"There's more species now. How do they relate to one another? Drag the species into the work area.",
-connection:"Remember: An arrow with a + sign, means that when the population of one species increases, the other also increases. A \u2013 sign means the opposite. When the population of one species increases, the population of the other species decreases."
-}
-	[
-		"Hello! Drag the species into the white area to get started.",
-		"In this food chain, the zebra gives energy to the lion. What happens to the lion population if the zebra population doubles? (A) Goes up, (B) Goes down, (C) Stays the same. Test your theory.",
-		"What happens to the zebra population if the lion population doubles? (A) Goes up, (B) Goes down, (C) Stays the same. Test your theory."
-		];
-	var level2 = [
-		"Instead of a food chain, you're creating an 'Interaction Web' Drag the species into the white area to get started.",
-		"What do you think this arrow means?"
-		];
-	*/
 	this.level = l;
 	this.ctx = context;
 	this.name = "prompt";
@@ -80,18 +54,21 @@ connection:"Remember: An arrow with a + sign, means that when the population of 
 	this.message = "" ;
 	this.EVENT_CLICKED = "clicked";	
 	
+	var background = bg;
+	var textColour;
 	var itemList = [];
 	var mcMarginX = this.x + 100;
 	var mcMarginY = this.y + 10;
-	/*
-	var mc1 = new MultipleChoice("lion", mcMarginX, mcMarginY, context);
-	mc1.addEventListener(mc1.EVENT_CLICKED, onMultipleChoiceClick);
-	itemList.push( mc1 );
-	*/
+
 	if ( this.level ){
 		this.message = promptsList[ this.level-1 ].instruction;	
 	} else {
 		this.message = "Error";
+	}
+	if ( background == "dark" ){
+		textColour = "#FFFFFF";
+	} else {
+		textColour = "black";
 	}
 	function drawStyledBreakedWrappedText(context, text, x, y, font, fontSize, maxWidth){
 		var textblock = text.split("<br>");
@@ -103,7 +80,6 @@ connection:"Remember: An arrow with a + sign, means that when the population of 
 			//lastY += lineHeight;
 			lastY += breakHeight;
 		}
-
 		//return textblock;
 	}
 	function drawStyledText(context, text, x, y, font, fontSize) {
@@ -216,31 +192,15 @@ connection:"Remember: An arrow with a + sign, means that when the population of 
 		}
 	}
 	this.draw = function() {
-		/*
-		this.ctx.fillStyle = "#546E7A";
-		this.ctx.shadowColor="#BFBFBF";
-        this.ctx.shadowBlur=4;
-        this.ctx.shadowOffsetX = 0;
-        this.ctx.shadowOffsetY = 4
-		this.ctx.fillRect(0,960-h,this.ctx.canvas.width-150,h);
-		*/
-		//draws a square for testing mouse click propagation
-		//this.ctx.fillStyle = "#546e7a";
-		//this.ctx.fillRect(this.x,this.y,this.width,this.height);
-
 		this.ctx.shadowBlur=0;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0
-		//this.ctx.font = "16pt Helvetica";
 		this.ctx.font = "300 12pt 'Roboto'";
-		//this.ctx.font = "16pt 'Roboto'";
 		this.ctx.textAlign = "left";
 		this.ctx.textBaseline = "top";
-		this.ctx.fillStyle = "black"; //"#FFFFFF";
+		this.ctx.fillStyle = textColour; "black"; //"#FFFFFF";
 		//wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
-		//console.log("maxWidth: "+this.maxWidth);
 		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 14, this.maxWidth );
-		//mc1.draw();
 		//this.ctx.fillText(this.message, this.x, this.y);
 	}
 }

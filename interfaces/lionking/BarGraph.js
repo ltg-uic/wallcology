@@ -18,11 +18,7 @@ function BarGraph(ctx, ico, cw) {
 	this.height = 80;
 	this.iconHeight = parseInt(ico.height*0.3);
 	this.iconWidth = parseInt(ico.width*0.3);
-	//console.log("this.iconHeight: "+this.iconHeight+", this.iconWidth: "+this.iconWidth);
-
 	this.x = cw - this.width;	//cw = canvas width
-	//this.y = 0;
-	//console.log("BarGraph x: "+this.x+", y: "+this.y+"");
 
 	this.maxValue = 1;
 	this.margin = 1;
@@ -57,10 +53,8 @@ function BarGraph(ctx, ico, cw) {
 	var loop = function () {
 	  var delta;
 	  var animationComplete = true;
-
 	  // Boolean to prevent update function from looping if already looping
 	  looping = true;
-	  
 	  // For each bar
 	  for (var i = 0; i < endArr.length; i += 1) {
 		// Change the current bar height toward its target height
@@ -102,10 +96,6 @@ function BarGraph(ctx, ico, cw) {
 	  ctx.fillRect(that.x, yOffset, that.width, that.height);
 
 	  //Draw icon and make room
-	  	//ctx.drawImage(icon, 4, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
-	  	//iconHeight
-	  	//console.log("that.iconWidth: "+that.iconWidth+", that.iconHeight: "+that.iconHeight );
-	  	//ctx.drawImage(icon, that.x+xOffset, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
 	  	ctx.drawImage(icon, that.x+xOffset+15-that.iconWidth/2, yOffset+graphAreaHeight/2-10, that.iconWidth, that.iconHeight); //offset icon from top by 10px
 	  	graphAreaWidth -= 40;
 	  	graphAreaX = 50;
@@ -148,19 +138,6 @@ function BarGraph(ctx, ico, cw) {
 
 		}
 	};
-	/*
-	//Update the dimension of the canvas if graphs don't fit
-	var redrawCanvas = function ( total ) {
-		var totalGraphs = total;
-		//console.log("totalGraphs: "+totalGraphs);
-		//console.log("ctx.canvas.height: "+ctx.canvas.height);
-		//console.log("that.height * totalGraphs: "+(that.height * totalGraphs));
-		if ( ctx.canvas.height !== that.height * totalGraphs ){
-			ctx.canvas.height = that.height * totalGraphs;
-		}
-	}
-	*/
-  
 	// Loop method adjusts the height of bar and redraws if neccessary
 	var append = function () {
 		// Boolean to prevent append function from looping if already looping

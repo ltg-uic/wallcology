@@ -11,14 +11,7 @@ function GenericButton(n, x, y, h, w, c, colour){
 		this.dispatch(this.EVENT_CLICKED);
 	}
 	this.draw = function() {
-		//console.log("draw GenericButton x: "+this.x+" , y: "+this.y+" , "+this.width+" , "+this.height);
-		/*
-	    this.context.shadowBlur=4;
-	    this.context.shadowColor="#BFBFBF";
-	    this.context.shadowOffsetX = 0;
-	    this.context.shadowOffsetY = 4;
-	    */
-	    this.context.fillStyle = this.colour; //"#FF5722";
+	    this.context.fillStyle = this.colour;
 	    this.context.fillRect(this.x, this.y, this.width, this.height);
 
 	    this.context.shadowBlur=0;
@@ -27,7 +20,7 @@ function GenericButton(n, x, y, h, w, c, colour){
 	    this.context.font = "12pt 'Roboto'";
 	    this.context.textAlign = "center";
 	    this.context.textBaseline = "top";
-	    this.context.fillStyle = "#FFFFFF"//"#263238";
+	    this.context.fillStyle = "#FFFFFF"
 	    this.context.fillText(this.name, this.x+this.width/2, this.y+8);
 	}
 }
