@@ -2,8 +2,10 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
+    var fullscreen = false;
+    var background = "dark"; //light or dark
     var app = "lion king";
-    this.versionID = "20160912-2348"
+    this.versionID = "20160913-1915"
     
     var query_parameters;
     var nutella
@@ -52,6 +54,9 @@ function FoodWeb(){
     //setup palette and work areas
     var paletteColour = "#2B323F";//"#DBDADA";//"#2B323F";
     var buttonColour = "#FF5722";
+    var backgroundColour; 
+    var shadowColour;
+
     var pbpadding = 0;
     var pbwidth = 150;
     var pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
@@ -82,6 +87,7 @@ function FoodWeb(){
     var multipleChoice = [];
     var data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
 
+    loadColours( background );
     initDataCollection();
     setupSpecies();
     setupLevel(1, false, levels[0], oldWidth, oldHeight);
@@ -105,6 +111,15 @@ function FoodWeb(){
     function initDataCollection(){
         data.save("INIT",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
     }
+    function loadColours( background ){
+        if ( background == "dark" ){
+            backgroundColour = "#455260";
+            shadowColour = "#38414A";
+        } else {
+            backgroundColour = "#FFFFFF";
+            shadowColour = "#BFBFBF";
+        }
+    }
     function setupLevel( num, minus, species, cw, ch ){
         level.STATE = "A";
         clearListeners();
@@ -121,13 +136,13 @@ function FoodWeb(){
         if( minus ){
             minusButtons = setupButtons("minus");
         }
-        prompt = new Prompt(ctx, pbwidth+20, 20, cw, ch, num);
+        prompt = new Prompt(ctx, pbwidth+20, 20, cw, ch, num, background);
         displayList.addChild(prompt);
         setTimeout(draw, 500);
     }
     function setupBstate(){
         displayList.removeChild( plusButtons[0] );
-        var tempBtn = new ActionButton(ctx, obj[1].name, "plus", buttonColour, obj[1].width, obj[1].height );
+        var tempBtn = new ActionButton(ctx, obj[1].name, "plus", buttonColour, shadowColour, backgroundColour, obj[1].width, obj[1].height );
         tempBtn.index = 1;
         tempBtn.updateXY( obj[1].x, obj[1].y );
         displayList.addChild(tempBtn);
@@ -137,7 +152,7 @@ function FoodWeb(){
     }
     function setupCstate(){
         displayList.removeChild( plusButtons[1] );
-        var tempBtn = new ActionButton(ctx, obj[0].name, "minus", buttonColour, obj[0].width, obj[0].height );
+        var tempBtn = new ActionButton(ctx, obj[0].name, "minus", buttonColour, shadowColour, backgroundColour, obj[0].width, obj[0].height );
         tempBtn.index = 0;
         tempBtn.updateXY( obj[0].x, obj[0].y );
         displayList.addChild(tempBtn);
@@ -146,7 +161,7 @@ function FoodWeb(){
     }
     function setupDstate(){
         displayList.removeChild( minusButtons[0] );
-        var tempBtn = new ActionButton(ctx, obj[1].name, "minus", buttonColour, obj[1].width, obj[1].height );
+        var tempBtn = new ActionButton(ctx, obj[1].name, "minus", buttonColour, shadowColour, backgroundColour, obj[1].width, obj[1].height );
         tempBtn.index = 1;
         tempBtn.updateXY( obj[1].x, obj[1].y );
         displayList.addChild(tempBtn);
@@ -161,7 +176,7 @@ function FoodWeb(){
                 pbwidth/2-sp.width/2, 
                 speciesMargin+((speciesSize+speciesMargin)*i), 
                 sp.height, 
-                sp.width, ctx, sp.up, sp.down );
+                sp.width, ctx, sp.up, sp.down, shadowColour );
             obj.push(tempObj);
             displayList.addChild(tempObj);
         }
@@ -175,14 +190,14 @@ function FoodWeb(){
             var o = obj[i];
             if( type == "plus"){
                 if( o.up ){
-                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, obj[i].width, obj[i].height );    
+                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
                     tempBtn.index = i;
                     tempArr.push( tempBtn );
                     displayList.addChild(tempBtn);
                 }
             } else if (type == "minus"){
                 if( o.down ){
-                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, obj[i].width, obj[i].height );    
+                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
                     tempBtn.index = i;
                     tempArr.push( tempBtn );
                     displayList.addChild(tempBtn);
@@ -211,7 +226,7 @@ function FoodWeb(){
     function onResizeWindow( i ){
         cW = window.innerWidth;
         cH = window.innerHeight;
-        //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+        console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
         gctx = gcanvas.getContext("2d");
@@ -219,10 +234,20 @@ function FoodWeb(){
         canvas = document.getElementById("ui-layer");
         ctx = canvas.getContext("2d");
 
-        canvas.width = cW;
-        canvas.height = cH
-        gcanvas.width = cW;
-        gcanvas.height = cH
+        //allow for top wallcology buttons and left margin if mode is set to "deploy"
+        if ( fullscreen ){
+            canvas.width = cW;
+            canvas.height = cH
+            gcanvas.width = cW;
+            gcanvas.height = cH
+        } else if ( !fullscreen ){
+            var distFromTop = 58;
+            var distFromLeft = 40;
+            canvas.width = cW-distFromLeft;
+            canvas.height = cH-distFromTop;
+            gcanvas.width = cW-distFromLeft;
+            gcanvas.height = cH-distFromTop;
+        }
 
         //Scaling a canvas with a backing store multipler
         scaleFactor = backingScale(ctx);  
@@ -237,7 +262,6 @@ function FoodWeb(){
             canvas.style.width = oldWidth + "px";
             canvas.style.height = oldHeight + "px";
             // update the context for the new canvas scale
-            //var ctx = canvas.getContext("2d");
             ctx.scale( scaleFactor, scaleFactor );
 
             gcanvas.width = gcanvas.width * scaleFactor;
@@ -245,9 +269,9 @@ function FoodWeb(){
             gcanvas.style.width = oldWidth2 + "px";
             gcanvas.style.height = oldHeight2 + "px";
             // update the context for the new canvas scale
-            //var gctx = gcanvas.getContext("2d");
             gctx.scale( scaleFactor, scaleFactor );
         }
+        console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
         if ( i != "init" ){
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];
@@ -644,7 +668,7 @@ function FoodWeb(){
                             //create connection if flag is still false
                             data.save("CONNECTION_MADE","level ;"+level.num+" ;object1 ;"+s1.name+" ;object2 ;"+s2.name+" ;connection ;"+tempConnection);
                             //console.log("create connection: "+tempConnection+" between "+s1.name +" and "+s2.name);
-                            var line = new Line( tempConnection, s1, s2, ctx, level.num, connectType );
+                            var line = new Line( tempConnection, s1, s2, ctx, level.num, connectType, shadowColour );
                             prompt.setConnectionPrompt();
                             connections.push( line );
                             displayList.addChild( line );
@@ -682,6 +706,22 @@ function FoodWeb(){
                             connections.splice(j, 1);
                         }
                     }
+                    /*
+                    for (var n = 0; n < connections.length; n`++) {
+                        //check to see if s1 is present in other connections
+                        var testConnection = connections[n].name;
+                        var removeConnection = false;
+                        //search for s1 in connection via string search
+                        console.log("object not active: "+s1+", connections["+n+"]: "+testConnection)
+                        /*
+                        if( connections[n].name == tempConnection ){
+                            //remove
+                            displayList.removeChild( connections[j] );
+                            connections.splice(j, 1);
+                        }
+                        
+                    }
+                    */
                 }
             }
         }
@@ -825,7 +865,7 @@ function FoodWeb(){
             //setup multple choice and prompts
             //console.log("level: "+level+", "+level.getColour());
             data.save("MC_START","level ;"+level.num+" ;object ;"+species.name+" ;direction ;"+direction);
-            var mc = new MultipleChoice( namesArr, pbwidth, cH, cW, ctx, species, num, direction, buttonColour, headingText, promptText );
+            var mc = new MultipleChoice( namesArr, oldHeight, oldWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
             mc.addEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
@@ -925,14 +965,14 @@ function FoodWeb(){
         }
     }
     function draw() {
+        // console.log("backgroundColour: "+backgroundColour);
         //clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ctx.fillStyle = "#FFFFFF";
-        //ctx.fillStyle = "red";
-        //ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
+        ctx.fillStyle = backgroundColour;
+        ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
         //clear area so graphs will show through
         ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
-        //ctx.fillRect(oldWidth2-400,0,400,graphs.length*80);
+        /*
         //showPos
         ctx.font = "24pt Helvetica";
         ctx.shadowBlur=0;
@@ -947,6 +987,7 @@ function FoodWeb(){
         if (!mouseIsDown)
             str += " up";
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        */
         /*
         // draw text at center, max length to fit on canvas
         ctx.fillText(str, (canvas.width/2)/scaleFactor, (canvas.height/2)/scaleFactor, canvas.width - 10);

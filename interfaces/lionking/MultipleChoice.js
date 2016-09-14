@@ -1,4 +1,4 @@
-function MultipleChoice(n, x, y, w, c, sp, num, type, colour, heading, text){
+function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	var upFile = "graphincrease.png";
 	var downFile = "graphdecrease.png";
 	var sameFile = "graphsame.png";
@@ -15,8 +15,8 @@ function MultipleChoice(n, x, y, w, c, sp, num, type, colour, heading, text){
 	    b: 'bold',
 	    l: 'lighter'
 	};
-	var canvasHeight = y;
-	var canvasWidth = w;
+	var canvasHeight = cH;
+	var canvasWidth = cW;
 	var headingYoffset = 20;
 	var headingXoffset = 20;
 	var iconHeight = 30;
@@ -48,12 +48,12 @@ function MultipleChoice(n, x, y, w, c, sp, num, type, colour, heading, text){
 	this.context = c;
 	this.name = "multiple choice";
 	this.height = n.length * (graphHeight+paddingY) + yOffset + marginTop+ marginBottom + btnHeight + paddingY;
-	this.width = w; //cW from FoodWeb.js 
+	this.width = canvasWidth; //cW from FoodWeb.js 
 	//console.log("w: "+w+", this.width: "+this.width);
 	this.x = 0; 	//x;
-	this.y = y - this.height;	//y = canvasHeight, not reliable
-	this.canvasWidth = w; 
-	this.canvasHeight = y;
+	this.y = canvasHeight - this.height;	//y = canvasHeight, not reliable
+	this.canvasWidth = canvasWidth; 
+	this.canvasHeight = canvasHeight;
 	
 	var maxWidth;
 	var graphSetWidth;

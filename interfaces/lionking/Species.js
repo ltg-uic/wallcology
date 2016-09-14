@@ -1,4 +1,4 @@
-function Species ( n, x, y, h, w, c, up, down ){
+function Species ( n, x, y, h, w, c, up, down, sc ){
 	
 	this.name = n;
 	this.file = this.name + ".png";
@@ -20,19 +20,21 @@ function Species ( n, x, y, h, w, c, up, down ){
     this.up = up;
     this.down = down;
 
+    var shadowColor = sc;
+
     this.onMouseUp = function (mouseX,mouseY) {
     	this.dispatch(this.EVENT_CLICKED);
     }
     
     this.draw = function() {
-        this.context.shadowColor= "#2B323F";
+        //this.context.shadowColor= "#2B323F";
         this.context.shadowBlur=0;
         this.context.shadowOffsetX = 0;
         this.context.shadowOffsetY = 0;
         this.context.drawImage(this.placeholder,this.px,this.py, this.width,this.height);
         if ( this.active ){
             this.context.shadowBlur=4;
-            this.context.shadowColor= "#BFBFBF";
+            this.context.shadowColor = shadowColor;
             this.context.shadowOffsetX = 0;
             this.context.shadowOffsetY = 4;
         } else {

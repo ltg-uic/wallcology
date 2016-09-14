@@ -1,4 +1,4 @@
-function Line(n,o1,o2,c,l,t){
+function Line(n,o1,o2,c,l,t,sc){
     this.name=n;
     this.type = t;
     this.ctx = c;
@@ -14,31 +14,14 @@ function Line(n,o1,o2,c,l,t){
     this.y = 0;
     this.height = this.ctx.canvas.height;
     this.width = this.ctx.canvas.width;
-    this.shadowColour = "#BFBFBF";
+    this.shadowColour = sc;
 
     if ( this.level > 1 ){
         this.colour = "#22B573";
     } else {
-        this.colour = "#2196F3"; //2196F3 //22B573
+        this.colour = "#2196F3";
     }
-//    console.log("level: "+this.level+", colour: "+this.colour);
-    /*
-    if( this.level > 1 ){
-        if( this.type == "eatenby" ){
-            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx);
-            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx);
-        } else if ( this.type == "competition" ){
-            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx);
-            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx);
-        } else if ( this.type == "eats" ){
-            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx);
-            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx);
-        } else if ( this.type == "mutualism" ){
-            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx);
-            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx);            
-        }
-    }
-    */
+
     //PRIVATE METHODS
     function getLineType(source, destination){
         var type = "";
@@ -134,29 +117,6 @@ function Line(n,o1,o2,c,l,t){
         var smallerXY = {x: smallerX, y:smallerY};
         return smallerXY;
     }
-    /*
-    // returns radians
-    function findAngle(sx, sy, ex, ey) {
-        // make sx and sy at the zero point
-        return Math.atan((ey - sy) / (ex - sx));
-    }
-    function drawCurvedArrowhead(locx, locy, angle, sizex, sizey, ctx) {
-        var hx = sizex / 2;
-        var hy = sizey / 2;
-        ctx.save();
-        ctx.translate((locx ), (locy));
-        ctx.rotate(angle);
-        ctx.translate(-hx,-hy);
-
-        ctx.beginPath();
-        ctx.moveTo(0,0);
-        ctx.lineTo(0,1*sizey);    
-        ctx.lineTo(1*sizex,1*hy);
-        ctx.closePath();
-        ctx.restore();
-        ctx.fill();
-    }
-    */
     function drawArrowhead(ctx,x,y,radians){
         ctx.save();
         ctx.beginPath();
@@ -309,63 +269,8 @@ function Line(n,o1,o2,c,l,t){
             ctx.fillText("\u2013", minusXY.x-textWidth/2, minusXY.y-textHeight/2);
             ctx.fillText("\u2013", plusXY.x-textWidth/2, plusXY.y-textHeight/2);
         }
-
-        /*
-        //draw +/- buttons
-        var plusXY = findPerpendicularPoint(line2.p1,line2.p2,"line2",0.8,20); //getLineXY(line2.p1,line2.p2,0.875);
-        var minusXY = findPerpendicularPoint(line1.p1,line1.p2,"line1",0.2,20); //getLineXY(line1.p1,line1.p2,0.125);
-        sb.updateXY( plusXY.x-sb.width/2, plusXY.y-sb.height/2 );
-        db.updateXY( minusXY.x-db.width/2, minusXY.y-db.height/2 );
-        sb.draw();
-        db.draw();
-        */
     }
-    /*
-    function drawDoubleArrow(ctx,p1,p2,d,t,sb,db){
-        var lineDiff = d;
-        var lineType = t;
-        // draw the line
-        ctx.shadowBlur=4;
-        ctx.shadowColor="#BFBFBF";
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 2;
-        ctx.beginPath();
-        ctx.moveTo(p1.x,p1.y);
-        ctx.lineTo(p2.x,p2.y);
-        ctx.stroke();
 
-        var startRadians=Math.atan((p2.y-p1.y)/(p2.x-p1.x));
-        startRadians+=((p2.x>p1.x)?-90:90)*Math.PI/180;
-        drawArrowhead(ctx,p1.x,p1.y,startRadians);
-        
-        //draw +/- competition arrow
-        var plusXY = getLineXY(p1,p2,0.875);
-        var minusXY = getLineXY(p1,p2,0.125);
-        var dy = 36;    //distance between '-' and line
-        lineDiff = -14;  //distance between '+' and line
-        
-        sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
-        db.updateXY( minusXY.x, minusXY.y-dy );
-        sb.draw();
-        db.draw();
-        /*
-        if ( lineType == "eatenby" ){
-            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
-            db.updateXY( minusXY.x, minusXY.y-dy );
-            sb.draw();
-            db.draw();
-        } else if ( lineType == "competition" ){
-            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
-            db.updateXY( minusXY.x, minusXY.y-dy );
-            sb.draw();
-            db.draw();
-        } else if ( lineType == "eats" ){
-            sb.updateXY( plusXY.x, plusXY.y+dy+lineDiff );
-            db.updateXY( minusXY.x, minusXY.y-dy );
-            sb.draw();
-            db.draw();
-        }
-    }*/
     //PUBLIC METHODS
     this.onMouseUp = function (mouseX,mouseY) {
         /*
@@ -413,15 +318,6 @@ function Line(n,o1,o2,c,l,t){
         p2 = getPoint(p2,p1,50);
 
         if( this.level != 1 ){
-            /*
-            var dx = 6;
-            var dy = 6;
-            var p1a = {x:p1.x+dx, y:p1.y+dx};
-            var p2a = {x:p2.x+dx, y:p2.y+dx};
-
-            var p1b = {x:p1.x-dx, y:p1.y-dx};
-            var p2b = {x:p2.x-dx, y:p2.y-dx};
-            */
             drawDoubleArrow(this.ctx,p1,p2,this.type);
         } else {
             drawSingleArrow(this.ctx,p1,p2);
