@@ -73,13 +73,15 @@ NOTES.load(function () {
       if (!speciesIndex.checkRange(0, 10)) throw 'speciesIndex out of bounds' + speciesIndex;
 
       //we passed all the tests
-      console.log('making request for speciesIndex: ' + speciesIndex + ' for runId: ' + nutella.run_id);
 
       var foundNotes = NOTES.notes.filter(
         function (note) {
           return (note.fromSpecies.index == speciesIndex);
         });
-      return returnMessage(speciesIndex, -1, foundNotes);
+
+      var rm = returnMessage(speciesIndex, -1, foundNotes);
+      console.log('making request for speciesIndex: ' + speciesIndex + ' #notes: ' + foundNotes.length);
+      return rm
     } catch (err) {
       console.log('all_notes_with_species error: ' + err);
       return returnMessage(-1, -1, []);
@@ -96,25 +98,12 @@ NOTES.load(function () {
 
       var n = NOTES.notes.filter(function (note) { return (note.species == parsedNote.species && note.group == parsedNote.group) });
       return ((n.length == 0) ? {} : n[n.length - 1]);
-
-
-      // tony, your code below returns an array of notes, not a single note
-      // my strategy is to filter and then choose the last (most recent) one
-      // if there are more than one. there will never be more than one, though.
-      //
-      // return (
-      //   Notes.notes.filter(
-      //   function(note){
-      //     return (note.species == parsedNote.species);
-      //   }));
-
     } else {
       return {};
     }
   });
 
   nutella.net.handle_requests('save_note', function (message) {
-    console.log('CAPTURED NOTE: ' + message);
     //check for bad message
     var newNote = message
     try {
@@ -154,7 +143,9 @@ NOTES.load(function () {
       NOTES.save();
 
       //publish
-      nutella.net.publish('note_changes', returnMessage(speciesIndex, groupIndex, [newNote]));
+      var rm = returnMessage(speciesIndex, groupIndex, [newNote])
+      console.log('Publishing note', rm)
+      nutella.net.publish('note_changes', rm);
     } catch (err) {
       console.log('save_note error: ' + err);
       nutella.net.publish('note_changes', returnMessage(-1, -1, []));
