@@ -35,9 +35,9 @@
 		document.write('Class &nbsp<select  id="class" onChange="classChange();">');
 		document.write('<option value="default">default</option>');
 		document.write('<option value="guest">guest</option>');
-		// document.write('<option value="BM">BM</option>');
-		// document.write('<option value="MT">MT</option>');
-		// document.write('<option value="ADF">ADF</option>');
+		document.write('<option value="6BM">6BM</option>');
+		document.write('<option value="6MT">6MT</option>');
+		document.write('<option value="6ADF">6ADF</option>');
 		document.write('</select><br>');
 	});
 // <!-- 	<H2>Enactment control</H2>
@@ -47,9 +47,9 @@
 		currentRun = message; 
 		if (currentRun == 'default') document.getElementById('class').selectedIndex = 0;
 		if (currentRun == 'guest') document.getElementById('class').selectedIndex = 1;
-		if (currentRun == 'BM') document.getElementById('class').selectedIndex = 2;
-		if (currentRun == 'MT') document.getElementById('class').selectedIndex = 3;
-		if (currentRun == 'ADF') document.getElementById('class').selectedIndex = 4;
+		if (currentRun == '6BM') document.getElementById('class').selectedIndex = 2;
+		if (currentRun == '6MT') document.getElementById('class').selectedIndex = 3;
+		if (currentRun == '6ADF') document.getElementById('class').selectedIndex = 4;
 
 	});
 

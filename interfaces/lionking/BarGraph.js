@@ -1,29 +1,13 @@
-// Modified from code by William Malone 2011 (www.williammalone.com), 
-//
-// Malone's code is licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//   http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
-
-function BarGraph(ctx, ico) {
-
+function BarGraph(ctx, ico, cw) {
 	// Private properties 
 	var that = this;
 	var icon;
 	var ctx = ctx;
 	var file = ico.file;
-
 	var startArr;
 	var endArr;
 	var looping = false;
+	var xOffset = 10;
 	var yOffset = 0;
 	var remove = false;
 	var running = false;
@@ -31,12 +15,16 @@ function BarGraph(ctx, ico) {
 	// Public properties 
 	this.name = ico.name;
 	this.width = 400;
-	this.height = 80;	
+	this.height = 80;
+	this.iconHeight = parseInt(ico.height*0.3);
+	this.iconWidth = parseInt(ico.width*0.3);
+	this.x = cw - this.width;	//cw = canvas width
+
 	this.maxValue = 1;
 	this.margin = 1;
 	this.colors = ["#333"];
 	this.curArr = [];
-	this.backgroundColor = "#F5F5F5";//"#f1f2eb";
+	this.backgroundColor = "#F2F4F7";//"#F5F5F5";//"#f1f2eb";
 	this.xAxisLabelArr = [];
 	this.yAxisLabelArr = [];
 	this.animationInterval = 100;
@@ -63,13 +51,10 @@ function BarGraph(ctx, ico) {
 
   	// Loop method adjusts the height of bar and redraws if neccessary
 	var loop = function () {
-
 	  var delta;
 	  var animationComplete = true;
-
 	  // Boolean to prevent update function from looping if already looping
 	  looping = true;
-	  
 	  // For each bar
 	  for (var i = 0; i < endArr.length; i += 1) {
 		// Change the current bar height toward its target height
@@ -91,8 +76,7 @@ function BarGraph(ctx, ico) {
 	};
 		
   // Draw method updates the canvas with the current display
-	var draw = function (arr) {
-							
+	var draw = function (arr) {			
 	  var numOfBars = arr.length;
 	  var barWidth;
 	  var barHeight;
@@ -109,12 +93,12 @@ function BarGraph(ctx, ico) {
 
 	  // Draw the background color
 	  ctx.fillStyle = that.backgroundColor;
-	  ctx.fillRect(0, yOffset, that.width, that.height);
+	  ctx.fillRect(that.x, yOffset, that.width, that.height);
 
 	  //Draw icon and make room
-	  	ctx.drawImage(icon, 4, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
+	  	ctx.drawImage(icon, that.x+xOffset+15-that.iconWidth/2, yOffset+graphAreaHeight/2-10, that.iconWidth, that.iconHeight); //offset icon from top by 10px
 	  	graphAreaWidth -= 40;
-	  	graphAreaX = 40;
+	  	graphAreaX = 50;
 					
 	  // If x axis labels exist then make room	
 	  if (that.xAxisLabelArr.length) {
@@ -145,27 +129,15 @@ function BarGraph(ctx, ico) {
 		barHeight = ratio * maxBarHeight;
 
 		// Draw bar
-		ctx.fillStyle = "#333";			
-		ctx.fillRect(graphAreaX + that.margin + i * (graphAreaWidth-5) / numOfBars, //offset bars from right by 5 px
+		ctx.fillStyle = "#333";
+		//console.log("BarGraph x: "+that.x);
+		ctx.fillRect(that.x + graphAreaX + that.margin + i * (graphAreaWidth-5) / numOfBars, //offset bars from right by 5 px
 		  yOffset + graphAreaHeight - barHeight - 5, //offset bars from bottom by 5 px
 		  barWidth,
 		  barHeight);
 
 		}
 	};
-	/*
-	//Update the dimension of the canvas if graphs don't fit
-	var redrawCanvas = function ( total ) {
-		var totalGraphs = total;
-		//console.log("totalGraphs: "+totalGraphs);
-		//console.log("ctx.canvas.height: "+ctx.canvas.height);
-		//console.log("that.height * totalGraphs: "+(that.height * totalGraphs));
-		if ( ctx.canvas.height !== that.height * totalGraphs ){
-			ctx.canvas.height = that.height * totalGraphs;
-		}
-	}
-	*/
-  
 	// Loop method adjusts the height of bar and redraws if neccessary
 	var append = function () {
 		// Boolean to prevent append function from looping if already looping

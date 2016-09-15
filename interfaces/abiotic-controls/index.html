@@ -13,39 +13,39 @@
 
 		<!-- Scripts -->
 	<script src="nutella_lib.js" type="text/javascript"></script>
-	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
+	<script> 
+		window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); 
+		// Parse the query parameters
+		var query_parameters = NUTELLA.parseURLParameters();
+		var ecosystem = query_parameters.INSTANCE;
+		if (ecosystem === undefined) ecosystem = 0;
+		document.write('<H4>Abiotic Controls for Ecosystem ' + (Number(ecosystem) +1) + '</H4>');
+	</script>
 
-<!-- Your markup here -->
-	<H2>Abiotic Controls</H2>
-	Ecosystem: <input type=text id="ecosystem" READONLY size=1><br><br>
 
 	<!-- The above is very temporary. We need to get ecosystem from URL PARAMETERS -->
-
-
-	Wall Controls: <br><br>
-	<button type="button" onclick="wall('left','in');" id="leftin">Left wall in</button><button type="button"onclick="wall('left','out');" id="leftout">Left wall out</button><br>
-	<button type="button" onclick="wall('top','in');" id="topin">Top wall in</button><button type="button"onclick="wall('top','out');" id="topout">Top wall out</button><br>
-	<button type="button" onclick="wall('right','in');" id="rightin">Right wall in</button><button type="button"onclick="wall('right','out');" id="rightout">Right wall out</button><br>
-	<button type="button" onclick="wall('bottom','in')" id="bottomin">Bottom wall in</button><button type="button"onclick="wall('bottom','out');" id="bottomout">Bottom wall out</button><br>
-	<br>
-	Temperature &nbsp<input type=text id="temperature" size=3 READONLY>ºC<br>
-	Thermostat &nbsp&nbsp <input type=text id="thermostat" size=3>ºC <button type="button" onclick="thermostat(document.getElementById('thermostat').value);">Set</button><br><br>
-	Humidity &nbsp&nbsp&nbsp&nbsp&nbsp <input type=text id="humidity" size=3 READONLY>%<br>
+	<div style="color:DarkCyan; font-size: 120%"> Drywall Controls</div> <br>
+	<table class="center">
+	<tr><td align=right><button type="button" onclick="wall('left','in');" id="leftin">Move left drywall in</button></td><td align=left><button type="button" onclick="wall('left','out');" id="leftout">Move left drywall out</button></td></tr>
+	<tr><td align=right><button type="button" onclick="wall('top','in');" id="topin">Move top drywall in</button></td><td align=left><button type="button" onclick="wall('top','out');" id="topout">Move top drywall out</button></td></tr>
+	<tr><td align=right><button type="button" onclick="wall('right','in');" id="rightin">Move right drywall in</button></td><td align=left><button type="button" onclick="wall('right','out');" id="rightout">Move right drywall out</button></td></tr>
+	<tr><td align=right><button type="button" onclick="wall('bottom','in')" id="bottomin">Move bottom drywall in</button></td><td align=left><button type="button" onclick="wall('bottom','out');" id="bottomout">Move bottom drywall out</button></td></tr>
+	</table><br>
+	<div style="color:DarkCyan; font-size: 120%">Temperature Control</div><br>
+	
+	Current Temperature &nbsp<input type=text style="font-size:100%;" id="temperature" size=2 READONLY>&nbspºC<br><br>
+	Current Thermostat  <input type=text style="font-size:100%;" id="thermostat" size=2>&nbspºC&nbsp<button style="font-size:70%;" type="button" onclick="thermostat(document.getElementById('thermostat').value);">Set Thermostat</button>
+<!-- 	Humidity &nbsp&nbsp&nbsp&nbsp&nbsp <input type=text id="humidity" size=3 READONLY>%<br>
 	Humidistat &nbsp&nbsp <input type=text id="humidistat" size=3>% <button type="button" onclick="humidistat(document.getElementById('humidistat').value);">Set</button><br><br>
-
+ -->
 
 
 	<!-- Your scripts here -->
 				
 	<script type="text/javascript">
 	
-	// Parse the query parameters
-	var query_parameters = NUTELLA.parseURLParameters();
-	var ecosystem = query_parameters.INSTANCE;
-	if (ecosystem === undefined) ecosystem = 0;
-	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 
-
+	var abiotic = [];
 
 	// Get an instance of nutella. 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
@@ -53,41 +53,58 @@
 	// (Optional) Set the resourceId
 	// nutella.setResourceId('my_resource_id');
 
-	nutella.net.request('last_state',{},function(state){			
-		populateForm(state);
+	nutella.net.request('last_state',{},function(state,from){ 	abiotic = state.abiotic;		
+		populateForm();
 	});
 
-	nutella.net.subscribe('state_update', function(state, from) {
-		populateForm(state);
+	nutella.net.subscribe('state_update', function(state, from) {  abiotic = state.abiotic;
+		populateForm();
 	});
 
-	function populateForm(state){
-		if (state.abiotic[ecosystem].left == 'in') document.getElementById('leftin').disabled=true;
-		if (state.abiotic[ecosystem].left == 'out') document.getElementById('leftout').disabled=true;
-		if (state.abiotic[ecosystem].top == 'in') document.getElementById('topin').disabled=true;
-		if (state.abiotic[ecosystem].top == 'out') document.getElementById('topout').disabled=true;
-		if (state.abiotic[ecosystem].right == 'in') document.getElementById('rightin').disabled=true;
-		if (state.abiotic[ecosystem].right == 'out') document.getElementById('rightout').disabled=true;
-		if (state.abiotic[ecosystem].bottom == 'in') document.getElementById('bottomin').disabled=true;
-		if (state.abiotic[ecosystem].bottom == 'out') document.getElementById('bottomout').disabled=true;
+	function populateForm(){ 
+
+		document.getElementById('leftin').disabled=true;
+		document.getElementById('leftout').disabled=true;
+		document.getElementById('rightin').disabled=true;
+		document.getElementById('rightout').disabled=true;
+		document.getElementById('topin').disabled=true;
+		document.getElementById('topout').disabled=true;
+		document.getElementById('bottomin').disabled=true;
+		document.getElementById('bottomout').disabled=true;
 
 
-		document.getElementById('temperature').value = Math.round(state.abiotic[ecosystem]['temperature']);
-		document.getElementById('thermostat').value = state.abiotic[ecosystem].thermostat;
-		document.getElementById('humidity').value = Math.round(state.abiotic[ecosystem].humidity);
-		document.getElementById('humidistat').value = state.abiotic[ecosystem].humidistat;
-		document.getElementById('ecosystem').value = Number(ecosystem) + 1;
-	
+		if (abiotic[ecosystem].left == 'in' || abiotic[ecosystem].right == 'in' ) {
+			if (abiotic[ecosystem].left == 'in') document.getElementById('leftout').disabled=false; else document.getElementById('leftin').disabled=false;
+			if (abiotic[ecosystem].right == 'in') document.getElementById('rightout').disabled=false; else document.getElementById('rightin').disabled=false;
+			finishup(); return;
+		} 
+
+		if (abiotic[ecosystem].top == 'in' || abiotic[ecosystem].bottom == 'in' ) {
+			if (abiotic[ecosystem].top == 'in') document.getElementById('topout').disabled=false; else document.getElementById('topin').disabled=false;
+			if (abiotic[ecosystem].bottom == 'in') document.getElementById('bottomout').disabled=false; else document.getElementById('bottomin').disabled=false;
+			finishup(); return;
+		}
+
+		document.getElementById('leftin').disabled=false;
+		document.getElementById('rightin').disabled=false;
+		document.getElementById('topin').disabled=false;
+		document.getElementById('bottomin').disabled=false;
+		finishup(); return;
 	}
 
 
-	function wall (side,direction) {
+	function finishup(){
+		document.getElementById('temperature').value = Math.round(abiotic[ecosystem]['temperature']);
+		document.getElementById('thermostat').value = abiotic[ecosystem].thermostat;
+		// document.getElementById('humidity').value = Math.round(state.abiotic[ecosystem].humidity);
+		// document.getElementById('humidistat').value = state.abiotic[ecosystem].humidistat;
+		// document.getElementById('ecosystem').value = Number(ecosystem) + 1;
+	}
+
+	function wall (side,direction) { 
 		nutella.net.publish('wall',{ecosystem:ecosystem, side:side, direction:direction});
-		document.getElementById(side + direction).disabled=true;
-		if (direction == 'in') document.getElementById(side + 'out').disabled=false;
-		if (direction == 'out') document.getElementById(side + 'in').disabled=false;
-
-
+		abiotic[ecosystem][side] = direction;
+		populateForm();
 	}
 
 	function thermostat (value) {
@@ -95,68 +112,7 @@
 		else nutella.net.publish('thermostat',{ecosystem:ecosystem, value:value});
 	}
 
-	function humidistat (value) {
-		if (value<0 || value>100) alert("Humidistat values must be in the range 0% to 100% Relative Humidity");
-		nutella.net.publish('humidistat',{ecosystem:ecosystem, value:value});
-	}
 
-
-
-	// Your code that uses the nutella instance here
-	
-	
-	// EXAMPLES
-	// You can do stuff like:
-	
-	// // 1. Subscribing to a channel
-	// nutella.net.subscribe('demo_channel', function(message, from_component_id, from_resource_id) {
-	// 	// Your code to handle messages received on this here
-	// });
-	
-	// // 2. Subscribe to a wildcard channel (a.k.a. more than one channel at the same time,
-	// // in the example below we'll receive messages on demo_channel/a, demo_channel/a/b, demo_channel/c, etc.)
-	// nutella.net.subscribe('demo_channel/#', function(message, channel, from_component_id, from_resource_id) {
-	// 	// Your code to handle messages received by this channel here
-	// });
-	
-	// // 3. Publish a message to a channel
-	// nutella.net.publish('demo_channel', 'demo_message');
-	
-	// // 3a The cool thing is that the message can be any Javascript variable or object
-	// nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
-	
-	// // 4. Make requests on a certain channel...
-	// nutella.net.request('demo_channel', 'my_request', function(response) {
-	// 	// Your code to handle the response here
-	// });
-	
-	// // 4a ... and, guess what, we can send anything in a request, like in publish!
-	// // Requests can even be empty, kind of like a GET
-	// nutella.net.request('demo_channel', function(response) {
-	// 	// Your code to handle the response here
-	// });
-	
-	// // 5. Handle requests from other components
-	// nutella.net.handle_requests('my_channel', function(request, component_id, resource_id) {
-	// 	/// Your code to handle each request here
-	// 	// Anything this function returns (string, integer, object,...) is going to be sent as the response
-	// 	var response = 'this is my response';
-	// 	// Or...
-	// 	// var response = {};
-	// 	// var response = 12345;
-	// 	// var response = {a: 'proper', key: 'value'};
-	// 	return response;
-	// });
-	
-	// // 6. Access the variables that uniquely identify this instance of this component
-	// nutella.runId;
-	// nutella.componentId;
-	// nutella.resourceId;
-	
-	// // 7. Do you need an extra instance of nutella (to work with React components for instance)? Not a problem...
-	// // var nutella2 = NUTELLA.init(query_parameters.run_id, query_parameters.broker, 'your_interface_name');
-	
-	// // HAVE FUN WITH nutella!
 	
 	</script>
 				
