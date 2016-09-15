@@ -2,9 +2,10 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
+    var fullscreen = false;
     var app = "modeler";
     var background = "dark";
-    this.versionID = "20160914-2348";
+    this.versionID = "20160915-1113";
 
     var query_parameters;
     var nutella;
@@ -18,46 +19,22 @@ function FoodWeb(){
         google: {
           families: ['Droid Sans', 'Roboto']
         }
-      });
+    });
 
-    var cW = 980;   //window.innerWidth;
-    var cH = 680;   //window.innerHeight;
-    //Canvas for graphs
-    var gcanvas = document.getElementById("graphs-layer");
-    var gctx = gcanvas.getContext("2d");
-    //Canvas for drag and drop
-    var canvas = document.getElementById("ui-layer");
-    var ctx = canvas.getContext("2d");
+    var cW;
+    var cH;
+    var gcanvas;
+    var gctx;
+    var canvas;
+    var ctx;
+    var scaleFactor;
+    var oldWidth;   //canvas width before retina screen resize
+    var oldHeight;
+    var oldWidth2;
+    var oldHeight2;
 
-    canvas.width = cW;
-    canvas.height = cH
-    gcanvas.width = cW;
-    gcanvas.height = cH
+    onResizeWindow("init");
 
-    //Scaling a canvas with a backing store multipler
-    var scaleFactor = backingScale(ctx);  
-    var oldWidth = canvas.width;
-    var oldHeight = canvas.height;
-    var oldWidth2 = gcanvas.width;
-    var oldHeight2 = gcanvas.height;
-
-    if (scaleFactor > 1) {
-        canvas.width = canvas.width * scaleFactor;
-        canvas.height = canvas.height * scaleFactor;
-        canvas.style.width = oldWidth + "px";
-        canvas.style.height = oldHeight + "px";
-        // update the context for the new canvas scale
-        var ctx = canvas.getContext("2d");
-        ctx.scale( scaleFactor, scaleFactor );
-
-        gcanvas.width = gcanvas.width * scaleFactor;
-        gcanvas.height = gcanvas.height * scaleFactor;
-        gcanvas.style.width = oldWidth2 + "px";
-        gcanvas.style.height = oldHeight2 + "px";
-        // update the context for the new canvas scale
-        var gctx = gcanvas.getContext("2d");
-        gctx.scale( scaleFactor, scaleFactor );
-    }    
 	//Drag related variables
 	var dragok = false;    //for mouse events
     var startX;
@@ -77,15 +54,6 @@ function FoodWeb(){
     var buttonColour = "#FF5722";
     var backgroundColour; 
     var shadowColour;
-
-    //load colours
-    if ( background == "dark" ){
-        backgroundColour = "#3D5168";//"#455260";   //3D5168
-        shadowColour = "#38414A";
-    } else {
-        backgroundColour = "#FFFFFF";
-        shadowColour = "#BFBFBF";
-    }
 
     var pbpadding = 0;
     var pbwidth = 150;
@@ -115,6 +83,7 @@ function FoodWeb(){
     var data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
     //n, x, y, h, w, c, colour, textcolour, font, yo
     
+    loadColours( background );
     initDataCollection();
     setupSpecies();
     setupLevel(1, true, levels[0], oldWidth, oldHeight);
@@ -130,9 +99,20 @@ function FoodWeb(){
     document.body.addEventListener("mouseup", onMouseUp, false);
     document.body.addEventListener("touchcancel", onTouchUp, false);
 
+    window.addEventListener("orientationchange", onResizeWindow);
+
     //SETUP
     function initDataCollection(){
         data.save("INIT MODELER",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+    }
+    function loadColours( background ){
+        if ( background == "dark" ){
+            backgroundColour = "#455260";
+            shadowColour = "#38414A";
+        } else {
+            backgroundColour = "#FFFFFF";
+            shadowColour = "#BFBFBF";
+        }
     }
     function setupLevel( num, minus, species, cw, ch ){
         clearListeners();
@@ -159,10 +139,10 @@ function FoodWeb(){
             var tempObj = new Species( name, 
                 speciesMargin, speciesMargin+((speciesSize+speciesMargin)*i), 
                 speciesSize, speciesSize, ctx, shadowColour );
-            //tempObj.addEventListener(tempObj.EVENT_CLICKED, onSpeciesClicked );
             obj.push(tempObj);
             displayList.addChild(tempObj);
         }
+        draw();
     }
     //Set up action buttons
     function setupButtons(type){
@@ -193,6 +173,75 @@ function FoodWeb(){
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
     }
     //EVENTLISTENERS
+    function onResizeWindow( i ){
+        cW = window.innerWidth;
+        cH = window.innerHeight;
+        console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+        //Canvas for graphs
+        gcanvas = document.getElementById("graphs-layer");
+        gctx = gcanvas.getContext("2d");
+        //Canvas for drag and drop
+        canvas = document.getElementById("ui-layer");
+        ctx = canvas.getContext("2d");
+
+        //allow for top wallcology buttons and left margin if mode is set to "deploy"
+        if ( fullscreen ){
+            canvas.width = cW;
+            canvas.height = cH
+            gcanvas.width = cW;
+            gcanvas.height = cH
+        } else if ( !fullscreen ){
+            var distFromTop = 58;
+            var distFromLeft = 40;
+            canvas.width = cW-distFromLeft;
+            canvas.height = cH-distFromTop;
+            gcanvas.width = cW-distFromLeft;
+            gcanvas.height = cH-distFromTop;
+        }
+
+        //Scaling a canvas with a backing store multipler
+        scaleFactor = backingScale(ctx);  
+        oldWidth = canvas.width;
+        oldHeight = canvas.height;
+        oldWidth2 = gcanvas.width;
+        oldHeight2 = gcanvas.height;
+
+        if (scaleFactor > 1) {
+            canvas.width = canvas.width * scaleFactor;
+            canvas.height = canvas.height * scaleFactor;
+            canvas.style.width = oldWidth + "px";
+            canvas.style.height = oldHeight + "px";
+            // update the context for the new canvas scale
+            ctx.scale( scaleFactor, scaleFactor );
+
+            gcanvas.width = gcanvas.width * scaleFactor;
+            gcanvas.height = gcanvas.height * scaleFactor;
+            gcanvas.style.width = oldWidth2 + "px";
+            gcanvas.style.height = oldHeight2 + "px";
+            // update the context for the new canvas scale
+            gctx.scale( scaleFactor, scaleFactor );
+        }
+        console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
+        if ( i != "init" ){
+            for( var j=0; j<graphs.length; j++ ){
+                var g = graphs[j];
+                g.x = oldWidth2 - g.width;
+                g.drawBarGraph(j);
+            }
+            if ( prompt ){
+                prompt.setMaxWidth( oldWidth );
+            }
+            for (var k=0; k<multipleChoice.length; k++){
+                var mc = multipleChoice[k];
+                mc.setCanvasWidthHeight( oldWidth, oldHeight );
+            }
+            //level.updateCanvasHeight( oldHeight );
+            setTimeout(draw, 500);
+            data.save("ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+        } else {
+            return;
+        }
+    }
     function onMCcontinueClick(e){
         //console.log("onMCcontinueClick");
         for(var i=0; i<multipleChoice.length; i++){
@@ -675,7 +724,7 @@ function FoodWeb(){
             for(var l=0; l<graphs.length; l++){
                 var graph = graphs[l];
                 if ( graph.name != species.name ){
-                    namesArr.push(graph.name)
+                    namesArr.push({name: graph.name, height: graph.iconHeight, width: graph.iconWidth})
                 }
             }
             //clear mc first
@@ -691,7 +740,7 @@ function FoodWeb(){
 
             //setup multple choice and prompts
             data.save("MC_START","object ;"+species.name+" ;direction ;"+direction);
-            var mc = new MultipleChoice( namesArr, pbwidth, cH, cW, ctx, species, num, direction, level.getColour(), headingText, promptText );
+            var mc = new MultipleChoice( namesArr, oldHeight, oldWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
             mc.addEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);

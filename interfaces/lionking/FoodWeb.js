@@ -2,10 +2,10 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = true;
+    var fullscreen = false;
     var background = "dark"; //light or dark
     var app = "lion king";
-    this.versionID = "20160915-0045"
+    this.versionID = "20160915-1124"
     
     var query_parameters;
     var nutella
@@ -109,7 +109,7 @@ function FoodWeb(){
 
     //SETUP
     function initDataCollection(){
-        data.save("INIT",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+        data.save("INIT LION KING",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
     }
     function loadColours( background ){
         if ( background == "dark" ){
@@ -187,22 +187,10 @@ function FoodWeb(){
         var tempArr = [];
         var t = type;
         for (var i = 0; i < obj.length; i++) {
-            var o = obj[i];
-            if( type == "plus"){
-                if( o.up ){
-                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
-                    tempBtn.index = i;
-                    tempArr.push( tempBtn );
-                    displayList.addChild(tempBtn);
-                }
-            } else if (type == "minus"){
-                if( o.down ){
-                    var tempBtn = new ActionButton(ctx, o.name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
-                    tempBtn.index = i;
-                    tempArr.push( tempBtn );
-                    displayList.addChild(tempBtn);
-                }
-            }
+            var tempBtn = new ActionButton(ctx, obj[i].name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
+            tempBtn.index = i;
+            tempArr.push( tempBtn );
+            displayList.addChild(tempBtn);
         }
         return tempArr;
     }

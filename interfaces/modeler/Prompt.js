@@ -131,7 +131,9 @@ function Prompt(context, x, y, cw, ch, l, bg){
 	this.setText = function(m){
 		this.message = m;
 	}
-	
+	this.setMaxWidth = function( cw ){
+		this.maxWidth = cw - this.x - 400 - 10;
+	}
 	this.onMouseUp = function (mouseX,mouseY) {
 		/*
 		//this is being called by DisplayList when the mouse/touch on canvas is UP
