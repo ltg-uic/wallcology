@@ -2,7 +2,7 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = false;
+    var fullscreen = true;
     var app = "modeler";
     var background = "dark";
     this.versionID = "20160915-1113";
@@ -174,8 +174,11 @@ function FoodWeb(){
     }
     //EVENTLISTENERS
     function onResizeWindow( i ){
-        cW = window.innerWidth;
-        cH = window.innerHeight;
+        cW = 1000;
+        cH = 800;
+        
+        //cW = window.innerWidth;
+        //cH = window.innerHeight;
         console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
