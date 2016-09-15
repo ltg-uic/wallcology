@@ -2,10 +2,10 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = false;
+    var fullscreen = true;
     var background = "dark"; //light or dark
     var app = "lion king";
-    this.versionID = "20160913-1915"
+    this.versionID = "20160915-0045"
     
     var query_parameters;
     var nutella
@@ -226,7 +226,7 @@ function FoodWeb(){
     function onResizeWindow( i ){
         cW = window.innerWidth;
         cH = window.innerHeight;
-        console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+        //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
         gctx = gcanvas.getContext("2d");
@@ -271,7 +271,7 @@ function FoodWeb(){
             // update the context for the new canvas scale
             gctx.scale( scaleFactor, scaleFactor );
         }
-        console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
+        //console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
         if ( i != "init" ){
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];

@@ -1,11 +1,13 @@
-function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
+function MultipleChoice(n, x, y, w, c, sp, num, type, colour, heading, text){
 	var upFile = "graphincrease.png";
 	var downFile = "graphdecrease.png";
 	var sameFile = "graphsame.png";
-	var backgroundColor = "#FFFFFF";
+	var backgroundColor = "#FFFFFF"; //EFEBE9
 	var accentColour = "#00BCD4";
 	var accentColourDark = "#0097A7";
+	
 	var headingText = heading;
+	//var promptText = text;
 	var lineHeight = 18;
 	var styleMarker = '§';
 	// table code style --> font style
@@ -15,14 +17,12 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	    b: 'bold',
 	    l: 'lighter'
 	};
-	var canvasHeight = cH;
-	var canvasWidth = cW;
 	var headingYoffset = 20;
 	var headingXoffset = 20;
 	var iconHeight = 30;
-	var iconWidth = 30;	//default
-	var graphHeight = 51;	//original: 156;
-	var graphWidth = 240;	//original: 726;
+	var iconWidth = 30;
+	var graphHeight = 51;	//156;
+	var graphWidth = 240;	//726;
 	var btnHeight = 36;
 	var btnWidth = 65;
 	var contBtnWidth = 100;
@@ -32,11 +32,11 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	var topBarH = 75;
 	var marginTop = topBarH + 8;
 	var marginBottom = 20;
-	//var marginLeft = 400; 	//414;	//graphs margin //not used
+	var marginLeft = 400; 	//414;	//graphs margin //not used
 	var choices = [];
 	var textblock = text.split("<br>");
-	var prompt = {x:0, y:0};
-
+	//var text1 = textblock[0];
+	//var text2 = textblock[1];
 	this.STATE = "question"; 	//or "answer"
 	this.colour = colour;
 	this.species = sp;
@@ -48,53 +48,18 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	this.context = c;
 	this.name = "multiple choice";
 	this.height = n.length * (graphHeight+paddingY) + yOffset + marginTop+ marginBottom + btnHeight + paddingY;
-	this.width = canvasWidth; //cW from FoodWeb.js 
-	//console.log("w: "+w+", this.width: "+this.width);
+	this.width = w; //cW from FoodWeb.js 
 	this.x = 0; 	//x;
-	this.y = canvasHeight - this.height;	//y = canvasHeight, not reliable
-	this.canvasWidth = canvasWidth; 
-	this.canvasHeight = canvasHeight;
-	
-	var maxWidth;
-	var graphSetWidth;
-	var graphSetHeight;
-	var upX;
-	var downX;
-	var sameX;
-	var btnX; 
-	var btnY; 
-	var contBtnX;
-	var prompt;
-	/*
-	var graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;
+	this.y = y - this.height;	//y = canvasHeight, not reliable
+
+	var graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;//marginLeft + iconWidth + padding * 5 + graphWidth * 3 + btnWidth;
 	var graphSetHeight = n.length * (graphHeight+paddingY) + yOffset + marginTop;
-	
-	var upX = this.width - graphSetWidth + padding + iconWidth + padding;
-	var downX = this.width - graphSetWidth + padding + iconWidth + padding + padding + graphWidth;
-	var sameX = this.width - graphSetWidth + padding + iconWidth + padding + 2*(padding + graphWidth);
 
-	var btnX = this.width - btnWidth - padding; 
-	var btnY = y - btnHeight - paddingY - marginBottom; 
+	var btnX = this.width - btnWidth - padding; //this.x + marginLeft + padding + iconWidth + 3*(padding + graphWidth);
+	var btnY = y - btnHeight - paddingY - marginBottom; //this.height + graphSetHeight + yOffset + marginTop; //graphHeight/2-iconHeight/2; //this.y+yOffset+marginTop
 	var contBtnX = this.width - contBtnWidth - padding;
-	var maxWidth = this.width - graphSetWidth - headingXoffset; //360
+	var maxWidth = this.width - graphSetWidth - headingXoffset; //360;
 	
-	var prompt ={x:0, y:0};
-	if ( maxWidth > 10 ){
-		prompt.x = this.x + headingXoffset;
-		prompt.y = this.y + marginTop + paddingY;
-	} else {
-		padding = 4;
-		prompt.x = padding;
-		prompt.y = btnY;
-		maxWidth = this.width - btnWidth - 10;
-		graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;
-		lineHeight = 10;
-	}
-	*/
-	//this.setCanvasWidthHeight( this.width, y );
-
-	setupVars("init", this.x, this.y);
-
 	this.button = new GenericButton("Run", btnX, btnY, btnHeight, btnWidth, c, this.colour, "#FFFFFF", "12pt 'Roboto'", 8);
 	this.continueBtn = new GenericButton("Continue",contBtnX,btnY,btnHeight,contBtnWidth,c,accentColour, "#FFFFFF", "12pt 'Roboto'", 8);
 	
@@ -103,20 +68,21 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	this.EVENT_CONTINUE = "continue";
 
 	for( var i=0; i<n.length; i++){
-		var rowY = this.y + yOffset + marginTop + (graphHeight+paddingY)*i;
 		var row = {
-			name: n[i].name,
-			iconWidth: n[i].width,
-			iconHeight: n[i].height,
-			iconX: this.width - graphSetWidth + padding + 15 - n[i].width/2,
-			y: rowY,
-			icon: loadImage( n[i].name + ".png" ),
+			name: n[i],
+			y: this.y+yOffset+marginTop+(graphHeight+paddingY)*i,
+			icon: loadImage( n[i] + ".png" ),
+			//graphSetWidth
+			/*
+			up: new Choice( "graphincrease", this.x + marginLeft + padding + iconWidth, this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
+			down: new Choice( "graphdecrease", this.x + marginLeft + padding + iconWidth + padding + graphWidth,this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
+			same: new Choice( "graphsame", this.x + marginLeft + padding + iconWidth + 2*(padding + graphWidth),this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
+			*/
 			selection: "none",
-			up: 	new Choice( "graphincrease", upX, rowY, graphWidth, graphHeight, this.context, this.colour),
-			down: 	new Choice( "graphdecrease", downX,rowY, graphWidth, graphHeight, this.context, this.colour),
-			same: 	new Choice( "graphsame", sameX, rowY, graphWidth, graphHeight, this.context, this.colour),
+			up: new Choice( "graphincrease", this.width - graphSetWidth + padding + iconWidth + padding, this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
+			down: new Choice( "graphdecrease", this.width - graphSetWidth + padding + iconWidth + padding + padding + graphWidth,this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
+			same: new Choice( "graphsame", this.width - graphSetWidth + padding + iconWidth + padding + 2*(padding + graphWidth),this.y+yOffset+marginTop+(graphHeight+paddingY)*i, graphWidth, graphHeight, this.context, this.colour),
 			}
-		//console.log("upX: " + upX + ", downX: " + downX + ", sameX: " +sameX+ ", rowY: " + rowY + ", iconX: " + row.iconX +", iconWidth: "+row.iconWidth);
 		this.rows.push(row);
 	}
 	this.dispatch(this.EVENT_REDRAW);
@@ -198,71 +164,20 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 		}
 		return complete;
 	}
-	//setupVars("orientation", this.x, this.y, this.rows );
-	function setupVars(state, x, y, rows, runBtn, contBtn){
-		//console.log("x: "+x+", y: "+y+", rows:"+rows);
-		graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;
-		maxWidth = canvasWidth - graphSetWidth - headingXoffset;
-		//var graphWidth = 240;	//original: 726;
-		if ( maxWidth > 160 ){
-			prompt.x = x + headingXoffset;
-			prompt.y = y + marginTop + paddingY;
-			lineHeight = 18;
-			console.log("large maxWidth: "+maxWidth);
-		} else if ( maxWidth > 100 && maxWidth <= 160 ){
-			console.log("medium maxWidth: "+maxWidth);
-			padding = 4;
-			prompt.x = x + headingXoffset;
-			prompt.y = y + marginTop + paddingY;
-			lineHeight = 14;
-		} else {
-			padding = 4;
-			prompt.x = padding;
-			prompt.y = btnY;
-			maxWidth = this.width - btnWidth - 10;
-			graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;
-			lineHeight = 10;
-			console.log("small maxWidth: "+maxWidth);
-		}
-
-		graphSetWidth = padding + iconWidth + 3*(padding + graphWidth) + padding;
-		maxWidth = canvasWidth - graphSetWidth - headingXoffset;
-			
-		btnX = canvasWidth - btnWidth - padding;
-		btnY = canvasHeight - btnHeight - paddingY - marginBottom;
-		contBtnX = canvasWidth - contBtnWidth - padding;
-
-		upX = canvasWidth - graphSetWidth + padding + iconWidth + padding;
-		downX = canvasWidth - graphSetWidth + padding + iconWidth + padding + padding + graphWidth;
-		sameX = canvasWidth - graphSetWidth + padding + iconWidth + padding + 2*(padding + graphWidth);
-		
-		if ( state != "init" ){
-			for( var i=0; i< rows.length;i++){
-		    	var r = rows[i];
-		    	var rowY = parseInt(y + yOffset+marginTop+(graphHeight+paddingY)*i);
-		    	r.iconX = canvasWidth - graphSetWidth + padding + 15 - r.iconWidth/2;
-		    	r.y = y+yOffset+marginTop+(graphHeight+paddingY)*i,
-		    	r.up.x = upX;
-		    	r.down.x = downX;
-		    	r.same.x = sameX;
-		    	r.up.y = r.down.y = r.same.y = rowY;
-		    }
-		    runBtn.x = btnX;
-		    runBtn.y = btnY;
-		    contBtn.x = contBtnX;
-		    contBtn.y = btnY;
-		}
-		//console.log("btnX: "+btnX+", btnY: "+btnY+", contBtnX: "+contBtnX);
+	/*
+	function onGraphsLoaded(e){
+		console.log("onGraphsLoaded");
+		this.dispatch(this.EVENT_REDRAW);
 	}
-	this.setCanvasWidthHeight = function(cw, ch){
-		//console.log("this.rows: "+this.rows);
-		canvasWidth = cw; 
-		canvasHeight = ch;
-		this.width = cw;
-		this.x = 0;
-		this.y = ch - this.height;
-		setupVars("orientation", this.x, this.y, this.rows, this.button, this.continueBtn );
+	this.clearEventListeners = function(){
+		for (var i=0; i<this.rows.length; i++){
+			var row = this.rows[i];
+			row.up.removeEventListener(row.up.EVENT_REDRAW, onGraphsLoaded);
+			row.down.removeEventListener(row.up.EVENT_REDRAW, onGraphsLoaded);
+			row.same.removeEventListener(row.up.EVENT_REDRAW, onGraphsLoaded);
+		}
 	}
+	*/
 	this.onMouseUp = function (mouseX,mouseY) {
 		for (i=0; i< this.rows.length; i++) {
 		    var r = this.rows[i];
@@ -294,6 +209,8 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 		    }
 		}
 		if( hitTest(mouseX, mouseY, this.button) || hitTest(mouseX, mouseY, this.continueBtn) ){
+			//console.log("this.STATE: "+this.STATE);
+			//console.log("checkSelectionComplete: "+checkSelectionComplete( this.rows ));
 			var oldState = this.STATE;
 			if ( oldState == "question" ){
 				if ( checkSelectionComplete( this.rows )){
@@ -349,18 +266,16 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	    //prompt text
 	   	this.context.font = "10pt 'Roboto'";
 	    this.context.fillStyle = "black";
-	    //var textY = wrapText(this.context, textblock[0], this.x + headingXoffset, this.y + marginTop + paddingY, maxWidth, lineHeight);
-	    //var textY2 = wrapText(this.context, textblock[1], this.x + headingXoffset, textY+lineHeight*2, maxWidth, lineHeight);
-	    var textY = wrapText(this.context, textblock[0], prompt.x, prompt.y, maxWidth, lineHeight);
-	    var textY2 = wrapText(this.context, textblock[1], prompt.x, textY+lineHeight*2, maxWidth, lineHeight);
+	    var textY = wrapText(this.context, textblock[0], this.x + headingXoffset, this.y + marginTop + paddingY, maxWidth, lineHeight);
+	    //console.log("textY: "+textY);
+	    var textY2 = wrapText(this.context, textblock[1], this.x + headingXoffset, textY+lineHeight*2, maxWidth, lineHeight);
 	    //graph
 	    this.context.font = "500 12pt 'Roboto'";
 	    this.context.fillStyle = accentColourDark;
-	    this.context.fillText("Goes up", upX, this.y+marginTop);
-	    this.context.fillText("Goes down", downX, this.y+marginTop);
-	    this.context.fillText("Stays the same", sameX, this.y+marginTop);
-	    //this.width - graphSetWidth + padding + iconWidth + padding + graphWidth + padding
-	    //this.width - graphSetWidth + padding + iconWidth + 2*(padding + graphWidth) + padding
+	    this.context.fillText("Goes up", this.width - graphSetWidth + padding + iconWidth + padding, this.y+marginTop);
+	    this.context.fillText("Goes down", this.width - graphSetWidth + padding + iconWidth + padding + graphWidth + padding, this.y+marginTop);
+	    this.context.fillText("Stays the same", this.width - graphSetWidth + padding + iconWidth + 2*(padding + graphWidth) + padding, this.y+marginTop);
+
 	    this.context.font = "8pt 'Roboto'";
 	    this.context.textAlign = "right";
 	    this.context.fillStyle = this.colour; //"#666666";
@@ -369,14 +284,11 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	    for( var i=0; i<this.rows.length;i++){
 	    	var r = this.rows[i];
 	    	//console.log("row "+i+": "+r.name+" , "+r.y+" , "+r.up+" , "+r.down+" , "+r.same);
-	    	//console.log("iconWidth: "+iconWidth+", iconHeight: "+iconHeight );
-	    	this.context.drawImage(r.icon, r.iconX,r.y+graphHeight/2-r.iconHeight/2,r.iconWidth,r.iconHeight);	
+	    	this.context.drawImage(r.icon, this.width - graphSetWidth + padding,r.y+graphHeight/2-iconHeight/2,iconWidth,iconHeight);	
 	    	r.up.draw();
 	    	r.down.draw();
 	    	r.same.draw();
 	    }
-	    //console.log("btnX: "+btnX+", btnY: "+btnY+", contBtnX: "+contBtnX);
-	    //console.log("this.button.x: "+this.button.x+", this.button.y: "+this.button.y+", this.continueBtn.x: ")
 	    if (this.STATE == "question"){
 	    	this.button.draw();
 	    } else if (this.STATE == "answer"){
