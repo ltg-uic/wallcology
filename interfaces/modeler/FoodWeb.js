@@ -2,10 +2,10 @@
 function FoodWeb(){
     //Nutella 
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = false;
+    var fullscreen = true;
     var app = "modeler";
     var background = "dark";
-    this.versionID = "20160916-1146f";
+    this.versionID = "OLD-TABLE-CANVAS-20160915-1113";
 
     var query_parameters;
     var nutella;
@@ -33,11 +33,7 @@ function FoodWeb(){
     var oldWidth2;
     var oldHeight2;
 
-    //Setup display list
-    var offsetX; 
-    var offsetY; 
-    var displayList; 
-    var prompt;
+    onResizeWindow("init");
 
 	//Drag related variables
 	var dragok = false;    //for mouse events
@@ -47,6 +43,12 @@ function FoodWeb(){
     var canX = 0;           
     var canY = 0;
 
+    //Setup display list
+    var offsetX = canvas.offsetLeft;
+    var offsetY = canvas.offsetTop;
+    var displayList = new DisplayList(canvas);
+    var prompt;
+
     //setup palette and work areas
     var paletteColour = "#2B323F";
     var buttonColour = "#FF5722";
@@ -55,9 +57,13 @@ function FoodWeb(){
 
     var pbpadding = 0;
     var pbwidth = 150;
-    var pickerbox;
-    var pickerHit;
-    var activeHit;
+    var pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
+    var pickerHit = {x:0,y:0, width:pbpadding+pickerbox.width, height:canvas.height};
+    var activeHit = {
+        x:pickerbox.x+pickerbox.width, 
+        y:0,
+        width:canvas.width-pickerbox.width-pickerbox.x,
+        height:canvas.height};
 
     //setup objects
     var speciesNames = []; 
@@ -66,7 +72,7 @@ function FoodWeb(){
     var speciesSpacing = 50;
 
     var levels = [["triangle", "square", "circle", "diamond"]];
-    var level;
+    var level = new Level(1, ctx);
     var obj = [];
     var connections = [];
     var movingConnections = [];
@@ -74,9 +80,9 @@ function FoodWeb(){
     var plusButtons = [];
     var minusButtons = [];
     var multipleChoice = [];
-    var data;
+    var data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+    //n, x, y, h, w, c, colour, textcolour, font, yo
     
-    onResizeWindow("init");
     loadColours( background );
     initDataCollection();
     setupSpecies();
@@ -97,7 +103,7 @@ function FoodWeb(){
 
     //SETUP
     function initDataCollection(){
-        data.save("MODELER_INIT",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+        data.save("INIT MODELER",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
     }
     function loadColours( background ){
         if ( background == "dark" ){
@@ -170,11 +176,11 @@ function FoodWeb(){
     }
     //EVENTLISTENERS
     function onResizeWindow( i ){
-        cW = 1000;
-        cH = 680;  
+        //cW = 1000;
+        //cH = 800;        
         //cW = window.innerWidth;
         //cH = window.innerHeight;
-        console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+        //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
         gctx = gcanvas.getContext("2d");
@@ -182,6 +188,9 @@ function FoodWeb(){
         canvas = document.getElementById("ui-layer");
         ctx = canvas.getContext("2d");
 
+        cH = canvas.height;
+        cW = canvas.width;
+        
         //allow for top wallcology buttons and left margin if mode is set to "deploy"
         if ( fullscreen ){
             canvas.width = cW;
@@ -219,21 +228,8 @@ function FoodWeb(){
             // update the context for the new canvas scale
             gctx.scale( scaleFactor, scaleFactor );
         }
-
-        if ( i == "init" ){
-            offsetX = canvas.offsetLeft;
-            offsetY = canvas.offsetTop;
-            displayList = new DisplayList(canvas);
-            pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
-            pickerHit = {x:0,y:0, width:pbpadding+pickerbox.width, height:canvas.height};
-            activeHit = {
-                x:pickerbox.x+pickerbox.width, 
-                y:0,
-                width:canvas.width-pickerbox.width-pickerbox.x,
-                height:canvas.height};
-            level = new Level(1, ctx);
-            data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
-        } else {
+        console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
+        if ( i != "init" ){
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];
                 g.x = oldWidth2 - g.width;
@@ -246,9 +242,12 @@ function FoodWeb(){
                 var mc = multipleChoice[k];
                 mc.setCanvasWidthHeight( oldWidth, oldHeight );
             }
-            data.save("MODELER_ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+            //level.updateCanvasHeight( oldHeight );
+            setTimeout(draw, 500);
+            data.save("ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+        } else {
+            return;
         }
-        setTimeout(draw, 500);
     }
     function onMCcontinueClick(e){
         //console.log("onMCcontinueClick");
@@ -275,7 +274,7 @@ function FoodWeb(){
             var arr = mc.getSelectionArray();
             for(var j=0; j<arr.length; j++){
                 var item = arr[j];
-                data.save("MODELER_MC_RUN","object ;"+item.species.name+" ;direction ;"+item.type+" ;graph ;"+item.name+" ;select ;"+item.selection);
+                data.save("MC_RUN","object ;"+item.species.name+" ;direction ;"+item.type+" ;graph ;"+item.name+" ;select ;"+item.selection);
                 //console.log("name: "+item.name+", selection: "+item.selection); 
                 sp = item.species;
                 num = item.num;
@@ -443,7 +442,7 @@ function FoodWeb(){
                         from = "palette";   
                     }
                 }
-                data.save("MODELER_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+                data.save("MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             obj[i].isDragging = false;
         }
@@ -453,16 +452,14 @@ function FoodWeb(){
         if(detectHit(mx,my,activeHit)){
             //console.log("active");
             setActiveProperty(activeHit, true);
-            if ( multipleChoice.length < 1 ){
-                for (var j = 0; j < plusButtons.length; j++) {
-                    if( detectHit(mx,my,plusButtons[j])){
-                        setupPopulationChange(obj[j], j, "plus");
-                    }
+            for (var j = 0; j < plusButtons.length; j++) {
+                if( detectHit(mx,my,plusButtons[j])){
+                    setupPopulationChange(obj[j], j, "plus");
                 }
-                for (var k = 0; k < minusButtons.length; k++) {
-                    if( detectHit(mx,my,minusButtons[k])){
-                        setupPopulationChange(obj[k], k, "minus");
-                    }
+            }
+            for (var k = 0; k < minusButtons.length; k++) {
+                if( detectHit(mx,my,minusButtons[k])){
+                    setupPopulationChange(obj[k], k, "minus");
                 }
             }
         }
@@ -522,7 +519,7 @@ function FoodWeb(){
         for ( var i=0; i<movingConnections.length; i++){
             var movingConnection = movingConnections[i];
             prompt.setConnectionPrompt();
-            data.save("MODELER_CONNECTION_MADE","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;connection ;"+movingConnection.type);
+            data.save("CONNECTION_MADE","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;connection ;"+movingConnection.type);
             connections.push( movingConnection );
         }
         movingConnections = [];
@@ -549,7 +546,7 @@ function FoodWeb(){
                 if(!speciesActive){
                     //one of the objects in a created connection is no longer active
                     //console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
-                    data.save("MODELER_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
+                    data.save("CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
                     for (var m = 0; m < connections.length; m++) {
                         if( connections[m].name == tempConnection ){
                             //remove
@@ -749,7 +746,7 @@ function FoodWeb(){
             }
 
             //setup multple choice and prompts
-            data.save("MODELER_MC_START","object ;"+species.name+" ;direction ;"+direction);
+            data.save("MC_START","object ;"+species.name+" ;direction ;"+direction);
             var mc = new MultipleChoice( namesArr, oldHeight, oldWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
@@ -795,7 +792,7 @@ function FoodWeb(){
                         dataset = data2.baseline;
                 }
                 graph.replace( dataset, id );
-                data.save("MODELER_GRAPH","object ;"+object.name+" ;direction ;"+type+" ;graph ;"+graph.name+" ;result ;"+r);
+                data.save("GRAPH","object ;"+object.name+" ;direction ;"+type+" ;graph ;"+graph.name+" ;result ;"+r);
             }
         }
     }
@@ -999,7 +996,7 @@ function FoodWeb(){
         ctx.fillStyle = backgroundColour;
         ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
         //clear area so graphs will show through
-        ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
+        //ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
         /*
         //showPos
         ctx.font = "24pt Helvetica";

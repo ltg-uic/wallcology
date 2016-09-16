@@ -95,7 +95,6 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	//this.setCanvasWidthHeight( this.width, y );
 
 	setupVars("init", this.x, this.y);
-
 	this.button = new GenericButton("Run", btnX, btnY, btnHeight, btnWidth, c, this.colour, "#FFFFFF", "12pt 'Roboto'", 8);
 	this.continueBtn = new GenericButton("Continue",contBtnX,btnY,btnHeight,contBtnWidth,c,accentColour, "#FFFFFF", "12pt 'Roboto'", 8);
 	
@@ -330,12 +329,15 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 		this.context.fillStyle = "black";
 		this.context.globalAlpha = 0.2;
 		this.context.fillRect(0,0,this.width,this.y);
+		/*
 		if (this.STATE == "answer"){
 			this.context.clearRect(this.width-400,0,400,(this.rows.length+1)*80);
 		}
+		*/
 		this.context.globalAlpha = 1;
 		//draw header
 		this.context.fillStyle = accentColour;
+		console.log("this.x: "+this.x+", this.y: "+this.y+", this.width: "+this.width+", topBarH: "+topBarH)
 		this.context.fillRect(this.x,this.y,this.width,topBarH);
 		//draw background
 		this.context.fillStyle = backgroundColor;

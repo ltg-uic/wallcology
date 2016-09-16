@@ -97,11 +97,13 @@ function BarGraph(ctx, ico, cw) {
 
 	  // Draw the background color
 	  ctx.fillStyle = that.backgroundColor;
-	  ctx.fillRect(that.x, yOffset, that.width, that.height);
+	  ctx.fillRect(0, yOffset, that.width, that.height);
+	  //ctx.fillRect(that.x, yOffset, that.width, that.height);
 
 	  //Draw icon and make room
 	  	//ctx.drawImage(icon, 4, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
-	  	ctx.drawImage(icon, that.x+xOffset, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
+	  	//ctx.drawImage(icon, that.x+xOffset, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
+	  	ctx.drawImage(icon, 10, yOffset+graphAreaHeight/2-10, 30, 30); //offset icon from top by 10px
 	  	graphAreaWidth -= 40;
 	  	graphAreaX = 50;
 					
@@ -136,12 +138,19 @@ function BarGraph(ctx, ico, cw) {
 		// Draw bar
 		ctx.fillStyle = "#333";
 		//console.log("BarGraph x: "+that.x);
+		/*
 		ctx.fillRect(that.x + graphAreaX + that.margin + i * (graphAreaWidth-5) / numOfBars, //offset bars from right by 5 px
 		  yOffset + graphAreaHeight - barHeight - 5, //offset bars from bottom by 5 px
 		  barWidth,
 		  barHeight);
 
 		}
+		*/
+		ctx.fillRect(graphAreaX + that.margin + i * (graphAreaWidth-5) / numOfBars, //offset bars from right by 5 px
+		  yOffset + graphAreaHeight - barHeight - 5, //offset bars from bottom by 5 px
+		  barWidth,
+		  barHeight);
+
 	};
 	/*
 	//Update the dimension of the canvas if graphs don't fit
@@ -155,7 +164,7 @@ function BarGraph(ctx, ico, cw) {
 		}
 	}
 	*/
-  
+  }
 	// Loop method adjusts the height of bar and redraws if neccessary
 	var append = function () {
 		// Boolean to prevent append function from looping if already looping
