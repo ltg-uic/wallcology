@@ -48,7 +48,8 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	this.context = c;
 	this.name = "multiple choice";
 	this.height = n.length * (graphHeight+paddingY) + yOffset + marginTop+ marginBottom + btnHeight + paddingY;
-	this.width = canvasWidth; //cW from FoodWeb.js 
+	this.width = canvasWidth; 
+	//cW from FoodWeb.js 
 	//console.log("w: "+w+", this.width: "+this.width);
 	this.x = 0; 	//x;
 	this.y = canvasHeight - this.height;	//y = canvasHeight, not reliable
@@ -101,14 +102,15 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	this.EVENT_CLICKED = "clicked";
 	this.EVENT_REDRAW = "redraw";
 	this.EVENT_CONTINUE = "continue";
-
+	//console.log("this.width: "+this.width+", graphSetWidth: "+graphSetWidth+", padding: "+ padding +", iconWidth: "+iconWidth/2)
 	for( var i=0; i<n.length; i++){
 		var rowY = this.y + yOffset + marginTop + (graphHeight+paddingY)*i;
 		var row = {
 			name: n[i].name,
-			iconWidth: n[i].width,
-			iconHeight: n[i].height,
-			iconX: this.width - graphSetWidth + padding + 15 - n[i].width/2,
+			iconWidth: iconWidth,
+			iconHeight: iconHeight,
+			iconX: this.width - graphSetWidth + padding + 15 - iconWidth/2,
+			iconY: rowY+graphHeight/2-iconHeight/2,
 			y: rowY,
 			icon: loadImage( n[i].name + ".png" ),
 			selection: "none",
@@ -116,7 +118,7 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 			down: 	new Choice( "graphdecrease", downX,rowY, graphWidth, graphHeight, this.context, this.colour),
 			same: 	new Choice( "graphsame", sameX, rowY, graphWidth, graphHeight, this.context, this.colour),
 			}
-		//console.log("upX: " + upX + ", downX: " + downX + ", sameX: " +sameX+ ", rowY: " + rowY + ", iconX: " + row.iconX +", iconWidth: "+row.iconWidth);
+		//console.log("iconX: " + row.iconX +", iconWidth: "+row.iconWidth);
 		this.rows.push(row);
 	}
 	this.dispatch(this.EVENT_REDRAW);
@@ -240,7 +242,8 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 			for( var i=0; i< rows.length;i++){
 		    	var r = rows[i];
 		    	var rowY = parseInt(y + yOffset+marginTop+(graphHeight+paddingY)*i);
-		    	r.iconX = canvasWidth - graphSetWidth + padding + 15 - r.iconWidth/2;
+		    	r.iconX = canvasWidth - graphSetWidth + padding + 15 - iconWidth/2;
+		    	r.iconY = rowY + graphHeight/2 - iconHeight/2
 		    	r.y = y+yOffset+marginTop+(graphHeight+paddingY)*i,
 		    	r.up.x = upX;
 		    	r.down.x = downX;
@@ -368,15 +371,11 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 
 	    for( var i=0; i<this.rows.length;i++){
 	    	var r = this.rows[i];
-	    	//console.log("row "+i+": "+r.name+" , "+r.y+" , "+r.up+" , "+r.down+" , "+r.same);
-	    	//console.log("iconWidth: "+iconWidth+", iconHeight: "+iconHeight );
-	    	this.context.drawImage(r.icon, r.iconX,r.y+graphHeight/2-r.iconHeight/2,r.iconWidth,r.iconHeight);	
 	    	r.up.draw();
 	    	r.down.draw();
 	    	r.same.draw();
+	    	this.context.drawImage(r.icon, r.iconX, r.iconY, r.iconWidth, r.iconHeight);	
 	    }
-	    //console.log("btnX: "+btnX+", btnY: "+btnY+", contBtnX: "+contBtnX);
-	    //console.log("this.button.x: "+this.button.x+", this.button.y: "+this.button.y+", this.continueBtn.x: ")
 	    if (this.STATE == "question"){
 	    	this.button.draw();
 	    } else if (this.STATE == "answer"){
