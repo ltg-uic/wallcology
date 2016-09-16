@@ -46,21 +46,43 @@ NOTES.load(function () {
 
   //returns all notes for from a group index, e.g.,  group == 1
   nutella.net.handle_requests('all_notes_with_group', function (message, from) {
-    // if coming from the debugger
-    //var parsedNote = JSON.parse(message);
-    var parsedNote = message;
+        try {
+      //check the  index
 
-    if (!isNaN(parsedNote) && (parsedNote >= 0 && parsedNote <= 4)) {
-      console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
-      return (
-        NOTES.notes.filter(
-          function (note) {
-            return (note.group == parsedNote.group);
-          }));
-    } else {
-      return {};
+      //check species
+      var groupIndex = message && message.groupIndex;
+      if (isNaN(groupIndex)) throw 'groupIndex index is not a number' + groupIndex;
+      if (!groupIndex.checkRange(0, 4)) throw 'groupIndex out of bounds' + groupIndex;
+
+      //we passed all the tests
+
+      var foundNotes = NOTES.notes.filter(
+        function (note) {
+          return (note.groupIndex == groupIndex);
+        });
+
+      var rm = returnMessage(-1, groupIndex, foundNotes);
+      console.log('making request for groupIndex: ' + groupIndex + ' #notes: ' + foundNotes.length);
+      return rm
+    } catch (err) {
+      console.log('all_notes_with_group error: ' + err);
+      return returnMessage(-1, -1, []);
     }
   });
+
+  //   var parsedNote = message;
+
+  //   if (!isNaN(parsedNote) && (parsedNote >= 0 && parsedNote <= 4)) {
+  //     console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
+  //     return (
+  //       NOTES.notes.filter(
+  //         function (note) {
+  //           return (note.group == parsedNote.group);
+  //         }));
+  //   } else {
+  //     return {};
+  //   }
+  // });
 
   //returns all the species from a species index e.g., species == 2
   nutella.net.handle_requests('all_notes_with_species', function (message, from) {
@@ -97,7 +119,7 @@ NOTES.load(function () {
       console.log('request note_with_species_group speciesIndex: ' + parsedNote.species + ' groupIndex: ' + parsedNote.group);
 
       var n = NOTES.notes.filter(function (note) { return (note.species == parsedNote.species && note.group == parsedNote.group) });
-      return ((n.length == 0) ? {} : n[n.length - 1]);
+      return ((n.length == 0) ? {} : n[n.length - 1]);ac
     } else {
       return {};
     }
