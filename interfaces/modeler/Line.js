@@ -19,8 +19,10 @@ function Line(n,o1,o2,c,l,t,d,sc,bg){
     } else {
         this.colour = "#22B573";
     }
-    //this.colour = "#CDDC39"; //"#22B573";
+
+    //sthis.colour = "#CDDC39"; //"#22B573";
     this.lastHit;
+
     var hit = getHitObject(this.obj1,this.obj2);
     this.x = hit.x;
     this.y = hit.y;
@@ -351,7 +353,7 @@ function Line(n,o1,o2,c,l,t,d,sc,bg){
         this.type = getLineType( this.sourceBtn.symbol, this.destinationBtn.symbol );
         this.lastHit = hit;
         if ( hit == "source" || hit == "destination" ){
-            this.datalog.save("RELATIONSHIP","source ;"+this.obj1.name+" ;destination ;"+this.obj2.name+" ;line type ;"+this.type+" ;clicked ;"+this.lastHit+" ;ss ;"+this.sourceBtn.symbol+" ;ds ;"+this.destinationBtn.symbol);
+            this.datalog.save("MODELER_RELATIONSHIP","source ;"+this.obj1.name+" ;destination ;"+this.obj2.name+" ;line type ;"+this.type+" ;clicked ;"+this.lastHit+" ;ss ;"+this.sourceBtn.symbol+" ;ds ;"+this.destinationBtn.symbol);
         }
     }
     this.getLength = function(){
