@@ -16,6 +16,7 @@ node_modules/*
 interfaces/wallscope-interface/wallcology-visualization/unity
 interfaces/wallscope-interface/wallcology-visualization/unity/*
 interfaces/imageUpload
+interfaces/ecosystem-history2.0
 
 unity/
 unity/*
