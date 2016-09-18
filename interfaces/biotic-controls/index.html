@@ -29,7 +29,7 @@
 <!-- Your markup here -->
 
 	<!-- The above is very temporary. We need to get ecosystem from URL PARAMETERS -->
-	Species: <input type=text id="species" size=2><br>
+	<!-- Species: <input type=text id="species" size=2><br> -->
 
 
 	<div style="color:DarkCyan; font-size: 120%"> Vegetation Controls</div> <br>
@@ -78,34 +78,37 @@
 		var DELAY=60 * 1000; //one minute between actions
 	// (Optional) Set the resourceId
 
+var s = -1;
 	
-	function toggle(speciesType,index){ alert('here');
+	function toggle(speciesType,index){ 
 		// for (var i=0; i<10; i++) {
 		// 	document.getElementById('img' + i).enabled=false;
 		// } 
-		document.getElementById('img' + 0).enabled=true;		// document.getElementById('img' + index).setAttribute('enabled', 'enabled');
+		// document.getElementById('img' + index).enabled=true; 
+		s=index;
+				// document.getElementById('img' + index).setAttribute('enabled', 'enabled');
 	}
 
 	// Get an instance of nutella. 
 	// nutella.setResourceId('my_resource_id');
 
 
-	function seed (s) {
-		// nutella.net.publish('seed',{ecosystem:ecosystem,species:s});
-		// block();
+	function seed () {
+		nutella.net.publish('seed',{ecosystem:ecosystem,species:s});
+		block();
 	}
 
-	function herbicide (s) {
-		// nutella.net.publish('herbicide',{ecosystem:ecosystem,species:s});
-		// block();
+	function herbicide () {
+		nutella.net.publish('herbicide',{ecosystem:ecosystem,species:s});
+		block();
 	}
-	function colonize (s) {
-		// nutella.net.publish('colonize',{ecosystem:ecosystem,species:s});
-		// block();
+	function colonize () {
+		nutella.net.publish('colonize',{ecosystem:ecosystem,species:s});
+		block();
 	}
-	function trap (s) {
-		// nutella.net.publish('trap',{ecosystem:ecosystem,species:s});
-		// block();
+	function trap () {
+		nutella.net.publish('trap',{ecosystem:ecosystem,species:s});
+		block();
 	}
 
 	function block () {
