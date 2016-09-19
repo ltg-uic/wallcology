@@ -24,7 +24,7 @@ PLACES.load(function () {
         return body;
     });
 
-    //returns all notes for from a group index, e.g.,  group == 1
+    //returns all places for from a group index, e.g.,  group == 1
     nutella.net.handle_requests('all_places_with_group', function (message, from) {
         try {
             //check the  index
@@ -94,9 +94,6 @@ PLACES.load(function () {
             //we passed all the tests
             console.log('making request for groupIndex: ' + groupIndex + ' speciesIndex: ' + speciesIndex + ' for runId: ' + nutella.run_id);
 
-            //finally add the newNote
-            newPlace['timestamp'] = new Date().getTime();
-            newPlace['isSynced'] = true
             PLACES.places.push(newPlace);
             //set it
 
