@@ -35,13 +35,9 @@ NOTES.load(function () {
   //returns all_notes for every group
   nutella.net.handle_requests('all_notes', function (message, from) {
     console.log('request all_notes');
-    //save to dop file box erer, calculaur 
-    var url = calculate
-    //console.log('message' + message);
-    var image = { 'to': from.componentId, 'imageUrl': url }
-    nutella.net.publish('image_out', image);
-
-    return NOTES.notes;
+    var rm = returnMessage(-1, -1, NOTES.notes);
+    console.log('making request for all_notes #notes: ' + NOTES.notes.length);
+    return rm;
   });
 
   //returns all notes for from a group index, e.g.,  group == 1
@@ -69,20 +65,6 @@ NOTES.load(function () {
       return returnMessage(-1, -1, []);
     }
   });
-
-  //   var parsedNote = message;
-
-  //   if (!isNaN(parsedNote) && (parsedNote >= 0 && parsedNote <= 4)) {
-  //     console.log('request all_notes_with_group groupIndex: ' + parsedNote.group);
-  //     return (
-  //       NOTES.notes.filter(
-  //         function (note) {
-  //           return (note.group == parsedNote.group);
-  //         }));
-  //   } else {
-  //     return {};
-  //   }
-  // });
 
   //returns all the species from a species index e.g., species == 2
   nutella.net.handle_requests('all_notes_with_species', function (message, from) {
