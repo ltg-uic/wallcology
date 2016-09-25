@@ -61,7 +61,6 @@ PLACES.load(function () {
             if (!speciesIndex.checkRange(0, 10)) throw 'speciesIndex out of bounds' + speciesIndex;
 
             //we passed all the tests
-
             var foundPlaces = PLACES.places.filter(
                 function (place) {
                     return (place.speciesIndex == speciesIndex);
@@ -132,7 +131,6 @@ PLACES.load(function () {
     };
 
 });
-
 
 Number.prototype.checkRange = function (min, max) {
     return this >= min && this <= max;
