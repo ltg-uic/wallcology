@@ -4,7 +4,7 @@ function Prompt(context, x, y, cw, ch, l, bg){
 	var maxWidth = cw - x - 400 - 10;	//400 as size of graphs	//10 = padding
 	var lineHeight = 25;
 	var styleMarker = '§';
-	
+
 	// table code style --> font style
 	var styleCodeToStyle = {
 	    r: '',
@@ -15,9 +15,9 @@ function Prompt(context, x, y, cw, ch, l, bg){
 
 	var promptsList = [
 	   	{level:1,
-		instruction:"Drag the shapes into the work area to get started.",
+		instruction:"",
 		//instruction:" ",
-		connection:"Click on §b+§r and §b\u2013§r to change the relationship.<br>See what happens when the population of one shape increase or decrease.<br>Click on the 'arrow up' or 'arrow down' buttons to find out."
+		connection:""
 		},
 		{level:2,
 		instruction:"In level 1, you created a food chain. Here you'll be creating an 'Interaction Web'. Drag the species into the work area.",
@@ -39,10 +39,10 @@ function Prompt(context, x, y, cw, ch, l, bg){
 	this.x = x;
 	this.y = y;
 	this.height = 100;	//need x, y, height and width properties to be same as graphs and mouse to detect mouse up
-	this.width = this.ctx.canvas.width; 
+	this.width = this.ctx.canvas.width;
 	this.message = "" ;
-	this.EVENT_CLICKED = "clicked";	
-	
+	this.EVENT_CLICKED = "clicked";
+
 	var itemList = [];
 	var mcMarginX = this.x + 100;
 	var mcMarginY = this.y + 10;
@@ -60,7 +60,7 @@ function Prompt(context, x, y, cw, ch, l, bg){
 	itemList.push( mc1 );
 	*/
 	if ( this.level ){
-		this.message = promptsList[ this.level-1 ].instruction;	
+		this.message = promptsList[ this.level-1 ].instruction;
 	} else {
 		this.message = "Error";
 	}
@@ -142,7 +142,7 @@ function Prompt(context, x, y, cw, ch, l, bg){
 
 		//calls onPromptClicked in FoodWeb.js
 		//this.dispatch(this.EVENT_CLICKED);
-		
+
 		//runs through all the clickable items and see which one was clicked
 		for (i=0; i< itemList.length; i++) {
 		    var to = itemList[i];
@@ -154,11 +154,11 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		}
 		*/
 	}
-	
+
 	this.setConnectionPrompt = function(){
 
 		if ( this.level ){
-			this.message = promptsList[ this.level-1 ].connection;	
+			this.message = promptsList[ this.level-1 ].connection;
 		} else {
 			this.message = "Error";
 		}
