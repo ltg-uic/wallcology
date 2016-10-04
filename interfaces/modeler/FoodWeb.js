@@ -1,14 +1,59 @@
 //MODELER
 function FoodWeb(){
-    //Nutella 
+    //
     var mode = "deploy"; //"develop" or "deploy"
     var fullscreen = false;
     var app = "modeler";
     var background = "dark";
-    this.versionID = "20160916-1146f";
-
+    var versionID = "20160921-1000";
     var query_parameters;
     var nutella;
+
+    //canvas variables
+    var gcanvas;
+    var gctx;
+    var canvas;
+    var ctx;
+    var scaleFactor;
+    var canvasWidth;
+    var canvasHeight;
+    var preScaledWidth;   //canvas width before retina screen resize
+    var preScaledHeight;
+
+    //Drag related variables
+    var dragok = false;    //for mouse events
+    var startX;
+    var startY;
+    var mouseIsDown = 0;   //for showPos
+    var canX = 0;
+    var canY = 0;
+
+    //setup objects
+    var species = [{name:"triangle", width:60, height:60}, {name:"square", width:60, height:60}, {name:"circle", width:60, height:60}, {name:"diamond", width:60, height:60}];
+    var speciesSize = 60;
+    var speciesMargin = 20;
+    var speciesSpacing = 50;
+    var palette;
+    var paletteWidth = 100;
+    var paletteColour = "#2B323F";
+    var buttonColour = "#FF5722";
+    var backgroundColour;
+    var shadowColour;
+
+    var activeArea;
+    var displayList;
+    var prompt;
+    var data;
+    var initialized = false;
+
+    var obj = [];
+    var connections = [];
+    var movingConnections = [];
+    var graphs = [];
+    var plusButtons = [];
+    var minusButtons = [];
+    var multipleChoice = [];
+
     if ( mode == "deploy"){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
@@ -17,164 +62,57 @@ function FoodWeb(){
     }
     WebFont.load({
         google: {
-          families: ['Droid Sans', 'Roboto']
+          families: ['Roboto']
         }
     });
-
-    var cW;
-    var cH;
-    var gcanvas;
-    var gctx;
-    var canvas;
-    var ctx;
-    var scaleFactor;
-    var oldWidth;   //canvas width before retina screen resize
-    var oldHeight;
-    var oldWidth2;
-    var oldHeight2;
-
-    //Setup display list
-    var offsetX; 
-    var offsetY; 
-    var displayList; 
-    var prompt;
-
-	//Drag related variables
-	var dragok = false;    //for mouse events
-    var startX;
-    var startY;
-    var mouseIsDown = 0;   //for showPos
-    var canX = 0;           
-    var canY = 0;
-
-    //setup palette and work areas
-    var paletteColour = "#2B323F";
-    var buttonColour = "#FF5722";
-    var backgroundColour; 
-    var shadowColour;
-
-    var pbpadding = 0;
-    var pbwidth = 150;
-    var pickerbox;
-    var pickerHit;
-    var activeHit;
-
-    //setup objects
-    var speciesNames = []; 
-    var speciesSize = 100;
-    var speciesMargin = 25;
-    var speciesSpacing = 50;
-
-    var levels = [["triangle", "square", "circle", "diamond"]];
-    var level;
-    var obj = [];
-    var connections = [];
-    var movingConnections = [];
-    var graphs = [];
-    var plusButtons = [];
-    var minusButtons = [];
-    var multipleChoice = [];
-    var data;
-    
+    //load colours
+    if ( background == "dark" ){
+        backgroundColour = "#3d5168";
+        shadowColour = "#253240";
+        lineColour = "#CDDC39";
+    } else {
+        backgroundColour = "#FFFFFF";
+        shadowColour = "#BFBFBF";
+        lineColour = "#CDDC39";
+    }
+    //resize canvas
     onResizeWindow("init");
-    loadColours( background );
-    initDataCollection();
-    setupSpecies();
-    setupLevel(1, true, levels[0], oldWidth, oldHeight);
+
+    data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+    data.save("MODELER_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
+
+    //setup display list items
+    displayList = new DisplayList( canvas );
+    palette = { x:0, y:0, width:paletteWidth, height: preScaledHeight };
+    activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x, height: preScaledHeight };
+    obj = setupSpecies( species );
+    plusButtons = setupButtons("plus");
+    minusButtons = setupButtons("minus");
+    prompt = new Prompt(ctx, paletteWidth+20, 20, preScaledWidth, preScaledHeight, 1, background);
+    displayList.addChild(prompt);
+    setTimeout(draw, 500);
 
     // Add eventlistener to canvas
-    canvas.addEventListener("mousemove", onMouseMove, false); 
+    canvas.addEventListener("mousemove", onMouseMove, false);
     canvas.addEventListener("mousedown", onMouseDown, false);
     canvas.addEventListener("mouseup", onMouseUp, false);
     canvas.addEventListener("touchstart", onTouchDown, false);
     canvas.addEventListener("touchmove", onTouchMove, true);
     canvas.addEventListener("touchend", onTouchUp, false);
-    
+
     document.body.addEventListener("mouseup", onMouseUp, false);
     document.body.addEventListener("touchcancel", onTouchUp, false);
 
     window.addEventListener("orientationchange", onResizeWindow);
 
     //SETUP
-    function initDataCollection(){
-        data.save("MODELER_INIT",this.versionID+"; window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
-    }
-    function loadColours( background ){
-        if ( background == "dark" ){
-            backgroundColour = "#3d5168";
-            shadowColour = "#253240";
-            lineColour = "#CDDC39";
-        } else {
-            backgroundColour = "#FFFFFF";
-            shadowColour = "#BFBFBF";
-            lineColour = "#CDDC39";
-        }
-    }
-    function setupLevel( num, minus, species, cw, ch ){
-        clearListeners();
-        removeGraphs();
-        speciesNames = species;
-        displayList.objectList = [];
-        obj = [];
-        connections = [];
-        graphs = [];     
-        setupSpecies();
-        plusButtons = [];
-        minusButtons = [];
-        plusButtons = setupButtons("plus");
-        if( minus ){
-            minusButtons = setupButtons("minus");
-        }
-        prompt = new Prompt(ctx, pbwidth+20, 20, cw, ch, num, background);
-        displayList.addChild(prompt);
-        setTimeout(draw, 500);
-    }
-    function setupSpecies(){
-        for(var i=0; i<speciesNames.length; i++){
-            var name = speciesNames[i];
-            var tempObj = new Species( name, 
-                speciesMargin, speciesMargin+((speciesSize+speciesMargin)*i), 
-                speciesSize, speciesSize, ctx, shadowColour );
-            obj.push(tempObj);
-            displayList.addChild(tempObj);
-        }
-        draw();
-    }
-    //Set up action buttons
-    function setupButtons(type){
-        var tempArr = [];
-        var t = type;
-        for (var i = 0; i < obj.length; i++) {
-            var tempBtn = new ActionButton(ctx, t, buttonColour, shadowColour, backgroundColour );
-            tempBtn.index = i;
-            tempArr.push( tempBtn );
-            displayList.addChild(tempBtn);
-        }
-        return tempArr;
-    }
-    //clear all the event listeners before removing object
-    function clearListeners(){
-        for (var l=0; l<multipleChoice.length; l++){
-            var mc = multipleChoice[l];
-            mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
-            mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
-            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
-        }
-    }
-    //remove all graphs
-    function removeGraphs(){
-        for (var i=0; i<graphs.length; i++){
-            graphs[i].clearGraph();
-        }
-        gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
-    }
-    //EVENTLISTENERS
-    function onResizeWindow( i ){
-        cW = 1000;
-        cH = 680;  
-        //cW = window.innerWidth;
-        //cH = window.innerHeight;
-        console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
+    function onResizeWindow( init ){
+
+
+        canvasWidth = (window.innerWidth === 0)? 1000 : window.innerWidth;
+        canvasHeight = (window.innerHeight === 0)? 760 : window.innerHeight;
+
+        console.log("window.innerHeight: "+canvasHeight+", window.innerWidth: "+canvasWidth);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
         gctx = gcanvas.getContext("2d");
@@ -182,101 +120,112 @@ function FoodWeb(){
         canvas = document.getElementById("ui-layer");
         ctx = canvas.getContext("2d");
 
-        //allow for top wallcology buttons and left margin if mode is set to "deploy"
+        //allow for top wallcology buttons and left margin if mode is not set to "fullscreen"
         if ( fullscreen ){
-            canvas.width = cW;
-            canvas.height = cH
-            gcanvas.width = cW;
-            gcanvas.height = cH
+            canvas.width = canvasWidth;
+            canvas.height = canvasHeight;
+            gcanvas.width = canvasWidth;
+            gcanvas.height = canvasHeight;
         } else if ( !fullscreen ){
-            var distFromTop = 58;
-            var distFromLeft = 40;
-            canvas.width = cW-distFromLeft;
-            canvas.height = cH-distFromTop;
-            gcanvas.width = cW-distFromLeft;
-            gcanvas.height = cH-distFromTop;
+            var distFromTop = 20; //58;
+            var distFromLeft = 20; //40;
+            canvas.width = canvasWidth-distFromLeft;
+            canvas.height = canvasHeight-distFromTop;
+            gcanvas.width = canvasWidth-distFromLeft;
+            gcanvas.height = canvasHeight-distFromTop;
         }
 
         //Scaling a canvas with a backing store multipler
-        scaleFactor = backingScale(ctx);  
-        oldWidth = canvas.width;
-        oldHeight = canvas.height;
-        oldWidth2 = gcanvas.width;
-        oldHeight2 = gcanvas.height;
+        scaleFactor = backingScale(ctx);
+        preScaledWidth = canvas.width;
+        preScaledHeight = canvas.height;
 
         if (scaleFactor > 1) {
             canvas.width = canvas.width * scaleFactor;
             canvas.height = canvas.height * scaleFactor;
-            canvas.style.width = oldWidth + "px";
-            canvas.style.height = oldHeight + "px";
+            canvas.style.width = preScaledWidth + "px";
+            canvas.style.height = preScaledHeight + "px";
             // update the context for the new canvas scale
             ctx.scale( scaleFactor, scaleFactor );
 
             gcanvas.width = gcanvas.width * scaleFactor;
             gcanvas.height = gcanvas.height * scaleFactor;
-            gcanvas.style.width = oldWidth2 + "px";
-            gcanvas.style.height = oldHeight2 + "px";
+            gcanvas.style.width = preScaledWidth + "px";
+            gcanvas.style.height = preScaledHeight + "px";
             // update the context for the new canvas scale
             gctx.scale( scaleFactor, scaleFactor );
         }
 
-        if ( i == "init" ){
-            offsetX = canvas.offsetLeft;
-            offsetY = canvas.offsetTop;
-            displayList = new DisplayList(canvas);
-            pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
-            pickerHit = {x:0,y:0, width:pbpadding+pickerbox.width, height:canvas.height};
-            activeHit = {
-                x:pickerbox.x+pickerbox.width, 
-                y:0,
-                width:canvas.width-pickerbox.width-pickerbox.x,
-                height:canvas.height};
-            level = new Level(1, ctx);
-            data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
-        } else {
+        if ( init != "init" ){
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];
-                g.x = oldWidth2 - g.width;
+                g.x = preScaledWidth - g.width;
                 g.drawBarGraph(j);
             }
             if ( prompt ){
-                prompt.setMaxWidth( oldWidth );
+                prompt.setMaxWidth( preScaledWidth );
             }
             for (var k=0; k<multipleChoice.length; k++){
                 var mc = multipleChoice[k];
-                mc.setCanvasWidthHeight( oldWidth, oldHeight );
+                mc.setCanvasWidthHeight( preScaledWidth, preScaledHeight );
             }
-            data.save("MODELER_ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
+            // Update the palette
+            // palette.height = preScaledHeight;
+            // activeArea.width = preScaledWidth - palette.width - palette.x;
+            // activeArea.height = preScaledHeight;
+            data.save("MODELER_ORIENTATION","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
         setTimeout(draw, 500);
     }
+
+    function setupSpecies( speciesArr ){
+        var tempArr = [];
+        for(var i=0; i<speciesArr.length; i++){
+            var sp = speciesArr[i];
+            var tempObj = new Species( sp.name,
+                speciesMargin, speciesMargin+((sp.height+speciesMargin)*i),
+                sp.height, sp.width, ctx, shadowColour );
+            tempArr.push(tempObj);
+            displayList.addChild(tempObj);
+        }
+        return tempArr;
+    }
+    //Set up action buttons
+    function setupButtons( t ){
+        var tempArr = [];
+        var type = t;
+        for (var i = 0; i < obj.length; i++) {
+            var tempBtn = new ActionButton(ctx, type, obj[i].width, obj[i].height,  buttonColour, shadowColour, backgroundColour );
+            tempBtn.index = i;
+            tempArr.push( tempBtn );
+            displayList.addChild(tempBtn);
+        }
+        return tempArr;
+    }
+    //EVENTLISTENERS
     function onMCcontinueClick(e){
-        //console.log("onMCcontinueClick");
         for(var i=0; i<multipleChoice.length; i++){
             var mc = multipleChoice[i];
             displayList.removeChild( mc );
             mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
-            mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+            mc.removeEventListener(mc.EVENT_CLICKED, onMCrunClick);
             mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
             mc = {};
             multipleChoice.splice(i, 1);
         }
-        draw();   
+        draw();
     }
-    function onMultipleChoiceClick(e){
-        //console.log("onMultipleChoiceClick");   
+    function onMCrunClick(e){
         var sp;
         var num;
         var type;
         prompt.setText(" ");
         for(var i=0; i<multipleChoice.length; i++){
             var mc = multipleChoice[i];
-            //console.log("mc.STATE: "+mc.STATE);
             var arr = mc.getSelectionArray();
             for(var j=0; j<arr.length; j++){
                 var item = arr[j];
                 data.save("MODELER_MC_RUN","object ;"+item.species.name+" ;direction ;"+item.type+" ;graph ;"+item.name+" ;select ;"+item.selection);
-                //console.log("name: "+item.name+", selection: "+item.selection); 
                 sp = item.species;
                 num = item.num;
                 type = item.type;
@@ -286,7 +235,7 @@ function FoodWeb(){
         draw();
     }
     function handleRedraw(e){
-        draw();   
+        draw();
     }
     function onTouchUp(e){
         endMove(e.changedTouches[0].pageX, e.changedTouches[0].pageY,true);
@@ -310,7 +259,7 @@ function FoodWeb(){
         startMove(e.clientX,e.clientY,false);
     }
     // handle mouseup events
-    function onMouseUp(e) {  
+    function onMouseUp(e) {
         // tell the browser we're handling this mouse event
         e.preventDefault();
         e.stopPropagation();
@@ -325,11 +274,16 @@ function FoodWeb(){
         moveXY(e.clientX,e.clientY);
     }
     function moveXY(x,y){
+        if ( !initialized ){
+            onResizeWindow( "init" );
+            initialized = true;
+        }
+
         var newx = x;
-        var newy = y;        
+        var newy = y;
         canX = newx; //- canvas.offsetLeft;
         canY = newy; //- canvas.offsetTop;
-        
+
         if (dragok) {
             // get the current mouse position
             var mx = canX;
@@ -340,7 +294,7 @@ function FoodWeb(){
             var dx = mx - startX;
             var dy = my - startY;
 
-            // move each rect that isDragging 
+            // move each rect that isDragging
             // by the distance the mouse has moved
             // since the last mousemove
             for (var i = 0; i < obj.length; i++) {
@@ -391,9 +345,9 @@ function FoodWeb(){
         startX = mx;
         startY = my;
         mouseIsDown = 1;
-        
+
         if(isTouch){
-            onTouchMove();    
+            onTouchMove();
         } else {
             onMouseMove();
         }
@@ -410,8 +364,8 @@ function FoodWeb(){
             var from;
             if( obj[i].isDragging ){
                 //prompt.setText(" ");
-                if( detectHit(newx,newy,activeHit)){
-                    setActiveProperty(activeHit, true);
+                if( detectHit(newx,newy,activeArea)){
+                    setActiveProperty(activeArea, true);
                     if ( o.active ){
                         //then just moving around
                         to = "active";
@@ -421,7 +375,7 @@ function FoodWeb(){
                         to = "active";
                         from = "palette";
                     }
-                } else if( detectHit(newx,my,pickerHit)){
+                } else if( detectHit(newx,my,palette)){
                     if ( o.active ){
                         //move from active to palette
                         to = "palette";
@@ -429,10 +383,10 @@ function FoodWeb(){
                     } else {
                         //then moving from palette to palette
                         to = "palette";
-                        from = "palette";   
+                        from = "palette";
                     }
                 } else {
-                    setActiveProperty(pickerHit, false);
+                    setActiveProperty(palette, false);
                     if ( o.active ){
                         //move from active to palette
                         to = "palette";
@@ -440,19 +394,19 @@ function FoodWeb(){
                     } else {
                         //then moving from palette to palette
                         to = "palette";
-                        from = "palette";   
+                        from = "palette";
                     }
                 }
                 data.save("MODELER_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             obj[i].isDragging = false;
         }
-        //detectHit 
+        //detectHit
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
-        if(detectHit(mx,my,activeHit)){
+        if(detectHit(mx,my,activeArea)){
             //console.log("active");
-            setActiveProperty(activeHit, true);
+            setActiveProperty(activeArea, true);
             if ( multipleChoice.length < 1 ){
                 for (var j = 0; j < plusButtons.length; j++) {
                     if( detectHit(mx,my,plusButtons[j])){
@@ -482,7 +436,7 @@ function FoodWeb(){
         }
         return 1;
     }
-    //Detect whether x,y position is within picker or active areas, assumes x, y is at top left of object
+    //Detect whether x,y position within area 'a', assumes x, y is at top left of object
     function detectHit(x,y,a){
         var mx = x;
         var my = y;
@@ -502,9 +456,7 @@ function FoodWeb(){
                 //species active
                 s.active = b;
                 pb.active = b;
-                if( mb ){
-                    mb.active = b;
-                }
+                mb.active = b;
             }
         }
     }
@@ -574,17 +526,13 @@ function FoodWeb(){
             }
             var tempConnection = movingObj.name+"-"+closestObj.name;
             var connectType = "eatenby"
-            var line = new Line( tempConnection, movingObj, closestObj, ctx, level.num, connectType, data, shadowColour, backgroundColour);
-            //line.addEventListener( line.EVENT_RELATIONSHIP, handleRelationship );
-            //line.addEventListener( line.EVENT_REDRAW, handleRedraw );
+            var line = new Line( tempConnection, movingObj, closestObj, ctx, 1, connectType, data, shadowColour, backgroundColour);
             for( var j=0; j<movingConnections.length;j++){
-                //console.log( "connection removed: "+movingConnections[j].name );
                 displayList.removeChild( movingConnections[j] );
                 movingConnections.splice(j, 1);
             }
             movingConnections.push(line);
             displayList.addChild( line );
-            //console.log("closest: "+ closestObj.name );
         }
     }
     function getClosestObj( moving, objList ){
@@ -620,22 +568,21 @@ function FoodWeb(){
         var ylen = y2 - y1;
         // Determine hypotenuse length
         var hlen = Math.sqrt(Math.pow(xlen,2) + Math.pow(ylen,2));
-        return hlen;  
+        return hlen;
     }
-    //if objects are set to picker, place them in correct pos
+    //if objects back at palette, place them in correct position
     function resetObjPos(){
         for (var i = 0; i < obj.length; i++) {
             var s = obj[i];
             if(!s.active){
                 s.x = s.px;
                 s.y = s.py;
-            } 
+            }
         }
     }
     //Graphing
     //if objects are active, draw graph, add buttons
     function evalGraphs(){
-        //console.log("oldWidth2: "+oldWidth2);
         for (var i = 0; i < obj.length; i++) {
             var s = obj[i];
             if( s.active ){
@@ -649,7 +596,7 @@ function FoodWeb(){
                 }
                 if(!isGraph){
                     //addGraph
-                    var graph = new BarGraph(gctx, s, oldWidth2 );
+                    var graph = new BarGraph(gctx, s, preScaledWidth );
                     var data = new GraphData();
                     graph.curArr = data.baseline;
                     graphs.push(graph);
@@ -666,12 +613,9 @@ function FoodWeb(){
                 }
             }
         }
-        //draw graphs
         //clear canvas
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
-        //var total = graphs.length
-        //resizeGraphCanvas( total );
-
+        //draw graphs
         for (var m = 0; m < graphs.length; m++) {
             graphs[m].drawBarGraph(m);
         }
@@ -681,7 +625,7 @@ function FoodWeb(){
         var newdata = new GraphData();
         var promptText;
         var headingText;
-        
+
         //find out if graphs are running
         for(var i=0; i<graphs.length; i++){
             var graphsRunning = graphs[i].getRunning();
@@ -705,7 +649,7 @@ function FoodWeb(){
             for(var k=0; k<graphs.length; k++){
                 var graph = graphs[k];
                 //replace data for object clicked's graph
-                if( graph.name == species.name ){   
+                if( graph.name == species.name ){
                     var id = k;
                     if ( direction == "plus" ){
                         graph.replace( newdata.increase, id );
@@ -739,10 +683,10 @@ function FoodWeb(){
             }
             //clear mc first
             for ( var i = 0; i<multipleChoice.length; i++){
-                var mc = multipleChoice[i];                
+                var mc = multipleChoice[i];
                 displayList.removeChild( mc );
                 mc.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
-                mc.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+                mc.removeEventListener(mc.EVENT_CLICKED, onMCrunClick);
                 mc.removeEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
                 mc = {};
                 multipleChoice.splice(i, 1);
@@ -750,9 +694,9 @@ function FoodWeb(){
 
             //setup multple choice and prompts
             data.save("MODELER_MC_START","object ;"+species.name+" ;direction ;"+direction);
-            var mc = new MultipleChoice( namesArr, oldHeight, oldWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
+            var mc = new MultipleChoice( namesArr, preScaledHeight, preScaledWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
-            mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+            mc.addEventListener(mc.EVENT_CLICKED, onMCrunClick);
             mc.addEventListener(mc.EVENT_CONTINUE, onMCcontinueClick);
             displayList.addChild(mc);
             multipleChoice.push(mc);
@@ -768,7 +712,7 @@ function FoodWeb(){
             var graph = graphs[i];
             //replace data for object clicked's graph
             var id = i;
-            if( graph.name == object.name ){   
+            if( graph.name == object.name ){
                 if ( type == "plus" ){
                     graph.replace( data1.increase, id );
                 } else if ( type == "minus" ){
@@ -858,7 +802,7 @@ function FoodWeb(){
                     result = -1;
                 }
             }
-        } 
+        }
         return result;
     }
     //returns "goes up", "goes down", or "same" or 1, -1, 0
@@ -866,12 +810,12 @@ function FoodWeb(){
     function getRelationship( name1, name2, direction ){
         //var r = [];
         var clicked = name1;
-        var graph = name2; 
+        var graph = name2;
         var effects = [];
-        var result = ""; 
+        var result = "";
         var index = 0;
 
-        var r = getDirectRelationship( clicked, graph );     
+        var r = getDirectRelationship( clicked, graph );
         //console.log( name1 + " & " + name2 + ", direct: " + r.direct );
         if ( r.direct ){
             var c = r.connection;
@@ -889,7 +833,7 @@ function FoodWeb(){
                 var testObj;
                 //one of the direct connections of clicked
                 if( clicked == source.name ){
-                    testObj = destination.name;         
+                    testObj = destination.name;
                 } else if ( clicked == destination.name ){
                     testObj = source.name;
                 }
@@ -903,7 +847,7 @@ function FoodWeb(){
                     effects.push( getMultiplier( testObj, r2.connection, d2 ));
                     index = getMultiplier( testObj, r2.connection, d2 );
                     //console.log("if "+testObj+" "+ d2+" then "+graph+" "+effects[effects.length-1]);
-                } else {                    
+                } else {
                     //test for teritary connection
                     var r3;
                     var connectedList2 = r2.connection;
@@ -914,7 +858,7 @@ function FoodWeb(){
                         var testObj2;
                         //one of the direct connections of testObj
                         if( testObj == source2.name ){
-                            testObj2 = destination2.name;         
+                            testObj2 = destination2.name;
                         } else if ( testObj == destination2.name ){
                             testObj2 = source2.name;
                         }
@@ -934,7 +878,7 @@ function FoodWeb(){
                             //test for quartary connection
                         }
                     }
-                    
+
                 }
             }
         }
@@ -962,7 +906,7 @@ function FoodWeb(){
             var c = connections[i];
             var source = c.obj1;
             var destination = c.obj2;
-            if( (name1 == source.name || name1 == destination.name) && 
+            if( (name1 == source.name || name1 == destination.name) &&
                 (name2 == source.name || name2 == destination.name) ){
                 //direct relationship
                 relationship = {direct: true, connection: c};
@@ -995,11 +939,11 @@ function FoodWeb(){
     }
     function draw() {
         //clear canvas
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, preScaledWidth, preScaledHeight);
         ctx.fillStyle = backgroundColour;
-        ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
-        //clear area so graphs will show through
-        ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
+        ctx.fillRect(0, 0, preScaledWidth, preScaledHeight);
+        //clear area so graphs will show through; graph width = 400
+        ctx.clearRect(preScaledWidth-400,0,400,graphs.length*80);
         /*
         //showPos
         ctx.font = "24pt Helvetica";
@@ -1015,7 +959,7 @@ function FoodWeb(){
         if (!mouseIsDown)
             str += " up";
         //gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
-        
+
         // draw text at center, max length to fit on canvas
         ctx.fillText(str, (canvas.width/2)/scaleFactor, (canvas.height/2)/scaleFactor, canvas.width - 10);
         // plot cursor
@@ -1023,12 +967,8 @@ function FoodWeb(){
         ctx.fillRect(canX -5, canY -5, 10, 10);
         */
         //Draw palette
-        ctx.fillStyle = paletteColour; //"#DBDADA";
-        ctx.shadowBlur=0;
-        ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0
-        ctx.fillRect(pickerbox.x,pickerbox.y,pickerbox.width,pickerbox.height);
-        ctx.globalAlpha = 1;
+        ctx.fillStyle = paletteColour;
+        ctx.fillRect(palette.x, palette.y, palette.width, palette.height);
         displayList.draw();
     }
 }

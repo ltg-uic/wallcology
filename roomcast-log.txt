@@ -60,3 +60,47 @@ Initialization complete.
 	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
 Initializing RoomCast...
 Initialization complete.
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.
+/Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:283:in `read_byte': Failed to read byte from socket (MQTT::ProtocolException)
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/packet.rb:31:in `read'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:454:in `receive_packet'
+	from /Users/krbalmryde/.rvm/gems/ruby-2.2.3/gems/mqtt-0.3.1/lib/mqtt/client.rb:283:in `block in connect'
+Initializing RoomCast...
+Initialization complete.

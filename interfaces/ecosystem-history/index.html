@@ -13,7 +13,7 @@
 
 	<!-- Your markup here -->
 	Ecosystem <input type=text READONLY size=1 id="ecosystem"> History<br>
-	From: 
+	From:
 	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -37,7 +37,7 @@
 			  <option value="2016">2016</option>
 	  <option value="2017">2017</option>
 	</select>
- -->	&nbsp&nbspTo: 
+ -->	&nbsp&nbspTo:
 	<select id="endMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -64,7 +64,7 @@
 
 	<table style="border-spacing:0px;padding:0;">
 		<script type="text/javascript">
-		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.png', 
+		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_01.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_02.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_03.png',
@@ -96,7 +96,7 @@
 
 	<!-- Your scripts here -->
 	<canvas id="myChart" width="600" height="50"></canvas>
-			
+
 	<script type="text/javascript">
 
 	var abioticDisplay = 0;
@@ -112,23 +112,23 @@
 	document.getElementById('endDay').selectedIndex = day-1;
 
 
-	
+
 	// Parse the query parameters
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.INSTANCE;
 	if (ecosystem === undefined) ecosystem = 0;
 	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 
-	// Get an instance of nutella. 
+	// Get an instance of nutella.
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-	
+
 	var bioticActions = [];
 	var abioticActions = [];
 
 	updateGraphs();
 
 	nutella.net.subscribe('state_update', function(message, from) {
-		updateGraphs(); 
+		updateGraphs();
 	});
 
 	setInterval(ping, 5*60*1000); //ping every five minutes
@@ -137,7 +137,7 @@
 		nutella.net.publish('ping');
 	}
 	//gather all the manipulations on this ecosystem into two arrays
-	
+
 	function toggleAbiotic() {
 		abioticDisplay++;
 		if (abioticDisplay==abioticOptions.length) abioticDisplay=0;
@@ -149,9 +149,9 @@
 	function updateGraphs() {
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
-		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){ 
+		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
 			for (var i=1; i<message.length; i++) {
-				if (message[i].species >0) { 
+				if (message[i].species >0) {
 					var last = bioticActions[message[i].species].length;
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
 				}
@@ -165,10 +165,10 @@
 			});
 		})
 	}
-	
+
 	// Your code that uses the nutella instance here
-	
-	function query(){ 
+
+	function query(){
 		var sm = document.getElementById('startMonth').selectedIndex+1;
 		var sd = document.getElementById('startDay').selectedIndex+1;
 		// var sy = document.getElementById('startYear').value;
@@ -192,7 +192,7 @@
 		}
 
 		if (lower >= upper) { alert('End date must be after start date'); return; }
-		// var sT = 
+		// var sT =
 
 		// document.getElementById('startMonth').selectedIndex
 
@@ -211,9 +211,9 @@
 
 
 
-	
+
 		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
-			var c = response.biotic.length; 
+			var c = response.biotic.length;
 			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,1];
 			var max=[];
 			var min = 0;
@@ -236,7 +236,7 @@
 
 				var yUnit = (HEIGHT - yOffset - yOffset)/max[i];
 				var ident = (i==11)? 'abioticCanvas'  :  'myChart' + i;
-				
+
 				var ctx = document.getElementById(ident).getContext('2d');
 				ctx.clearRect(0, 0, 800, 50);
 				ctx.clearRect(0, 0, WIDTH, HEIGHT);
@@ -262,7 +262,7 @@
 
 				if (i!=11) {
 					for (var k=0; k<bioticActions[i].length; k++) {
-						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) { 
+						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
 						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset), HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
 						      var action = bioticActions[i][k].action;
@@ -276,10 +276,10 @@
 					}
 				}
 				ctx.lineWidth = 1.5;
-				ctx.strokeStyle = 'white'; 
+				ctx.strokeStyle = 'white';
 				for (var j=0; j<c; j++) {
 					ctx.beginPath();
-					if (i==11) { 
+					if (i==11) {
 						var t = response.abiotic[j][abioticOptions[abioticDisplay]];
 						if (abioticOptions[abioticDisplay]=='temperature') t = t/30;
 						if(t!=0) {
@@ -317,8 +317,8 @@ function gaussian() {
     return ((Math.random() + Math.random() + Math.random() + Math.random() + Math.random() + Math.random()) - 3) / 3;
 }
 
-	
+
 	</script>
-				
+
 </body>
 </html>

@@ -1,14 +1,16 @@
-	function ActionButton(context, t, c, sc, bc){
+	function ActionButton(context, t, w, h, c, sc, bc){
 	var dx = 8;
 	var dy = 8;
 	var radius = 20;
 
 	var centerX = dx;
 	var centerY = dy;
+	var objWidth = w;
+	var objHeight = h;
 	var colour = c;
 	var shadowColour = sc;
 	var backgroundColour = bc;
-	
+
 	this.symbol;
 	this.ctx = context;
 	this.index = 0;
@@ -22,13 +24,13 @@
 	this.type = t;
 	if( this.type == "plus" ){
 		//console.log("plus");
-		dx = -50;
+		dx = -1*objWidth/2;
 		dy = 20;
 		this.symbol = "+";
 	} else if( this.type == "minus" ){
 		//console.log("minus");
-		dx = -50;
-		dy = -120;
+		dx = -1*objWidth/2;
+		dy = -20 - objHeight;
 		this.symbol = "-";
 	}
 
@@ -56,7 +58,7 @@
 			this.ctx.shadowColor=shadowColour;
 			this.ctx.shadowOffsetX = 0;
 			this.ctx.shadowOffsetY = 4;
-			
+
 			if( this.type == "plus" ){
 			//up
 				this.ctx.beginPath();
