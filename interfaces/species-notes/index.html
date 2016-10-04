@@ -53,7 +53,7 @@
 		document.write("<td>");
 
 		document.write('<a style="font-size:150%;color:#FFFF66;"> Relationships with other species </a><br>');
-		document.write('<a style="font-size:125%;"> <i>Eats</i><br></adiv>');
+		document.write('<a style="font-size:125%;"> <i>Eats</i><br></a>');
 		speciesSelector('eats',selected,'horizontal',.75);
 		document.write('<a style="font-size:125%;"> <i>Eaten by</i><br></a>');
 		speciesSelector('eatenBy',selected,'horizontal',.75);
@@ -61,30 +61,39 @@
 		speciesSelector('competesWith',selected,'horizontal',.75);
 		document.write('</td></tr></table>');
 
-
+		document.write('<br>');
 
 		// end of first table (claims)
 
-		document.write('<table width="965" bgcolor="#006666" valign=top align=left><tr><td valign=top>');
+		document.write('<table width="965" bgcolor="#B8946A" valign=top align=left><tr><td width=50> </td><td align=left valign=top>');
+
+
 
 		// second table depends on whether the support is in the form of an observation
 		// or an experiment. Implementing Observations for now.
 
 
 
-		
-		
+
+		document.write('<a style="font-size:150%;color:#FFFF66;"> Claim </a><br>');
+		var pad = (i<10) ? '0' : '';
+					// pad species name to match icon numbering scheme
+					document.write('<img src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + i + '.png" ');
+"')
+
+
+
 		document.write('<a style="font-size:150%;color:#FFFF66;"> Observations </a><br>');
-		document.write('<textarea rows=8 cols=50 id="notes">We saw...</textarea>');
+		document.write('<textarea rows=8 cols=65 id="notes">We saw...</textarea>');
 		document.write('<br>');
 
 
 
-		// Reasoning and Evidence column
+		// Reasoning  
 
 		document.write('<a style="font-size:150%;color:#FFFF66;"> Reasoning </a><br>');
-		document.write('<textarea rows=8 cols=50 id="notes">We think...</textarea>');
-		document.write('</td><td align=left valign=top width="15%">');
+		document.write('<textarea rows=8 cols=65 id="notes">We think...</textarea><br>');
+		document.write('</td><td align=left valign=top width="30">');
 
 
 		document.write('<a style="font-size:150%;color:#FFFF66;" > Evidence </a><br>');
@@ -93,7 +102,7 @@
 		document.write('<img id="evidence0" src="clickHere.jpg"><br>Figure 1<br>');
 		document.write('<img id="evidence1" src="clickHere.jpg"><br>Figure 2<br>');
 		document.write('<img id="evidence2" src="clickHere.jpg"><br>Figure 3<br>');
-		document.write('</td><td align=center valign=top width="10%">');
+		document.write('</td><td align=left valign=top width="10%">');
 
 		document.write('<a style="font-size:150%;color:#FFFF66;" > Commit </a><br>');
 
@@ -106,7 +115,7 @@
 		// document.write('<button onClick="save(' + claim + ');" >Save</button>');
 		// document.write('<button vnClick="upload(' + claim + ');" >Share</button>');
 
-		document.write('</td></tr></table>')
+		document.write('</td></tr></table>');
 
 		deselectAll('eats');
 		deselectAll('eatenBy');
@@ -115,15 +124,22 @@
 		var context = document.getElementById('canvasID').getContext("2d");
 		deselectAll('species');
 		select('species0');
+
+
+
+
+					// var pad = (i<10) ? '0' : '';
+					// // pad species name to match icon numbering scheme
+					// document.write('<img src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + i + '.png" '
 		
 		function materialsSelector(size){
 
 			document.write('<img src="wood.png" id="wood" onClick="select(this.id);" ');
-			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '&nbsp> ');
+			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 			document.write('<img src="brick.png" id="brick" onClick="select(this.id);" ');
-			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '&nbsp> ');
+			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 			document.write('<img src="aluminum.png" id="aluminum" onClick="select(this.id);" ');
-			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '&nbsp> ');
+			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 			document.write('<img src="drywall.png" id="drywall" onClick="select(this.id);" ');
 			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 			document.write('<br>');
@@ -133,9 +149,9 @@
 		function temperatureSelector(size){
 
 			document.write('<img src="low.png" id="low" onClick="select(this.id);" ');
-			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '&nbsp> ');
+			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 			document.write('<img src="medium.png" id="medium" onClick="select(this.id);" ');
-			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '&nbsp> ');
+			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 			document.write('<img src="high.png" id="high" onClick="select(this.id);" ');
 			document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 			document.write('<br>');
@@ -174,30 +190,28 @@
 
 			switch (id.substring(0,4)) {
 				case 'spec': 	var s = document.getElementById(id);
-								if (s.style.opacity < 1.0) {
-									deselectAll('species');
-									s.style.opacity = "1.0"
-									var species = id.substring(7); 
-									nutella.net.request('get_observations',{group:query_parameters.INSTANCE,species:species},function(message,from){
-										document.getElementById('notes').value = message.notes;
-										document.getElementById('wood').checked = message.wood;
-										document.getElementById('brick').checked = message.brick;
-										document.getElementById('aluminum').checked = message.aluminum;
-										document.getElementById('drywall').checked = message.drywall;
-										document.getElementById('low').checked = message.low;
-										document.getElementById('medium').checked = message.medium;
-										document.getElementById('high').checked = message.high;
-										for (var i=0; i<11; i++) {
-											document.getElementById('eats' + i).style.opacity = message.eats[i].opacity;
-										}
-										for (var i=0; i<11; i++) {
-											document.getElementById('eatenBy' + i).style.opacity = message.eatenBy[i].opacity;
-										}
-										for (var i=0; i<11; i++) {
-											document.getElementById('competesWith' + i).style.opacity = message.competesWith[i].opacity;
-										}
-									});
-								};
+								deselectAll('species');
+								selected = Number(id.substring(7)); 
+								document.getElementById(id).style.opacity = 1.0;
+								nutella.net.request('get_observations',{group:query_parameters.INSTANCE,species:selected},function(message,from){
+									document.getElementById('notes').value = message.notes;
+									document.getElementById('wood').checked = message.wood;
+									document.getElementById('brick').checked = message.brick;
+									document.getElementById('aluminum').checked = message.aluminum;
+									document.getElementById('drywall').checked = message.drywall;
+									document.getElementById('low').checked = message.low;
+									document.getElementById('medium').checked = message.medium;
+									document.getElementById('high').checked = message.high;
+									for (var i=0; i<11; i++) {
+										document.getElementById('eats' + i).style.opacity = message.eats[i].opacity;
+									}
+									for (var i=0; i<11; i++) {
+										document.getElementById('eatenBy' + i).style.opacity = message.eatenBy[i].opacity;
+									}
+									for (var i=0; i<11; i++) {
+										document.getElementById('competesWith' + i).style.opacity = message.competesWith[i].opacity;
+									}
+								});								
 								break;
 				case 'wood':
 				case 'bric':
@@ -274,7 +288,7 @@
 		}
 
 		function deselectAll(idRoot) {
-//			for (i=0; i<11; i++) document.getElementById(idRoot + i).style.opacity="0.35";			
+			for (i=0; i<11; i++) document.getElementById(idRoot + i).style.opacity="0.35";			
 		}
 
 		function enableVegieControls() {
