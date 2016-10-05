@@ -108,8 +108,10 @@
 		s += 'index.html' + '?';
 		s += 'broker=' + query_parameters.broker + '&';
 		s += 'app_id=' + query_parameters.app_id + '&';
-		s += 'run_id=' + query_parameters.run_id + '&';
-		s += 'TYPE=' + query_parameters.TYPE;
+		s += 'run_id=' + query_parameters.run_id;
+		if (query_parameters.TYPE=='group'){
+			s += '&' + 'TYPE=' + query_parameters.TYPE;
+		} 
 
 		location.href = s;
 	}
