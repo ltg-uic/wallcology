@@ -79,7 +79,7 @@
 
 
 
-				document.write('<tr><td><img id="abioticImage" src="temperature.jpg" onclick="toggleAbiotic();" height=40 width=40></td>');
+				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height=40 ></td>');
 				document.write('<td><canvas id="abioticCanvas" width="600" height="50"></td></tr>');
 
 
@@ -141,7 +141,7 @@
 	function toggleAbiotic() {
 		abioticDisplay++;
 		if (abioticDisplay==abioticOptions.length) abioticDisplay=0;
-		document.getElementById('abioticImage').src=abioticOptions[abioticDisplay]+'.jpg';
+		document.getElementById('abioticImage').src=abioticOptions[abioticDisplay]+'.png';
 		query();
 	}
 
