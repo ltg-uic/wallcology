@@ -19,7 +19,7 @@ var HERBICIDE_EFFECT = .1;
 var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
 var ANIMAL_POPULATION_MAXIMUM = 10000;
 var ANIMAL_EXTINCTION_THRESHHOLD = .05;
-var COLONIZE_MINUMUM = 1;
+var COLONIZE_MINUMUM = .5;
 
 // the "ot" table specifies the fraction of total habitat that is
 // lost due to occlusion by drywall. so ot.brick[0].left = .25 means
@@ -29,18 +29,18 @@ var COLONIZE_MINUMUM = 1;
 
 
 var ot =    {   brick:  [
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25}
+                        {left:.5,top:.75,right:.25,bottom:0},
+                        {left:.25,top:0,right:.5,bottom:.25},
+                        {left:.5,top:0,right:.5,bottom:.5},
+                        {left:.5,top:.5,right:0,bottom:0},
+                        {left:0,top:.5,right:.5,bottom:.5}
                         ],
                 wood:   [
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25},
-                        {left:.25,top:.25,right:.25,bottom:.25}
+                        {left:.25,top:0,right:.25,bottom:.5},
+                        {left:.5,top:.75,right:.25,bottom:.25},
+                        {left:.25,top:.5,right:.25,bottom:.25},
+                        {left:.0,top:.25,right:.75,bottom:.5},
+                        {left:.5,top:.25,right:.25,bottom:.25}
                         ]
             };
 
@@ -240,7 +240,7 @@ function cycleSimulation(Model,Environment,Populations) {
                 sum2 += (M('m',i,k) * P('predators',k)) / (1 + M('s',k) * P('predators',k));
         exponent = M('b',i) * sum1 - M('d',i) - sum2;
         var next_index = M('community', 'resources',i);
-        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent));
+        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/2));
     }
 
 //  do the predators
@@ -250,7 +250,7 @@ function cycleSimulation(Model,Environment,Populations) {
         for (var j=0; j < M('community','herbivores').length; j++) 
             sum1 += (M('m',j,i) * P('herbivores',j))/(1 + M('s',i) * P('predators',i));
         exponent = M('beta',i) * sum1 - M('delta',i);
-        nP('predators',i,P('predators',i) * Math.exp(exponent));
+        nP('predators',i,P('predators',i) * Math.exp(exponent/.25));
     }
 
     return (next_population);

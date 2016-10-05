@@ -83,11 +83,11 @@ function reset_history () {
       {thermostat:20, temperature:20, humidistat:50, humidity:50, left:'out', top:'out', right:'out', bottom:'out', brick:1, wood:1},
       {thermostat:20, temperature:20, humidistat:50, humidity:50, left:'out', top:'out', right:'out', bottom:'out', brick:1, wood:1}
         ],
-      biotic :  [ [1,1,0,1,1,0,1,1,1,0,1], // this needs to be in a configuration file
-                  [0,1,1,0,1,0,1,1,1,1,0],
-                  [1,1,0,1,1,0,0,1,1,0,1],
-                  [1,1,0,1,0,1,1,1,0,1,1],
-                  [0,1,0,0,1,0,1,0,1,0,1]
+      biotic :  [ [0,1,1,0,1,0,1,0,1,1,1], // this needs to be in a configuration file
+                  [1,0,0,0,1,1,1,1,1,0,0],
+                  [0,1,1,1,0,1,1,0,0,0,1],
+                  [1,0,0,0,1,1,0,1,1,0,1],
+                  [1,0,0,1,1,1,0,1,1,1,0]
                 ]
   };
   history['states'].push(state);
