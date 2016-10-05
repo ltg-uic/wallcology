@@ -2,7 +2,7 @@
  #    Program Name: App.js
  #          Author: Kyle Reese Almryde
  #            Date: 10/10/2015
- #         Revised: 06/23/2016
+ #         Revised: 10/04/2016
  #
  #     Description:
  #        Establishes and communicates between the Unity3D visualization and
@@ -123,6 +123,23 @@ function initWebPlayer() {
 
 // Handles most recent state of simulation
 
+function Last_State_Handler(response) {
+    console.log("Last_State_Handler called!");
+    Unity.SetEcosystemText( Number(WallscopeID) + 1); // Sets the Ecosystem ID
+
+    State_Update_Handler(response); // at least until I can come up with a more thoughtful way of adding critters in place.
+
+    //
+    var lastState = sanitizeResponse(response),
+        Abiotic = lastState['abiotic'][WallscopeID];
+
+    Unity.SetDryWall('left', Abiotic['left']);
+    Unity.SetDryWall('right', Abiotic['right']);
+    Unity.SetDryWall('top', Abiotic['top']);
+    Unity.SetDryWall('bottom', Abiotic['bottom']);
+}
+
+// Handles the regular updates
 function State_Update_Handler(response) {
 
     var updatedState = sanitizeResponse(response),
@@ -131,81 +148,39 @@ function State_Update_Handler(response) {
 
     console.log("\tState_Update!", Date(updatedState["timestamp"]), updatedState);
     // Send messages to Unity
-    for (var i = 0; i < Biotic.length; i++) {
-        var count = 0,
-            rawPopulation = Biotic[i];
-
-        switch (i) {
-            case 1:
-            case 3:
-            case 8:
-                count = parseInt(Math.round(rawPopulation * 10));
-                break;
-            case 0:
-            case 2:
-            case 6:
-            case 7:
-                count = parseInt(Math.round(rawPopulation * 5));
-                break;
-            default:
-                count = (rawPopulation / 100.0);
-                break;
-        }
-        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
-        console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, count);
-        // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
-    }
+    UpdatePopulations(Biotic);
 
     console.log("\tSpecies Record Updated! ");
 
     Unity.SetThermostatText(Abiotic['thermostat']);
     Unity.SetTemperatureText(Abiotic['temperature']);
-    // Unity.SetDryWall('left', Abiotic['left']);
-    // Unity.SetDryWall('right', Abiotic['right']);
-    // Unity.SetDryWall('top', Abiotic['top']);
-    // Unity.SetDryWall('bottom', Abiotic['bottom']);
-
-}
-
-
-function Last_State_Handler(response) {
-    console.log("Last_State_Handler called!");
-    State_Update_Handler(response); // at least until I can come up with a more thoughtful way of adding critters in place.
-    Unity.SetEcosystemText( Number(WallscopeID) + 1); // Sets the Ecosystem ID
-
-    Unity.SetDryWall('left', Abiotic['left']);
-    Unity.SetDryWall('right', Abiotic['right']);
-    Unity.SetDryWall('top', Abiotic['top']);
-    Unity.SetDryWall('bottom', Abiotic['bottom']);
 }
 
 
 function UpdatePopulations(Biotic) {
     // Send messages to Unity
-    for (var i = 0; i < Biotic.length; i++) {
+    for (var species = 0; species < Biotic.length; species++) {
         var count = 0,
-            rawPopulation = Biotic[i];
+            rawPopulation = Biotic[species];
 
-        switch (i) {
-            case 1:
-            case 3:
-            case 8:
-                count = parseInt(Math.round(rawPopulation * 10));
-                break;
-            case 0:
-            case 2:
-            case 6:
-            case 7:
-                count = parseInt(Math.round(rawPopulation * 5));
-                break;
-            default:
-                count = (rawPopulation / 100.0);
-                break;
+        // Vegetation
+        if ( [ 4,5,9,10].includes(species) ) {
+            count = (rawPopulation / 100.0);
+            Unity.SetVegetationLevel(species, count);
         }
-        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
-        console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, count);
+        //Critters
+        else {
+            // Predators
+            if ( [1,3,8].includes(species) )
+                count = parseInt(Math.round(rawPopulation * 10));
+            // Herbivores
+            else if ( [0,2,6,7].include(species) )
+                count = parseInt(Math.round(rawPopulation * 5));
+
+            Unity.SetSpeciesRecordCount(species, count);
+        }
+
+        console.log("state_update", species, count);
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
 }
@@ -239,9 +214,7 @@ var TellJs = {
             var cleaned = sanitizeResponse(response);
             console.log('channel-thermostat', cleaned);
             Unity.SetThermostatText(cleaned['value'])
-
         })
-
 
         nutella.net.subscribe('wall', function(response) {
             console.log('channel-wall', response);
@@ -249,7 +222,6 @@ var TellJs = {
             var cleaned = sanitizeResponse(response);
             if (cleaned['ecosystem'] === WallscopeID)
                 Unity.SetDryWall(cleaned['side'], cleaned['direction'])
-
         })
 
         nutella.net.subscribe('seed', function(response) {
@@ -296,6 +268,12 @@ var Unity = {
     SetSpeciesRecordCount: function(species, count) {
         var packaged = species.toString() + " " + count.toString();
         unity3d.getUnity().SendMessage("Habitat", "jsUpdateSpeciesRecord", packaged);
+    },
+
+
+    SetVegetationLevel: function(species, count) {
+        var packaged = species.toString() + " " + count.toString();
+        unity3d.getUnity().SendMessage("Ground_Resource", "jsSetVegetationLevel", packaged);
     },
 
     // Sets the Thermostat GUI Text display
