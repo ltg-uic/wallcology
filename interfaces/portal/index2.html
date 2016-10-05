@@ -109,6 +109,9 @@
 		s += 'broker=' + query_parameters.broker + '&';
 		s += 'app_id=' + query_parameters.app_id + '&';
 		s += 'run_id=' + query_parameters.run_id;
+		if (query_parameters.TYPE=='group'){
+			s += '&' + 'TYPE=' + query_parameters.TYPE;
+		} 
 
 		location.href = s;
 	}
@@ -145,7 +148,7 @@
 
 			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + match[0].printName + '</a></li>');
 		}
-		document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
+		if (query_parameters.TYPE!='ecosystem')document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
 		// document.write('<li>[' + query_parameters.run_id + ' ' + currentRoom + ' ' + currentActivity + ']</li>');
 		// document.write('<li> Team ' + (Number(query_parameters.INSTANCE)+1) + ' </li>');
 
