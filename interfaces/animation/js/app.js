@@ -145,7 +145,7 @@ function State_Update_Handler(response) {
             case 2:
             case 6:
             case 7:
-                count = parseInt(Math.round(rawPopulation * 20));
+                count = parseInt(Math.round(rawPopulation * 200));
                 break;
             default:
                 count = (rawPopulation / 100.0);
@@ -174,6 +174,9 @@ function Last_State_Handler(response) {
     State_Update_Handler(response); // at least until I can come up with a more thoughtful way of adding critters in place.
     Unity.SetEcosystemText( Number(WallscopeID) + 1); // Sets the Ecosystem ID
 
+    var lastState = sanitizeResponse(response),
+        Abiotic = lastState['abiotic'][WallscopeID];
+
     Unity.SetDryWall('left', Abiotic['left']);
     Unity.SetDryWall('right', Abiotic['right']);
     Unity.SetDryWall('top', Abiotic['top']);
@@ -197,7 +200,7 @@ function UpdatePopulations(Biotic) {
             case 2:
             case 6:
             case 7:
-                count = parseInt(Math.round(rawPopulation * 5));
+                count = parseInt(Math.round(rawPopulation * 30));
                 break;
             default:
                 count = (rawPopulation / 100.0);
