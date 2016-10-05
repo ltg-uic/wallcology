@@ -131,32 +131,32 @@ function State_Update_Handler(response) {
 
     console.log("\tState_Update!", Date(updatedState["timestamp"]), updatedState);
     // Send messages to Unity
-    for (var i = 0; i < Biotic.length; i++) {
-        var count = 0,
-            rawPopulation = Biotic[i];
+    // for (var i = 0; i < Biotic.length; i++) {
+    //     var count = 0,
+    //         rawPopulation = Biotic[i];
 
-        switch (i) {
-            case 1:
-            case 3:
-            case 8:
-                count = parseInt(Math.round(rawPopulation * 10));
-                break;
-            case 0:
-            case 2:
-            case 6:
-            case 7:
-                count = parseInt(Math.round(rawPopulation * 100));
-                break;
-            default:
-                count = (rawPopulation / 100.0);
-                break;
-        }
-        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
-        console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, (count > 50 ? 50 : count) );
-        // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
-    }
-
+    //     switch (i) {
+    //         case 1:
+    //         case 3:
+    //         case 8:
+    //             count = parseInt(Math.round(rawPopulation * 20));
+    //             break;
+    //         case 0:
+    //         case 2:
+    //         case 6:
+    //         case 7:
+    //             count = parseInt(Math.round(rawPopulation * 100));
+    //             break;
+    //         default:
+    //             count = (rawPopulation / 100.0);
+    //             break;
+    //     }
+    //     // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
+    //     console.log("state_update", i, count);
+    //     Unity.SetSpeciesRecordCount(i, (count > 100 ? 100 : count) );
+    //     // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
+    // }
+    UpdatePopulations(response)
     console.log("\tSpecies Record Updated! ");
 
     Unity.SetThermostatText(Abiotic['thermostat']);
@@ -184,31 +184,33 @@ function Last_State_Handler(response) {
 }
 
 
-function UpdatePopulations(Biotic) {
-    // Send messages to Unity
-    for (var i = 0; i < Biotic.length; i++) {
-        var count = 0,
-            rawPopulation = Biotic[i];
+function UpdatePopulations(response) {
+    var updatedState = sanitizeResponse(response),
+        Biotic = updatedState['biotic'][WallscopeID]
 
-        switch (i) {
-            case 1:
-            case 3:
-            case 8:
-                count = parseInt(Math.round(rawPopulation * 10));
-                break;
-            case 0:
-            case 2:
-            case 6:
-            case 7:
-                count = parseInt(Math.round(rawPopulation * 30));
-                break;
-            default:
-                count = (rawPopulation / 100.0);
-                break;
+    // Send messages to Unity
+    for (var species = 0; species < Biotic.length; species++) {
+        var count = 0,
+            rawPopulation = Biotic[species];
+
+        // Vegetation
+        if ( [ 4,5,9,10].includes(species) ) {
+            count = (rawPopulation / 100.0);
+            Unity.SetVegetationLevel(species, count);
         }
-        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
-        console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, count);
+        //Critters
+        else {
+            // Predators
+            if ( [1,3,8].includes(species) )
+                count = parseInt(Math.round(rawPopulation * 10));
+            // Herbivores
+            else if ( [0,2,6,7].include(species) )
+                count = parseInt(Math.round(rawPopulation * 30));
+
+            Unity.SetSpeciesRecordCount(species, (count > 100 ? 100 : count));
+        }
+
+        console.log("state_update", species, count);
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
 }
@@ -300,6 +302,12 @@ var Unity = {
         var packaged = species.toString() + " " + count.toString();
         unity3d.getUnity().SendMessage("Habitat", "jsUpdateSpeciesRecord", packaged);
     },
+
+    SetVegetationLevel: function(species, count) {
+        var packaged = species.toString() + " " + count.toString();
+        unity3d.getUnity().SendMessage("Ground_Resource", "jsSetVegetationLevel", packaged);
+    },
+
 
     // Sets the Thermostat GUI Text display
     SetThermostatText: function(thermo) {
