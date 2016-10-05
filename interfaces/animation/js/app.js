@@ -273,7 +273,14 @@ var Unity = {
 
 
     SetVegetationLevel: function(species, count) {
-        var packaged = species.toString() + " " + count.toString();
+        var name = '';
+        switch(species) {
+            case 4: name = 'V1_amount'; break
+            case 5: name = 'V2_amount'; break
+            case 9: name = 'V3_amount'; break
+            case 10: name = 'V4_amount'; break
+        }
+        var packaged = name + " " + count.toString();
         unity3d.getUnity().SendMessage("Ground_Resource", "jsSetVegetationLevel", packaged);
     },
 
