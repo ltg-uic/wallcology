@@ -145,7 +145,7 @@ function State_Update_Handler(response) {
             case 2:
             case 6:
             case 7:
-                count = parseInt(Math.round(rawPopulation * 200));
+                count = parseInt(Math.round(rawPopulation * 100));
                 break;
             default:
                 count = (rawPopulation / 100.0);
@@ -153,7 +153,7 @@ function State_Update_Handler(response) {
         }
         // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
         console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, count);
+        Unity.SetSpeciesRecordCount(i, (count > 50 ? 50 : count) );
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
 
