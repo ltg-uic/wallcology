@@ -131,32 +131,32 @@ function State_Update_Handler(response) {
 
     console.log("\tState_Update!", Date(updatedState["timestamp"]), updatedState);
     // Send messages to Unity
-    for (var i = 0; i < Biotic.length; i++) {
-        var count = 0,
-            rawPopulation = Biotic[i];
+    // for (var i = 0; i < Biotic.length; i++) {
+    //     var count = 0,
+    //         rawPopulation = Biotic[i];
 
-        switch (i) {
-            case 1:
-            case 3:
-            case 8:
-                count = parseInt(Math.round(rawPopulation * 20));
-                break;
-            case 0:
-            case 2:
-            case 6:
-            case 7:
-                count = parseInt(Math.round(rawPopulation * 100));
-                break;
-            default:
-                count = (rawPopulation / 100.0);
-                break;
-        }
-        // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
-        console.log("state_update", i, count);
-        Unity.SetSpeciesRecordCount(i, (count > 100 ? 100 : count) );
-        // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
-    }
-    // UpdatePopulations(response)
+    //     switch (i) {
+    //         case 1:
+    //         case 3:
+    //         case 8:
+    //             count = parseInt(Math.round(rawPopulation * 20));
+    //             break;
+    //         case 0:
+    //         case 2:
+    //         case 6:
+    //         case 7:
+    //             count = parseInt(Math.round(rawPopulation * 100));
+    //             break;
+    //         default:
+    //             count = (rawPopulation / 100.0);
+    //             break;
+    //     }
+    //     // var count = parseInt(updatedState['biotic'][WallscopeID][i]) * 25;
+    //     console.log("state_update", i, count);
+    //     Unity.SetSpeciesRecordCount(i, (count > 100 ? 100 : count) );
+    //     // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
+    // }
+    UpdatePopulations(Biotic);
     console.log("\tSpecies Record Updated! ");
 
     Unity.SetThermostatText(Abiotic['thermostat']);
@@ -184,10 +184,7 @@ function Last_State_Handler(response) {
 }
 
 
-function UpdatePopulations(response) {
-    var updatedState = sanitizeResponse(response),
-        Biotic = updatedState['biotic'][WallscopeID]
-
+function UpdatePopulations(Biotic) {
     // Send messages to Unity
     for (var species = 0; species < Biotic.length; species++) {
         var count = 0,
