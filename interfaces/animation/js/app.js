@@ -175,7 +175,7 @@ function UpdatePopulations(Biotic) {
                 count = parseInt(Math.round(rawPopulation * 10));
             // Herbivores
             else if ( [0,2,6,7].include(species) )
-                count = parseInt(Math.round(rawPopulation * 5));
+                count = parseInt(Math.round(rawPopulation * 20));
 
             Unity.SetSpeciesRecordCount(species, count);
         }
