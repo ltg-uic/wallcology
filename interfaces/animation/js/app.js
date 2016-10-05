@@ -174,16 +174,17 @@ function UpdatePopulations(Biotic) {
             if ( [1,3,8].includes(species) )
                 count = parseInt(Math.round(rawPopulation * 10));
             // Herbivores
-            else if ( [0,2,6,7].include(species) )
-                count = parseInt(Math.round(rawPopulation * 30));
+            else if ( [0,2,6,7].includes(species) )
+                count = parseInt(Math.round(rawPopulation * 100));
 
-            Unity.SetSpeciesRecordCount(species, count);
+            Unity.SetSpeciesRecordCount(species, (count > 100 ? 100 : count));
         }
 
         console.log("state_update", species, count);
         // unity3d.getUnity().SendMessage("Habitat", "jsGetPopulationCount", i );
     }
 }
+
 
 /*==============================================================================
  #                        MESSAGE HANDLERS
