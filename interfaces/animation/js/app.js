@@ -202,10 +202,10 @@ function UpdatePopulations(response) {
         else {
             // Predators
             if ( [1,3,8].includes(species) )
-                count = parseInt(Math.round(rawPopulation * 10));
+                count = parseInt(Math.round(rawPopulation * 20));
             // Herbivores
             else if ( [0,2,6,7].include(species) )
-                count = parseInt(Math.round(rawPopulation * 30));
+                count = parseInt(Math.round(rawPopulation * 100));
 
             Unity.SetSpeciesRecordCount(species, (count > 100 ? 100 : count));
         }
