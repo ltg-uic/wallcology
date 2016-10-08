@@ -1,3 +1,4 @@
+
 var NUTELLA = require('nutella_lib');
 
 // Get configuration parameters and init nutella
@@ -16,108 +17,52 @@ var foodwebs = nutella.persist.getMongoObjectStore('foodwebs');
 
 foodwebs.load(function(){
 
-  if (!foodwebs.hasOwnProperty('data')){
-    resetFoodwebs();
-  };
+    if (!foodwebs.hasOwnProperty('data')){
+        foodwebs.data = [];
+        foodwebs.save();
+    };
 
-nutella.net.subscribe('set_foodweb',{group: this.group, time: t, drawing: drawing})
+//    nutella.net.subscribe('set_foodweb',{group: this.group, time: t, drawing: drawing})
 
-nutella.net.subscribe('set_foodweb',function(message,from){
-    foodweb.data.push(message);
-    foodweb.save();
+    nutella.net.subscribe('set_foodweb',function(message,from){
+        foodwebs.data.push(message);
+        foodwebs.save();
+    });
+
+
+    nutella.net.handle_requests('get_num_of_saved_foodwebs',function(group, from) {
+        var index = foodwebs.data.length;
+        var count = 0;
+        while (--index >= 0){
+            if (foodwebs.data[index].group == group) count++;
+        }
+        return count;
+    });
+
+
+
+    nutella.net.handle_requests('get_current_foodweb',function(group,from){
+        var index = foodwebs.data.length;
+        while (--index >= 0){
+            if (foodwebs.data[index].group == group) return (foodwebs.data[index]);
+        }
+        return {};
+    });
+
+    nutella.net.handle_requests('get_previous_foodweb',function(message,from){
+        var index = foodwebs.data.length;
+        var countBack = 0;
+        while (--index >= 0){
+            if (foodwebs.data[index].group == message.group) 
+                {   if (countBack == message.index) return (foodwebs.data[index]);
+                    countBack++;
+                }
+        }
+        return {};
+    });
+
 });
 
-
-nutella.net.handle_requests('get_current_foodweb',function(group,from){
-    var index = foodweb.data.length;
-    while (--index >= 0){
-        if foodweb.data[i].group == group) return (foodweb.data[i]);
-    }
-    return false;
-})
-
-nutella.net.handle_requests('get_previous_foodweb',function(message,from){
-    var index = foodweb.data.length;
-    var countBack = 0;
-    while (--index >= 0){
-        if foodweb.data[i].group == message.group) 
-            {   if (countBack == message.index) return (foodweb.data[i]);
-                countBack++;
-            }
-    }
-    return false;
-})
-
-
-
-
-    /*this.nutella.net.request('get_num_of_saved_foodwebs', this.group, function( num, from ){
-                return num;
-            });*/
-
-    this.saveDrawing = function( nodes, links ){
-        //console.log("nodes: "+nodes.length+", links: "+links.length);
-        var t = Timestamp(); 
-        var message = "";
-        var drawing;
-
-        for(var i=0; i<nodes.length; i++){
-            var o = nodes[i];
-            var node = { name: o.name, x: o.x, y: o.y, active: o.active };
-            message += "{ name: " + o.name + ", x: " + o.x +", y:"+o.y+", active: "+o.active+" }, ";
-            //console.log("{ name: " + o.name + ", x: " + o.x +", y:"+o.y+", active: "+o.active+" }, ");
-        }
-
-        for(var j=0; j<links.length; j++){
-            var c = links[j];
-            var link = { name: c.name, source: c.obj1.name, destination: c.obj2.name, type: c.type };
-            message += "{ name: " + c.name + ", source: " + c.obj1.name +", destination:"+c.obj2.name+", type: "+c.type+" }, ";
-            //console.log("{ name: " + c.name + ", source: " + c.obj1.name +", destination:"+c.obj2.name+", type: "+c.type+" }, ");
-        }
-        
-        message = message.slice(0, -2);
-        drawing = { nodes: nodes, links: links };
-
-        if ( this.mode == "deploy"){
-            //this.nutella.net.publish('set_foodweb',['Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ drawing]);
-            this.nutella.net.publish('set_foodweb',{group: this.group, time: t, drawing: drawing});
-        } else {            
-            console.log('Group ;'+ this.group +' ;time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ message);
-        }
-    }
-    this.getCurrentDrawing = function(){
-        //var t = Timestamp(); 
-        var drawing;
-        if ( this.mode == "deploy"){
-            //this.nutella.net.publish('set_foodweb',['Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ message]);
-            //earliest = 0, current = n;
-            this.nutella.net.request('get_current_foodweb', this.group, function(drawing,from){
-                return drawing;
-            });
-        } else {            
-            console.log('Group ;'+ this.group +' ;time ;'+t+' ;' + "FOODWEB_RETRIEVE" +' ;');
-        }
-    }
-    this.getPreviousDrawing = function(){
-        //var t = Timestamp(); 
-        var drawing;
-        if ( this.mode == "deploy"){
-            //this.nutella.net.publish('set_foodweb',['Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ message]);
-            //earliest = 0, current = n;
-            this.nutella.net.request('get_saved_foodweb',{group:this.group, index: this.index}, function(drawing,from){
-                return drawing;
-            });
-        } else {            
-            console.log('Group ;'+ this.group +' ;time ;'+t+' ;' + "FOODWEB_RETRIEVE" +' ;');
-        }
-    }
-
-
-
-  function resetFoodwebs() {
-    foodwebs.data = [];
-    foodwebs.save();
-  };
 
 // Some examples to give you ideas...
 // You can do things such as:
