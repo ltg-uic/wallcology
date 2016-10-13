@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161007-1336";
+    var versionID = "20161009-0740";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -54,12 +54,15 @@ function FoodWeb(){
 
     var activeArea;
     var displayList; 
+    var label;
     var prompt;
+    var helpText;
     var data;
     var currentDrawing;
     var initialized = false;
 
     var obj = [];
+    var placeholderObj = [];
     var connections = [];
     var movingConnections = [];
     var potentialConnections = [];
@@ -71,6 +74,7 @@ function FoodWeb(){
     var saveBtn;
     var trashBtn;
     var viewOnlyBtn;
+    var helpBtn;
     var savedVersionsNum;   //number of saved versions retrieved from nutella
     var viewOnly = false;
     var input;
@@ -116,21 +120,23 @@ function FoodWeb(){
     palette = { x:0, y:0, width:paletteWidth, height: preScaledHeight };
     toolbar = { x:preScaledWidth-toolbarWidth, y:0, width:toolbarWidth, height: preScaledHeight };
     activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x-toolbarWidth, height: preScaledHeight };
+    placeholderObj = setupPlaceholderSpecies( species );
     obj = setupSpecies( species );
     setupButtons();
+    label = getLabel( group );
     prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
-    prompt.setText( getLabel( group ) );
+    prompt.setText( label );
     displayList.addChild(prompt);
+    helpText = new Help(ctx, preScaledWidth, preScaledHeight, toolbarWidth, background);
     input = document.getElementById("textBox");
     input.style.backgroundColor = textboxColour;
     setupVersions();
- 
-    var label = getLabel( group );
+     
     data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
     //get latest saved drawing
-    if ( this.mode == "deploy"){
-        this.nutella.net.request('get_current_foodweb', group, function(message,from){
-            retrieveDrawing( message.drawing ); alert(message.drawing.hasOwnProperty('nodes'));
+    if ( mode == "deploy"){
+        nutella.net.request('get_current_foodweb', group, function(message,from){
+            retrieveDrawing( message.drawing ); 
             setupEventListeners();
         });
     } else {
@@ -156,8 +162,11 @@ function FoodWeb(){
         formElement.addEventListener('click', handleSubmitText, false);
     }
     function onResizeWindow( init ){
-        canvasWidth = (window.innerWidth === 0)? 1000 : window.innerWidth;
-        canvasHeight = (window.innerHeight === 0)? 760 : window.innerHeight;
+        canvasWidth = (window.innerWidth == 0)? 1000 : window.innerWidth;
+        canvasHeight = (window.innerHeight == 0)? 720 : window.innerHeight;
+
+        //canvasWidth=1000;
+        //canvasHeight=720;
 
         //Canvas for drag and drop
         canvas = document.getElementById("ui-layer");
@@ -197,17 +206,25 @@ function FoodWeb(){
             }
             if ( toolbar ){
                 toolbar.x = preScaledWidth-toolbarWidth;
+                toolbar.height = preScaledHeight;
+            }
+            if ( palette ){
+                palette.height = preScaledHeight;
             }
             if ( addArrowBtn ){
                 var btnX = preScaledWidth-toolbarWidth+11;
                 addArrowBtn.x = btnX;
                 removeArrowBtn.x = btnX;
                 saveBtn.x = btnX;
-                trashBtn.x = btnX
+                trashBtn.x = btnX;
+                helpBtn.x = btnX;
                 viewOnlyBtn.x = preScaledWidth/2-viewOnlyBtn.width/2;
             }
             if( version ){
-                version.updateCanvasSize( preScaledWidth, preScaledHeight)
+                version.updateCanvasSize( preScaledWidth, preScaledHeight);
+            }
+            if( helpText ){
+                helpText.updateCanvasSize( preScaledWidth, preScaledHeight );
             }
             data.save("FOODWEB_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
@@ -223,7 +240,22 @@ function FoodWeb(){
                 sp.height, sp.width, ctx, shadowColour );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
-            tempY += speciesSize+speciesSpacing;        }
+            tempY += speciesSize+speciesSpacing;        
+        }
+        return tempArr;
+    }
+    function setupPlaceholderSpecies( speciesArr ){
+        var tempArr = [];
+        var tempY = speciesMargin;
+        for(var i=0; i<speciesArr.length; i++){
+            var sp = speciesArr[i];
+            var tempObj = new Species( iconsUrl, sp.name+"_grey", 
+                (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
+                sp.height, sp.width, ctx, shadowColour );
+            tempArr.push(tempObj);
+            displayList.addChild(tempObj);
+            tempY += speciesSize+speciesSpacing;        
+        }
         return tempArr;
     }
     //Set up toolbar buttons
@@ -237,17 +269,21 @@ function FoodWeb(){
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( saveBtn );
 
-        addArrowBtn = new ImageTextButton("Add ⇄", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        addArrowBtn = new ImageTextButton("Add", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( addArrowBtn );
 
-        removeArrowBtn = new ImageTextButton("Remove ⇄", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        removeArrowBtn = new ImageTextButton("Remove", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( removeArrowBtn );
 
         trashBtn = new ImageTextButton("Delete", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        trashBtn.active = true;
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( trashBtn );
+
+        helpBtn =  new ImageTextButton("Help", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        displayList.addChild( helpBtn ); 
 
         //only show view only icon if in view only mode
         viewOnlyBtn = new ImageTextButton("View Only", preScaledWidth/2-btnWidth/2, 40, btnWidth, btnHeight, ctx, backgroundColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
@@ -256,42 +292,53 @@ function FoodWeb(){
     }
     //get nubmer of saved version from server
     function setupVersions(){
-        if ( this.mode == "deploy"){
-            this.nutella.net.request('get_num_of_saved_foodwebs', this.group, function( num, from ){
+        if ( mode == "deploy"){
+            nutella.net.request('get_num_of_saved_foodwebs', group, function( num, from ){
                 savedVersionsNum = num;
+                version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, backgroundColour, savedVersionsNum);
+                version.changeVersion();
             });
         } else {
             savedVersionsNum = 0;
+            version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, backgroundColour, savedVersionsNum);
+            version.changeVersion();
         }
-        version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
-        version.changeVersion();
     }
     //EVENTLISTENERS    
     function handleToobarClicks(e){
         var clicked = e.target;
         if ( !viewOnly ){
             switch( clicked.name ){
-                case "Add ⇄":
+                case "Add":
                     newConnectionObjs = [];
                     removeArrowBtn.active = false;
                     removeArrowBtn.drawButton();
                     saveBtn.active = false;
                     saveBtn.drawButton();
+                    helpBtn.active = false;
+                    helpBtn.drawButton();
+                    handleHelpText();
                     break;
-                case "Remove ⇄":
+                case "Remove":
                     newConnectionObjs = [];
                     addArrowBtn.active = false;
                     addArrowBtn.drawButton();
                     saveBtn.active = false;
                     saveBtn.drawButton();
+                    helpBtn.active = false;
+                    helpBtn.drawButton();
+                    handleHelpText();
                     break;
                 case "Save":
                     newConnectionObjs = [];
                     addArrowBtn.active = false;
                     addArrowBtn.drawButton();
                     removeArrowBtn.active = false;
+                    helpBtn.active = false;
+                    helpBtn.drawButton();
                     removeArrowBtn.drawButton();
                     saveFoodWeb();
+                    handleHelpText();
                     break;
                 case "Delete":
                     newConnectionObjs = [];
@@ -301,8 +348,21 @@ function FoodWeb(){
                     removeArrowBtn.drawButton();
                     saveBtn.active = false;
                     saveBtn.drawButton();
-                    trashBtn.active = false;
+                    trashBtn.active = true;
                     trashBtn.drawButton();
+                    helpBtn.active = false;
+                    helpBtn.drawButton();
+                    handleHelpText();
+                    break;
+                case "Help":
+                    newConnectionObjs = [];
+                    addArrowBtn.active = false;
+                    addArrowBtn.drawButton();
+                    removeArrowBtn.active = false;
+                    removeArrowBtn.drawButton();
+                    saveBtn.active = false;
+                    saveBtn.drawButton();
+                    handleHelpText();
                     break;
                 case "View Only":
                     break;
@@ -314,24 +374,34 @@ function FoodWeb(){
                     removeArrowBtn.drawButton();
                     saveBtn.active = false;
                     saveBtn.drawButton();
+                    helpBtn.active = false;
+                    helpBtn.drawButton();
+                    handleHelpText();
             }
         }
     }
+    //direction = "first", "back", "next", or "last"
     function handleVersionChange( direction ){
         saveBtn.active = false;
         saveBtn.drawButton();
         var oldVersion = version.num;
         var newVersion;
+        var lastVersion = version.saved + 1;
         if ( direction == "next" ){
             newVersion = oldVersion + 1;
         } else if ( direction == "back" ){
             newVersion = oldVersion - 1;
-        }        
-        version.num = newVersion;
+        } else if ( direction == "last" ){
+            newVersion = lastVersion;
+        } else if ( direction == "first" ){
+            newVersion = 1;
+        }   
+
+        version.num = newVersion; 
 
         if ( newVersion == (version.saved + 1) ){
             viewOnly = false;
-            console.log("remove viewOnlyBtn: " + containsObject( viewOnlyBtn, displayList.objectList ));
+            //console.log("remove viewOnlyBtn: " + containsObject( viewOnlyBtn, displayList.objectList ));
             if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
                 displayList.removeChild( viewOnlyBtn );   
             }
@@ -349,13 +419,14 @@ function FoodWeb(){
             }
             clearFoodWeb();
             //retrieve saved versions
-            if ( this.mode == "deploy"){
+            var index = newVersion-1;
+            if ( mode == "deploy"){ 
                 //earliest = 0, current = n;
-                this.nutella.net.request('get_saved_foodweb',{group: group, index: newVersion}, function(drawing,from){
-                    retrieveDrawing( drawing );
+                nutella.net.request('get_saved_foodweb',{group: group, index: index}, function(foodweb,from){
+                   retrieveDrawing( foodweb.drawing ); draw(); 
                 });
             } else {      
-                retrieveDrawing( { nodes:[{name:"species_00", x:100, y:100, active:true},{name:"species_01", x:200, y:200, active: true}]});
+                retrieveDrawing( {group:group, time:0, nodes:[{name:"species_00", x:100, y:100, active:true},{name:"species_01", x:200, y:200, active: true}]});
             }
             viewOnly = true;
             data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
@@ -373,6 +444,20 @@ function FoodWeb(){
             a.drawAnnotation();
             annotations.push(a);
             data.save("FOODWEB_ANNOTATION_ADDED","content ;"+message+";number of annotations ;"+annotations.length);
+        }
+    }
+    function handleHelpText(){
+        //console.log("handleHelpText: "+helpBtn.active);
+        if ( helpBtn.active ){
+            if ( !containsObject( helpText, displayList.objectList ) ){
+                displayList.addChild( helpText );   
+                helpText.drawHelp();
+            }
+        } else {
+            if ( containsObject( helpText, displayList.objectList ) ){
+                displayList.removeChild( helpText );   
+                draw();
+            }
         }
     }
     function handleRedraw(e){
@@ -419,10 +504,10 @@ function FoodWeb(){
         moveXY(e.clientX,e.clientY);
     }
     function moveXY(x,y){
-        if ( !initialized ){
-            onResizeWindow();
-            initialized = true;
-        }
+        // if ( !initialized ){
+        //     onResizeWindow();
+        //     initialized = true;
+        // }
         if ( !viewOnly ){
             var newx = x;
             var newy = y;        
@@ -446,18 +531,8 @@ function FoodWeb(){
                     var r = obj[i];
                     if ( r.isDragging ) {
                         //test to see if object is within boundary
-                        if( r.x + r.width + dx >= preScaledWidth-toolbarWidth ){
-                            //return;
-                            //r.x = preScaledWidth-toolbarWidth-r.width;
-                        } else if ( r.y + r.height + dy >= preScaledHeight ){
-                            //return;
-                            //r.y = preScaledHeight - r.height;
-                        } else if ( r.y + dy < 0 ){
-                            //return;
-                            //r.y = 0;
-                        } else if ( r.x + dx < 0 ){
-                            //return;
-                            //r.x = 0;
+                        if( r.x + r.width + dx >= preScaledWidth-toolbarWidth || r.y + r.height + dy >= preScaledHeight || r.y + dy < 0 || r.x + dx < 0 ){
+                            //do nothing
                         } else {
                             r.x += dx;
                             r.y += dy;
@@ -476,20 +551,9 @@ function FoodWeb(){
                 for ( var k=0; k<annotations.length; k++){
                     var a = annotations[k];
                     if ( a.isDragging ) {
-                        //trashBtn.active = true;
-                        //test to see if object is within boundary
-                        if( a.x + a.width + dx >= preScaledWidth ){
-                            //return;
-                            //r.x = preScaledWidth-toolbarWidth-r.width;
-                        } else if ( a.y + a.height + dy >= preScaledHeight ){
-                            //return;
-                            //r.y = preScaledHeight - r.height;
-                        } else if ( a.y + dy < 0 ){
-                            //return;
-                            //r.y = 0;
-                        } else if ( a.x + dx < paletteWidth ){
-                            //return;
-                            //r.x = 0;
+                        movingAnnoation = a;
+                        if( a.x + a.width + dx >= preScaledWidth || a.y + a.height + dy >= preScaledHeight || a.y + dy < 0 || a.x + dx < paletteWidth ){
+                            //do nothing
                         } else {                   
                             a.x += dx;
                             a.y += dy;
@@ -502,20 +566,24 @@ function FoodWeb(){
                 // reset the starting mouse position for the next mousemove
                 startX = mx;
                 startY = my;
+                draw();
             }
             //set active state of trash button to true if mouse over and dragging annotation, otherwise, set to false
             if ( overTrashBtn ){
-                trashBtn.active = true;
-            } else {
                 trashBtn.active = false;
+                trashBtn.drawButton();
+                movingAnnoation.drawAnnotation();
+            } else {
+                trashBtn.active = true;
             }
             if ( addArrowBtn.active ){
                 if( newConnectionObjs.length >= 1 ){
                     //console.log("source obj: "+newConnectionObjs[0].name+", looking for lines");
                     showPotentialConnections( x, y );
+                    draw();
                 }
             }
-            draw();
+            
         }
     }
     function startMove(x,y,isTouch){
@@ -573,6 +641,14 @@ function FoodWeb(){
                 //
                 handleVersionChange(version.backBtn.name);
                 version.changeVersion(mx,my,version.backBtn.name);
+            }  else if ( detectHit(mx,my,version.lastBtn) && version.lastBtn.active ){
+                //
+                handleVersionChange(version.lastBtn.name);
+                version.changeVersion(mx,my,version.lastBtn.name);
+            } else if ( detectHit(mx,my,version.firstBtn) && version.firstBtn.active ){
+                //
+                handleVersionChange(version.firstBtn.name);
+                version.changeVersion(mx,my,version.firstBtn.name);
             }
         }
         // clear all the dragging flags
@@ -587,38 +663,47 @@ function FoodWeb(){
                         //then just moving around
                         to = "active";
                         from = "active";
+                        o.active = true;
                     } else {
                         //then moving from palette to active
                         to = "active";
                         from = "palette";
+                        o.active = true;
                     }
-                    setActiveProperty( activeArea, true );
+                    //setActiveProperty( activeArea, true );
+                    //console.log( "detectHit: work area, name:"+o.name+", from: "+from+", to: "+to+", active: "+o.active );
                 } else if( detectHit( newx,newy,palette )){
                     if ( o.active ){
                         //move from active to palette
-                        setActiveProperty( palette, false );
                         to = "palette";
                         from = "active";
+                        o.active = false;
                         //console.log("remove connections 1: "+o.name);
                         removeConnectionBySpecies( o );
                     } else {
                         //then moving from palette to palette
                         to = "palette";
-                        from = "palette";   
+                        from = "palette";
+                        o.active = false;   
                     }
+                    //setActiveProperty( palette, false );
+                    //console.log( "detectHit: palette, name:"+o.name+", from: "+from+", to: "+to+", active: "+o.active );
                 } else {   
                     if ( o.active ){
                         //move from active to palette
                         to = "palette";
                         from = "active";
+                        o.active = false;
                         //console.log("remove connections 2: "+o.name);
                         removeConnectionBySpecies( o );
                     } else {
                         //then moving from palette to palette
                         to = "palette";
-                        from = "palette";   
+                        from = "palette";
+                        o.active = false;   
                     }
-                    setActiveProperty( palette, false );
+                    //setActiveProperty( palette, false );
+                    //console.log( "detectHit: unknown, name:"+o.name+", from: "+from+", to: "+to+", active: "+o.active );
                 }
                 data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
@@ -650,23 +735,48 @@ function FoodWeb(){
                 addArrowBtn.drawButton();   
             }
         }
-
+        var tempConnections = [];
+        var trashConnections = false;
         //if removeArrow button is active, remove line if mouse/touch is over line 
         if ( removeArrowBtn.active && !viewOnly ){
             //console.log("remove line clicked: "+canX+", "+canY);
             for( var k=0; k<connections.length; k++){
                 var c = connections[k];
-                if (detectHit( mx, my, c )){
-                    //remove connection
-                    data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+c.name+" ;type ;"+c.type);
-                    displayList.removeChild( c );
-                    connections.splice(k, 1);
-                    //reset remove arrow button
-                    removeArrowBtn.active = false;
-                    removeArrowBtn.drawButton();
+                if ( detectHit( mx, my, c ) ){
+                    tempConnections.push( {connection: c, index:k});
+                    trashConnections = true;
                 }
             }
         }
+        if ( trashConnections && !viewOnly ){
+            //console.log( "tempConnections: "+ tempConnections.length);
+            if( tempConnections.length < 2 ){
+                //remove connection
+                data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tempConnections[0].connection.name+" ;type ;"+tempConnections[0].connection.type);
+                displayList.removeChild( tempConnections[0].connection );
+                connections.splice( tempConnections[0].index, 1 );
+                //reset remove arrow button
+                //removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+            } else {
+                var dist;
+                for ( var i = 0; i< tempConnections.length; i++ ){
+                    var tc = tempConnections[i];
+                    dist = getDistance( {x:mx, y:my}, {x:tc.connection.x+tc.connection.width/2, y:tc.connection.y+tc.connection.height/2} );
+                    if ( dist < 30 ){
+                        data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tc.connection.name+" ;type ;"+tc.connection.type);
+                        displayList.removeChild( tempConnections[i].connection );
+                        connections.splice( tempConnections[i].index, 1 );
+                        //reset remove arrow button
+                        //removeArrowBtn.active = false;
+                        removeArrowBtn.drawButton();
+                    }
+                    //console.log("tempConnections["+i+"]: "+tc.connection.name+", dist: "+dist );
+                }
+            }
+        }
+        removeArrowBtn.active = false;
+
         var tempAnnotation;
         var tempIndex;
         var trashAnnotation = false;
@@ -689,11 +799,13 @@ function FoodWeb(){
             annotations.splice( tempIndex, 1 );
             data.save("FOODWEB_ANNOTATION_REMOVED","content ;"+tempAnnotation.name+";number of annotations ;"+annotations.length);
         }
-        trashBtn.active = false;
+        trashBtn.active = true;
+
         //if save button is active, upon mouse click, change it back to inactive
         if ( saveBtn.active && !viewOnly ){
             saveBtn.active = false;
         }
+
         evalNewConnection();
         evalConnection();        
         resetObjPos();
@@ -759,11 +871,11 @@ function FoodWeb(){
                 label = "Master Food Web";
                 break;
             case "null":
-                label = "Team 6";
+                label = "";
                 break;
             default:
                 team = Number(g)+1;
-                label = "Team "+ team;
+                label = "";
         }
         return label;
     }
@@ -944,10 +1056,17 @@ function FoodWeb(){
         version.saveVersion( savedVersionsNum );
         //save drawing 
         var d = getDrawing();
-        data.saveDrawing( d.drawing, d.message );
+        var dataURL = canvas.toDataURL();
+        data.saveDrawing( d.drawing, d.message, dataURL );
         //draw "Saved" button state
-        saveBtn.drawSavedButton();
+        //saveBtn.drawSavedButton();
+        saveBtn.active = true;
+        setTimeout( resetSavedButton, 2000 );
         data.save("FOODWEB_DRAWING_SAVED","savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+" ;drawing ;"+d.message);
+    }
+    function resetSavedButton(){
+        saveBtn.active = false;
+        saveBtn.drawButton();
     }
     function getDrawing(){
         var nodes = [];
@@ -1082,7 +1201,7 @@ function FoodWeb(){
         ctx.fillRect(toolbar.x, toolbar.y, toolbar.width, toolbar.height);
 
         if ( preScaledHeight != 0 && preScaledWidth != 0 ){
-            version.draw();
+//            version.draw();
             displayList.draw();
         }
     }

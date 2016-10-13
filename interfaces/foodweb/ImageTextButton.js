@@ -1,16 +1,15 @@
 function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 	var imageW = 24;
 	var imageH = 24;
-	var imageX = x + (w-imageW)/2;
-	var imageY = y;
+	// var imageX = x + (w-imageW)/2;
+	// var imageY = y;
 	var image;
-	var image2;
-
+	// var image2;
 	var fileName;
-	var fileName2;
+	// var fileName2;
 	var backgroundStyle = s;
-	var inactiveAlpha = 0.5;
-	var activeAlpha = 1;
+	var inactiveAlpha = 1;
+	var activeAlpha = 0.5;
 
 	this.name = n;
 	this.x = x;
@@ -26,27 +25,23 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 	this.EVENT_CLICKED = "clicked";
 
 	switch( this.name ){
-		case "Add ⇄":
-			fileName = "ic_add_white_48dp_2x.png";
+		case "Add":
+			fileName = "ic_add_arrow_48dp_2x.png";
 			break;
-		case "Remove ⇄":
-			fileName = "ic_remove_white_48dp_2x.png";
+		case "Remove":
+			fileName = "ic_remove_arrow_48dp_2x.png";
 			break;
 		case "Save":
 			fileName = "ic_cloud_upload_white_48dp_2x.png";
-			fileName2 = "ic_cloud_done_white_48dp_2x.png";
-			image2 = loadImage( fileName2 );
 			break;
-		/*case "Annotate":
-			fileName = "ic_insert_comment_white_48dp_2x.png";
-			break;*/
 		case "Delete":
 			fileName = "ic_delete_white_48dp_2x.png";
 			break;
 		case "View Only":
 			fileName = "ic_visibility_white_48dp_2x.png";
-			//this.x -= 6;
-			//imageX -= 6;
+			break;
+		case "Help":
+			fileName = "ic_help_outline_white_48dp_2x.png";
 			break;
 		default:
 			fileName = "";
@@ -78,21 +73,13 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 		this.draw();
 		this.context.restore();
 	}
-	this.drawSavedButton = function(){
+/*	this.drawSavedButton = function(){
 		this.context.save();
 		this.context.shadowBlur=0;
 		this.context.shadowOffsetX = 0;
 		this.context.shadowOffsetY = 0;
 		this.context.fillStyle = this.colour;
 		this.context.fillRect(this.x, this.y, this.width, this.height);
-		/*		
-		//change alpha based on whether button is active or not
-		if( this.active ){
-			this.context.globalAlpha = activeAlpha;
-		} else {
-			this.context.globalAlpha = inactiveAlpha;
-		}
-		*/		
 		this.context.globalAlpha = inactiveAlpha;
 		this.context.drawImage(image2,imageX,imageY,imageW,imageH);
 
@@ -106,7 +93,7 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 		this.context.fillText("Saved", this.x+this.width/2, this.y+this.yOffset);
 		this.context.globalAlpha = 1;
 		this.context.restore();
-	}
+	}*/
 	this.draw = function() {
 	    this.context.shadowBlur=0;
 	    this.context.shadowOffsetX = 0;
@@ -130,16 +117,13 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 	    this.context.textBaseline = "top";
 	    this.context.fillStyle = this.textcolour;
 	    //draw "Saved" state if saveBtn is active
-	    if( this.active && this.name == "Save" ){
-	    	this.context.drawImage(image2,imageX,imageY,imageW,imageH);
-	    	this.context.fillText("Saved", this.x+this.width/2, this.y+this.yOffset);
-	    } else {
-			this.context.drawImage(image,imageX,imageY,imageW,imageH);
-			this.context.fillText(this.name, this.x+this.width/2, this.y+this.yOffset);
-			if( this.name == "View Only"){
-				var tempX = this.x+this.width/2;
-			}
-	    }
+	    // if( this.active && this.name == "Save" ){
+	    // 	this.context.drawImage(image2,this.x+(this.width-imageW)/2,this.y,imageW,imageH);
+	    // 	this.context.fillText("Saved", this.x+this.width/2, this.y+this.yOffset);
+	    // } else {
+		this.context.drawImage(image,this.x+(this.width-imageW)/2,this.y,imageW,imageH);
+		this.context.fillText(this.name, this.x+this.width/2, this.y+this.yOffset);
+	    // }
 	    //this.context.fillText(this.name, this.x+this.width/2, this.y+this.yOffset);
 	    this.context.globalAlpha = 1;
 	}

@@ -49,16 +49,17 @@ foodwebs.load(function(){
         return {};
     });
 
-    nutella.net.handle_requests('get_previous_foodweb',function(message,from){
-        var index = foodwebs.data.length;
-        var countBack = 0;
-        while (--index >= 0){
+    nutella.net.handle_requests('get_saved_foodweb',function(message,from){ 
+        var countUp = 0;
+        for (index=0; index<foodwebs.data.length; index++) {
             if (foodwebs.data[index].group == message.group) 
-                {   if (countBack == message.index) return (foodwebs.data[index]);
-                    countBack++;
+                { 
+                  if (countUp == (message.index)) {return (foodwebs.data[index]);}; 
+                    countUp++;
                 }
+
         }
-        return {};
+        console.log('none found'); return {};
     });
 
 });

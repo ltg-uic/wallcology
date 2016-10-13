@@ -10,8 +10,8 @@ function Annotation(m, c, colour, textcolour, font){
 	//public variables
 	this.name = m;
 	this.context = c;
-	this.x = 80;
-	this.y = 60;
+	this.x = 90;
+	this.y = 300;
 	this.width = 10;
 	this.height = 10;
 	this.isDragging = false;
