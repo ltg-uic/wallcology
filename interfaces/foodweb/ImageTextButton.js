@@ -37,8 +37,16 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 			fileName2 = "ic_cloud_done_white_48dp_2x.png";
 			image2 = loadImage( fileName2 );
 			break;
-		case "Annotate":
+		/*case "Annotate":
 			fileName = "ic_insert_comment_white_48dp_2x.png";
+			break;*/
+		case "Delete":
+			fileName = "ic_delete_white_48dp_2x.png";
+			break;
+		case "View Only":
+			fileName = "ic_visibility_white_48dp_2x.png";
+			//this.x -= 6;
+			//imageX -= 6;
 			break;
 		default:
 			fileName = "";
@@ -114,7 +122,6 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 	    }
 	    
 	    //this.context.drawImage(image,imageX,imageY,imageW,imageH);
-
 	    this.context.shadowBlur=0;
 	    this.context.shadowOffsetX = 0;
 	    this.context.shadowOffsetY = 0;
@@ -129,6 +136,9 @@ function ImageTextButton(n, x, y, w, h, c, colour, textcolour, font, yo, s){
 	    } else {
 			this.context.drawImage(image,imageX,imageY,imageW,imageH);
 			this.context.fillText(this.name, this.x+this.width/2, this.y+this.yOffset);
+			if( this.name == "View Only"){
+				var tempX = this.x+this.width/2;
+			}
 	    }
 	    //this.context.fillText(this.name, this.x+this.width/2, this.y+this.yOffset);
 	    this.context.globalAlpha = 1;

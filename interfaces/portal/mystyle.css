@@ -64,7 +64,7 @@ button {
 ul.tab {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 2;
     overflow: hidden;
     border: 0px solid #ccc;
     background-color: DarkCyan; /* tab bar background color */
@@ -81,7 +81,7 @@ ul.tab li a {
     padding: 14px 16px;
     text-decoration: none;
     transition: 0.3s;
-    font-size: 17px;
+    font-size: 110%;
 }
 
 /* Change background color of links on hover */

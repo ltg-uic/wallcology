@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161007-1336";
+    var versionID = "20161006-1407";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -18,8 +18,8 @@ function FoodWeb(){
     var preScaledWidth;   //canvas width before retina screen resize
     var preScaledHeight;
 
-	//Drag related variables
-	var dragok = false;    //for mouse events
+    //Drag related variables
+    var dragok = false;    //for mouse events
     var startX;
     var startY;
     var mouseIsDown = 0;   //for showPos
@@ -50,7 +50,6 @@ function FoodWeb(){
     var toolbarSpacing = 20;
     var backgroundColour; 
     var shadowColour;   
-    var textboxColour;
 
     var activeArea;
     var displayList; 
@@ -69,11 +68,13 @@ function FoodWeb(){
     var addArrowBtn;
     var removeArrowBtn;
     var saveBtn;
+    var annotateBtn;
     var trashBtn;
-    var viewOnlyBtn;
-    var savedVersionsNum;   //number of saved versions retrieved from nutella
+    var savedVersionsNum;
     var viewOnly = false;
     var input;
+    var isAnnotating = false;
+
     //load nutella
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
@@ -96,21 +97,20 @@ function FoodWeb(){
     //load colours
     if ( background == "dark" ){
         backgroundColour = "#3d5168";
-        textboxColour = "#56687d";
         shadowColour = "#253240";
         lineColour = "#39b54a";
         paletteColour = "#2b394a";
     } else {
         backgroundColour = "#FFFFFF";
-        textboxColour = "#FFFFFF";
         shadowColour = "#BFBFBF";
         lineColour = "#22B573";
-        paletteColour = "#2b394a";
+        paletteColour = "#2b394a";//"#2B323F";
     }
     //resize canvas
     onResizeWindow("init");
     //setup datalog
-    data = new DataLog( nutella, app, group, mode );
+    data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+    data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
     //setup display list items
     displayList = new DisplayList( canvas );
     palette = { x:0, y:0, width:paletteWidth, height: preScaledHeight };
@@ -118,48 +118,54 @@ function FoodWeb(){
     activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x-toolbarWidth, height: preScaledHeight };
     obj = setupSpecies( species );
     setupButtons();
-    prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
-    prompt.setText( getLabel( group ) );
+    prompt = new Prompt(ctx, paletteWidth+20, 20, preScaledWidth, preScaledHeight, 1, background);
     displayList.addChild(prompt);
     input = document.getElementById("textBox");
-    input.style.backgroundColor = textboxColour;
     setupVersions();
- 
-    var label = getLabel( group );
-    data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
     //get latest saved drawing
-    if ( this.mode == "deploy"){
-        this.nutella.net.request('get_current_foodweb', group, function(message,from){
-            retrieveDrawing( message.drawing ); alert(message.drawing.hasOwnProperty('nodes'));
-            setupEventListeners();
+    if (mode == "deploy"){ 
+        nutella.net.request('get_current_foodweb', group, function(drawing,from){
+            retrieveDrawing( drawing );
+//            draw();
+            restOfInit();
         });
     } else {
+        //console.log('Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_RETRIEVE_CURRENT");
         retrieveDrawing( {} );
-        setupEventListeners();
+//        draw();
+        restOfInit();
     }
+
+function restOfInit(){
+    // Add eventlistener to canvas
+    canvas.addEventListener("mousemove", onMouseMove, false); 
+    canvas.addEventListener("mousedown", onMouseDown, false);
+    canvas.addEventListener("mouseup", onMouseUp, false);
+    canvas.addEventListener("touchstart", onTouchDown, false);
+    canvas.addEventListener("touchmove", onTouchMove, true);
+    canvas.addEventListener("touchend", onTouchUp, false);
+    
+    document.body.addEventListener("mouseup", onMouseUp, false);
+    document.body.addEventListener("touchcancel", onTouchUp, false);
+
+    window.addEventListener("orientationchange", onResizeWindow);
+
+    //hide annotate div
+    document.getElementById("annotate-layer").style.display = "none";
+    var formElement = document.getElementById("submitText");
+    formElement.addEventListener('click', handleSubmitText, false);
+};
 
     //SETUP
-    function setupEventListeners(){
-        canvas.addEventListener("mousemove", onMouseMove, false); 
-        canvas.addEventListener("mousedown", onMouseDown, false);
-        canvas.addEventListener("mouseup", onMouseUp, false);
-        canvas.addEventListener("touchstart", onTouchDown, false);
-        canvas.addEventListener("touchmove", onTouchMove, true);
-        canvas.addEventListener("touchend", onTouchUp, false);
-        
-        document.body.addEventListener("mouseup", onMouseUp, false);
-        document.body.addEventListener("touchcancel", onTouchUp, false);
-
-        window.addEventListener("orientationchange", onResizeWindow);
-
-        var formElement = document.getElementById("submitText");
-        formElement.addEventListener('click', handleSubmitText, false);
-    }
     function onResizeWindow( init ){
-        canvasWidth = (window.innerWidth === 0)? 1000 : window.innerWidth;
-        canvasHeight = (window.innerHeight === 0)? 760 : window.innerHeight;
-
-        //Canvas for drag and drop
+        if ( !initialized ){
+            canvasWidth = 1000;
+            canvasHeight = 760;
+        }
+            canvasWidth = 1000;
+            canvasHeight = 760;
+        // canvasWidth = window.innerWidth; 
+        // canvasHeight = window.innerHeight;
         canvas = document.getElementById("ui-layer");
         ctx = canvas.getContext("2d");
 
@@ -168,12 +174,12 @@ function FoodWeb(){
             canvas.width = canvasWidth;
             canvas.height = canvasHeight;
         } else if ( !fullscreen ){
-            var distFromTop = 20;
+            var distFromTop = 20; //58 //95
             var distFromLeft = 20;
             canvas.width = canvasWidth-distFromLeft;
             canvas.height = canvasHeight-distFromTop;
         }
-        //scaling a canvas with a backing store multipler
+        //Scaling a canvas with a backing store multipler
         scaleFactor = backingScale(ctx);  
         preScaledWidth = canvas.width;
         preScaledHeight = canvas.height;
@@ -186,13 +192,8 @@ function FoodWeb(){
             // update the context for the new canvas scale
             ctx.scale( scaleFactor, scaleFactor );
         }
-        //move annotate div
-        var annotateY = preScaledHeight - 40 + "px";
-        document.getElementById("annotate-layer").style.top = annotateY;
-
         if ( init != "init" ){
             if ( prompt ){
-                prompt.x = preScaledWidth/2;
                 prompt.setMaxWidth( preScaledWidth );
             }
             if ( toolbar ){
@@ -202,14 +203,13 @@ function FoodWeb(){
                 var btnX = preScaledWidth-toolbarWidth+11;
                 addArrowBtn.x = btnX;
                 removeArrowBtn.x = btnX;
-                saveBtn.x = btnX;
-                trashBtn.x = btnX
-                viewOnlyBtn.x = preScaledWidth/2-viewOnlyBtn.width/2;
+                saveBtn = btnX;
+                annotateBtn = btnX;
             }
             if( version ){
                 version.updateCanvasSize( preScaledWidth, preScaledHeight)
             }
-            data.save("FOODWEB_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
+            data.save("FOODWEB_ORIENTATION","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
         setTimeout(draw, 500);
     }
@@ -228,161 +228,197 @@ function FoodWeb(){
     }
     //Set up toolbar buttons
     function setupButtons(){
-        var btnHeight = 48;
-        var btnWidth = 60;
+        var btnHeight = 60;
+        var btnWidth = 48; 
         var btnX = preScaledWidth-toolbarWidth+11;//((toolbarWidth-btnWidth)/3);
         var btnY = speciesMargin;
-
-        saveBtn = new ImageTextButton("Save", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        saveBtn = new ImageTextButton("Save", btnX, btnY, btnHeight, btnWidth, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( saveBtn );
 
-        addArrowBtn = new ImageTextButton("Add ⇄", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        addArrowBtn = new ImageTextButton("Add ⇄", btnX, btnY, btnHeight, btnWidth, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( addArrowBtn );
 
-        removeArrowBtn = new ImageTextButton("Remove ⇄", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        removeArrowBtn = new ImageTextButton("Remove ⇄", btnX, btnY, btnHeight, btnWidth, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
         displayList.addChild( removeArrowBtn );
-
-        trashBtn = new ImageTextButton("Delete", btnX, btnY, btnWidth, btnHeight, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        
+        annotateBtn = new ImageTextButton("Annotate", btnX, btnY, btnHeight, btnWidth, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
         btnY += toolbarSpacing + btnHeight;
-        displayList.addChild( trashBtn );
-
-        //only show view only icon if in view only mode
-        viewOnlyBtn = new ImageTextButton("View Only", preScaledWidth/2-btnWidth/2, 40, btnWidth, btnHeight, ctx, backgroundColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        displayList.addChild( annotateBtn );
+        
+        trashBtn = new ImageTextButton("Delete", btnX, btnY, btnHeight, btnWidth, ctx, toolbarColour, "#FFFFFF", "300 8pt 'Roboto'", 28, background);
+        btnY += toolbarSpacing + btnHeight;
+        //displayList.addChild( trashBtn );
         //one event listener works for all ImageTextButtons
         saveBtn.addEventListener( saveBtn.EVENT_CLICKED, handleToobarClicks ); 
     }
     //get nubmer of saved version from server
     function setupVersions(){
-        if ( this.mode == "deploy"){
-            this.nutella.net.request('get_num_of_saved_foodwebs', this.group, function( num, from ){
-                savedVersionsNum = num;
-            });
-        } else {
-            savedVersionsNum = 0;
-        }
+        savedVersionsNum = data.getSavedFoodwebNum();
         version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
         version.changeVersion();
     }
     //EVENTLISTENERS    
     function handleToobarClicks(e){
+        //console.log(e.type+", "+e.target.name);
         var clicked = e.target;
-        if ( !viewOnly ){
-            switch( clicked.name ){
-                case "Add ⇄":
-                    newConnectionObjs = [];
-                    removeArrowBtn.active = false;
-                    removeArrowBtn.drawButton();
-                    saveBtn.active = false;
-                    saveBtn.drawButton();
-                    break;
-                case "Remove ⇄":
-                    newConnectionObjs = [];
-                    addArrowBtn.active = false;
-                    addArrowBtn.drawButton();
-                    saveBtn.active = false;
-                    saveBtn.drawButton();
-                    break;
-                case "Save":
-                    newConnectionObjs = [];
-                    addArrowBtn.active = false;
-                    addArrowBtn.drawButton();
-                    removeArrowBtn.active = false;
-                    removeArrowBtn.drawButton();
-                    saveFoodWeb();
-                    break;
-                case "Delete":
-                    newConnectionObjs = [];
-                    addArrowBtn.active = false;
-                    addArrowBtn.drawButton();
-                    removeArrowBtn.active = false;
-                    removeArrowBtn.drawButton();
-                    saveBtn.active = false;
-                    saveBtn.drawButton();
-                    trashBtn.active = false;
-                    trashBtn.drawButton();
-                    break;
-                case "View Only":
-                    break;
-                default:
-                    newConnectionObjs = [];
-                    addArrowBtn.active = false;
-                    addArrowBtn.drawButton();
-                    removeArrowBtn.active = false;
-                    removeArrowBtn.drawButton();
-                    saveBtn.active = false;
-                    saveBtn.drawButton();
-            }
+        switch( clicked.name ){
+            case "Add ⇄":
+                newConnectionObjs = [];
+                removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+                saveBtn.active = false;
+                saveBtn.drawButton();
+                annotateBtn.active = false;
+                annotateBtn.drawButton();
+                break;
+            case "Remove ⇄":
+                newConnectionObjs = [];
+                addArrowBtn.active = false;
+                addArrowBtn.drawButton();
+                saveBtn.active = false;
+                saveBtn.drawButton();
+                annotateBtn.active = false;
+                annotateBtn.drawButton();
+                break;
+            case "Save":
+                newConnectionObjs = [];
+                addArrowBtn.active = false;
+                addArrowBtn.drawButton();
+                removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+                annotateBtn.active = false;
+                annotateBtn.drawButton();
+                saveFoodWeb();
+                break;
+            case "Annotate":
+                newConnectionObjs = [];
+                addArrowBtn.active = false;
+                addArrowBtn.drawButton();
+                removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+                saveBtn.active = false;
+                saveBtn.drawButton();
+                handleAnnotateBtn();
+                break;
+            case "Delete":
+                newConnectionObjs = [];
+                addArrowBtn.active = false;
+                addArrowBtn.drawButton();
+                removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+                saveBtn.active = false;
+                saveBtn.drawButton();
+                trashBtn.active = false;
+                trashBtn.drawButton();
+                break;
+            default:
+                newConnectionObjs = [];
+                addArrowBtn.active = false;
+                addArrowBtn.drawButton();
+                removeArrowBtn.active = false;
+                removeArrowBtn.drawButton();
+                saveBtn.active = false;
+                saveBtn.drawButton();
+                annotateBtn.active = false;
+                annotateBtn.drawButton();
         }
     }
+    function handleAnnotateBtn(e){
+        //console.log("handleAnnotateBtn");
+        if ( isAnnotating ){
+            //endAnnotate();
+            isAnnotating = false;
+            annotateBtn.active = false;
+            annotateBtn.drawButton();
+            displayList.removeChild( trashBtn );
+            draw();
+            //hide input
+            document.getElementById("annotate-layer").style.display = "none";
+        } else {
+            //startAnnotate();
+            isAnnotating = true;
+            //show input
+            document.getElementById("annotate-layer").style.display = "inline"; //or inline-block
+            displayList.addChild( trashBtn );
+            trashBtn.drawButton();
+        }
+    }
+    /*
+    function startAnnotate(){
+        isAnnotating = true;
+        //show input
+        document.getElementById("annotate-layer").style.display = "inline"; //or inline-block
+        displayList.addChild( trashBtn );
+        trashBtn.drawButton();
+    }
+    function endAnnotate(){
+        isAnnotating = false;
+        annotateBtn.active = false;
+        annotateBtn.drawButton();
+        displayList.removeChild( trashBtn );
+        draw();
+        //hide input
+        document.getElementById("annotate-layer").style.display = "none";
+    }*/
     function handleVersionChange( direction ){
-        saveBtn.active = false;
-        saveBtn.drawButton();
+        //console.log("handleVersionChange");
         var oldVersion = version.num;
         var newVersion;
         if ( direction == "next" ){
             newVersion = oldVersion + 1;
         } else if ( direction == "back" ){
             newVersion = oldVersion - 1;
-        }        
+        }
+        
+        //cycle through versions **** 
+        if( newVersion > savedVersionsNum + 1 || newVersion < 1){
+            return;
+        }
         version.num = newVersion;
 
         if ( newVersion == (version.saved + 1) ){
             viewOnly = false;
-            console.log("remove viewOnlyBtn: " + containsObject( viewOnlyBtn, displayList.objectList ));
-            if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
-                displayList.removeChild( viewOnlyBtn );   
-            }
             retrieveDrawing( currentDrawing );
-            data.save("FOODWEB_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         } else {
-            
-            if ( !containsObject( viewOnlyBtn, displayList.objectList ) ){
-                displayList.addChild( viewOnlyBtn );
-            }
-            //need to save current state before retrieveDrawing
-            if( !viewOnly ){
-                var d = getDrawing();
-                currentDrawing = d.drawing;
-            }
-            clearFoodWeb();
+            viewOnly = true;
             //retrieve saved versions
+           //data.index = newVersion;
+            //var oldDrawing = data.getPreviousDrawing();
+            //need to save current state before retrieveDrawing
+            clearFoodWeb();
             if ( this.mode == "deploy"){
                 //earliest = 0, current = n;
                 this.nutella.net.request('get_saved_foodweb',{group: group, index: newVersion}, function(drawing,from){
                     retrieveDrawing( drawing );
                 });
             } else {      
+                //console.log('Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_RETRIEVE_SAVED"+' ;Index ;'+this.index);
+                //return {};
                 retrieveDrawing( { nodes:[{name:"species_00", x:100, y:100, active:true},{name:"species_01", x:200, y:200, active: true}]});
             }
-            viewOnly = true;
-            data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         }
+        console.log("savedVersionsNum: "+savedVersionsNum+", version.num: "+version.num+", version.saved: "+version.saved+", viewOnly: "+viewOnly);
     }
     function handleSubmitText(e){
-        e.preventDefault();
-        if( !viewOnly ){
-            //create new annotation
-            //var message = document.getElementById("submitText");
-            var message = input.value;
-            input.value = '';
-            var a = new Annotation( message, ctx, backgroundColour, "#FFFFFF", "300 11pt 'Roboto'" );
-            displayList.addChild(a);
-            a.drawAnnotation();
-            annotations.push(a);
-            data.save("FOODWEB_ANNOTATION_ADDED","content ;"+message+";number of annotations ;"+annotations.length);
-        }
+        console.log("Submit annotation: "+input.value);
+        //create new annotation
+        //var message = document.getElementById("submitText");
+        var message = input.value;
+        input.value = '';
+        var a = new Annotation( message, ctx, backgroundColour, "#FFFFFF", "300 8pt 'Roboto'" );
+        displayList.addChild(a);
+        a.drawAnnotation();
+        annotations.push(a);
     }
     function handleRedraw(e){
         draw();   
     }
     function onTouchUp(e){
         endMove(e.changedTouches[0].pageX, e.changedTouches[0].pageY,true);
-        if( !viewOnly ){
-            displayList.onMouseUp(event);
-        }
+        displayList.onMouseUp(event);
     }
     function onTouchDown(e){
         startMove(e.targetTouches[0].pageX,e.targetTouches[0].pageY,true);
@@ -407,9 +443,7 @@ function FoodWeb(){
         e.preventDefault();
         e.stopPropagation();
         endMove(e.clientX,e.clientY,false);
-        if( !viewOnly ){
-            displayList.onMouseUp(event);
-        }
+        displayList.onMouseUp(event);
     }
     // handle mouse moves
     function onMouseMove(e) {
@@ -420,149 +454,201 @@ function FoodWeb(){
     }
     function moveXY(x,y){
         if ( !initialized ){
-            onResizeWindow();
+            onResizeWindow( "init" );
             initialized = true;
         }
-        if ( !viewOnly ){
-            var newx = x;
-            var newy = y;        
-            canX = newx; //- canvas.offsetLeft;
-            canY = newy; //- canvas.offsetTop;
-            
-            if (dragok) {
-                // get the current mouse position
-                var mx = canX;
-                var my = canY;
-
-                // calculate the distance the mouse has moved
-                // since the last mousemove
-                var dx = mx - startX;
-                var dy = my - startY;
-
-                // move each rect that isDragging 
-                // by the distance the mouse has moved
-                // since the last mousemove
-                for (var i = 0; i < obj.length; i++) {
-                    var r = obj[i];
-                    if ( r.isDragging ) {
-                        //test to see if object is within boundary
-                        if( r.x + r.width + dx >= preScaledWidth-toolbarWidth ){
-                            //return;
-                            //r.x = preScaledWidth-toolbarWidth-r.width;
-                        } else if ( r.y + r.height + dy >= preScaledHeight ){
-                            //return;
-                            //r.y = preScaledHeight - r.height;
-                        } else if ( r.y + dy < 0 ){
-                            //return;
-                            //r.y = 0;
-                        } else if ( r.x + dx < 0 ){
-                            //return;
-                            //r.x = 0;
-                        } else {
-                            r.x += dx;
-                            r.y += dy;
-                        }
-                        //create function to make temporary lines, only if there are more than 2 active objects
-                        var activeObj = getActiveObj();
-                        if ( activeObj.length >= 1 && !r.active){
-                            setupMovingConnections(r);
-                        }
-                    }
-                }
-                for (var j = 0; j < connections.length; j++) {
-                    connections[j].updateXY();
-                }
-                var overTrashBtn = false;
-                for ( var k=0; k<annotations.length; k++){
-                    var a = annotations[k];
-                    if ( a.isDragging ) {
-                        //trashBtn.active = true;
-                        //test to see if object is within boundary
-                        if( a.x + a.width + dx >= preScaledWidth ){
-                            //return;
-                            //r.x = preScaledWidth-toolbarWidth-r.width;
-                        } else if ( a.y + a.height + dy >= preScaledHeight ){
-                            //return;
-                            //r.y = preScaledHeight - r.height;
-                        } else if ( a.y + dy < 0 ){
-                            //return;
-                            //r.y = 0;
-                        } else if ( a.x + dx < paletteWidth ){
-                            //return;
-                            //r.x = 0;
-                        } else {                   
-                            a.x += dx;
-                            a.y += dy;
-                        }
-                        if( detectHit( mx, my, trashBtn )){
-                            overTrashBtn = true;
-                        }    
-                    }
-                }
-                // reset the starting mouse position for the next mousemove
-                startX = mx;
-                startY = my;
-            }
-            //set active state of trash button to true if mouse over and dragging annotation, otherwise, set to false
-            if ( overTrashBtn ){
-                trashBtn.active = true;
-            } else {
-                trashBtn.active = false;
-            }
-            if ( addArrowBtn.active ){
-                if( newConnectionObjs.length >= 1 ){
-                    //console.log("source obj: "+newConnectionObjs[0].name+", looking for lines");
-                    showPotentialConnections( x, y );
-                }
-            }
-            draw();
-        }
-    }
-    function startMove(x,y,isTouch){
-        if ( !viewOnly ){
+        /*if ( viewOnly ){
+            return;
+        }*/
+        var newx = x;
+        var newy = y;        
+        canX = newx; //- canvas.offsetLeft;
+        canY = newy; //- canvas.offsetTop;
+        
+        if (dragok) {
             // get the current mouse position
-            var newx = x;
-            var newy = y;
-            var mx = parseInt(newx - canvas.offsetLeft);
-            var my = parseInt(newy - canvas.offsetTop);
+            var mx = canX;
+            var my = canY;
 
-            // test each obj to see if mouse is inside
-            dragok = false;
+            // calculate the distance the mouse has moved
+            // since the last mousemove
+            var dx = mx - startX;
+            var dy = my - startY;
+
+            // move each rect that isDragging 
+            // by the distance the mouse has moved
+            // since the last mousemove
             for (var i = 0; i < obj.length; i++) {
                 var r = obj[i];
-                if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
-                    // if yes, set that obj isDragging=true
-                    dragok = true;
-                    r.isDragging = true;
+                if (r.isDragging) {
+                    //test to see if object is within boundary
+                    if( r.x + r.width + dx >= preScaledWidth-toolbarWidth ){
+                        return;
+                        //r.x = preScaledWidth-toolbarWidth-r.width;
+                    } else if ( r.y + r.height + dy >= preScaledHeight ){
+                        return;
+                        //r.y = preScaledHeight - r.height;
+                    } else if ( r.y + dy < 0 ){
+                        return;
+                        //r.y = 0;
+                    } else if ( r.x + dx < 0 ){
+                        return;
+                        //r.x = 0;
+                    }                    
+                    r.x += dx;
+                    r.y += dy;
+                    //create function to make temporary lines, only if there are more than 2 active objects
+                    var activeObj = getActiveObj();
+                    if ( activeObj.length >= 1 && !r.active){
+                        setupMovingConnections(r);
+                    }
                 }
             }
-            for ( var j=0; j<annotations.length; j++){
-                var a = annotations[j];
-                if (mx > a.x && mx < a.x + a.width && my > a.y && my < a.y + a.height) {
-                    // if yes, set that obj isDragging=true
-                    dragok = true;
-                    a.isDragging = true;
+            for (var j = 0; j < connections.length; j++) {
+                connections[j].updateXY();
+            }
+            for ( var k=0; k<annotations.length; k++){
+                var a = annotations[k];
+                if (a.isDragging) {
+                    //trashBtn.active = true;
+                    //test to see if object is within boundary
+                    if( a.x + a.width + dx >= preScaledWidth ){
+                        return;
+                        //r.x = preScaledWidth-toolbarWidth-r.width;
+                    } else if ( a.y + a.height + dy >= preScaledHeight ){
+                        return;
+                        //r.y = preScaledHeight - r.height;
+                    } else if ( a.y + dy < 0 ){
+                        return;
+                        //r.y = 0;
+                    } else if ( a.x + dx < paletteWidth ){
+                        return;
+                        //r.x = 0;
+                    }                    
+                    a.x += dx;
+                    a.y += dy;
                 }
             }
-            // save the current mouse position
+            // reset the starting mouse position for the next mousemove
             startX = mx;
             startY = my;
-            mouseIsDown = 1;
-            
-            if(isTouch){
-                onTouchMove();    
-            } else {
-                onMouseMove();
+        }
+        /*
+        //if removeArrow button is active, then when mouse over lines, make it 50% opacity
+        if ( removeArrowBtn.active ){
+            for( var k=0; k<connections.length; k++){
+                var c = connections[k];
+                if (detectHit( x, y, c )){
+                    //console.log("mouse over "+ c.name);
+                    c.updateAlpha(0.5);
+                } else {
+                    c.updateAlpha(1);
+                }
             }
+        }
+        */
+        if ( addArrowBtn.active ){
+            if( newConnectionObjs.length >= 1 ){
+                //console.log("source obj: "+newConnectionObjs[0].name+", looking for lines");
+                showPotentialConnections( x, y );
+            }
+        }
+        draw();
+    }
+    function startMove(x,y,isTouch){
+        /*if ( viewOnly ){
+            return;
+        }*/
+        // get the current mouse position
+        var newx = x;
+        var newy = y;
+        var mx = parseInt(newx - canvas.offsetLeft);
+        var my = parseInt(newy - canvas.offsetTop);
+
+        // test each obj to see if mouse is inside
+        dragok = false;
+        for (var i = 0; i < obj.length; i++) {
+            var r = obj[i];
+            if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height) {
+                // if yes, set that obj isDragging=true
+                dragok = true;
+                r.isDragging = true;
+            }
+        }
+        for ( var j=0; j<annotations.length; j++){
+            var a = annotations[j];
+            if (mx > a.x && mx < a.x + a.width && my > a.y && my < a.y + a.height) {
+                // if yes, set that obj isDragging=true
+                dragok = true;
+                a.isDragging = true;
+            }
+        }
+        // save the current mouse position
+        startX = mx;
+        startY = my;
+        mouseIsDown = 1;
+        
+        if(isTouch){
+            onTouchMove();    
+        } else {
+            onMouseMove();
         }
     }
     function endMove(x,y,isTouch){
         var newx = x;
         var newy = y;
         mouseIsDown = 0;
+        // clear all the dragging flags
+        dragok = false;
+        for (var i = 0; i < obj.length; i++) {
+            var o = obj[i];
+            var to;
+            var from;
+            if( o.isDragging ){
+                //prompt.setText(" ");
+                if( detectHit(newx,newy,activeArea)){
+                    setActiveProperty( activeArea, true );
+                    if ( o.active ){
+                        //then just moving around
+                        to = "active";
+                        from = "active";
+                    } else {
+                        //then moving from palette to active
+                        to = "active";
+                        from = "palette";
+                    }
+                } else if( detectHit( newx,newy,palette )){
+                    if ( o.active ){
+                        //move from active to palette
+                        setActiveProperty( palette, false );
+                        to = "palette";
+                        from = "active";
+                    } else {
+                        //then moving from palette to palette
+                        to = "palette";
+                        from = "palette";   
+                    }
+                } else {
+                    setActiveProperty( palette, false );
+                    if ( o.active ){
+                        //move from active to palette
+                        to = "palette";
+                        from = "active";
+                    } else {
+                        //then moving from palette to palette
+                        to = "palette";
+                        from = "palette";   
+                    }
+                }
+                data.save("FOODWEB_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+            }
+            o.isDragging = false;
+        }
+
         //detectHit 
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
+
         //check to see if version buttons are clicked
         if( detectHit(mx,my,version) ){
             if( detectHit(mx,my,version.nextBtn) && version.nextBtn.active ){
@@ -575,58 +661,9 @@ function FoodWeb(){
                 version.changeVersion(mx,my,version.backBtn.name);
             }
         }
-        // clear all the dragging flags
-        dragok = false;
-        for (var i = 0; i < obj.length; i++) {
-            var o = obj[i];
-            var to;
-            var from;
-            if( o.isDragging ){
-                if( detectHit( newx, newy, activeArea )){
-                    if ( o.active ){
-                        //then just moving around
-                        to = "active";
-                        from = "active";
-                    } else {
-                        //then moving from palette to active
-                        to = "active";
-                        from = "palette";
-                    }
-                    setActiveProperty( activeArea, true );
-                } else if( detectHit( newx,newy,palette )){
-                    if ( o.active ){
-                        //move from active to palette
-                        setActiveProperty( palette, false );
-                        to = "palette";
-                        from = "active";
-                        //console.log("remove connections 1: "+o.name);
-                        removeConnectionBySpecies( o );
-                    } else {
-                        //then moving from palette to palette
-                        to = "palette";
-                        from = "palette";   
-                    }
-                } else {   
-                    if ( o.active ){
-                        //move from active to palette
-                        to = "palette";
-                        from = "active";
-                        //console.log("remove connections 2: "+o.name);
-                        removeConnectionBySpecies( o );
-                    } else {
-                        //then moving from palette to palette
-                        to = "palette";
-                        from = "palette";   
-                    }
-                    setActiveProperty( palette, false );
-                }
-                data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
-            }
-            o.isDragging = false;
-        }
         //if addArrow button is active, add source/destination objects to the array
         //flag checks if user clicked on species
-        if ( addArrowBtn.active && !viewOnly ){
+        if ( addArrowBtn.active ){
             var flag = false;
             for (var j = 0; j < obj.length; j++) {
                 var o = obj[j];
@@ -652,19 +689,22 @@ function FoodWeb(){
         }
 
         //if removeArrow button is active, remove line if mouse/touch is over line 
-        if ( removeArrowBtn.active && !viewOnly ){
+        if ( removeArrowBtn.active ){
             //console.log("remove line clicked: "+canX+", "+canY);
             for( var k=0; k<connections.length; k++){
                 var c = connections[k];
                 if (detectHit( mx, my, c )){
                     //remove connection
-                    data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+c.name+" ;type ;"+c.type);
+                    data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+c.name);
                     displayList.removeChild( c );
                     connections.splice(k, 1);
                     //reset remove arrow button
                     removeArrowBtn.active = false;
                     removeArrowBtn.drawButton();
+                } else {
+                    //nothing
                 }
+                //c.updateAlpha(1);
             }
         }
         var tempAnnotation;
@@ -673,7 +713,6 @@ function FoodWeb(){
         for (var l = 0; l < annotations.length; l++) {
             var a = annotations[l];
             if( a.isDragging ){
-                data.save("FOODWEB_ANNOTATION_MOVE","content ;"+a.name+" ; x;"+a.x+" ;y ;"+a.y+" ; height;"+a.height+" ;width ;"+a.width);
                 if( detectHit( newx, newy, trashBtn )){
                     tempAnnotation = a;
                     tempIndex = l;
@@ -684,14 +723,13 @@ function FoodWeb(){
             a.isDragging = false;
         }
         //remove annotation if user moves it to trash button
-        if ( trashAnnotation && !viewOnly ){
+        if ( trashAnnotation ){
             displayList.removeChild( tempAnnotation );
             annotations.splice( tempIndex, 1 );
-            data.save("FOODWEB_ANNOTATION_REMOVED","content ;"+tempAnnotation.name+";number of annotations ;"+annotations.length);
         }
-        trashBtn.active = false;
+        //trashBtn.active = false;
         //if save button is active, upon mouse click, change it back to inactive
-        if ( saveBtn.active && !viewOnly ){
+        if ( saveBtn.active ){
             saveBtn.active = false;
         }
         evalNewConnection();
@@ -718,26 +756,21 @@ function FoodWeb(){
         if (mx > r.x && mx < r.x + r.width && my > r.y && my < r.y + r.height)
             return 1;
     }
-    //detects if object is in array, returns true or false
-    function containsObject(obj, list) {
-        var i;
-        for (i = 0; i < list.length; i++) {
-            if (list[i] === obj) {
-                return true;
-            }
-        }
-        return false;
-    }
     //set active property of species objects to either true or false;
     function setActiveProperty(hitObj, isActive){
         var h = hitObj;
         var b = Boolean(isActive);
         for (var i = 0; i < obj.length; i++) {
             var s = obj[i];
+            //var pb = plusButtons[i];
+            //var mb = minusButtons[i];
             if( detectHit(s.x,s.y,h) ){
                 //species active
                 s.active = b;
+                //pb.active = b;
+                //mb.active = b;
             }
+            //console.log( s.name + ", x: "+s.x+", y: "+s.y );
         }
     }
     function getActiveObj(){
@@ -750,60 +783,49 @@ function FoodWeb(){
         }
         return activeSpeciesList;
     }
-    //g = group, returns label to be placed at the top of the UI
-    function getLabel( g ){
-        var label;
-        var team; 
-        switch (g){
-            case -1:
-                label = "Master Food Web";
-                break;
-            case "null":
-                label = "Team 6";
-                break;
-            default:
-                team = Number(g)+1;
-                label = "Team "+ team;
-        }
-        return label;
-    }
-    function removeItem( arr ) {
-        var what, a = arguments, L = a.length, ax;
-        while (L > 1 && arr.length) {
-            what = a[--L];
-            while ((ax= arr.indexOf(what)) !== -1) {
-                arr.splice(ax, 1);
-            }
-        }
-        return arr;
-    }
-    //if species is moved from active to palette, find all of the connections connected to it and remove it/them
-    function removeConnectionBySpecies( sp ){
-        var tempArr = []
-        for (var i=0; i<connections.length; i++){
-            var c = connections[i];
-            var str = c.name;
-            var pos = str.indexOf(sp.name);
-            //console.log("connection["+i+"]: "+c.name+", inactive species: "+sp.name+", pos: "+pos );
-            if ( pos >= 0 ){
-                tempArr.push(c);
-            }
-        }
-        for ( var j=0; j<tempArr.length; j++){
-            var t = tempArr[j];
-            data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
-            displayList.removeChild( t );
-            removeItem( connections, t );
-
-        }
-    }
     function evalConnection(){
         for ( var i=0; i<movingConnections.length; i++){
             var movingConnection = movingConnections[i];
-            data.save("FOODWEB_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
+            prompt.setConnectionPrompt();
+            data.save("FOODWEB_CONNECTION_MADE","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;connection ;"+movingConnection.type);
             connections.push( movingConnection );
         }
         movingConnections = [];
+
+        //REMOVE CONNECTION
+        //for every connection, check to see if both species are active
+        //first loop runs through all the created connections
+        var activeObjList = getActiveObj();
+        for( var j=0; j<connections.length;j++){
+            var tempConnection = connections[j].name;
+            var tempObj = tempConnection.split("-");
+            //second look runs through the names of species in each created connection
+            for (var k=0; k<tempObj.length; k++){
+                var s1 = tempObj[k];
+                var speciesActive = false;
+                //third loop runs through all the active species
+                for (var l=0; l<activeObjList.length; l++){
+                    var s2 = activeObjList[l].name;
+                    if ( s1 == s2 ){
+                        //active
+                        speciesActive = true;
+                    }
+                }
+                if(!speciesActive){
+                    //one of the objects in a created connection is no longer active
+                    //console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
+                    data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
+                    for (var m = 0; m < connections.length; m++) {
+                        if( connections[m].name == tempConnection ){
+                            //remove
+                            var line = connections[j];
+                            displayList.removeChild( connections[j] );
+                            connections.splice(j, 1);
+                        }
+                    }
+                }
+            }
+        }
     }
     function evalNewConnection(){
         if( addArrowBtn.active ){
@@ -812,6 +834,7 @@ function FoodWeb(){
                 var obj2 = newConnectionObjs[1];
                 //if the new objects are the same, return
                 if ( obj1.name == obj2.name ){
+                    //console.log("same object, no connection necessary");
                     newConnectionObjs = [];
                     displayList.removeChild( potentialConnections[0] );
                     potentialConnections = [];
@@ -830,12 +853,13 @@ function FoodWeb(){
                     }
                 }
                 //setup new connection
+                console.log("Setup new connection between "+newConnectionObjs[0].name+" and "+newConnectionObjs[1].name);
                 var tempConnection = obj1.name+"-"+obj2.name;
                 var connectType = "eatenby"
                 var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
                 connections.push( line );
                 displayList.addChild( line );
-                data.save("FOODWEB_CONNECTION_ADDED","add arrow tool ;source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
+                data.save("FOODWEB_CONNECTION_ADDED","source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
 
                 //turn add arrow buttn off and reset array
                 for(var j=0;j<potentialConnections.length; j++){
@@ -915,6 +939,69 @@ function FoodWeb(){
             } 
         }
     }
+
+    //returns 1, -1, or 0
+    function getMultiplier( object, connection, direction ){
+        var c = connection;
+        var type = c.type;
+        var object = object;
+        var result;
+        //direct relationship, return connection
+        if ( object == c.obj1.name ){
+            if ( type == "eatenby" ){
+                if ( direction == "plus" ){
+                    result = 1;
+                } else {    //direction == "minus"
+                    result = -1;
+                }
+            } else if ( type == "competition" ){
+                if ( direction == "plus" ){
+                    result = -1;
+                } else {    //direction == "minus"
+                    result = 1;
+                }
+            } else if ( type == "eats" ){
+                if ( direction == "plus" ){
+                    result = -1;
+                } else {    //direction == "minus"
+                    result = 1;
+                }
+            } else if ( type == "mutualism" ){
+                if ( direction == "plus" ){
+                    result = 1;
+                } else {    //direction == "minus"
+                    result = -1;
+                }
+            }
+        } else if ( object == c.obj2.name ){
+            if ( type == "eatenby" ){
+                if ( direction == "plus" ){
+                    result = -1;
+                } else {    //direction == "minus"
+                    result = 1;
+                }
+            } else if ( type == "competition" ){
+                if ( direction == "plus" ){
+                    result = -1;
+                } else {    //direction == "minus"
+                    result = 1;
+                }
+            } else if ( type == "eats" ){
+                if ( direction == "plus" ){
+                    result = 1;
+                } else {    //direction == "minus"
+                    result = -1;
+                }
+            } else if ( type == "mutualism" ){
+                if ( direction == "plus" ){
+                    result = 1;
+                } else {    //direction == "minus"
+                    result = -1;
+                }
+            }
+        } 
+        return result;
+    }
     //if add arrow button is active, and a source species is chosen, then show potenial connections
     function showPotentialConnections( mx, my ){
         //create fake species if source object is clicked when add arrow function is on
@@ -937,6 +1024,7 @@ function FoodWeb(){
         }
         potentialConnections.push(line);
         displayList.addChild( line );
+        //console.log("line: " + potentialConnections[0].x1+", "+potentialConnections[0].y1+", "+potentialConnections[0].x2+", "+potentialConnections[0].y2+", "+potentialConnections[0].height+", "+potentialConnections[0].width);
     }
     function saveFoodWeb(){
         //handle versions
@@ -947,7 +1035,7 @@ function FoodWeb(){
         data.saveDrawing( d.drawing, d.message );
         //draw "Saved" button state
         saveBtn.drawSavedButton();
-        data.save("FOODWEB_DRAWING_SAVED","savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+" ;drawing ;"+d.message);
+        console.log("savedVersionsNum: "+savedVersionsNum+", version.num: "+version.num+", version.saved: "+version.saved);
     }
     function getDrawing(){
         var nodes = [];
@@ -972,15 +1060,20 @@ function FoodWeb(){
             var a = annotations[k];
             //create annotation
             var comment = { name: a.name, x: a.x, y: a.y };
-            message += "{ name: " + a.name + ", x: " + a.x +", y:"+a.y+" }, ";
+            message += "{ name: " + c.name + ", x: " + c.x +", y:"+c.y+" }, ";
             comments.push( comment );
+            //data.save("FOODWEB_CONNECTION_ADDED","source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
         }
+        
         message = message.slice(0, -2);
-        currentDrawing = { nodes: nodes, links: links, comments: comments };
+        currentDrawing = { nodes: nodes, links: links };
         return {drawing: currentDrawing, message: message};
     }
     //clear drawing
     function clearFoodWeb(){
+        var d = getDrawing();
+        currentDrawing = d.drawing;
+
         for(var i=0; i<obj.length; i++){
             var o = obj[i];
             o.active = false;
@@ -991,15 +1084,10 @@ function FoodWeb(){
             var c = connections[j];
             displayList.removeChild( c );
         }
-        for(var k=0; k<annotations.length; k++){
-            var a = annotations[k];
-            displayList.removeChild( a );
-        }
         connections = [];
         movingConnections = [];
         potentialConnections = [];
         newConnectionObjs = [];
-        annotations = [];
     }
     //retrieve drawing
     function retrieveDrawing( drawing ){
@@ -1058,15 +1146,17 @@ function FoodWeb(){
             var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
             connections.push( line );
             displayList.addChild( line );
+            //data.save("FOODWEB_CONNECTION_ADDED","source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
         }
         for(var k=0; k<comments.length; k++){
             var c = comments[k];
             //create annotation
-            var annotation = new Annotation( c.name, ctx, backgroundColour, "#FFFFFF", "300 11pt 'Roboto'" );
+            var annotation = new Annotation( c.message, ctx, backgroundColour, "#FFFFFF", "300 8pt 'Roboto'" );
             annotation.x = c.x;
             annotation.y = c.y;
             annotations.push( annotation );
             displayList.addChild( annotation );
+            //data.save("FOODWEB_CONNECTION_ADDED","source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
         }
     }
     function draw() {
@@ -1080,10 +1170,7 @@ function FoodWeb(){
         //draw toolbar
         ctx.fillStyle = toolbarColour;
         ctx.fillRect(toolbar.x, toolbar.y, toolbar.width, toolbar.height);
-
-        if ( preScaledHeight != 0 && preScaledWidth != 0 ){
-            version.draw();
-            displayList.draw();
-        }
+        version.draw(); 
+        displayList.draw();
     }
 }

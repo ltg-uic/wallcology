@@ -12,8 +12,8 @@
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
 	<!-- Your markup here -->
-	Ecosystem <input type=text READONLY size=1 id="ecosystem"> History<br>
-	From:
+	<input hidden type=text size=1 id="ecosystem">
+	<a style="font-size:120%;">From:</a>
 	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -58,8 +58,8 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'>normalized
-&nbsp<input type=checkbox id='hack' onClick='query();'>one day (at 10 second intervals)<br>
+	<input type=hidden type=checkbox id='normalize' onClick='query();'>
+&nbsp<input hidden type=checkbox id='hack' onClick='query();'><br>
 
 
 	<table style="border-spacing:0px;padding:0;">

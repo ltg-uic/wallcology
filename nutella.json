@@ -4,5 +4,5 @@
   "nutella_version": "0.6.2",
   "type": "application",
   "description": "WallCology",
-  "app_bots": ["master", "rubyMaster"]
+  "app_bots": ["rubyMaster"]
 }

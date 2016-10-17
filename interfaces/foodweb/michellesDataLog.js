@@ -4,9 +4,9 @@ function DataLog( n, app, group, mode ){
 	this.group = group;
 	this.mode = mode;
 	this.destination;
-	//this.sentData = [];
-	//this.unsentData = [];
-	//this.index;
+	this.sentData = [];
+	this.unsentData = [];
+	this.index;
 
 	switch(app){
 		case "lion king":
@@ -45,7 +45,7 @@ function DataLog( n, app, group, mode ){
 		    this.nutella.net.publish('set_foodweb',{group: this.group, time: t, drawing: drawing});
 		    this.nutella.net.publish(this.destination,['Group ;'+ this.group +' ;Time ;'+t+' ;' + type +' ;'+ message]);
 		} else {            
-			//console.log('Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ message);
+			console.log('Group ;'+ this.group +' ;Time ;'+t+' ;' + "FOODWEB_SAVE" +' ;'+ message);
 		}
 	}
 	/*

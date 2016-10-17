@@ -168,11 +168,11 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0
 		this.ctx.font = "300 12pt 'Roboto'";
-		this.ctx.textAlign = "left";
+		this.ctx.textAlign = "center";//"left";
 		this.ctx.textBaseline = "top";
 		this.ctx.fillStyle = textColour;
 		//wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
-		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 14 );
+		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 16 );
 	}
 }
 Prompt.prototype = new EventDispatcher();
