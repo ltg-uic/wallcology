@@ -33,17 +33,17 @@ function Help(context, cw, ch, tbw, bg){
 
 	promptsList = [
 	   	{name:"save",
-		instruction:"Click 'Save' to store a version in the database. You can access prior versions with the \u2190 and \u2192 buttons below.",
+		instruction:"Click 'Save' to store a version in the database. You can access prior versions with the \u23EA and \u23E9 buttons below.",
 		x: this.width - toolbarWidth - maxWidth - padding + 100,
 		y: 30
 		},
 		{name:"add arrow",
-		instruction:"Click on the 'Add ⇄' button to activate tool. Select one species in the<br>work area, then choose another to add relationship between the species.",
+		instruction:"Click on the 'Add' button to activate tool. Select one species in the<br>work area, then choose another to add relationship between the species.",
 		x: this.width - toolbarWidth - maxWidth - padding + 14,
 		y: 100
 		},
 		{name:"remove arrow",
-		instruction:"Click on the 'Remove ⇄'' button to activate tool.<br>Select the midpoint of the arrow to remove.",
+		instruction:"Click on the 'Remove' button to activate tool.<br>Select the midpoint of the arrow to remove.",
 		x: this.width - toolbarWidth - maxWidth - padding + 134,
 		y: 174
 		},
@@ -58,8 +58,8 @@ function Help(context, cw, ch, tbw, bg){
 		y: this.height - 106
 		},
 		{name:"versions",
-		instruction:"To view saved food webs, click on the \u2190 button, to see successively<br>older versions. Click on the \u2192 button to see newer saved versions. The last food web will be your working version. Remember to save it before<br>you leave the program. §bNOTE§r: only the \u2190 and \u2192 buttons will work in 'View Only' mode.",
-		x: this.width - toolbarWidth - maxWidth - padding + 30,
+		instruction:"To view saved food webs, click on the \u23EA button, to see successively<br>older versions. Click on the \u23E9 button to see newer saved versions. The last food web will be your working version. Remember to save it before<br>you leave the program. §bNOTE§r: only the buttons for navigating versions will work in 'View Only' mode.",
+		x: this.width - toolbarWidth - maxWidth - padding + 20,
 		y: this.height - 136
 		}
 	];

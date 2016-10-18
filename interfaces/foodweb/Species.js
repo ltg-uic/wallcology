@@ -1,6 +1,6 @@
-function Species ( u, n, x, y, h, w, c, sc){
+function Species ( n, x, y, h, w, c, sc){
 	
-    var url = u;
+    // var url = u;
     var file = n + ".png";
     //var file = url + n + ".png";
     //var placeholderFile = url + n + ".png";

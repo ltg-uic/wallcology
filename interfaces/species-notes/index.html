@@ -1,5 +1,3 @@
-
-
 <!doctype html>
 <html>
 <head>
@@ -21,23 +19,23 @@
 	</script>
 
 			<div id="yourModal" class="modal2">
+			<div class="modal2-content" align="center">
   			<span class="close">×</span>
-  			<img class="modal2-content" id="img01" height=400 width=300>
-			<div id="caption"></div>			
-			</div>
+  			<img src="" id="img01" >
+			</div></div>
 
 
 	<div id="myModal" class="modal">
 	  <div class="modal-content">
 	    <div class="modal-header" id="divH">	      
-	      <table width=100% ><tr>
+	      <table valign=middle width=100% ><tr>
 	      	<td><a style="font-size: 150%;font-weight:bold;">Claim:&nbsp&nbsp</a></td>
 	    	<td><img src="" id="slot1" height=50 width=50></td>
-	    	<td><a id="relationship"></a> </td>
+	    	<td><a id="relationship" style="font-size: 130%;"></a> </td>
 	    	<td><img src="" id="slot2" height=50 width=50></td>
 
 	    	<td width=310></td>
-	    	<td style="background-color:#273548;" align=right valign=middle> <img src="thumbsup.png" id="action1" onClick="setClaim('assert');"><img id="action2"  src="thumbsdown.png" onClick="setClaim('refute');"><img id="action3" src="qmark.png" onClick="setClaim('unsure');"></td>
+	    	<td align=right valign=middle> <img style="vertical-align:middle;" src="thumbsup.png" id="action1" onClick="setClaim('assert');">&nbsp&nbsp&nbsp&nbsp<img id="action2"  style="vertical-align:middle;" src="thumbsdown.png" onClick="setClaim('refute');">&nbsp&nbsp&nbsp<img id="action3" style="vertical-align:middle;" src="qmark.png" onClick="setClaim('unsure');"></td>
 	    	</tr></table>
 
 
@@ -49,9 +47,9 @@
 
 	    <div id="divX" class="modal-body" style="color:black;">
 			<table width=100%><tr><td><a id="observations" style="color:black;font-size:125%;">Observations</a><br>
-	    	<textarea id="text1" rows=10 cols=64>Prompt</textarea><br>
+	    	<textarea id="text1" rows=9 cols=50>Prompt</textarea><br>
 	    	<a id="reasoning" style="color:black;font-size:125%;">Reasoning</a><br>
-	    	<textarea id="text2" rows=10 cols=64>Prompt</textarea><br>
+	    	<textarea id="text2" rows=9 cols=50>Prompt</textarea><br>
 	    	</td><td align=center>
 
 
@@ -80,6 +78,7 @@
 	<script>
 
 		// Parse the query parameters
+			var speciesNames = [];
 			var tempClaim;
 			var selectedClaim;
 			var imageURL;
@@ -91,6 +90,9 @@
 			var ecosystem = query_parameters.INSTANCE;
 			if (ecosystem === undefined) ecosystem = 0;
 			var group = ecosystem;
+
+			var treatment = query_parameters.TREATMENT; 
+			var room = query_parameters.ROOM;
 
 			document.write('<canvas id="canvasID" width=1000 height=800 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
 			var context = document.getElementById('canvasID').getContext("2d"); 
@@ -117,7 +119,12 @@
 
 			document.write("<table>");
 
-			document.write('<tr><td>');
+			document.write('<tr><td colspan=3>');
+			document.write('<a id="speciesName" style="font-size:200%;color:white;">&nbsp</a><br><br></td>');
+			document.write('<td align=right><a style="font-size:175%;color:white;">group ' + Number(1+Number(group)) + ' species account</a></td>');
+
+
+			document.write('</tr><tr><td>');
 			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br><br>');
 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
@@ -170,18 +177,33 @@
 			document.write('<img id="m5" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
 			document.write('</td><td style="font-size:125%;" align=center>Competes with</td><td></td><td>');
 			speciesSelector('competesWith',-1,'horizontal',.75);
-			document.write('</td></tr><tr height=50></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
+			document.write('</td></tr>');
+
+
+			if (treatment == "push") document.write('<tr height=20></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
+
 			document.write('</table></td></tr></table><br>');
 
 			document.close();
-			var accounts = [];
+			var accounts = []; 
 	nutella.net.request('mostRecentAccounts',query_parameters.INSTANCE,function(a,from){
+			nutella.net.request('get_species_names',{},function(message,from){
+
+				speciesNames = message;
+				document.getElementById('speciesName').innerHTML = speciesNames[selected];
+			})
 			for(var i=0; i<11; i++) accounts[i] = a[i];
 
 
-			select('species0');
-	});
-			var modal = document.getElementById('myModal');
+			select('species0');setTimeout(correct,100);
+	});	
+			
+			function correct() { 
+				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,100); 
+				else {redrawClaimsCanvas();}
+			}
+
+			var modal = document.getElementById('myModal'); 
 
 			// Get the button that opens the modal
 			// var btn = document.getElementById("myBtn");
@@ -228,9 +250,17 @@
 			}
 
 
-			function blowup(id) { 
-				var modalImg = document.getElementById("img01");
-			    modalImg.src = document.getElementById(id).src;
+			function blowup(id) {
+				var originalImage = document.getElementById(id); 
+				var blownUpImage = document.getElementById("img01");
+				blownUpImage.style.height="auto";
+				if (originalImage.naturalWidth > originalImage.naturalHeight) {
+					blownUpImage.style.width="100%"; 
+				} else {
+					var ratio = Math.floor((originalImage.naturalWidth / originalImage.naturalHeight) * 100);
+					blownUpImage.style.width= ratio + "%";
+				}
+				blownUpImage.src = originalImage.src;;
 			    modal2.style.display = "block";
 			}
 
@@ -241,25 +271,36 @@
 			}
 
 			function sync() {
-			    var d = new Date();
-				accounts[selected].timestamp = d.getTime();
-				accounts[selected].synced = true;
-			    saveClaims();
+
+				nutella.net.publish('sync',{species:selected, group:query_parameters.INSTANCE});
+				userLog('species-notes',['Synchronized claims',group, selected]);			
 			}
 
 
 			function save() {
+
+	
 			    modal.style.display = "none"; 
 			    var d = new Date();
-				accounts[selected].timestamp = d.getTime();
-				accounts[selected].synced = false;
-				accounts[selected].claims[selectedClaim].claim = tempClaim;
-				accounts[selected].claims[selectedClaim].observations =	document.getElementById('text1').value;
-				accounts[selected].claims[selectedClaim].reasoning = document.getElementById('text2').value;
-	//			accounts[selected].claims[selectedClaim].experiment = document.getElementById('experiment').value;
-				accounts[selected].claims[selectedClaim].images[0] = document.getElementById('image1').src;
-				accounts[selected].claims[selectedClaim].images[1] = document.getElementById('image2').src;
-				accounts[selected].claims[selectedClaim].images[2] = document.getElementById('image3').src;
+				accounts[selected][selectedClaim].timestamp = d.getTime();
+				accounts[selected][selectedClaim].synced = false; 
+				if (treatment == "auto") accounts[selected][selectedClaim].synced = true;
+				accounts[selected][selectedClaim].claim = tempClaim;
+				accounts[selected][selectedClaim].observations = document.getElementById('text1').value;
+				accounts[selected][selectedClaim].reasoning = document.getElementById('text2').value;
+				// accounts[selected][selectedClaim].experiment = document.getElementById('experiment').value;
+				accounts[selected][selectedClaim].images[0] = document.getElementById('image1').src;
+				accounts[selected][selectedClaim].images[1] = document.getElementById('image2').src;
+				accounts[selected][selectedClaim].images[2] = document.getElementById('image3').src;
+
+				var dob = (accounts[selected][selectedClaim].observations != oldObservations);
+				var dre = (accounts[selected][selectedClaim].reasoning != oldReasoning);
+				var dex = (accounts[selected][selectedClaim].experiment != oldExperiment);
+				var dcl = (accounts[selected][selectedClaim].claim != oldClaim);
+				userLog('species-notes',['Saved support',group, selected, selectedClaim,dob,dre,dex,dcl]);			
+				// accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
+				// accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
+				// accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
 			    drawAllClaimsOnCanvas(); 
 			    saveClaims();
 			}
@@ -272,6 +313,7 @@
 			// }
 
 	  var loadFile1 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
 	    var output = document.getElementById('image1');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -280,6 +322,7 @@
 	  };
 
 	  var loadFile2 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,2]);
 	    var output = document.getElementById('image2');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -288,6 +331,7 @@
 	  };
 
 	  var loadFile3 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,3]);
 	    var output = document.getElementById('image3');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -309,13 +353,13 @@
 
 
 		    function chooseClaim(type){ 
-		    	accounts[selected].claims[selectedClaim].claim = type; 
+		    	accounts[selected][selectedClaim].claim = type; 
 		    	document.getElementById('action1').style.opacity=0.3; 
 		    	document.getElementById('action2').style.opacity=0.3;
 		    	document.getElementById('action3').style.opacity=0.3;
-				if (accounts[selected].claims[selectedClaim].claim == 'assert') document.getElementById('action1').style.opacity=1.0;
-				if (accounts[selected].claims[selectedClaim].claim == 'refute') document.getElementById('action2').style.opacity=1.0;
-				if (accounts[selected].claims[selectedClaim].claim == 'unsure') document.getElementById('action3').style.opacity=1.0;
+				if (accounts[selected][selectedClaim].claim == 'assert') document.getElementById('action1').style.opacity=1.0;
+				if (accounts[selected][selectedClaim].claim == 'refute') document.getElementById('action2').style.opacity=1.0;
+				if (accounts[selected][selectedClaim].claim == 'unsure') document.getElementById('action3').style.opacity=1.0;
 			}
 
 			
@@ -374,12 +418,16 @@
 			};
 
 			// document.getElementById('img0').style.opacity="0.2";
-
+var oldObservations = "";
+var oldReasoning = "";
+var oldExperiment = "";
+var oldClaim = ""
 
 			function select(id){ 
 				
 				switch (id.substring(0,1)) { 
 					case 'c':   var index = Number(id.substring(1)); selectedClaim=index; 
+								userLog('species-notes',['Selected claim',group,selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
 								var slot2;
 								if (index == 0) slot2="wood.png";
@@ -398,23 +446,34 @@
 								if (index >= 7 && index <= 17 ) document.getElementById('relationship').innerHTML = "eats";
 								if (index >= 18 && index <= 28 ) document.getElementById('relationship').innerHTML = "is eaten by";
 								if (index >= 29 && index <= 39 ) document.getElementById('relationship').innerHTML = "competes with";
-								clearCanvasOfAllClaims(); 
-								document.getElementById('text1').value = accounts[selected].claims[selectedClaim].observations;
-								document.getElementById('text2').value = accounts[selected].claims[selectedClaim].reasoning;
+								clearCanvasOfAllClaims(); //alert('selected: ' + selected + '  selectedClaim: ' + selectedClaim);
+								document.getElementById('text1').value = accounts[selected][selectedClaim].observations;
+								document.getElementById('text2').value = accounts[selected][selectedClaim].reasoning;
 	//							document.getElementById('experiment').value = experiment[selectedClaim];
-								document.getElementById('image1').src = accounts[selected].claims[selectedClaim].images[0];
-								document.getElementById('image2').src = accounts[selected].claims[selectedClaim].images[1];
-								document.getElementById('image3').src = accounts[selected].claims[selectedClaim].images[2];
+								document.getElementById('image1').src = accounts[selected][selectedClaim].images[0];
+								document.getElementById('image2').src = accounts[selected][selectedClaim].images[1];
+								document.getElementById('image3').src = accounts[selected][selectedClaim].images[2];
+
+								oldObservations = accounts[selected][selectedClaim].observations;
+								oldReasoning = accounts[selected][selectedClaim].reasoning;
+								oldExperiment = accounts[selected][selectedClaim].experiment;
+								oldClaim = accounts[selected][selectedClaim].claim;
+
+
+
 								// document.getElementById('image1').src = message.claims[i].obsImages[0];
 								// document.getElementById('image2').src = message.claims[i].obsImages[1];
 								// document.getElementById('image3').src = message.claims[i].obsImages[2];
-								setClaim(accounts[selected].claims[selectedClaim].claim);
+								setClaim(accounts[selected][selectedClaim].claim);
 								modal.style.display = "block"; 
 								break;
 					case 's': 	
 								deselectAll('species');
 								document.getElementById(id).style.opacity = 1.0;
-								selected = Number(id.substring(7)); 
+								selected = Number(id.substr(7)); 
+								userLog('species-notes',['Selected species',group, selected]);
+
+								document.getElementById('speciesName').innerHTML = speciesNames[selected];
 								for(var j=1; j<6; j++){ 
 									var pad = (selected<10) ? '0' : '';
 									document.getElementById('m' + j).src = 'https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png';
@@ -457,11 +516,11 @@
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 245;
+				X += 256;
 				Y += 4; 
-				switch (accounts[selected].claims[i].claim) {
-					case 'assert': context.drawImage(document.getElementById('thumbsup'), X, Y); break;
-					case 'refute': context.drawImage(document.getElementById('thumbsdown'), X, Y); break;
+				switch (accounts[selected][i].claim) {
+					case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1, Y); break;
+					case 'refute': context.drawImage(document.getElementById('thumbsdown'), X-3, Y+18); break;
 					case 'unsure': context.drawImage(document.getElementById('unsure'), X, Y); break;
 				}
 			}
@@ -483,13 +542,38 @@
 		// }
 
 		function saveClaims(){
-			nutella.net.publish('newAccount',{species:selected,group:group,account:accounts[selected]});
+			nutella.net.publish('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]});
+			//
+			// need to update this to do automatic reflective claims
+			//
+			// 
 		}
 
 
 		function speciesImageURL (index) {
 			var pad = (index<10) ? '0' : '';
 			return "https://ltg.cs.uic.edu/WC/icons/species_" + pad + index + ".png";
+		}
+
+	// this is the function that everybody else will use to write to the user log
+		function userLog(channel, extension){
+			var SEPARATOR = "^,^";
+			var exp = "";
+			for (var i=0; i<extension.length; i++) { 
+				exp += extension[i] + SEPARATOR;
+			}
+			var log = channel + SEPARATOR;
+			log += query_parameters.CLASS + SEPARATOR;
+			log += query_parameters.ROOM + SEPARATOR;
+			log += query_parameters.ACTIVITY + SEPARATOR;
+			log += query_parameters.TREATMENT + SEPARATOR;
+			log += query_parameters.CHANNEL + SEPARATOR;
+			log += query_parameters.TYPE + SEPARATOR;
+			log += query_parameters.INSTANCE + SEPARATOR;
+			log += exp;
+			var xl = [];
+			xl[0] = log;
+			nutella.net.publish('add_to_user_log',xl);
 		}
 
 

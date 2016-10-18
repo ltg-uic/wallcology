@@ -1,16 +1,18 @@
 function Version(c, cw, ch, tbw, bc, n){
 	var canvasHeight = ch;
 	var canvasWidth = cw;
-	var toolbarWidth = 236;//tbw;
-	var xOffset = 0;
-	var padding = 8;
+	var toolbarWidth = tbw;
+	var xOffset = 8;
+	var padding = 6;
 	var btnH = 30;
 	var btnW = 30;
-	var btnY = canvasHeight - btnH - padding;
+	var topBtnY = canvasHeight - btnH - padding - 34;
+	var bottomBtnY = canvasHeight - btnH - padding;
 	var firstBtnX = canvasWidth - toolbarWidth + xOffset;
-	var backBtnX = canvasWidth - toolbarWidth + xOffset + btnW + padding;
-	var nextBtnX = canvasWidth - toolbarWidth + xOffset + (padding + btnW)*2;
-	var lastBtnX = canvasWidth - toolbarWidth + xOffset + (padding + btnW)*3;
+	var lastBtnX = canvasWidth - toolbarWidth + xOffset + padding + btnW;
+	var backBtnX = canvasWidth - toolbarWidth + xOffset;
+	var nextBtnX = canvasWidth - toolbarWidth + xOffset + padding + btnW;
+	
 	var btnColour = bc;
 	
 	this.colour;
@@ -18,15 +20,15 @@ function Version(c, cw, ch, tbw, bc, n){
 	this.saved = n;
 	this.ctx = c;
 	this.x = canvasWidth - toolbarWidth + xOffset;
-	this.y = btnY;
+	this.y = topBtnY;
 	this.width = (btnW + padding)*4;
-	this.height = btnH;
+	this.height = btnH + 36;
 	this.EVENT_CLICKED = "clicked";
 
-	this.nextBtn = new ImageButton("next", nextBtnX, btnY, btnH, btnW, c, btnColour);
-	this.backBtn = new ImageButton("back", backBtnX, btnY, btnH, btnW, c, btnColour);
-	this.lastBtn = new ImageButton("last", lastBtnX, btnY, btnH, btnW, c, btnColour);
-	this.firstBtn = new ImageButton("first", firstBtnX, btnY, btnH, btnW, c, btnColour);
+	this.nextBtn = new ImageButton("next", nextBtnX, topBtnY, btnH, btnW, c, btnColour);
+	this.backBtn = new ImageButton("back", backBtnX, topBtnY, btnH, btnW, c, btnColour);
+	this.lastBtn = new ImageButton("last", lastBtnX, bottomBtnY, btnH, btnW, c, btnColour);
+	this.firstBtn = new ImageButton("first", firstBtnX, bottomBtnY, btnH, btnW, c, btnColour);
 
 	this.nextBtn.active = false;
 	this.backBtn.active = false;
@@ -58,21 +60,22 @@ function Version(c, cw, ch, tbw, bc, n){
 		canvasWidth = cw;
 
 		firstBtnX = canvasWidth - toolbarWidth + xOffset;
-		backBtnX = canvasWidth - toolbarWidth + xOffset + btnW + padding;
-		nextBtnX = canvasWidth - toolbarWidth + xOffset + (padding + btnW)*2;
-		lastBtnX = canvasWidth - toolbarWidth + xOffset + (padding + btnW)*3;
+		lastBtnX = canvasWidth - toolbarWidth + xOffset + padding + btnW;
+		backBtnX = canvasWidth - toolbarWidth + xOffset;
+		nextBtnX = canvasWidth - toolbarWidth + xOffset + padding + btnW;
 
-		btnY = canvasHeight - btnH - padding;
+		topBtnY = canvasHeight - btnH - padding - 34;
+		bottomBtnY = canvasHeight - btnH - padding;
 		
 		this.x = canvasWidth - toolbarWidth + xOffset;
-		this.y = btnY;
+		this.y = topBtnY;
 		this.width = btnW + btnW + padding;
-		this.height = btnH;
+		this.height = btnH + 34;
 
-		this.nextBtn.updateXY( nextBtnX, btnY );
-		this.backBtn.updateXY( backBtnX, btnY ); 
-		this.lastBtn.updateXY( lastBtnX, btnY );
-		this.firstBtn.updateXY( firstBtnX, btnY ); 
+		this.nextBtn.updateXY( nextBtnX, topBtnY );
+		this.backBtn.updateXY( backBtnX, topBtnY ); 
+		this.lastBtn.updateXY( lastBtnX, bottomBtnY );
+		this.firstBtn.updateXY( firstBtnX, bottomBtnY ); 
 	}
 	this.saveVersion = function( v ){
 		this.num += 1;

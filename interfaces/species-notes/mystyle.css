@@ -21,6 +21,8 @@ iframe { width:100% ;
 
  }
 
+textarea { font-size: 125%; }
+
 td { font-size: 100%; color: white; }
 
 button {
@@ -104,11 +106,11 @@ body {font-family: "Lato", sans-serif; width:100% ;
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
     z-index: 3; /* Sit on top */
-    padding-top: 100px; /* Location of the box */
-    left: 200;
-    top: 100;
-    width: 700px; /* Full width */
-    height: 500px; /* Full height */
+    padding-top: 20px; /* Location of the box */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
@@ -116,32 +118,18 @@ body {font-family: "Lato", sans-serif; width:100% ;
 
 /* Modal Content (image) */
 .modal2-content {
+    position: relative;
+    background-color: rgb(0,0,0); 
     margin: auto;
-    display: block;
-
-    width: 700px; /* Full width */
-    height: 500px; /* Full height */
-    max-width: 700px;
+    padding: 0;
+    width: 70%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+    animation-name: animatetop;
+    animation-duration: 0.4s
 }
 
-#caption {
-    margin: auto;
-    display: block;
-    width: 80%;
-    max-width: 700px;
-    text-align: center;
-    color: #ccc;
-    padding: 10px 0;
-    height: 150px;
-}
-
-/* Add Animation */
-.modal2-content, #caption {
-    -webkit-animation-name: zoom;
-    -webkit-animation-duration: 0.6s;
-    animation-name: zoom;
-    animation-duration: 0.6s;
-}
 
 
 /* Add Animation */

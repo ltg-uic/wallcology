@@ -42,7 +42,7 @@ function ToggleButton(n, s, x, y, c, bg, tc){
 		this.context.save();
 		//this.context.clearRect(this.x+8, this.y+8, 13, 18);
 		this.context.fillStyle = this.backgroundColour;
-		this.context.fillRect(this.x+8, this.y+6, 13, 18);
+		this.context.fillRect(this.x+8, this.y+4, 13, 20);
 		this.draw();
 		this.context.restore();
 	}

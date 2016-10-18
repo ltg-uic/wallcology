@@ -412,13 +412,13 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.draw = function(){
         var p1 = {x:this.x1,y:this.y1};
         var p2 = {x:this.x2,y:this.y2};
-        /*
-        var hit = getHitObject(this.obj1,this.obj2);
+        
+        /*var hit = getHitObject(this.obj1,this.obj2);
         this.ctx.fillStyle = "#F44336";
         this.ctx.globalAlpha = 0.2;
         this.ctx.fillRect(hit.x, hit.y, hit.width, hit.height);
-        this.ctx.globalAlpha = 1;
-        */
+        this.ctx.globalAlpha = 1;*/
+        
         // arbitrary styling
         this.ctx.strokeStyle = this.colour;  //"#00E5FF";
         this.ctx.fillStyle = this.colour;     //"#00E5FF";

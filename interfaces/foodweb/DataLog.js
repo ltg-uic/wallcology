@@ -29,9 +29,9 @@ function DataLog( n, app, group, mode ){
 		var t = Timestamp(); 
 		if ( mode == "deploy"){
 		    this.nutella.net.publish('set_foodweb',{group: group, time: t, drawing: drawing});
-		    this.nutella.net.publish(this.destination,['Group ;'+ this.group +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 ]);
+		    this.nutella.net.publish(this.destination,['Group ;'+ group +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 ]);
 		} else {            
-			console.log('Group ;'+ this.group +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 );
+			console.log('Group ;'+ group +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 );
 		}
 	}
 }
