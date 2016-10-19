@@ -62,6 +62,7 @@
 
 	    </td></tr></table>
  		</div>
+
 	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
 	    	<button onClick="cancel();">Cancel</button><button onClick="save();">Save</button>
 	      	      <br><br>
@@ -94,7 +95,7 @@
 			var treatment = query_parameters.TREATMENT; 
 			var room = query_parameters.ROOM;
 
-			document.write('<canvas id="canvasID" width=1000 height=800 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
+			document.write('<canvas id="canvasID" width=800 height=600 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
 			var context = document.getElementById('canvasID').getContext("2d"); 
 
 
@@ -104,7 +105,7 @@
 
 
 
-			document.write('<table valign=top align=left><tr><td style="background-color:#273548;" align=center valign=top>');
+			document.write('<table border=1 valign=top align=left><tr><td style="background-color:#273548;" align=center valign=top>');
 			document.write('<a style="font-size:150%;color:#FFFF66;"> </a>');
 			speciesSelector('species',-1,'vertical',.65);
 			document.write("</td>");
@@ -117,7 +118,7 @@
 
 			document.write("<td valign=top><div>");
 
-			document.write("<table cellpadding=0 width=700>");
+			document.write("<table border=1 cellpadding=0 >");
 
 			document.write('<tr><td colspan=3>');
 			document.write('<a id="speciesName" style="font-size:200%;color:white;">&nbsp</a><br><br></td>');
@@ -197,9 +198,10 @@
 
 			select('species0');setTimeout(correct,100);
 	});	
-			
+			var corrections = 0;
 			function correct() { 
-				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,100); 
+//				if (++corrections > 100) {alert('100'); return;}
+				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
 				else {redrawClaimsCanvas();}
 			}
 
@@ -516,11 +518,11 @@ var oldClaim = ""
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 150;
+				X += 159;
 				Y += 4; 
 				switch (accounts[selected][i].claim) {
 					case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1, Y); break;
-					case 'refute': context.drawImage(document.getElementById('thumbsdown'), X-3, Y+18); break;
+					case 'refute': context.drawImage(document.getElementById('thumbsdown'), X+3, Y+18); break;
 					case 'unsure': context.drawImage(document.getElementById('unsure'), X, Y); break;
 				}
 			}

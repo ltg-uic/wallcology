@@ -12,39 +12,56 @@ var experiments = nutella.persist.getMongoObjectStore('experiments');
 experiments.load(function(){
 
     if (!experiments.hasOwnProperty('data')){
-        experiments['data'] = []; experiments.save();
+        experiments['data'] = [[],[],[],[],[]]; experiments.save();       
     };
 
-    nutella.net.handle_requests('get_experiments',function(ecosystem, from) {
-        return (experiments.data.filter(function(item){return item.ecosystem == ecosystem}));
+    nutella.net.handle_requests('get_experiments',function(group, from) {
+        var response = [];
+        for (var q=0; q < experiments.data[group].length; q++)
+            response[q] = experiments.data[group][q][experiments.data[group][q].length-1];
+        return(response);  
     });
 
-    nutella.net.handle_requests('update_experiment',function(experiment, from) {
-
-        for (var i=0; i<experiments.data.length; i++)
-            if (experiments.data[i].ecosystem == experiment.ecosystem &&
-                experiments.data[i].question == experiment.question)
-                { experiments.data[i] = experiment; experiments.save();}
+    nutella.net.handle_requests('update_experiment',function(exp, from) {
+        var experiment = exp;
+        var d = new Date();
+        experiment.timestamp = d.getTime();
+        //
+        // find the matching experiment
+        // 
+        group=experiment.ecosystem;
+        for (var q=0; q<experiments.data[group].length; q++)
+            if (experiments.data[group][q][0].question == experiment.question){
+                experiments.data[group][q].push(experiment); experiments.save(); return;
+        }
         return;
     });
 
+ 
     nutella.net.subscribe('create_experiment',function(message, from) {
+        var d = new Date();
+        var initialExperiment = {ecosystem: message.ecosystem, timestamp: d.getTime(), question: message.question,  manipulations:'', 
+                            reasoning: message.notes, results:'', figures: [], conclusions:''};
 
-        experiments.data = [{ecosystem: message.ecosystem, timestamp: 0, question: message.question,  manipulations:'', 
-                            reasoning: message.notes, results:'', figures: [], conclusions:''}].concat(experiments.data);
-        experiments.save();                    
+        experiments.data[message.ecosystem].push([initialExperiment]);
+        experiments.save();
         nutella.net.publish('refresh_experiments',message.ecosystem);                
 
     });
 
 ///////////////////////
     nutella.net.subscribe('delete_experiment',function(message, from) { 
-        experiments.data = experiments.data.filter(function(item){return !(item.ecosystem == message.ecosystem && item.question == message.question);});
-        experiments.save(); 
-        nutella.net.publish('refresh_experiments',message.ecosystem);                
+        var g = message.ecosystem;
+        for (q=0; q < experiments.data[g].length; q++)
+            if (message.question == experiments.data[g][q][0].question) {
+                experiments.data[g].splice(q,1); return;
+            }
+        return;
+
 ///////////////////////
 ///////////////////////
     });
+
 
 
 });
