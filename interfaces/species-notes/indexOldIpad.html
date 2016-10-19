@@ -34,7 +34,7 @@
 	    	<td><a id="relationship" style="font-size: 130%;"></a> </td>
 	    	<td><img src="" id="slot2" height=50 width=50></td>
 
-	    	<td width=150></td>
+	    	<td width=310></td>
 	    	<td align=right valign=middle> <img style="vertical-align:middle;" src="thumbsup.png" id="action1" onClick="setClaim('assert');">&nbsp&nbsp&nbsp&nbsp<img id="action2"  style="vertical-align:middle;" src="thumbsdown.png" onClick="setClaim('refute');">&nbsp&nbsp&nbsp<img id="action3" style="vertical-align:middle;" src="qmark.png" onClick="setClaim('unsure');"></td>
 	    	</tr></table>
 
@@ -47,22 +47,22 @@
 
 	    <div id="divX" class="modal-body" style="color:black;">
 			<table width=100%><tr><td><a id="observations" style="color:black;font-size:125%;">Observations</a><br>
-	    	<textarea id="text1" rows=8 cols=45>Prompt</textarea><br>
+	    	<textarea id="text1" rows=9 cols=50>Prompt</textarea><br>
 	    	<a id="reasoning" style="color:black;font-size:125%;">Reasoning</a><br>
-	    	<textarea id="text2" rows=8 cols=45>Prompt</textarea><br>
+	    	<textarea id="text2" rows=9 cols=50>Prompt</textarea><br>
 	    	</td><td align=center>
 
 
-	    	<img onClick="blowup(this.id);" id="image1" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button onClick="document.getElementById('abc1').click()">Figure 1</button><br>
+	    	<img onClick="blowup(this.id);" id="image1" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button onClick="document.getElementById('abc1').click()">Figure 1</button><br>
 
-	    	<img onClick="blowup(this.id);" id="image2" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button onClick="document.getElementById('abc2').click()">Figure 2</button><br>
+	    	<img onClick="blowup(this.id);" id="image2" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button onClick="document.getElementById('abc2').click()">Figure 2</button><br>
 
-	    	<img onClick="blowup(this.id);" id="image3" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button onClick="document.getElementById('abc3').click()">Figure 3</button><br>
+	    	<img onClick="blowup(this.id);" id="image3" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button onClick="document.getElementById('abc3').click()">Figure 3</button><br>
 
 
 	    </td></tr></table>
  		</div>
-	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
+	    <div style="text-align:right;font-size:125%;" class="modal-footer"><br>
 	    	<button onClick="cancel();">Cancel</button><button onClick="save();">Save</button>
 	      	      <br><br>
 
@@ -104,11 +104,11 @@
 
 
 
-			document.write('<table valign=top align=left><tr><td style="background-color:#273548;" align=center valign=top>');
-			document.write('<a style="font-size:150%;color:#FFFF66;"> </a>');
-			speciesSelector('species',-1,'vertical',.65);
+			document.write('<table valign=top align=left><tr><td style="background-color:#273548;" align=center valign=middle>');
+			document.write('<a style="font-size:150%;color:#FFFF66;"> &nbspSpecies </a><br>');
+			speciesSelector('species',-1,'vertical',.85);
 			document.write("</td>");
-			document.write("<td width=5></td>");
+			document.write("<td width=20></td>");
 
 			// Habitat selectors: where it lives
 
@@ -117,7 +117,7 @@
 
 			document.write("<td valign=top><div>");
 
-			document.write("<table cellpadding=0 width=700>");
+			document.write("<table>");
 
 			document.write('<tr><td colspan=3>');
 			document.write('<a id="speciesName" style="font-size:200%;color:white;">&nbsp</a><br><br></td>');
@@ -125,62 +125,62 @@
 
 
 			document.write('</tr><tr><td>');
-			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br>');
+			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br><br>');
 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m1" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Inhabits</td><td width=5></td><td>');
-			materialsSelector(.65);
+			document.write('</td><td style="font-size:125%;" align=center>Inhabits</td><td width=5></td><td>');
+			materialsSelector(.75);
 			document.write('</td></tr>');
 
-			document.write('<tr height=1></tr>');
+			document.write('<tr height=20></tr>');
 
 			document.write('<tr><td colspan=2>');
 			document.write('<a style="font-size:125%;"> <i>Temperatures</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m2" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Survives in</td><td></td><td>');
-			temperatureSelector(.65);
+			document.write('</td><td style="font-size:125%;" align=center>Survives in</td><td></td><td>');
+			temperatureSelector(.75);
 			document.write('</td></tr>');
 
-			document.write('<tr height=1></tr>');
+			document.write('<tr height=30></tr>');
 
 
 			document.write('<tr><td colspan=4><a style="font-size:150%;color:#FFFF66;"> Relationships with other species </a><br></td></tr>');
-			document.write('<tr height=1></tr>');
+			document.write('<tr height=10></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m3" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Eats</td><td></td><td>');
-			speciesSelector('eats',-1,'horizontal',.65);
+			document.write('</td><td style="font-size:125%;" align=center>Eats</td><td></td><td>');
+			speciesSelector('eats',-1,'horizontal',.75);
 			document.write('</td></tr>');
 
-			document.write('<tr height=1></tr>');
+			document.write('<tr height=20></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m4" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Eaten by</td><td></td><td>');
-			speciesSelector('eatenBy',-1,'horizontal',.65);
+			document.write('</td><td style="font-size:125%;" align=center>Eaten by</td><td></td><td>');
+			speciesSelector('eatenBy',-1,'horizontal',.75);
 			document.write('</td></tr>');
 
-			document.write('<tr height=1></tr>');
+			document.write('<tr height=20></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m5" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Competes with</td><td></td><td>');
-			speciesSelector('competesWith',-1,'horizontal',.65);
+			document.write('</td><td style="font-size:125%;" align=center>Competes with</td><td></td><td>');
+			speciesSelector('competesWith',-1,'horizontal',.75);
 			document.write('</td></tr>');
 
 
-			if (treatment == "push") document.write('<tr height=1></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
+			if (treatment == "push") document.write('<tr height=20></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
 
 			document.write('</table></td></tr></table><br>');
 
@@ -516,7 +516,7 @@ var oldClaim = ""
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 150;
+				X += 256;
 				Y += 4; 
 				switch (accounts[selected][i].claim) {
 					case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1, Y); break;
