@@ -3,7 +3,6 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.name = n;
     this.type = t;
     this.ctx = c;
-    //this.level = 2;//l; //1 or 2, corresponds to level.num
     this.obj1 = o1;     //source
     this.obj2 = o2;     //destination
     this.x1 = o1.x + o1.width/2;
@@ -14,17 +13,9 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.alpha = 1;
     this.shadowColour = sc;
     this.backgroundColour = bg;
-    this.colour = lc;//"#22B573"; //"#22B573";
-    /*
-    if ( this.backgroundColour == "dark"){
-        this.colour = "#22B573";
-    } else {
-        this.colour = "#22B573";
-    }
-    */
-    //this.colour = "#CDDC39"; //"#22B573";
+    this.colour = lc;
     this.lastHit;
-
+    //hit object for detecting +, -, ? symbols associated with each line
     var hit = getHitObject(this.obj1,this.obj2);
     this.x = hit.x;
     this.y = hit.y;
@@ -34,52 +25,68 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.EVENT_RELATIONSHIP = "relationship";
     this.EVENT_REDRAW = "redraw";
 
-    //if( this.level > 1 ){
-        if( this.type == "eatenby" ){
-            //this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx);
-            //this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx);
+    switch (this.type){
+        case "eatenby":
             this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-        } else if ( this.type == "competition" ){
+            break;
+        case "competition":
             this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-        } else if ( this.type == "eats" ){
-            //this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx);
-            //this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx);
+            break;
+        case "eats":
             this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-        } else if ( this.type == "mutualism" ){
+            break;
+        case "mutualism":
             this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-        }
-    //}
+            break;
+        case "eatsOrMutualism":
+            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
+            break;
+        case "eatenbyOrCompetition":
+            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
+            break;
+        case "eatenbyOrMutualism":
+            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
+            break;
+        case "eatsOrCompetition":
+            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
+            break;
+        case this.type == "unknown":
+            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
+            break;
+        default:
+            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
+            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
+    }
+
     //PRIVATE METHODS
-    /*
-    function handleSourceBtn(e){
-        console.log("handleSourceBtn");
-    }
-    function handleDesBtn(e){
-        console.log("handleDesBtn");
-    }
-    */
     function getHitObject(o1,o2){
         var x;
         var y;
         var h;
         var w;
+        var padding = 10;
         if ( o2.x > o1.x ){
-            x = o1.x;
-            w = o2.x - o1.x + o2.width;
+            x = o1.x - padding;
+            w = o2.x - o1.x + o2.width + padding*2;
         } else {
-            x = o2.x;
-            w = o1.x - o2.x + o1.width;
+            x = o2.x - padding;
+            w = o1.x - o2.x + o1.width + padding*2;
         }
         if ( o2.y > o1.y ){
-            y = o1.y;
-            h = o2.y - o1.y + o1.height;
+            y = o1.y - padding;
+            h = o2.y - o1.y + o1.height + padding*2;
         } else {
-            y = o2.y;
-            h = o1.y - o2.y + o2.height;
+            y = o2.y - padding;
+            h = o1.y - o2.y + o2.height + padding*2;
         }
         return {x:x, y:y, height:h, width:w};
     }
@@ -93,7 +100,17 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
             type = "eats";
         } else if ( source == "minus" && destination == "minus" ){
             type = "competition";
-        }
+        } else if ( source == "plus" && destination == "question" ){
+            type = "eatsOrMutualism";
+        } else if ( source == "minus" && destination == "question" ){
+            type = "eatenbyOrCompetition";
+        } else if ( source == "question" && destination == "plus" ){
+            type = "eatenbyOrMutualism";
+        } else if ( source == "question" && destination == "minus" ){
+            type = "eatsOrCompetition";
+        } else if ( source == "question" && destination == "question" ){
+            type = "unknown";
+        } 
         return type;
     }
     function hitTest(mouseX, mouseY, to){
@@ -395,13 +412,13 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.draw = function(){
         var p1 = {x:this.x1,y:this.y1};
         var p2 = {x:this.x2,y:this.y2};
-        /*
-        var hit = getHitObject(this.obj1,this.obj2);
+        
+        /*var hit = getHitObject(this.obj1,this.obj2);
         this.ctx.fillStyle = "#F44336";
         this.ctx.globalAlpha = 0.2;
         this.ctx.fillRect(hit.x, hit.y, hit.width, hit.height);
-        this.ctx.globalAlpha = 1;
-        */
+        this.ctx.globalAlpha = 1;*/
+        
         // arbitrary styling
         this.ctx.strokeStyle = this.colour;  //"#00E5FF";
         this.ctx.fillStyle = this.colour;     //"#00E5FF";
@@ -410,11 +427,7 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         p2 = getPoint(p2,p1,50);
         //if mouse over connections and "remove arrow" tool is active, set alpha tp 50%
         this.ctx.globalAlpha = this.alpha;
-        //if( this.level != 1 ){
-            drawDoubleArrow(this.ctx,p1,p2,this.sourceBtn,this.destinationBtn);
-        /*} else {
-            drawSingleArrow(this.ctx,p1,p2);
-        }*/
+        drawDoubleArrow(this.ctx,p1,p2,this.sourceBtn,this.destinationBtn);
         this.ctx.globalAlpha = 1;   
     }   
 }

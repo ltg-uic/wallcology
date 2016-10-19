@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html>
 <head>
 	<meta charset="utf-8">
@@ -8,6 +9,8 @@
 	<title></title>
 	<!-- The description of this interfaces here -->
 	<meta name="description" content="">
+	<meta name="apple-mobile-web-app-capable" content="yes">	
+	<meta name="viewport" content="width=device-width/" >
 </head>
 
 <body>
@@ -16,7 +19,6 @@
 				
 
 	<script type="text/javascript">
-
 
 	var instance;
 	var type;
@@ -29,17 +31,18 @@
 	var query_parameters = NUTELLA.parseURLParameters();
 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-	var currentRun;
-	var currentActivity;
+	var currentRun = query_parameters.run_id;
+	var currentActivity = "";
+	var currentTreatment = "";
 	var currentRoom;
-
-	nutella.net.
+	var currentChannel = "";
 
 	nutella.net.subscribe('activity_update', function(message, from){ 
 		location.reload(true);
 	})
 
 	nutella.net.subscribe('set_current_run', function (message,from){ 
+		currentRun = message;
 		if (message != query_parameters.run_id) {
 			if (query_parameters.TYPE == 'ecosystems' || query_parameters.TYPE == 'speciesPlace' || query_parameters.TYPE == 'pervasive') reloadInPlace(message); else redirectRun(message);
 		}
@@ -55,7 +58,7 @@
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
 						construct_user_interface(channel_lineup,prettyNames);
-						if (channel_lineup.length != 0) document.getElementById('button0').click();
+						if ((channel_lineup.length != 0) && (type=='ecosystem' || type == 'speciesPlace' | type == 'pervasive')) document.getElementById('button0').click();
 				});
 			});
 		});
@@ -119,6 +122,13 @@
 	}
 
 	function buildLineup (channelList, instance) {
+		if (query_parameters.run_id == "6BM") currentTreatment = "object";
+		if (query_parameters.run_id == "6MT") currentTreatment = "auto";
+		if (query_parameters.run_id == "6ADF") currentTreatment = "push";
+		if (query_parameters.run_id == "default") currentTreatment = "push";
+		if (query_parameters.run_id == "guest") currentTreatment = "push";
+		if (currentRoom == "312") currentTreatment = "cloud";
+
 		var s;
 		var channel_lineup = [];
 		for (var i=0; i<channelList.length; i++) {
@@ -132,6 +142,11 @@
 			s += 'broker=' + query_parameters.broker + '&';
 			s += 'app_id=' + query_parameters.app_id + '&';
 			s += 'run_id=' + query_parameters.run_id + '&';
+			s += 'CLASS=' + currentRun + '&';
+			s += 'ROOM=' + currentRoom + '&';
+			s += 'ACTIVITY=' + currentActivity + '&';
+			s += 'TREATMENT=' + currentTreatment + '&';		 
+			s += 'CHANNEL=' + channelList[i] + '&';		 
 			s += 'TYPE=' + type + '&';
 			s += 'INSTANCE=' + instance;
 
@@ -150,7 +165,7 @@
 
 			document.write('<li><a href="#" id="button' + i + '" class="tablinks" onclick="openTab(event, \'' + channel_lineup[i].name + '\')">' + match[0].printName + '</a></li>');
 		}
-		if (query_parameters.TYPE!='ecosystem')document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
+		if (query_parameters.TYPE!='ecosystem' && query_parameters.TYPE!='speciesPlace')document.write('<li><a href="#" class="tablinks" onclick="login(type,instance);">' + 'Logout' + '</a></li>');
 		// document.write('<li><a href="#" id="identifier" class="tablinks" onclick=";">' + query_parameter.run_id + ' ' + query_parameter.TYPE + ' ' + query_parameter.INSTANCE + '</a></li>');
 		// document.write('<li><a class="tablinks" style="text-align:right;">[' + query_parameters.run_id + ' ' + currentRoom + ' ' + currentActivity + ' ' + query_parameters.TYPE + ' ' + query_parameters.INSTANCE + ']</a></li>');
 		document.write ('<div align=right>' + query_parameters.run_id + ' ' + currentRoom + ' ' + currentActivity + ' ' + query_parameters.TYPE + ' ' + Number(Number(query_parameters.INSTANCE) + 1) + ' &nbsp&nbsp&nbsp</div>');
@@ -167,6 +182,8 @@
 	};
 
 	function openTab(evt, channelName) { 
+		currentChannel=channelName;
+		userLog('Selected channel');
 	    var i, tabcontent, tablinks;
 	    tabcontent = document.getElementsByClassName("tabcontent"); 
 	    for (i = 0; i < tabcontent.length; i++) {
@@ -179,6 +196,42 @@
 	    document.getElementById(channelName).style.display = "inline";
 	    evt.currentTarget.className += " active";
 	}
+
+	function userLog(extension){
+		var SEPARATOR = "^,^";
+		var log = "portal"  + SEPARATOR;
+		log += currentRun + SEPARATOR;
+		log += currentRoom + SEPARATOR;
+		log += currentActivity + SEPARATOR;
+		log += currentTreatment + SEPARATOR;
+		log += currentChannel + SEPARATOR;
+		log += query_parameters.TYPE + SEPARATOR;
+		log += query_parameters.INSTANCE + SEPARATOR;
+		log += extension + SEPARATOR;
+		var xl = [];
+		xl[0] = log;
+		nutella.net.publish('add_to_user_log',xl);
+	}
+
+
+
+
+	// this is the function that everybody else will use to write to the user log
+	// function userLog(channel, extension,){
+	// 	var SEPARATOR = "^,^";
+	// 	var log = channel + SEPARATOR;
+	// 	log += query_parameters.CLASS + SEPARATOR;
+	// 	log += query_parameters.ROOM + SEPARATOR;
+	// 	log += query_parameters.ACTIVITY + SEPARATOR;
+	// 	log += query_parameters.TREATMENT + SEPARATOR;
+	// 	log += query_parameters.CHANNEL + SEPARATOR;
+	// 	log += query_parameters.TYPE + SEPARATOR;
+	// 	log += query_parameters.INSTANCE + SEPARATOR;
+	// 	log += extension + SEPARATOR;
+	// 	var xl = [];
+	// 	xl[0] = log;
+	// 	nutella.net.publish('add_to_user_log',xl);
+	// }
 
 </script>
      
