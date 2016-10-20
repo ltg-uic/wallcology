@@ -14,7 +14,7 @@ experiments.load(function(){
     if (!experiments.hasOwnProperty('data')){
         experiments['data'] = [[],[],[],[],[]]; experiments.save();       
     };
-
+    console.log ( experiments['data'].length);
     nutella.net.handle_requests('get_experiments',function(group, from) {
         var response = []; console.log ( experiments['data'].length);
         for (var q=0; q < experiments.data[group].length; q++){
