@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161014-1240";
+    var versionID = "20161020-1210";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -166,8 +166,8 @@ function FoodWeb(){
         formElement.addEventListener('click', handleSubmitText, false);
     }
     function onResizeWindow( init ){
-        canvasWidth = (window.innerWidth == 0)? 1000 : window.innerWidth;
-        canvasHeight = (window.innerHeight == 0)? 720 : window.innerHeight;
+        canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
+        canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
 
         //Canvas for drag and drop
         canvas = document.getElementById("ui-layer");
@@ -178,8 +178,8 @@ function FoodWeb(){
             canvas.width = canvasWidth;
             canvas.height = canvasHeight;
         } else if ( !fullscreen ){
-            var distFromTop = 20;
-            var distFromLeft = 20;
+            var distFromTop = 26;
+            var distFromLeft = 24;
             canvas.width = canvasWidth-distFromLeft;
             canvas.height = canvasHeight-distFromTop;
         }

@@ -11,7 +11,7 @@ function DataLog( n, app, group, mode ){
 			this.destination = 'add_to_lionking_log';
 			break;
 		case "foodweb":
-			this.destination = 'add_to_foodweb_log';
+			this.destination = 'add_to_lionking_log';
 			break;
 		default:
 			this.destination = 'add_to_lionking_log';
