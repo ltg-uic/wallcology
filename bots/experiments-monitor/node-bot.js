@@ -15,11 +15,11 @@ experiments.load(function(){
         experiments['data'] = [[],[],[],[],[]]; experiments.save();       
     };
 
-    nutella.net.handle_requests('get_experiments',function(group, from) {
+    nutella.net.handle_requests('get_experiments',function(group, from) { console.log(group);
         var response = [];
-        for (var q=0; q < experiments.data[group].length; q++)
-            response[q] = experiments.data[group][q][experiments.data[group][q].length-1];
-        return(response);  
+        for (var q=0; q < experiments.data[group].length; q++){
+            response[q] = experiments.data[group][q][experiments.data[group][q].length-1];}
+        return(response); 
     });
 
     nutella.net.handle_requests('update_experiment',function(exp, from) {
