@@ -1,10 +1,10 @@
 //WALLCOLOGY FOOD WEB
 function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = true;
+    var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161013-1330";
+    var versionID = "20161014-1240";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -414,11 +414,11 @@ function FoodWeb(){
             if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
                 displayList.removeChild( viewOnlyBtn );   
             }
+            clearFoodWeb();
             retrieveDrawing( currentDrawing );
             data.save("FOODWEB_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         } else {
-            
-            if ( !containsObject( viewOnlyBtn, displayList.objectList ) ){
+            if ( !containsObject( viewOnlyBtn, displayList.objectList )){
                 displayList.addChild( viewOnlyBtn );
             }
             //need to save current state before retrieveDrawing
@@ -436,7 +436,7 @@ function FoodWeb(){
                    draw();
                 });
             } else {      
-                retrieveDrawing( {group:group, time:0, nodes:[{name:"species_00", x:100, y:100, active:true},{name:"species_01", x:200, y:200, active: true}]});
+                retrieveDrawing( {group:group, time:0, nodes:[{ name: "species_00", x: 415, y:202, active: true }, { name: "species_01", x: 247, y:96, active: true }, { name: "species_02", x: 341, y:376, active: true }, { name: "species_03", x: 10, y:187, active: false }, { name: "species_04", x: 338, y:560, active: true }, { name: "species_05", x: 635, y:454, active: true }, { name: "species_06", x: 10, y:361, active: false }, { name: "species_07", x: 10, y:419, active: false }, { name: "species_08", x: 10, y:477, active: false }, { name: "species_09", x: 10, y:535, active: false }, { name: "species_10", x: 10, y:593, active: false }], links:[{ name: "species_01-species_00", source: "species_01", destination:"species_00", type: "eatenby" }, { name: "species_02-species_00", source: "species_02", destination:"species_00", type: "eatenby" }, { name: "species_04-species_02", source: "species_04", destination:"species_02", type: "eatenby" }, { name: "species_05-species_00", source: "species_05", destination:"species_00", type: "eats" }], comments:[{name:"hello world!", x:400, y:100}]});
             }
             viewOnly = true;
             data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);

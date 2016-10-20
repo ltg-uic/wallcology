@@ -33,7 +33,7 @@ function Help(context, cw, ch, tbw, bg){
 
 	promptsList = [
 	   	{name:"save",
-		instruction:"Click 'Save' to store a version in the database. You can access prior versions with the \u23EA and \u23E9 buttons below.",
+		instruction:"Click 'Save' to store a version in the database. You can access prior versions with the \u25C0 and \u25B6 buttons below.",
 		x: this.width - toolbarWidth - maxWidth - padding + 100,
 		y: 30
 		},
@@ -58,7 +58,7 @@ function Help(context, cw, ch, tbw, bg){
 		y: this.height - 106
 		},
 		{name:"versions",
-		instruction:"To view saved food webs, click on the \u23EA button, to see successively<br>older versions. Click on the \u23E9 button to see newer saved versions. The last food web will be your working version. Remember to save it before<br>you leave the program. §bNOTE§r: only the buttons for navigating versions will work in 'View Only' mode.",
+		instruction:"To view saved food webs, click on the \u25C0 button, to see successively<br>older versions. Click on the \u25B6 button to see newer saved versions. The last food web will be your working version. Remember to save it before<br>you leave the program. §bNOTE§r: only the buttons for navigating versions will work in 'View Only' mode.",
 		x: this.width - toolbarWidth - maxWidth - padding + 20,
 		y: this.height - 136
 		}
