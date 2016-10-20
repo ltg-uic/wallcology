@@ -15,8 +15,8 @@ experiments.load(function(){
         experiments['data'] = [[],[],[],[],[]]; experiments.save();       
     };
 
-    nutella.net.handle_requests('get_experiments',function(group, from) { console.log(group);
-        var response = []; console.log ( group + ' ' + experiments.data);
+    nutella.net.handle_requests('get_experiments',function(group, from) {
+        var response = []; console.log ( experiments.data[group].length);
         for (var q=0; q < experiments.data[group].length; q++){
             response[q] = experiments.data[group][q][experiments.data[group][q].length-1]; console.log(response);}
         return(response); 
