@@ -16,9 +16,9 @@ experiments.load(function(){
     };
 
     nutella.net.handle_requests('get_experiments',function(group, from) { console.log(group);
-        var response = [];
+        var response = []; console.log ( group + ' ' + experiments.data);
         for (var q=0; q < experiments.data[group].length; q++){
-            response[q] = experiments.data[group][q][experiments.data[group][q].length-1];}
+            response[q] = experiments.data[group][q][experiments.data[group][q].length-1]; console.log(response);}
         return(response); 
     });
 
