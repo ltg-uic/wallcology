@@ -16,7 +16,7 @@ experiments.load(function(){
     };
 
     nutella.net.handle_requests('get_experiments',function(group, from) {
-        var response = []; console.log ( experiments.data[group].length);
+        var response = []; console.log ( experiments.hasOwnProperty('data'));
         for (var q=0; q < experiments.data[group].length; q++){
             response[q] = experiments.data[group][q][experiments.data[group][q].length-1]; console.log(response);}
         return(response); 
