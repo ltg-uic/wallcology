@@ -454,8 +454,8 @@ var oldClaim = ""
 
 			function select(id){ 
 				
-				switch (id.substring(0,1)) { 
-					case 'c':   var index = Number(id.substring(1)); selectedClaim=index; 
+				switch (id.substr(0,1)) { 
+					case 'c':   var index = Number(id.substr(1)); selectedClaim=index; 
 								userLog('species-notes',['Selected claim',group,selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
 								var slot2;

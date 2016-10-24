@@ -233,8 +233,12 @@
 				speciesNames = message;
 				document.getElementById('speciesName').innerHTML = speciesNames[selected];
 			});
+
+			var bailLater=false;
+
 			nutella.net.subscribe('new_account', function (species,from){
-				if (species == selected) bail();
+				if ((species == selected) && (modal.style.display == "none") && (modal2.style.display == "none")) bail();
+				bailLater=true;
 			});
 	nutella.net.request('latest_class_account',selected,function(a,from){
 
@@ -247,7 +251,7 @@
 	});	
 			
 			function correct() { 
-				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,100); 
+				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,500); 
 				else redrawClaimsCanvas();
 			}
 
@@ -319,7 +323,7 @@
 			}
 
 
-			function closePopup() {
+			function closePopup() { if (bailLater) bail();
 			    modal.style.display = "none"; 
 			    drawAllClaimsOnCanvas(); 
 			}
@@ -446,9 +450,9 @@
 
 			function select(id){ 
 				
-				switch (id.substring(0,1)) { 
+				switch (id.substr(0,1)) { 
 					case 'c':   
-								var index = Number(id.substring(1)); 
+								var index = Number(id.substr(1)); 
 								selectedClaim=index; 
 								userLog('classaccount',['Selected claim',group, selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
@@ -472,15 +476,13 @@
 								if (query_parameters.TYPE == "group") currentModalGroup = query_parameters.INSTANCE-1; 
 								load_modal(); 
 								clearCanvasOfAllClaims(); 
-								modal.style.display = "block"; 
 								break;
-					case 's': 	var nextSelected = Number(id.substring(7));
-								if (nextSelected != selected && query_parameters.TYPE == "speciesPlace" && !firstTime) {
+					case 's': 	var nextSelected = Number(id.substr(7)); 
+								if ((nextSelected != selected) && (query_parameters.TYPE == "speciesPlace")) {
 									userLog('classaccount',['Selected species',group,nextSelected]);
-									bail();
-								};
-
+								} else 
 								if (firstTime || ((nextSelected == selected) && (query_parameters.TYPE == "speciesPlace"))) {
+									alert(firstTime); alert(selected);alert(nextSelected);
 									selected = nextSelected;			
 									document.getElementById('speciesName').innerHTML = speciesNames[selected];
 									deselectAll('species');
@@ -491,8 +493,10 @@
 									document.getElementById(id).style.opacity = 1.0;
 									clearCanvasOfAllClaims();
 									firstTime = false;
+									drawAllClaimsOnCanvas();
 								} else {
 									userLog('classaccount',['Selected species',group,nextSelected]);
+									selected = nextSelected;
 									bail();
 								}
 					}
@@ -559,7 +563,7 @@
 			for (var i=0; i<40; i++) {  
 				var id = 'c' + i;//if (i<3) alert(document.getElementById(id).offsetLeft);
 				// if (i==0 || i==10) {alert(document.getElementById(id).offsetLeft + ' ' + document.getElementById(id).offsetTop); alert(document.getElementById(id).parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.offsetTop); alert(document.getElementById(id).parentElement.parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.parentElement.offsetTop);}
-				var X = 133 + document.getElementById(id).offsetLeft /*+ document.getElementById(id).parentElement.offsetLeft*/;
+				var X = 133 + document.getElementById(id).offsetLeft; /*+ document.getElementById(id).parentElement.offsetLeft*/;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop +document.getElementById(id).offsetTop;
 				X += 256;
 				Y += 4; 
