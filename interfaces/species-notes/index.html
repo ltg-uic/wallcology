@@ -312,6 +312,7 @@
 				var before = d.getTime();
 				nutella.net.request('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]}, function (message, from){
 					d = new Date();
+					alert('latency: ' + (d.getTime() - before)) + 'milliseconds');
 					modal.style.display = "none"; 
 				    drawAllClaimsOnCanvas(); 
 					// should add reflective claims here
