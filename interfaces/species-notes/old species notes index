@@ -104,9 +104,9 @@
 			}
 
 
-			document.write('<img src="thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
-			document.write('<img src="thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
-			document.write('<img src="unsure.png" style="opacity:1.0;" id="unsure" height=40 width=40 HIDDEN>');
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/unsure.png" style="opacity:1.0;" id="unsure" height=40 width=40 HIDDEN>');
 
 
 
@@ -284,7 +284,9 @@
 
 
 			function save() {
+
 	
+			    modal.style.display = "none"; 
 			    var d = new Date();
 				accounts[selected][selectedClaim].timestamp = d.getTime();
 				accounts[selected][selectedClaim].synced = false; 
@@ -302,23 +304,20 @@
 				var dex = (accounts[selected][selectedClaim].experiment != oldExperiment);
 				var dcl = (accounts[selected][selectedClaim].claim != oldClaim);
 				userLog('species-notes',['Saved support',group, selected, selectedClaim,dob,dre,dex,dcl]);			
-
-				// DO NOT DELETE. THESE NEED TO BE INCLUDED:
 				// accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
 				// accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
 				// accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
-				
-				d = new Date();
-				var before = d.getTime();
-				nutella.net.request('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]}, function (message, from){
-					d = new Date();
-					modal.style.display = "none"; 
-				    drawAllClaimsOnCanvas(); 
-					// should add reflective claims here
-				});
+			    drawAllClaimsOnCanvas(); 
+			    saveClaims();
 			}
 
- 
+//			When the user clicks anywhere outside of the modal, close it
+			// window.onclick = function(event) {
+			//     if (event.target == modal) {
+			//         modal.style.display = "none"; drawAllClaimsOnCanvas(); saveClaims();
+			//     }
+			// }
+
 	  var loadFile1 = function(event) {
 	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
 	    var output = document.getElementById('image1');
@@ -518,7 +517,7 @@ var oldClaim = ""
 
 
 
-		function drawAllClaimsOnCanvas() { 
+		function drawAllClaimsOnCanvas() {
 			for (var i=0; i<40; i++) {
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
@@ -526,10 +525,12 @@ var oldClaim = ""
 				X += 159;
 				Y += 4; 
 				//if (i<15) alert('claim: ' + i + ' ' + accounts[selected][i].claim);
-				switch (accounts[selected][i].claim) {
+				switch (accounts[selected][i].claim) { 
 					case 'assert': 	context.drawImage(document.getElementById('thumbsup'), X+1, Y);
+									alert('claim: ' + i + ' ' + accounts[selected][i].claim); 
 									break;
 					case 'refute': 	context.drawImage(document.getElementById('thumbsdown'), X+3, Y+18); 
+									alert('claim: ' + i + ' ' + accounts[selected][i].claim);
 									break;
 					case 'unsure': //context.drawImage(document.getElementById('unsure'), X, Y); break;
 				}
@@ -551,6 +552,13 @@ var oldClaim = ""
 		// 	});
 		// }
 
+		function saveClaims(){
+			nutella.net.publish('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]});
+			//
+			// need to update this to do automatic reflective claims
+			//
+			// 
+		}
 
 
 		function speciesImageURL (index) {

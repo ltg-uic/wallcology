@@ -233,11 +233,11 @@
 				speciesNames = message;
 				document.getElementById('speciesName').innerHTML = speciesNames[selected];
 			});
-	nutella.net.request('latest_class_account',selected,function(a,from){
-
 			nutella.net.subscribe('new_account', function (species,from){
 				if (species == selected) bail();
 			});
+	nutella.net.request('latest_class_account',selected,function(a,from){
+
 
 
 
@@ -387,13 +387,13 @@
 			
 			function materialsSelector(size){
 
-				document.write('<img src="wood.png" id="c0" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/env_wood.png" id="c0" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
-				document.write('<img src="brick.png" id="c1" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/env_brick.png" id="c1" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
-				document.write('<img src="aluminum.png" id="c2" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/aluminum.png" id="c2" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
-				document.write('<img src="drywall.png" id="c3" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/drywall.png" id="c3" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 				document.write('<br>');
 
@@ -401,11 +401,11 @@
 
 			function temperatureSelector(size){
 
-				document.write('<img src="low.png" id="c4" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/low.png" id="c4" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
-				document.write('<img src="medium.png" id="c5" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/medium.png" id="c5" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
-				document.write('<img src="high.png" id="c6" onClick="select(this.id);" ');
+				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/high.png" id="c6" onClick="select(this.id);" ');
 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 				document.write('<br>');
 
@@ -474,10 +474,14 @@
 								clearCanvasOfAllClaims(); 
 								modal.style.display = "block"; 
 								break;
-					case 's': 	if (!firstTime && query_parameters.TYPE == 'speciesPlace') break;
-								var lastSelected = selected;
-								selected = Number(id.substring(7));
-								if (firstTime || lastSelected == selected) {									
+					case 's': 	var nextSelected = Number(id.substring(7));
+								if (nextSelected != selected && query_parameters.TYPE == "speciesPlace" && !firstTime) {
+									userLog('classaccount',['Selected species',group,nextSelected]);
+									bail();
+								};
+
+								if (firstTime || ((nextSelected == selected) && (query_parameters.TYPE == "speciesPlace"))) {
+									selected = nextSelected;			
 									document.getElementById('speciesName').innerHTML = speciesNames[selected];
 									deselectAll('species');
 									for(var j=1; j<6; j++){ 
@@ -486,13 +490,11 @@
 									}
 									document.getElementById(id).style.opacity = 1.0;
 									clearCanvasOfAllClaims();
-									drawAllClaimsOnCanvas();
-									
-								} else if (query_parameters.TYPE != 'speciesPlace') {
-									userLog('classaccount',['Selected species',group,selected]);
+									firstTime = false;
+								} else {
+									userLog('classaccount',['Selected species',group,nextSelected]);
 									bail();
 								}
-								firstTime = false;
 					}
 
 			}
@@ -553,6 +555,7 @@
 
 
 		function drawAllClaimsOnCanvas() {  
+			
 			for (var i=0; i<40; i++) {  
 				var id = 'c' + i;//if (i<3) alert(document.getElementById(id).offsetLeft);
 				// if (i==0 || i==10) {alert(document.getElementById(id).offsetLeft + ' ' + document.getElementById(id).offsetTop); alert(document.getElementById(id).parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.offsetTop); alert(document.getElementById(id).parentElement.parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.parentElement.offsetTop);}
@@ -560,7 +563,7 @@
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop +document.getElementById(id).offsetTop;
 				X += 256;
 				Y += 4; 
-				for (var j=0; j<5; j++) {
+				for (var j=0; j<5; j++) { 
 					switch (accounts[j][i].claim) { 
 						case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1, Y); X++;X++; break;
 						case 'refute': context.drawImage(document.getElementById('thumbsdown'), X-3, Y+18); X++;X++; break;
