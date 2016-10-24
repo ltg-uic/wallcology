@@ -79,13 +79,14 @@ accounts.load(function(){
     });
 
 
-    nutella.net.subscribe('sync', function (message, from){ 
+    nutella.net.handle_requests('sync', function (message, from){ 
          for (var c=0; c<40; c++) {
             var index = accounts.data[message.species][message.group][c].length-1;// if(i==0)console.log(index);
             accounts.data[message.species][message.group][c][index].synced = true;
         };
         accounts.save();
-        nutella.net.publish('new_account',message.species);           
+        nutella.net.publish('new_account',message.species);
+        return;           
     });
 
 

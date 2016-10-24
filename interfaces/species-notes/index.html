@@ -64,7 +64,7 @@
  		</div>
 
 	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
-	    	<button onClick="cancel();">Cancel</button><button onClick="save();">Save</button>
+	    	<button onClick="cancel();" >Cancel</button><button id="saveButton" onClick="save();">Save</button>
 	      	      <br><br>
 
 	    </div>
@@ -185,7 +185,7 @@
 			document.write('</td></tr>');
 
 
-			if (treatment == "push") document.write('<tr height=1></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
+			if (treatment == "push") document.write('<tr height=1></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();" id="contribute">Contribute</button></td></tr>');
 
 			document.write('</table></td></tr></table><br>');
 
@@ -278,8 +278,14 @@
 
 			function sync() {
 
-				nutella.net.publish('sync',{species:selected, group:query_parameters.INSTANCE});
 				userLog('species-notes',['Synchronized claims',group, selected]);			
+				document.getElementById('contribute').innerHTML = "Loading...";
+				document.getElementById('contribute').disabled = true;
+
+				nutella.net.request('sync',{species:selected, group:query_parameters.INSTANCE}, function (message, from){ 
+					document.getElementById('contribute').innerHTML = "Contribute";
+					document.getElementById('contribute').disabled = false;
+					});
 			}
 
 
@@ -309,15 +315,30 @@
 				// accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
 				
 				d = new Date();
-				var before = d.getTime();
+				var before = d.getTime(); 
+				document.getElementById('saveButton').innerHTML = "Loading...";
+				document.getElementById('saveButton').disabled = true;
 				nutella.net.request('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]}, function (message, from){
 					e = new Date();
+					document.getElementById('saveButton').innerHTML = "Save";
+					document.getElementById('saveButton').disabled = false;
 					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
 					modal.style.display = "none"; 
-				    drawAllClaimsOnCanvas(); 
+				    drawAllClaimsOnCanvas();
+					// setTimeout(delay,5000);
+					// modal.style.display = "none"; 
+				 //    drawAllClaimsOnCanvas(); 
 					// should add reflective claims here
 				});
 			}
+
+			// function delay(){
+			// 		modal.style.display = "none"; 
+			// 	    drawAllClaimsOnCanvas();
+			// } 
+
+
+
 
  
 	  var loadFile1 = function(event) {
