@@ -236,7 +236,7 @@
 
 			var bailLater=false;
 
-			nutella.net.subscribe('new_account', function (species,from){ //alert (species + ' ' + selected + ' ' + modal.style.display + ' ' + modal2.style.display);
+			nutella.net.subscribe('new_account', function (species,from){ 
 				if (species == selected)  bail(); 
 			});
 
@@ -468,15 +468,16 @@
 								if (selectedClaim > 6) {
 									slot2 = speciesImageURL((selectedClaim-7) % 11);
 								}
-								document.getElementById('slot2').src=slot2;
+								document.getElementById('slot2').src='https://ltg.cs.uic.edu/WC/icons/' + slot2;
 								if (selectedClaim <= 3) document.getElementById('relationship').innerHTML = "inhabits";
 								if (selectedClaim >= 4 && selectedClaim <= 6 ) document.getElementById('relationship').innerHTML = "survives in";
 								if (selectedClaim >= 7 && selectedClaim <= 17 ) document.getElementById('relationship').innerHTML = "eats";
 								if (selectedClaim >= 18 && selectedClaim <= 28 ) document.getElementById('relationship').innerHTML = "is eaten by";
 								if (index >= 29 && index <= 39 ) document.getElementById('relationship').innerHTML = "competes with";
-								if (query_parameters.TYPE == "group") currentModalGroup = query_parameters.INSTANCE-1; 
-								load_modal(); 
+								if (query_parameters.TYPE == "group") currentModalGroup = (query_parameters.INSTANCE+4) % 5; 
+								load_modal();
 								clearCanvasOfAllClaims(); 
+								modal.style.display = "block";
 								break;
 					case 's': 	var nextSelected = Number(id.substr(7)); 
 								if ((nextSelected != selected) && (query_parameters.TYPE == "speciesPlace")) {
