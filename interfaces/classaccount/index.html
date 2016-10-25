@@ -566,12 +566,14 @@
 				// if (i==0 || i==10) {alert(document.getElementById(id).offsetLeft + ' ' + document.getElementById(id).offsetTop); alert(document.getElementById(id).parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.offsetTop); alert(document.getElementById(id).parentElement.parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.parentElement.offsetTop);}
 				var X = 133 + document.getElementById(id).offsetLeft; /*+ document.getElementById(id).parentElement.offsetLeft*/;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop +document.getElementById(id).offsetTop;
-				X += 256;
+				X += 254;
 				Y += 4; 
+				var TUX = 0;
+				var TDX = 0;
 				for (var j=0; j<5; j++) { 
 					switch (accounts[j][i].claim) { 
-						case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1, Y); X++;X++; break;
-						case 'refute': context.drawImage(document.getElementById('thumbsdown'), X-3, Y+18); X++;X++; break;
+						case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1+TUX, Y); TUX++; TUX++; break;
+						case 'refute': context.drawImage(document.getElementById('thumbsdown'), X+3+TDX, Y+18); TDX++;TDX++; break;
 						case 'unsure': context.drawImage(document.getElementById('unsure'), X, Y);
 					}
 				}
