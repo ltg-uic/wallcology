@@ -236,26 +236,27 @@
 
 			var bailLater=false;
 
-			nutella.net.subscribe('new_account', function (species,from){
-				if ((species == selected) && (modal.style.display == "none") && (modal2.style.display == "none")) bail();
-				bailLater=true;
+			nutella.net.subscribe('new_account', function (species,from){ //alert (species + ' ' + selected + ' ' + modal.style.display + ' ' + modal2.style.display);
+				if (species == selected)  bail(); 
 			});
+
+
+
 	nutella.net.request('latest_class_account',selected,function(a,from){
-
-
-
 
 			for(var i=0; i<5; i++) accounts[i] = a[i];
 			select('species' + selected); setTimeout(correct,100);
 
 	});	
-			
+			var modal; 
+			var modal2;
+
 			function correct() { 
 				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,500); 
 				else redrawClaimsCanvas();
 			}
 
-			var modal = document.getElementById('myModal');
+			modal = document.getElementById('myModal');
 
 			// Get the button that opens the modal
 			// var btn = document.getElementById("myBtn");
@@ -283,7 +284,7 @@
 
 	// 		}
 
-			var modal2 = document.getElementById('yourModal');
+			modal2 = document.getElementById('yourModal');
 
 			// Get the image and insert it inside the modal - use its "alt" text as a caption
 			// var img = document.getElementById('newImage');
