@@ -458,17 +458,17 @@
 								userLog('classaccount',['Selected claim',group, selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
 								var slot2;
-								if (selectedClaim == 0) slot2="wood.png";
-								if (selectedClaim == 1) slot2="brick.png";
-								if (selectedClaim == 2) slot2="aluminum.png";
-								if (selectedClaim == 3) slot2="drywall.png";
-								if (selectedClaim == 4) slot2="low.png";
-								if (selectedClaim == 5) slot2="medium.png";
-								if (selectedClaim == 6) slot2="high.png";
+								if (selectedClaim == 0) slot2="https://ltg.cs.uic.edu/WC/icons/env_wood.png";
+								if (selectedClaim == 1) slot2="https://ltg.cs.uic.edu/WC/icons/env_brick.png";
+								if (selectedClaim == 2) slot2="https://ltg.cs.uic.edu/WC/icons/aluminum.png";
+								if (selectedClaim == 3) slot2="https://ltg.cs.uic.edu/WC/icons/drywall.png";
+								if (selectedClaim == 4) slot2="https://ltg.cs.uic.edu/WC/icons/low.png";
+								if (selectedClaim == 5) slot2="https://ltg.cs.uic.edu/WC/icons/medium.png";
+								if (selectedClaim == 6) slot2="https://ltg.cs.uic.edu/WC/icons/high.png";
 								if (selectedClaim > 6) {
 									slot2 = speciesImageURL((selectedClaim-7) % 11);
 								}
-								document.getElementById('slot2').src='https://ltg.cs.uic.edu/WC/icons/' + slot2;
+								document.getElementById('slot2').src= slot2;
 								if (selectedClaim <= 3) document.getElementById('relationship').innerHTML = "inhabits";
 								if (selectedClaim >= 4 && selectedClaim <= 6 ) document.getElementById('relationship').innerHTML = "survives in";
 								if (selectedClaim >= 7 && selectedClaim <= 17 ) document.getElementById('relationship').innerHTML = "eats";
