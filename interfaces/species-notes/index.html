@@ -459,17 +459,17 @@ var oldClaim = ""
 								userLog('species-notes',['Selected claim',group,selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
 								var slot2;
-								if (index == 0) slot2="wood.png";
-								if (index == 1) slot2="brick.png";
-								if (index == 2) slot2="aluminum.png";
-								if (index == 3) slot2="drywall.png";
-								if (index == 4) slot2="low.png";
-								if (index == 5) slot2="medium.png";
-								if (index == 6) slot2="high.png";
+								if (index == 0) slot2="https://ltg.cs.uic.edu/WC/icons/wood.png";
+								if (index == 1) slot2="https://ltg.cs.uic.edu/WC/icons/brick.png";
+								if (index == 2) slot2="https://ltg.cs.uic.edu/WC/icons/aluminum.png";
+								if (index == 3) slot2="https://ltg.cs.uic.edu/WC/icons/drywall.png";
+								if (index == 4) slot2="https://ltg.cs.uic.edu/WC/icons/low.png";
+								if (index == 5) slot2="https://ltg.cs.uic.edu/WC/icons/medium.png";
+								if (index == 6) slot2="https://ltg.cs.uic.edu/WC/icons/high.png";
 								if (index > 6) {
 									slot2 = speciesImageURL((index-7) % 11);
 								}
-								document.getElementById('slot2').src=slot2;
+								document.getElementById('slot2').src='slot2;
 								if (index <= 3) document.getElementById('relationship').innerHTML = "inhabits";
 								if (index >= 4 && index <= 6 ) document.getElementById('relationship').innerHTML = "survives in";
 								if (index >= 7 && index <= 17 ) document.getElementById('relationship').innerHTML = "eats";
