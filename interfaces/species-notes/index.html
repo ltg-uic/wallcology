@@ -146,7 +146,7 @@
 			document.write('<a id="speciesName" style="font-size:175%;color:white;">&nbsp</a><a style="font-size:175%;color:white;">: group ' + Number(1+Number(group)) + ' claims</a></td>');
 
 
-			document.write('</tr><tr><td>');
+			document.write('</tr><tr><td colspan=2>');
 			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br>');
 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
@@ -197,7 +197,7 @@
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m5" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Competes with</td><td></td><td>');
+			document.write('</td><td style="font-size:100%;" align=center>&nbsp&nbspCompetes with</td><td></td><td>');
 			speciesSelector('competesWith',-1,'horizontal',.65);
 			document.write('</td></tr>');
 
@@ -347,7 +347,7 @@
 					e = new Date();
 					document.getElementById('saveButton').innerHTML = "Save";
 					document.getElementById('saveButton').disabled = false;
-					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
+//					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
 					modal.style.display = "none"; 
 				    drawAllClaimsOnCanvas();
 					// setTimeout(delay,5000);
@@ -616,13 +616,13 @@ var oldClaim = ""
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 159;
+				X += 110;
 				Y += 4; 
 				//if (i<15) alert('claim: ' + i + ' ' + accounts[selected][i].claim);
 				switch (accounts[selected][i].claim) {
 					case 'assert': 	context.drawImage(document.getElementById('thumbsup'), X+1, Y);
 									break;
-					case 'refute': 	context.drawImage(document.getElementById('thumbsdown'), X+3, Y+18); 
+					case 'refute': 	context.drawImage(document.getElementById('thumbsdown'), X+3, Y+12); 
 									break;
 					case 'unsure': //context.drawImage(document.getElementById('unsure'), X, Y); break;
 				}
