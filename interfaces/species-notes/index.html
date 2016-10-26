@@ -43,13 +43,11 @@
 <!-- 			<button onClick="document.getElementById('divX').innerHTML = '';">Observation</button><button onClick="haha();">Experiment</button>
  -->	    </div>
 
-
-
-	    <div id="divX" class="modal-body" style="color:black;">
-			<table width=100%><tr><td><a id="observations" style="color:black;font-size:125%;">Observations</a><br>
-	    	<textarea id="text1" rows=8 cols=45>Prompt</textarea><br>
-	    	<a id="reasoning" style="color:black;font-size:125%;">Reasoning</a><br>
-	    	<textarea id="text2" rows=8 cols=45>Prompt</textarea><br>
+	    <div id="divX"  class="modal-body" style="color:black;">
+			<table width=100%><tr><td valign=top><a id="observations" style="color:black;font-size:110%;">Observations</a>&nbsp&nbsp<a id="reasoning" onClick="document.getElementById('divX').style.display='none'; document.getElementById('divY').style.display='block';" style="color:gray;font-size:110%;cursor:pointer;">Investigation</a><br>
+	    	<textarea READONLY id="text1" rows=7 cols=50>Prompt</textarea><br>
+	    	<a id="reasoning" style="color:black;font-size:110%;">Reasoning</a><br>
+	    	<textarea READONLY id="text2" rows=7 cols=50>Prompt</textarea><br>
 	    	</td><td align=center>
 
 
@@ -62,6 +60,24 @@
 
 	    </td></tr></table>
  		</div>
+
+ 		 			    <div hidden id="divY" class="modal-body" style="color:black;">
+			<table width=100%><tr><td valign=top><a READONLY onClick="document.getElementById('divY').style.display='none'; document.getElementById('divX').style.display='block';" style="color:gray;font-size:110%;cursor:pointer;">Observations</a>&nbsp&nbsp<a style="color:black;font-size:110%;cursor:pointer;">Investigation</a><br>
+			<select id="experimentsList" onChange="loadExperiment();"><option>None selected</option></select><br>
+	    	<textarea READONLY id="text3" rows=12 cols=50></textarea><br><br>
+	    	</td><td align=center>
+
+
+	    	<img onClick="blowup(this.id);" id="image4" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc4" type="file" accept="image/*" onchange="loadFile4(event)"><button disabled>Figure 1</button><br>
+
+	    	<img onClick="blowup(this.id);" id="image5" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc5" type="file" accept="image/*" onchange="loadFile5(event)"><button disabled>Figure 2</button><br>
+
+	    	<img onClick="blowup(this.id);" id="image6" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc6" type="file" accept="image/*" onchange="loadFile6(event)"><button disabled>Figure 3</button><br>
+
+
+	    </td></tr></table>
+ 		</div>
+
 
 	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
 	    	<button onClick="cancel();" >Cancel</button><button id="saveButton" onClick="save();">Save</button>
@@ -86,6 +102,7 @@
 			var selected = 0;
 			var s = screen.height/18;
 			var pad;
+			var experiments = [];
 
 
 			var ecosystem = query_parameters.INSTANCE;
@@ -192,19 +209,28 @@
 			document.close();
 			var accounts = []; 
 	nutella.net.request('mostRecentAccounts',query_parameters.INSTANCE,function(a,from){
+			for(var i=0; i<11; i++) accounts[i] = a[i];
 			nutella.net.request('get_species_names',{},function(message,from){
-
 				speciesNames = message;
 				document.getElementById('speciesName').innerHTML = speciesNames[selected];
-			})
-			for(var i=0; i<11; i++) accounts[i] = a[i];
+				nutella.net.request('get_experiments',group,function(experimentsList,from){
+					for (var j=0; j<experimentsList.length; j++) {
+						experiments[j] = experimentsList[j];
+						var opt = document.createElement('option');
+					    opt.value = experiments[j].question;
+					    opt.innerHTML = experiments[j].question; 
+					    document.getElementById('experimentsList').appendChild(opt);
+					}
+					select('species0');setTimeout(correct,100);
+				});
+
+			});
 
 
-			select('species0');setTimeout(correct,100);
 	});	
 			var corrections = 0;
 			function correct() { 
-//				if (++corrections > 100) {alert('100'); return;}
+				// if (++corrections > 100) {alert('100'); return;}
 				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
 				else {redrawClaimsCanvas();}
 			}
@@ -298,10 +324,13 @@
 				accounts[selected][selectedClaim].claim = tempClaim;
 				accounts[selected][selectedClaim].observations = document.getElementById('text1').value;
 				accounts[selected][selectedClaim].reasoning = document.getElementById('text2').value;
-				// accounts[selected][selectedClaim].experiment = document.getElementById('experiment').value;
+				accounts[selected][selectedClaim].experiment = document.getElementById('text3').value;
 				accounts[selected][selectedClaim].images[0] = document.getElementById('image1').src;
 				accounts[selected][selectedClaim].images[1] = document.getElementById('image2').src;
 				accounts[selected][selectedClaim].images[2] = document.getElementById('image3').src;
+				accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
+				accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
+				accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
 
 				var dob = (accounts[selected][selectedClaim].observations != oldObservations);
 				var dre = (accounts[selected][selectedClaim].reasoning != oldReasoning);
@@ -309,10 +338,6 @@
 				var dcl = (accounts[selected][selectedClaim].claim != oldClaim);
 				userLog('species-notes',['Saved support',group, selected, selectedClaim,dob,dre,dex,dcl]);			
 
-				// DO NOT DELETE. THESE NEED TO BE INCLUDED:
-				// accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
-				// accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
-				// accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
 				
 				d = new Date();
 				var before = d.getTime(); 
@@ -365,6 +390,33 @@
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
 			document.getElementById("image3").src=url; imageURL=url;
+		}); 
+	  };
+
+	  var loadFile4 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
+	    var output = document.getElementById('image4');
+	    output.src = URL.createObjectURL(event.target.files[0]);
+	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
+			document.getElementById("image4").src=url; imageURL=url;
+		}); 
+	  };
+
+	  var loadFile5 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,2]);
+	    var output = document.getElementById('image5');
+	    output.src = URL.createObjectURL(event.target.files[0]);
+	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
+			document.getElementById("image5").src=url; imageURL=url;
+		}); 
+	  };
+
+	  var loadFile6 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,3]);
+	    var output = document.getElementById('image6');
+	    output.src = URL.createObjectURL(event.target.files[0]);
+	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
+			document.getElementById("image6").src=url; imageURL=url;
 		}); 
 	  };
 
@@ -478,11 +530,30 @@ var oldClaim = ""
 								clearCanvasOfAllClaims(); //alert('selected: ' + selected + '  selectedClaim: ' + selectedClaim);
 								document.getElementById('text1').value = accounts[selected][selectedClaim].observations;
 								document.getElementById('text2').value = accounts[selected][selectedClaim].reasoning;
-	//							document.getElementById('experiment').value = experiment[selectedClaim];
+								document.getElementById('text3').value = accounts[selected][selectedClaim].experiment;
 								document.getElementById('image1').src = accounts[selected][selectedClaim].images[0];
 								document.getElementById('image2').src = accounts[selected][selectedClaim].images[1];
 								document.getElementById('image3').src = accounts[selected][selectedClaim].images[2];
+								document.getElementById('image4').src = accounts[selected][selectedClaim].images[3];
+								document.getElementById('image5').src = accounts[selected][selectedClaim].images[4];
+								document.getElementById('image6').src = accounts[selected][selectedClaim].images[5];
+									// ugly string surgery
+								if (accounts[selected][selectedClaim].experiment == ''){
+									document.getElementById('experimentsList').selectedIndex=0;
+								} else {
 
+									var st = accounts[selected][selectedClaim].experiment;
+									var idx = st.indexOf('\n');
+										st = st.substr(idx+1);
+										idx = st.indexOf('\n');
+										st = st.substr(0,idx); 
+
+									for (var i=0; i<experiments.length;i++){
+										if (document.getElementById('experimentsList').options[i+1].value == st) {
+											document.getElementById('experimentsList').selectedIndex=i+1;
+										}
+									}
+								}
 								oldObservations = accounts[selected][selectedClaim].observations;
 								oldReasoning = accounts[selected][selectedClaim].reasoning;
 								oldExperiment = accounts[selected][selectedClaim].experiment;
@@ -601,6 +672,32 @@ var oldClaim = ""
 			nutella.net.publish('add_to_user_log',xl);
 		}
 
+		function loadExperiment(){
+			var s = document.getElementById('experimentsList').selectedIndex;
+			if (s == 0) {
+				document.getElementById('text3').value = '';
+				document.getElementById('image4').src = 'blank.png';
+				document.getElementById('image5').src = 'blank.png';
+				document.getElementById('image6').src = 'blank.png';
+			} else {
+				var copy = '';
+				var newLine = '\n';
+				copy += 'Question ' + newLine;
+				copy += experiments[s-1].question + newLine + newLine;
+				copy += 'Manipulations ' + newLine;
+				copy += experiments[s-1].manipulations + newLine + newLine;
+				copy += 'Reasoning ' + newLine;
+				copy += experiments[s-1].reasoning + newLine + newLine;
+				copy += 'Results ' + newLine;
+				copy += experiments[s-1].results + newLine + newLine;
+				copy += 'Conclusions ' + newLine;
+				copy += experiments[s-1].conclusions + newLine + newLine;
+				document.getElementById('text3').value = copy;
+				document.getElementById('image4').src = experiments[s-1].figures[0];
+				document.getElementById('image5').src = experiments[s-1].figures[1];
+				document.getElementById('image6').src = experiments[s-1].figures[2];
+			}
+		}
 
 
 	</script>
