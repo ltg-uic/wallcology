@@ -221,7 +221,9 @@
 					    opt.innerHTML = experiments[j].question; 
 					    document.getElementById('experimentsList').appendChild(opt);
 					}
-					select('species0');setTimeout(correct,100);
+					select('species0');
+				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
+					setTimeout(correct,100);
 				});
 
 			});
@@ -616,7 +618,7 @@ var oldClaim = ""
 				var id = 'c' + i;
 				var X = 133 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 110;
+				X += 115;
 				Y += 4; 
 				//if (i<15) alert('claim: ' + i + ' ' + accounts[selected][i].claim);
 				switch (accounts[selected][i].claim) {
