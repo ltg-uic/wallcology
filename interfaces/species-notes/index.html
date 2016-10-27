@@ -222,7 +222,7 @@
 					    document.getElementById('experimentsList').appendChild(opt);
 					}
 					select('species0');
-				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
+//				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
 					setTimeout(correct,100);
 				});
 
@@ -234,7 +234,9 @@
 			function correct() { 
 				// if (++corrections > 100) {alert('100'); return;}
 				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
-				else {redrawClaimsCanvas();}
+				else {redrawClaimsCanvas();				
+//					alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
+}
 			}
 
 			var modal = document.getElementById('myModal'); 
