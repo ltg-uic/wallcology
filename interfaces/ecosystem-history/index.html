@@ -13,7 +13,7 @@
 
 	<!-- Your markup here -->
 	<input hidden type=text size=1 id="ecosystem">
-	<a style="font-size:120%;">From:</a>
+	<a style="font-size:120%;">Fom:</a>
 	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -77,15 +77,16 @@
 				'https://ltg.cs.uic.edu/WC/icons/species_10.png',
 			 ];
 
+			 var myHt = Math.floor((parent.IW-261)/30); alert(myHt);
+			 var myIconHt = Math.floor(myHt*0.8);
 
-
-				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height=40 ></td>');
-				document.write('<td><canvas id="abioticCanvas" width="600" height="50"></td></tr>');
+				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
+				document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
 
 
 			for (i=0; i<11; i++) {
-				document.write('<tr><td><img src=' + images[i] + ' height=40 width=40></td>');
-				document.write('<td><canvas id="myChart' + i + '" width="600" height="50"></td></tr>');
+				document.write('<tr><td><img src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
+				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
 		</script>
 	</table>
@@ -95,9 +96,23 @@
 	<script src="Chart.min.js"></script>
 
 	<!-- Your scripts here -->
-	<canvas id="myChart" width="600" height="50"></canvas>
-
+<!-- 	<canvas id="myChart" width="900" height="50"></canvas>
+ -->
 	<script type="text/javascript">
+
+	// alert(parent.IW);alert(parent.IH);
+
+	// alert(document.documentElement.clientWidth);
+
+	// window.onload = showViewport;
+	// window.onresize = showViewport;
+
+	// function showViewport() {
+	//   var width = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+	//   var height= Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
+	//   alert("Viewport size is " + width + "x" + height);
+	// }
+
 
 	var abioticDisplay = 0;
 	var abioticOptions = ['temperature','brick','wood'];
@@ -217,10 +232,10 @@
 			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,1];
 			var max=[];
 			var min = 0;
-			var WIDTH = 600;
+			var WIDTH = 900;
 			var xOffset = 20;
 			var yOffset = 5;
-			var HEIGHT = 50;
+			var HEIGHT = myHt;
 			var xUnit = (WIDTH - xOffset - xOffset)/c;
 			var howManyDays = Math.round((upper-lower)/(24*60*60*1000));
 			for (var i=0; i<12; i++){
@@ -238,7 +253,7 @@
 				var ident = (i==11)? 'abioticCanvas'  :  'myChart' + i;
 
 				var ctx = document.getElementById(ident).getContext('2d');
-				ctx.clearRect(0, 0, 800, 50);
+//				ctx.clearRect(0, 0, WIDTH, HEIGHT);
 				ctx.clearRect(0, 0, WIDTH, HEIGHT);
 				ctx.strokeStyle = 'Silver';
 				ctx.lineWidth = 1;

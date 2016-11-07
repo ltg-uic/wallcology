@@ -103,6 +103,8 @@
 			var s = screen.height/18;
 			var pad;
 			var experiments = [];
+			var reflectivePartner;
+			var reflectiveClaim;
 
 
 			var ecosystem = query_parameters.INSTANCE;
@@ -112,7 +114,7 @@
 			var treatment = query_parameters.TREATMENT; 
 			var room = query_parameters.ROOM;
 
-			document.write('<canvas id="canvasID" width=800 height=600 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
+			document.write('<canvas id="canvasID" width=1000 height=800 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
 			var context = document.getElementById('canvasID').getContext("2d"); 
 
 			function speciesImageURL (index) {
@@ -123,7 +125,7 @@
 
 			document.write('<img src="thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
 			document.write('<img src="thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
-			document.write('<img src="unsure.png" style="opacity:1.0;" id="unsure" height=40 width=40 HIDDEN>');
+			document.write('<img src="qmark.png" style="opacity:0.5;" id="unsure" height=40 width=40 HIDDEN>');
 
 
 
@@ -140,7 +142,7 @@
 
 			document.write("<td valign=top><div>");
 
-			document.write("<table cellpadding=0 >");
+			document.write("<table cellpadding=6 >");
 
 			document.write('<tr><td colspan=4>');
 			document.write('<a id="speciesName" style="font-size:175%;color:white;">&nbsp</a><a style="font-size:175%;color:white;">: group ' + Number(1+Number(group)) + ' claims</a></td>');
@@ -149,10 +151,10 @@
 			document.write('</tr><tr><td colspan=2>');
 			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br>');
 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
-			document.write("</td></tr><tr><td align=center>");
+			document.write("</td></tr><tr><td width=100 align=center>");
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m1" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:100%;" align=center>Inhabits</td><td width=5></td><td>');
+			document.write('</td><td style="font-size:100%;" align=center>Inhabits</td><td width=10></td><td>');
 			materialsSelector(.65);
 			document.write('</td></tr>');
 
@@ -221,9 +223,10 @@
 					    opt.innerHTML = experiments[j].question; 
 					    document.getElementById('experimentsList').appendChild(opt);
 					}
-					select('species0');
+					document.getElementById('species0').click();
+//					select('species0');
 //				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
-					setTimeout(correct,100);
+//					setTimeout(correct2,1000);
 				});
 
 			});
@@ -231,12 +234,12 @@
 
 	});	
 			var corrections = 0;
+			function correct2(){select('species0');}
 			function correct() { 
 				// if (++corrections > 100) {alert('100'); return;}
+//				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
 				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
-				else {redrawClaimsCanvas();				
-//					alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
-}
+				else redrawClaimsCanvas();					
 			}
 
 			var modal = document.getElementById('myModal'); 
@@ -315,6 +318,7 @@
 				nutella.net.request('sync',{species:selected, group:query_parameters.INSTANCE}, function (message, from){ 
 					document.getElementById('contribute').innerHTML = "Contribute";
 					document.getElementById('contribute').disabled = false;
+					alert ("Contribution received!");
 					});
 			}
 
@@ -348,12 +352,38 @@
 				document.getElementById('saveButton').innerHTML = "Loading...";
 				document.getElementById('saveButton').disabled = true;
 				nutella.net.request('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]}, function (message, from){
-					e = new Date();
-					document.getElementById('saveButton').innerHTML = "Save";
-					document.getElementById('saveButton').disabled = false;
-//					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
-					modal.style.display = "none"; 
-				    drawAllClaimsOnCanvas();
+					// alert (selected + ' ' + selectedClaim);
+					if (selectedClaim >=7) {
+						if ((selectedClaim >= 7) && (selectedClaim <=17)) { 
+							reflectivePartner = selectedClaim-7;
+							reflectiveClaim = selected + 18;
+						}
+						if ((selectedClaim >= 18) && (selectedClaim <=28)) { 
+							reflectivePartner = selectedClaim-18;
+							reflectiveClaim = selected + 7;
+						}
+						if ((selectedClaim >= 29) && (selectedClaim <=39)) { 
+							reflectivePartner = selectedClaim-29;
+							reflectiveClaim = selected+29;
+						}; 
+						accounts[reflectivePartner][reflectiveClaim] = accounts[selected][selectedClaim];
+						nutella.net.request('updateAccount',{species:reflectivePartner,group:query_parameters.INSTANCE,claim:reflectiveClaim,account:accounts[reflectivePartner][reflectiveClaim]}, function (message, from){
+
+								e = new Date();
+								document.getElementById('saveButton').innerHTML = "Save";
+								document.getElementById('saveButton').disabled = false;
+			//					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
+								modal.style.display = "none"; 
+							    drawAllClaimsOnCanvas();
+							});
+					} else {
+							e = new Date();
+							document.getElementById('saveButton').innerHTML = "Save";
+							document.getElementById('saveButton').disabled = false;
+		//					alert('latency: ' + (e.getTime() - before) + 'milliseconds');
+							modal.style.display = "none"; 
+						    drawAllClaimsOnCanvas();
+					}
 					// setTimeout(delay,5000);
 					// modal.style.display = "none"; 
 				 //    drawAllClaimsOnCanvas(); 
@@ -618,17 +648,20 @@ var oldClaim = ""
 		function drawAllClaimsOnCanvas() { 
 			for (var i=0; i<40; i++) {
 				var id = 'c' + i;
-				var X = 133 + document.getElementById(id).offsetLeft;
+				var X = 194 + document.getElementById(id).offsetLeft;
 				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
-				X += 115;
+				X += 150;
 				Y += 4; 
 				//if (i<15) alert('claim: ' + i + ' ' + accounts[selected][i].claim);
 				switch (accounts[selected][i].claim) {
-					case 'assert': 	context.drawImage(document.getElementById('thumbsup'), X+1, Y);
+					case 'assert': 	context.drawImage(document.getElementById('thumbsup'), X+1, Y+4);
 									break;
 					case 'refute': 	context.drawImage(document.getElementById('thumbsdown'), X+3, Y+12); 
 									break;
-					case 'unsure': //context.drawImage(document.getElementById('unsure'), X, Y); break;
+					case 'unsure':  if (    accounts[selected][i].observations != "We saw..." || 
+											accounts[selected][i].reasoning != "We think..." || 
+											accounts[selected][i].experiment != "")
+										context.drawImage(document.getElementById('unsure'), X+2, Y);
 				}
 			}
 		}

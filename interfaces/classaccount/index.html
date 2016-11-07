@@ -221,13 +221,13 @@
 
 			document.close();
 			var accounts = [];
-			nutella.net.subscribe('arrive7',function(message, from) {
-				if (message.species == selected) document.getElementById('b' + message.group).disabled = false;
-			})
+			// nutella.net.subscribe('arrive7',function(message, from) {
+			// 	if (message.species == selected) document.getElementById('b' + message.group).disabled = false;
+			// })
 
-			nutella.net.subscribe('depart7',function(message, from) {
-				if (message.species == selected) document.getElementById('b' + message.group).disabled = true;
-			})
+			// nutella.net.subscribe('depart7',function(message, from) {
+			// 	if (message.species == selected) document.getElementById('b' + message.group).disabled = true;
+			// })
 			nutella.net.request('get_species_names',{},function(message,from){
 
 				speciesNames = message;
@@ -252,7 +252,7 @@
 			var modal2;
 
 			function correct() { 
-				if (document.getElementById("c0").offsetLeft == 1 && document.getElementById("c0").offsetTop == 1) setTimeout(correct,500); 
+				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,500); 
 				else redrawClaimsCanvas();
 			}
 
