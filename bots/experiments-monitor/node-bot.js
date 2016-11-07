@@ -32,11 +32,11 @@ experiments.load(function(){
         //
         // find the matching experiment
         // 
-        group=experiment.ecosystem;
+        var group=experiment.ecosystem;
         for (var q=0; q<experiments.data[group].length; q++)
             if (experiments.data[group][q][0].question == experiment.question){
                 experiments.data[group][q].push(experiment); experiments.save(); return;
-        }
+            }
         return;
     });
 
@@ -55,9 +55,9 @@ experiments.load(function(){
 ///////////////////////
     nutella.net.subscribe('delete_experiment',function(message, from) { 
         var g = message.ecosystem;
-        for (q=0; q < experiments.data[g].length; q++)
+        for (var q=0; q < experiments.data[g].length; q++)
             if (message.question == experiments.data[g][q][0].question) {
-                experiments.data[g].splice(q,1); return;
+                experiments.data[g].splice(q,1); experiments.save(); return;
             }
         return;
 
