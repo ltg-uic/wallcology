@@ -13,21 +13,25 @@ console.log("Lion King log");
 
 var lionLog = nutella.persist.getMongoObjectStore('lionLog');
 
-lionLog.load(function(){
+lionLog.load(function(){ console.log(lionLog.data[3000]);
 
     if (!lionLog.hasOwnProperty('data')){ lionLog.data = []; lionLog.save(); }
 
     // add to log of user actions incrementally
 
-    nutella.net.subscribe('add_to_lionking_log', function(arrayOfLogEntries, from) {
-        lionLog.data = lionLog.data.concat(arrayOfLogEntries); lionLog.save();
+    nutella.net.subscribe('add_to_lionking_log', function(arrayOfLogEntries, from) { 
+        lionLog.data = lionLog.data.concat(arrayOfLogEntries); lionLog.save(); 
     });
 
 
     // but retrieve as a whole 
 
-    nutella.net.handle_requests('retrieve_lionking_log', function(message, from){
-        return(lionLog.data);
+    nutella.net.handle_requests('retrieve_lionking_log', function(message, from){ 
+        var response = [];
+        for (var i=0; i<lionLog.data.length; i++) 
+            if (lionLog.data[i].indexOf('FOODWEB_IMAGE') == -1) response[i] = lionLog.date[i];
+                else response[i] = '';
+        return(response);
     })
 });
 

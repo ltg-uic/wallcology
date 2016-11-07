@@ -25,18 +25,21 @@ var accounts = nutella.persist.getMongoObjectStore('accounts');
 
 
 accounts.load(function(){
-    accounts['data'] = [];
-    for (var s=0; s<11; s++) {
-        accounts.data[s] = [];
-        for (var g=0; g<5; g++) {
-            accounts.data[s][g]=[];
-            for (var c=0; c<40; c++) {
-               accounts.data[s][g][c] = [];
-               accounts.data[s][g][c][0] = {timestamp:0, synced:true, claim: "unsure",observations: "We saw...",reasoning: "We think...",experiment: "", images: ['blank.png','blank.png','blank.png','blank.png','blank.png','blank.png']};
+
+    if (!accounts.hasOwnProperty('data')) {
+        accounts['data'] = [];
+        for (var s=0; s<11; s++) {
+            accounts.data[s] = [];
+            for (var g=0; g<5; g++) {
+                accounts.data[s][g]=[];
+                for (var c=0; c<40; c++) {
+                   accounts.data[s][g][c] = [];
+                   accounts.data[s][g][c][0] = {timestamp:0, synced:true, claim: "unsure",observations: "We saw...",reasoning: "We think...",experiment: "", images: ['blank.png','blank.png','blank.png','blank.png','blank.png','blank.png']};
+                }
             }
         }
+        accounts.save();
     }
-    accounts.save();
     
 
     // nutella.net.handle_requests('mostRecentAccounts', function (group, from){ 
@@ -76,18 +79,18 @@ accounts.load(function(){
     });
 
 
-    nutella.net.subscribe('sync', function (message, from){ 
+    nutella.net.handle_requests('sync', function (message, from){ 
          for (var c=0; c<40; c++) {
             var index = accounts.data[message.species][message.group][c].length-1;// if(i==0)console.log(index);
             accounts.data[message.species][message.group][c][index].synced = true;
         };
         accounts.save();
-        nutella.net.publish('new_account',message.species);           
+        nutella.net.publish('new_account',message.species);
+        return;           
     });
 
 
-    nutella.net.subscribe('updateAccount', function (message, from){ console.log(message.species);console.log(message.group);console.log(message.claim);console.log(message.account);
-        console.log(accounts.data[2][0][0][0].claim);        //console.log(accounts.data[2][0][0][1].claim);
+    nutella.net.handle_requests('updateAccount', function (message, from){   
 
         var index = accounts.data[message.species][message.group][message.claim].length; console.log(index);
         var images = [];
@@ -103,5 +106,6 @@ accounts.load(function(){
                 images: images
             };
         accounts.save();
+        return;
     });
 });

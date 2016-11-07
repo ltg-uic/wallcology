@@ -1,5 +1,3 @@
-
-
 <!doctype html>
 <html>
 <head>
@@ -11,14 +9,12 @@
 	<!-- Your CSS here -->
 	</head>
 
-	<body onLoad="doIt();">
+	<body>
 	<script src="nutella_lib.js" type="text/javascript"></script>
 	<script>
 		var query_parameters = NUTELLA.parseURLParameters();
 		var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 		document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); 
-
-	</script>
 
 	</script>
 
@@ -38,8 +34,8 @@
 	    	<td><a id="relationship" style="font-size: 130%;"></a> </td>
 	    	<td><img src="" id="slot2" height=50 width=50></td>
 
-	    	<td align=right><a style="font-size:200%;" id="gn"> </a></td>
-	    	<td align=right valign=middle> <img src="thumbsup.png" id="action1"  style="vertical-align:middle;">&nbsp&nbsp&nbsp&nbsp<img id="action2"  src="thumbsdown.png"  style="vertical-align:middle;">&nbsp&nbsp&nbsp<img id="action3" src="qmark.png"  style="vertical-align:middle;"></td>
+	    	<td></td>
+	    	<td align=right valign=middle> <img style="vertical-align:middle;" src="thumbsup.png" id="action1" onClick="setClaim('assert');">&nbsp&nbsp&nbsp&nbsp<img id="action2"  style="vertical-align:middle;" src="thumbsdown.png" onClick="setClaim('refute');">&nbsp&nbsp&nbsp<img id="action3" style="vertical-align:middle;" src="qmark.png" onClick="setClaim('unsure');"></td>
 	    	</tr></table>
 
 
@@ -49,41 +45,26 @@
 
 
 
-	    <div id="divX"  class="modal-body" style="color:black;">
-			<table width=100%><tr><td valign=top><a id="observations" style="color:black;font-size:110%;cursor:pointer;">Observations</a>&nbsp&nbsp<a id="reasoning" onClick="document.getElementById('divX').style.display='none'; document.getElementById('divY').style.display='block';" style="color:gray;font-size:110%;cursor:pointer;">Investigation</a><br>
-	    	<textarea READONLY id="text1" rows=7 cols=50>Prompt</textarea><br>
-	    	<a id="reasoning" style="color:black;font-size:110%;">Reasoning</a><br>
-	    	<textarea READONLY id="text2" rows=7 cols=50>Prompt</textarea><br>
+	    <div id="divX" class="modal-body" style="color:black;">
+			<table width=100%><tr><td><a id="observations" style="color:black;font-size:125%;">Observations</a><br>
+	    	<textarea id="text1" rows=8 cols=45>Prompt</textarea><br>
+	    	<a id="reasoning" style="color:black;font-size:125%;">Reasoning</a><br>
+	    	<textarea id="text2" rows=8 cols=45>Prompt</textarea><br>
 	    	</td><td align=center>
 
 
-	    	<img onClick="blowup(this.id);" id="image1" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button disabled>Figure 1</button><br>
+	    	<img onClick="blowup(this.id);" id="image1" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button onClick="document.getElementById('abc1').click()">Figure 1</button><br>
 
-	    	<img onClick="blowup(this.id);" id="image2" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button disabled>Figure 2</button><br>
+	    	<img onClick="blowup(this.id);" id="image2" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button onClick="document.getElementById('abc2').click()">Figure 2</button><br>
 
-	    	<img onClick="blowup(this.id);" id="image3" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button disabled>Figure 3</button><br>
-
-
-	    </td></tr></table>
- 		</div>
- 			    <div hidden id="divY" class="modal-body" style="color:black;">
-			<table width=100%><tr><td valign=top><a READONLY onClick="document.getElementById('divY').style.display='none'; document.getElementById('divX').style.display='block';" style="color:gray;font-size:110%;cursor:pointer;">Observations</a>&nbsp&nbsp<a style="color:black;font-size:110%;cursor:pointer;">Investigation</a><br>
-	    	<textarea READONLY id="text3" rows=12 cols=50></textarea><br><br>
-	    	</td><td align=center>
-
-
-	    	<img onClick="blowup(this.id);" id="image4" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button disabled>Figure 1</button><br>
-
-	    	<img onClick="blowup(this.id);" id="image5" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button disabled>Figure 2</button><br>
-
-	    	<img onClick="blowup(this.id);" id="image6" src="blank.png" height=100 width=100  alt="your image" /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button disabled>Figure 3</button><br>
+	    	<img onClick="blowup(this.id);" id="image3" src="blank.png" height=80 width=80  alt="your image" /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button onClick="document.getElementById('abc3').click()">Figure 3</button><br>
 
 
 	    </td></tr></table>
  		</div>
 
-	    <div style="text-align:right;font-size:125%;" class="modal-footer"><br>  
-	    	<button onClick="nextGroup();">Next Group</button><button onClick="closePopup();">Close</button>
+	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
+	    	<button onClick="cancel();">Cancel</button><button onClick="save();">Save</button>
 	      	      <br><br>
 
 	    </div>
@@ -98,41 +79,42 @@
 	<script>
 
 		// Parse the query parameters
-			var loaded = false;
 			var speciesNames = [];
-			var currentModalGroup=-1;
 			var tempClaim;
 			var selectedClaim;
 			var imageURL;
-			var selected;
+			var selected = 0;
 			var s = screen.height/18;
 			var pad;
-			var firstTime = true;
-
-			if (query_parameters.hasOwnProperty('SPECIES')) selected=query_parameters.SPECIES;
-
-			else if (query_parameters.TYPE == 'speciesPlace') selected = query_parameters.INSTANCE;
-
-			else selected = 0;
-
-			var group = query_parameters.INSTANCE;
 
 
-			document.write('<canvas id="canvasID" width=1000 height=800 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
+			var ecosystem = query_parameters.INSTANCE;
+			if (ecosystem === undefined) ecosystem = 0;
+			var group = ecosystem;
+
+			var treatment = query_parameters.TREATMENT; 
+			var room = query_parameters.ROOM;
+
+			document.write('<canvas id="canvasID" width=800 height=600 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
 			var context = document.getElementById('canvasID').getContext("2d"); 
 
+			function speciesImageURL (index) {
+				var pad = (index<10) ? '0' : '';
+				return "https://ltg.cs.uic.edu/WC/icons/species_" + pad + index + ".png";
+			}
 
-			document.write('<img src="thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
-			document.write('<img src="thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
-			document.write('<img src="unsure.png" style="opacity:1.0;" id="unsure" height=40 width=40 HIDDEN>');
+
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
+			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/unsure.png" style="opacity:1.0;" id="unsure" height=40 width=40 HIDDEN>');
 
 
 
-			document.write('<table valign=top align=left><tr><td style="background-color:#273548;" align=center valign=middle>');
-			document.write('<a style="font-size:150%;color:#FFFF66;"> &nbspSpecies </a><br>');
-			speciesSelector('species',-1,'vertical',.75);
+			document.write('<table  valign=top align=left><tr><td style="background-color:#273548;" align=center valign=top>');
+			document.write('<a style="font-size:150%;color:#FFFF66;"> </a>');
+			speciesSelector('species',-1,'vertical',.65);
 			document.write("</td>");
-			document.write("<td width=20></td>");
+			document.write("<td width=5></td>");
 
 			// Habitat selectors: where it lives
 
@@ -141,122 +123,93 @@
 
 			document.write("<td valign=top><div>");
 
-			document.write("<table >");
-
+			document.write("<table cellpadding=0 >");
 
 			document.write('<tr><td colspan=4>');
-			document.write('<a id="speciesName" style="font-size:175%;color:white;">&nbsp</a><a style="font-size:175%;color:white;">: class accounts</a></td>');
+			document.write('<a id="speciesName" style="font-size:175%;color:white;">&nbsp</a><a style="font-size:175%;color:white;">: group ' + Number(1+Number(group)) + ' claims</a></td>');
 
-
-			// document.write('<div id="version"><td align=right><button id="b0"  onclick="sync(0)"> Group 1 </button><button id="b1" DISABLED onclick="sync(1)"> Group 2 </button><button id="b2" DISABLED onclick="sync(2)"> Group 3 </button><button id="b3" DISABLED onclick="sync(3)"> Group 4 </button><button id="b4" DISABLED onclick="sync(4)"> Group 5 </button></td></div>');
 
 			document.write('</tr><tr><td>');
-			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br><br>');
+			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br>');
 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m1" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:125%;" align=center>Inhabits</td><td width=5></td><td>');
-			materialsSelector(.75);
+			document.write('</td><td style="font-size:100%;" align=center>Inhabits</td><td width=5></td><td>');
+			materialsSelector(.65);
 			document.write('</td></tr>');
 
-			document.write('<tr height=20></tr>');
+			document.write('<tr height=1></tr>');
 
-			document.write('<tr><td colspan=4>');
+			document.write('<tr><td colspan=2>');
 			document.write('<a style="font-size:125%;"> <i>Temperatures</i> </a> <br>');
 			document.write("</td></tr><tr><td align=center>");
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m2" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:125%;" align=center>Survives in</td><td></td><td>');
-			temperatureSelector(.75);
+			document.write('</td><td style="font-size:100%;" align=center>Survives in</td><td></td><td>');
+			temperatureSelector(.65);
 			document.write('</td></tr>');
 
-			document.write('<tr height=30></tr>');
+			document.write('<tr height=1></tr>');
 
 
 			document.write('<tr><td colspan=4><a style="font-size:150%;color:#FFFF66;"> Relationships with other species </a><br></td></tr>');
-			document.write('<tr height=10></tr>');
+			document.write('<tr height=1></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m3" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:125%;" align=center>Eats</td><td></td><td>');
-			speciesSelector('eats',-1,'horizontal',.75);
+			document.write('</td><td style="font-size:100%;" align=center>Eats</td><td></td><td>');
+			speciesSelector('eats',-1,'horizontal',.65);
 			document.write('</td></tr>');
 
-			document.write('<tr height=20></tr>');
+			document.write('<tr height=1></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m4" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:125%;" align=center>Eaten by</td><td></td><td>');
-			speciesSelector('eatenBy',-1,'horizontal',.75);
+			document.write('</td><td style="font-size:100%;" align=center>Eaten by</td><td></td><td>');
+			speciesSelector('eatenBy',-1,'horizontal',.65);
 			document.write('</td></tr>');
 
-			document.write('<tr height=20></tr>');
+			document.write('<tr height=1></tr>');
 
 
 			document.write('<tr><td align=center>');
 			pad = (selected<10) ? '0' : '';
 			document.write('<img id="m5" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
-			document.write('</td><td style="font-size:125%;" align=center>Competes with</td><td></td><td>');
-			speciesSelector('competesWith',-1,'horizontal',.75);
+			document.write('</td><td style="font-size:100%;" align=center>Competes with</td><td></td><td>');
+			speciesSelector('competesWith',-1,'horizontal',.65);
 			document.write('</td></tr>');
+
+
+			if (treatment == "push") document.write('<tr height=1></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();">Contribute</button></td></tr>');
+
 			document.write('</table></td></tr></table><br>');
-			document.write('<div id="myModal3" class="modal3">');
-  			document.write('<span class="close">×</span>');
-  			document.write('<img class="modal-content3" id="img03">');
-			document.write('</div>');
-
-			// var modal3 = document.getElementById('myModal3');
-
-			// var img = document.getElementById('newImage');
-			// var modalImg = document.getElementById("img01");
-			// img.onclick = function(){
-			//     modal.style.display = "block";
-			//     modalImg.src = this.src;
-			// };
 
 			document.close();
-			var accounts = [];
-			// nutella.net.subscribe('arrive7',function(message, from) {
-			// 	if (message.species == selected) document.getElementById('b' + message.group).disabled = false;
-			// })
-
-			// nutella.net.subscribe('depart7',function(message, from) {
-			// 	if (message.species == selected) document.getElementById('b' + message.group).disabled = true;
-			// })
+			var accounts = []; 
+	nutella.net.request('mostRecentAccounts',query_parameters.INSTANCE,function(a,from){
 			nutella.net.request('get_species_names',{},function(message,from){
 
 				speciesNames = message;
 				document.getElementById('speciesName').innerHTML = speciesNames[selected];
-			});
-
-			var bailLater=false;
-
-			nutella.net.subscribe('new_account', function (species,from){ 
-				if (species == selected)  bail(); 
-			});
+			})
+			for(var i=0; i<11; i++) accounts[i] = a[i];
 
 
-
-	nutella.net.request('latest_class_account',selected,function(a,from){
-
-			for(var i=0; i<5; i++) accounts[i] = a[i];
-			select('species' + selected); setTimeout(correct,100);
-
+			select('species0');setTimeout(correct,100);
 	});	
-			var modal; 
-			var modal2;
-
+			var corrections = 0;
 			function correct() { 
-				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,500); 
-				else redrawClaimsCanvas();
+//				if (++corrections > 100) {alert('100'); return;}
+				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
+				else {redrawClaimsCanvas();}
 			}
 
-			modal = document.getElementById('myModal');
+			var modal = document.getElementById('myModal'); 
 
 			// Get the button that opens the modal
 			// var btn = document.getElementById("myBtn");
@@ -284,7 +237,7 @@
 
 	// 		}
 
-			modal2 = document.getElementById('yourModal');
+			var modal2 = document.getElementById('yourModal');
 
 			// Get the image and insert it inside the modal - use its "alt" text as a caption
 			// var img = document.getElementById('newImage');
@@ -303,13 +256,7 @@
 			}
 
 
-			function doIt(){
-				loaded=true; redrawClaimsCanvas();
-			}
-
-			function blowup(id) { 
-				userLog('classaccount',['Expanded photo',group,selected,selectedClaim,currentModalGroup,id.substr(5)]);
-
+			function blowup(id) {
 				var originalImage = document.getElementById(id); 
 				var blownUpImage = document.getElementById("img01");
 				blownUpImage.style.height="auto";
@@ -324,15 +271,44 @@
 			}
 
 
-			function closePopup() { if (bailLater) bail();
+			function cancel() {
 			    modal.style.display = "none"; 
 			    drawAllClaimsOnCanvas(); 
 			}
 
+			function sync() {
 
-			function nextGroup() {var p=(currentModalGroup+1)%5 + 1;  
-				userLog('classaccount',['Selected group',group, selected, selectedClaim,p-1]);
-				load_modal();
+				nutella.net.publish('sync',{species:selected, group:query_parameters.INSTANCE});
+				userLog('species-notes',['Synchronized claims',group, selected]);			
+			}
+
+
+			function save() {
+
+	
+			    modal.style.display = "none"; 
+			    var d = new Date();
+				accounts[selected][selectedClaim].timestamp = d.getTime();
+				accounts[selected][selectedClaim].synced = false; 
+				if (treatment == "auto") accounts[selected][selectedClaim].synced = true;
+				accounts[selected][selectedClaim].claim = tempClaim;
+				accounts[selected][selectedClaim].observations = document.getElementById('text1').value;
+				accounts[selected][selectedClaim].reasoning = document.getElementById('text2').value;
+				// accounts[selected][selectedClaim].experiment = document.getElementById('experiment').value;
+				accounts[selected][selectedClaim].images[0] = document.getElementById('image1').src;
+				accounts[selected][selectedClaim].images[1] = document.getElementById('image2').src;
+				accounts[selected][selectedClaim].images[2] = document.getElementById('image3').src;
+
+				var dob = (accounts[selected][selectedClaim].observations != oldObservations);
+				var dre = (accounts[selected][selectedClaim].reasoning != oldReasoning);
+				var dex = (accounts[selected][selectedClaim].experiment != oldExperiment);
+				var dcl = (accounts[selected][selectedClaim].claim != oldClaim);
+				userLog('species-notes',['Saved support',group, selected, selectedClaim,dob,dre,dex,dcl]);			
+				// accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
+				// accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
+				// accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
+			    drawAllClaimsOnCanvas(); 
+			    saveClaims();
 			}
 
 //			When the user clicks anywhere outside of the modal, close it
@@ -343,6 +319,7 @@
 			// }
 
 	  var loadFile1 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
 	    var output = document.getElementById('image1');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -351,6 +328,7 @@
 	  };
 
 	  var loadFile2 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,2]);
 	    var output = document.getElementById('image2');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -359,6 +337,7 @@
 	  };
 
 	  var loadFile3 = function(event) {
+	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,3]);
 	    var output = document.getElementById('image3');
 	    output.src = URL.createObjectURL(event.target.files[0]);
 	    nutella.net.bin.uploadFile(event.target.files[0], function(url) { 
@@ -417,8 +396,6 @@
 			}
 
 
-
-
 			function speciesSelector(idRoot,exception,direction,size) {
 				document.write('<div style="display:inline;" id="' + idRoot + '">');
 				if (direction == 'horizontal') document.write('&nbsp&nbsp'); //HTML kludge
@@ -447,95 +424,73 @@
 			};
 
 			// document.getElementById('img0').style.opacity="0.2";
-
+var oldObservations = "";
+var oldReasoning = "";
+var oldExperiment = "";
+var oldClaim = ""
 
 			function select(id){ 
 				
-				switch (id.substr(0,1)) { 
-					case 'c':   
-								var index = Number(id.substr(1)); 
-								selectedClaim=index; 
-								userLog('classaccount',['Selected claim',group, selected,selectedClaim]);
+				switch (id.substring(0,1)) { 
+					case 'c':   var index = Number(id.substring(1)); selectedClaim=index; 
+								userLog('species-notes',['Selected claim',group,selected,selectedClaim]);
 								document.getElementById('slot1').src = speciesImageURL(selected);
 								var slot2;
-								if (selectedClaim == 0) slot2="https://ltg.cs.uic.edu/WC/icons/env_wood.png";
-								if (selectedClaim == 1) slot2="https://ltg.cs.uic.edu/WC/icons/env_brick.png";
-								if (selectedClaim == 2) slot2="https://ltg.cs.uic.edu/WC/icons/aluminum.png";
-								if (selectedClaim == 3) slot2="https://ltg.cs.uic.edu/WC/icons/drywall.png";
-								if (selectedClaim == 4) slot2="https://ltg.cs.uic.edu/WC/icons/low.png";
-								if (selectedClaim == 5) slot2="https://ltg.cs.uic.edu/WC/icons/medium.png";
-								if (selectedClaim == 6) slot2="https://ltg.cs.uic.edu/WC/icons/high.png";
-								if (selectedClaim > 6) {
-									slot2 = speciesImageURL((selectedClaim-7) % 11);
+								if (index == 0) slot2="wood.png";
+								if (index == 1) slot2="brick.png";
+								if (index == 2) slot2="aluminum.png";
+								if (index == 3) slot2="drywall.png";
+								if (index == 4) slot2="low.png";
+								if (index == 5) slot2="medium.png";
+								if (index == 6) slot2="high.png";
+								if (index > 6) {
+									slot2 = speciesImageURL((index-7) % 11);
 								}
-								document.getElementById('slot2').src= slot2;
-								if (selectedClaim <= 3) document.getElementById('relationship').innerHTML = "inhabits";
-								if (selectedClaim >= 4 && selectedClaim <= 6 ) document.getElementById('relationship').innerHTML = "survives in";
-								if (selectedClaim >= 7 && selectedClaim <= 17 ) document.getElementById('relationship').innerHTML = "eats";
-								if (selectedClaim >= 18 && selectedClaim <= 28 ) document.getElementById('relationship').innerHTML = "is eaten by";
+								document.getElementById('slot2').src=slot2;
+								if (index <= 3) document.getElementById('relationship').innerHTML = "inhabits";
+								if (index >= 4 && index <= 6 ) document.getElementById('relationship').innerHTML = "survives in";
+								if (index >= 7 && index <= 17 ) document.getElementById('relationship').innerHTML = "eats";
+								if (index >= 18 && index <= 28 ) document.getElementById('relationship').innerHTML = "is eaten by";
 								if (index >= 29 && index <= 39 ) document.getElementById('relationship').innerHTML = "competes with";
-								if (query_parameters.TYPE == "group") currentModalGroup = (query_parameters.INSTANCE+4) % 5; 
-								load_modal();
-								clearCanvasOfAllClaims(); 
-								modal.style.display = "block";
+								clearCanvasOfAllClaims(); //alert('selected: ' + selected + '  selectedClaim: ' + selectedClaim);
+								document.getElementById('text1').value = accounts[selected][selectedClaim].observations;
+								document.getElementById('text2').value = accounts[selected][selectedClaim].reasoning;
+	//							document.getElementById('experiment').value = experiment[selectedClaim];
+								document.getElementById('image1').src = accounts[selected][selectedClaim].images[0];
+								document.getElementById('image2').src = accounts[selected][selectedClaim].images[1];
+								document.getElementById('image3').src = accounts[selected][selectedClaim].images[2];
+
+								oldObservations = accounts[selected][selectedClaim].observations;
+								oldReasoning = accounts[selected][selectedClaim].reasoning;
+								oldExperiment = accounts[selected][selectedClaim].experiment;
+								oldClaim = accounts[selected][selectedClaim].claim;
+
+
+
+								// document.getElementById('image1').src = message.claims[i].obsImages[0];
+								// document.getElementById('image2').src = message.claims[i].obsImages[1];
+								// document.getElementById('image3').src = message.claims[i].obsImages[2];
+								setClaim(accounts[selected][selectedClaim].claim);
+								modal.style.display = "block"; 
 								break;
-					case 's': 	var nextSelected = Number(id.substr(7)); 
-								if ((nextSelected != selected) && (query_parameters.TYPE == "speciesPlace")) {
-									userLog('classaccount',['Selected species',group,nextSelected]);
-								} else 
-								if (firstTime || ((nextSelected == selected) && (query_parameters.TYPE == "speciesPlace"))) {
-									selected = nextSelected;			
-									document.getElementById('speciesName').innerHTML = speciesNames[selected];
-									deselectAll('species');
-									for(var j=1; j<6; j++){ 
-										var pad = (selected<10) ? '0' : '';
-										document.getElementById('m' + j).src = 'https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png';
-									}
-									document.getElementById(id).style.opacity = 1.0;
-									clearCanvasOfAllClaims();
-									firstTime = false;
-									drawAllClaimsOnCanvas();
-								} else {
-									userLog('classaccount',['Selected species',group,nextSelected]);
-									selected = nextSelected;
-									bail();
+					case 's': 	
+								deselectAll('species');
+								document.getElementById(id).style.opacity = 1.0;
+								selected = Number(id.substr(7)); 
+								userLog('species-notes',['Selected species',group, selected]);
+
+								document.getElementById('speciesName').innerHTML = speciesNames[selected];
+								for(var j=1; j<6; j++){ 
+									var pad = (selected<10) ? '0' : '';
+									document.getElementById('m' + j).src = 'https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png';
 								}
-					}
+								clearCanvasOfAllClaims();
+								drawAllClaimsOnCanvas();
+
+				}
 
 			}
 
-
-
-			function load_modal() {
-				currentModalGroup++;
-				if (currentModalGroup == 5) currentModalGroup = 0;
-				var group = currentModalGroup;
-
-				setClaim(accounts[currentModalGroup][selectedClaim].claim);
-
-				document.getElementById('text1').value = accounts[group][selectedClaim].observations;
-				document.getElementById('text2').value = accounts[group][selectedClaim].reasoning;
-				document.getElementById('text3').value = accounts[group][selectedClaim].experiment;
-				document.getElementById('image1').src = accounts[group][selectedClaim].images[0];
-				document.getElementById('image2').src = accounts[group][selectedClaim].images[1];
-				document.getElementById('image3').src = accounts[group][selectedClaim].images[2];
-				document.getElementById('image4').src = accounts[group][selectedClaim].images[3];
-				document.getElementById('image5').src = accounts[group][selectedClaim].images[4];
-				document.getElementById('image6').src = accounts[group][selectedClaim].images[5];
-
-				document.getElementById('gn').innerHTML = 'Group ' + Number(currentModalGroup + 1);
-
-
-			}
-
-
-
-
-
-			function bail() {
-				var URL = window.location.href + '&SPECIES=' + selected;
-				window.location.href = URL;
-			}
 
 				// }
 			// }
@@ -562,23 +517,22 @@
 
 
 
-		function drawAllClaimsOnCanvas() {  
-			
-			for (var i=0; i<40; i++) {  
-				var id = 'c' + i;//if (i<3) alert(document.getElementById(id).offsetLeft);
-				// if (i==0 || i==10) {alert(document.getElementById(id).offsetLeft + ' ' + document.getElementById(id).offsetTop); alert(document.getElementById(id).parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.offsetTop); alert(document.getElementById(id).parentElement.parentElement.offsetLeft + ' ' + document.getElementById(id).parentElement.parentElement.offsetTop);}
-				var X = 133 + document.getElementById(id).offsetLeft; /*+ document.getElementById(id).parentElement.offsetLeft*/;
-				var Y = document.getElementById(id).parentElement.parentElement.offsetTop +document.getElementById(id).offsetTop;
-				X += 254;
+		function drawAllClaimsOnCanvas() {
+			for (var i=0; i<40; i++) {
+				var id = 'c' + i;
+				var X = 133 + document.getElementById(id).offsetLeft;
+				var Y = document.getElementById(id).parentElement.parentElement.offsetTop + document.getElementById(id).offsetTop;
+				X += 159;
 				Y += 4; 
-				var TUX = 0;
-				var TDX = 0;
-				for (var j=0; j<5; j++) { 
-					switch (accounts[j][i].claim) { 
-						case 'assert': context.drawImage(document.getElementById('thumbsup'), X+1+TUX, Y); TUX++; TUX++; break;
-						case 'refute': context.drawImage(document.getElementById('thumbsdown'), X+3+TDX, Y+18); TDX++;TDX++; break;
-						case 'unsure': context.drawImage(document.getElementById('unsure'), X, Y);
-					}
+				//if (i<15) alert('claim: ' + i + ' ' + accounts[selected][i].claim);
+				switch (accounts[selected][i].claim) { 
+					case 'assert': 	context.drawImage(document.getElementById('thumbsup'), X+1, Y);
+									alert('claim: ' + i + ' ' + accounts[selected][i].claim); 
+									break;
+					case 'refute': 	context.drawImage(document.getElementById('thumbsdown'), X+3, Y+18); 
+									alert('claim: ' + i + ' ' + accounts[selected][i].claim);
+									break;
+					case 'unsure': //context.drawImage(document.getElementById('unsure'), X, Y); break;
 				}
 			}
 		}
@@ -598,18 +552,19 @@
 		// 	});
 		// }
 
-		// function saveClaims(){
-		// 	nutella.net.publish('updateAccount',{species:selected,group:group,account:accounts[selected]});
-		// }
+		function saveClaims(){
+			nutella.net.publish('updateAccount',{species:selected,group:query_parameters.INSTANCE,claim:selectedClaim,account:accounts[selected][selectedClaim]});
+			//
+			// need to update this to do automatic reflective claims
+			//
+			// 
+		}
 
 
 		function speciesImageURL (index) {
 			var pad = (index<10) ? '0' : '';
 			return "https://ltg.cs.uic.edu/WC/icons/species_" + pad + index + ".png";
 		}
-
-		// function sync(i) {nutella.net.publish('sync',{group:i,species:selected});}
-
 
 	// this is the function that everybody else will use to write to the user log
 		function userLog(channel, extension){
@@ -631,6 +586,7 @@
 			xl[0] = log;
 			nutella.net.publish('add_to_user_log',xl);
 		}
+
 
 
 	</script>

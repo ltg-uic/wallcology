@@ -129,7 +129,7 @@
     function save() {
 		var index = document.getElementById('experiments').selectedIndex; 
 		if (index > -1) {
-			exp[index].ecosystem = query_parameters.INSTANCE;
+			exp[index].ecosystem = Number(query_parameters.INSTANCE);
 			exp[index].question = document.getElementById('question').value;
 			exp[index].manipulations = document.getElementById('manipulations').value;
 			exp[index].reasoning = document.getElementById('reasoning').value;
