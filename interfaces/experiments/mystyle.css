@@ -35,6 +35,7 @@ button:disabled {
 select {
     -webkit-appearance: none;
     font-size:100%;
+    background-color:rgb(60,81,105);
 }
 
 option {
