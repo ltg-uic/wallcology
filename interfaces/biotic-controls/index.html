@@ -27,7 +27,7 @@
 
 		var selected = -1;
 
-		var s = Math.round(screen.height/20);
+		var s = Math.round(screen.height/30);
 
 
 
@@ -128,7 +128,7 @@
 		function trap () {
 			if (!inDelay) {
 				nutella.net.publish('trap',{ecosystem:ecosystem,species:selected});
-				document.getElementById('colonize').disabled=true;
+				document.getElementById('colonizer').disabled=true;
 				block();
 			} else alert('In Delay. Click ignored.');
 		}
