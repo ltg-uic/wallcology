@@ -282,7 +282,7 @@
 						      ctx.beginPath();
 						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset), HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
 						      var action = bioticActions[i][k].action;
-						      if (action == 'herbicide' || action == 'trap') color='red'; else color='green';
+						      if (action == 'herbicide' || action == 'trap') color='red'; else color='SpringGreen';
 						      ctx.fillStyle = color;
 						      ctx.fill();
 						      ctx.lineWidth = 4;
