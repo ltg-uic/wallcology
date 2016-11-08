@@ -28,6 +28,7 @@ select {
     -webkit-appearance: none;
     font-size:20px;
     width:120px;
+    color:white;
 }
 
 option {
