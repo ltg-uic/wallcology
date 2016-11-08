@@ -29,6 +29,7 @@ select {
     font-size:20px;
     width:120px;
     color:white;
+    background-color: rgb(60,81,105);
 }
 
 option {
