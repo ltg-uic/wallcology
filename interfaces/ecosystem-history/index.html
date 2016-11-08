@@ -77,7 +77,8 @@
 				'https://ltg.cs.uic.edu/WC/icons/species_10.png',
 			 ];
 
-			 var myHt = Math.floor((parent.IW-261)/30); myHt=35; // alert(myHt);
+			 var myHt = Math.floor((parent.IW-261)/30); 
+			 if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
 			 var myIconHt = Math.floor(myHt*0.8);
 
 				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
