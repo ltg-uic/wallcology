@@ -47,6 +47,8 @@
 		document.write("</td>");
 		document.write("<td width=100></td>")
 		document.write("<td style='font-size:150%'>");
+		document.write('<a id="opStatus">Operations available</a><br><br>);
+
 		document.write('<button id="seed" DISABLED onClick="seed();">Apply seed</button><br>');
 		document.write('<button id="herbicide" DISABLED onClick="herbicide();">Apply herbicide</button><br>');
 		document.write('<button id="colonizer" DISABLED onClick="colonize();">Insert colonizer</button><br>');
@@ -109,6 +111,7 @@
 			if (!confirm('WARNING: This operation will increase the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
 			nutella.net.publish('seed',{ecosystem:ecosystem,species:selected});
 			document.getElementById('herbicide').disabled=true;
+			document.getElementById('opStatus').innerHTML='Operation in progress...';
 			block();
 			return;
 		}
@@ -119,6 +122,7 @@
 			if (!confirm('WARNING: This operation will decrease the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
 			nutella.net.publish('herbicide',{ecosystem:ecosystem,species:selected});
 			document.getElementById('seed').disabled=true;
+			document.getElementById('opStatus').innerHTML='Operation in progress...';
 			block();
 			return;
 		}
@@ -130,6 +134,7 @@
 			if (!confirm('WARNING: This operation will increase the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
 			nutella.net.publish('colonize',{ecosystem:ecosystem,species:selected});
 			document.getElementById('trap').disabled=true;
+			document.getElementById('opStatus').innerHTML='Operation in progress...';
 			block();
 			return;
 		}
@@ -141,6 +146,7 @@
 			if (!confirm('WARNING: This operation will decrease the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
 			nutella.net.publish('trap',{ecosystem:ecosystem,species:selected});
 			document.getElementById('colonizer').disabled=true;
+			document.getElementById('opStatus').innerHTML='Operation in progress...';
 			block();
 			return;
 		}
@@ -158,6 +164,8 @@
 			disableAnimalControls();
 			selectAll();
 			inDelay=false;
+			document.getElementById('opStatus').innerHTML='Operations available';
+
 		}
 // 	}
 
