@@ -101,37 +101,51 @@
 			document.getElementById('trap').disabled=true;
 		}
 
+
+
 		function seed () {
-			if (!inDelay) {
-				nutella.net.publish('seed',{ecosystem:ecosystem,species:selected});
-				document.getElementById('herbicide').disabled=true;
-				block();
-			} else alert('In Delay. Click ignored.');
+
+			if (inDelay) {alert('In Delay. Click ignored.'); return;}
+			if (!confirm('WARNING: This operation will increase the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
+			nutella.net.publish('seed',{ecosystem:ecosystem,species:selected});
+			document.getElementById('herbicide').disabled=true;
+			block();
+			return;
 		}
 
 		function herbicide () {
-			if (!inDelay) {
-				nutella.net.publish('herbicide',{ecosystem:ecosystem,species:selected});
-				document.getElementById('seed').disabled=true;
-				block();
-			} else alert('In Delay. Click ignored.');
+
+			if (inDelay) {alert('In Delay. Click ignored.'); return;}
+			if (!confirm('WARNING: This operation will decrease the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
+			nutella.net.publish('herbicide',{ecosystem:ecosystem,species:selected});
+			document.getElementById('seed').disabled=true;
+			block();
+			return;
 		}
+
 
 		function colonize () {
-			if (!inDelay) {
-				nutella.net.publish('colonize',{ecosystem:ecosystem,species:selected});
-				document.getElementById('trap').disabled=true;
-				block();
-			} else alert('In Delay. Click ignored.');
+
+			if (inDelay) {alert('In Delay. Click ignored.'); return;}
+			if (!confirm('WARNING: This operation will increase the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
+			nutella.net.publish('colonize',{ecosystem:ecosystem,species:selected});
+			document.getElementById('trap').disabled=true;
+			block();
+			return;
 		}
 
+
 		function trap () {
-			if (!inDelay) {
-				nutella.net.publish('trap',{ecosystem:ecosystem,species:selected});
-				document.getElementById('colonizer').disabled=true;
-				block();
-			} else alert('In Delay. Click ignored.');
+
+			if (inDelay) {alert('In Delay. Click ignored.'); return;}
+			if (!confirm('WARNING: This operation will decrease the population of the selected species. You will not be able to perform any other operations for one minute. Do you wish to proceed with this manipulation?')) return;
+			nutella.net.publish('trap',{ecosystem:ecosystem,species:selected});
+			document.getElementById('colonizer').disabled=true;
+			block();
+			return;
 		}
+
+
 
 		function block () {
 			inDelay = true;
