@@ -27,12 +27,15 @@ td { font-size: 140%; color: white; }
 select {
     -webkit-appearance: none;
     font-size:20px;
-    width:100px;
+    width:120px;
+    color:white;
+    background-color: rgb(60,81,105);
 }
 
 option {
     -webkit-appearance: none;
     font-size:20px;
+    color:white;
 }
 
 

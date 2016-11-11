@@ -13,7 +13,7 @@
 
 	<!-- Your markup here -->
 	<input hidden type=text size=1 id="ecosystem">
-	<a style="font-size:120%;">Fom:</a>
+	<a style="font-size:120%;">From:</a>
 	<select id="startMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -37,7 +37,7 @@
 			  <option value="2016">2016</option>
 	  <option value="2017">2017</option>
 	</select>
- -->	&nbsp&nbspTo:
+ -->	<a style="font-size:120%;">To:</a>
 	<select id="endMonth" onChange="query();">
 	  <option value="January">January</option>
 	  <option value="February">February</option>
@@ -59,7 +59,7 @@
 	</select>
 	&nbsp&nbsp
 	<input type=hidden type=checkbox id='normalize' onClick='query();'>
-&nbsp<input hidden type=checkbox id='hack' onClick='query();'><br>
+&nbsp<input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
 	<table style="border-spacing:0px;padding:0;">
@@ -77,7 +77,8 @@
 				'https://ltg.cs.uic.edu/WC/icons/species_10.png',
 			 ];
 
-			 var myHt = Math.floor((parent.IW-261)/30); alert(myHt);
+			 var myHt = Math.floor((parent.IW-261)/30); 
+			 if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
 			 var myIconHt = Math.floor(myHt*0.8);
 
 				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
@@ -279,12 +280,12 @@
 					for (var k=0; k<bioticActions[i].length; k++) {
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
-						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset), HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
+						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset)-5, HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
 						      var action = bioticActions[i][k].action;
-						      if (action == 'herbicide' || action == 'trap') color='red'; else color='green';
+						      if (action == 'herbicide' || action == 'trap') color='red'; else color='SpringGreen';
 						      ctx.fillStyle = color;
 						      ctx.fill();
-						      ctx.lineWidth = 1;
+						      ctx.lineWidth = 4;
 						      ctx.strokeStyle = color;
 						      ctx.stroke();
 						}
