@@ -15,22 +15,22 @@
 	<input hidden type=text size=1 id="ecosystem">
 	<a style="font-size:120%;">From:</a>
 	<select id="startMonth" onChange="query();">
-	  <option value="January">January</option>
-	  <option value="February">February</option>
-	  <option value="March">March</option>
-	  <option value="April">April</option>
-	  <option value="May">May</option>
-	  <option value="June">June</option>
-	  <option value="July">July</option>
-	  <option value="August">August</option>
-	  <option value="September">September</option>
-	  <option value="October">October</option>
+	  <option disabled value="January">January</option>
+	  <option disabled value="February">February</option>
+	  <option disabled value="March">March</option>
+	  <option disabled value="April">April</option>
+	  <option disabled value="May">May</option>
+	  <option disabled value="June">June</option>
+	  <option disabled value="July">July</option>
+	  <option disabled value="August">August</option>
+	  <option disabled value="September">September</option>
+	  <option disabled value="October">October</option>
 	  <option value="November">November</option>
 	  <option value="December">December</option>
 	</select>
 	<select id="startDay" onChange="query();">
 		<script type="text/javascript">
-			for(i=1;i<=31;i++) document.write('<option value ="' + i + '">' + i + '</option>');
+			for(i=1;i<=31;i++) document.write('<option value="' + i + '">' + i + '</option>');
 		</script>
 	</select>
 <!-- 	<select id="startYear">
@@ -39,16 +39,16 @@
 	</select>
  -->	<a style="font-size:120%;">To:</a>
 	<select id="endMonth" onChange="query();">
-	  <option value="January">January</option>
-	  <option value="February">February</option>
-	  <option value="March">March</option>
-	  <option value="April">April</option>
-	  <option value="May">May</option>
-	  <option value="June">June</option>
-	  <option value="July">July</option>
-	  <option value="August">August</option>
-	  <option value="September">September</option>
-	  <option value="October">October</option>
+	  <option disabled value="January">January</option>
+	  <option disabled value="February">February</option>
+	  <option disabled value="March">March</option>
+	  <option disabled value="April">April</option>
+	  <option disabled value="May">May</option>
+	  <option disabled value="June">June</option>
+	  <option disabled value="July">July</option>
+	  <option disabled value="August">August</option>
+	  <option disabled value="September">September</option>
+	  <option disabled value="October">October</option>
 	  <option value="November">November</option>
 	  <option value="December">December</option>
 	</select>
@@ -58,8 +58,8 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=hidden type=checkbox id='normalize' onClick='query();'>
-&nbsp<input hidden type=checkbox id='hack' onClick='query();'><br><br>
+	<input type=checkbox id='normalize' onClick='query();'>
+&nbspCompare<input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
 	<table style="border-spacing:0px;padding:0;">
@@ -187,6 +187,15 @@
 	function query(){
 		var sm = document.getElementById('startMonth').selectedIndex+1;
 		var sd = document.getElementById('startDay').selectedIndex+1;
+
+// limit starting date. very hacky
+
+		if (sm == 11 && sd < 9) {
+			sd = 9;
+			document.getElementById('startDay').selectedIndex = 8;
+		}
+
+
 		// var sy = document.getElementById('startYear').value;
 		var sy = (sm > 7) ? 2016 : 2017;
 		var em = document.getElementById('endMonth').selectedIndex+1;
@@ -307,8 +316,11 @@
 					      	ctx.strokeStyle = 'white';
 						 };
 					} else {
-						ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
-						ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*response.biotic[j][i])));
+						var tod = 75/howManyDays * .45;
+						if (sm != 11 || sd != 9 || j>tod){
+							ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
+							ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*response.biotic[j][i])));
+						}
 					}
 					ctx.closePath();
 					ctx.stroke();
