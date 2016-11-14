@@ -127,9 +127,13 @@ function Last_State_Handler(response) {
     console.log("Last_State_Handler called!");
     Unity.SetEcosystemText( Number(WallscopeID) + 1); // Sets the Ecosystem ID
 
+
+    var json = { "echo": "hello hello" };
+    nutella.net.publish('scope_ping', json);
+
     State_Update_Handler(response); // at least until I can come up with a more thoughtful way of adding critters in place.
 
-    //
+
     var lastState = sanitizeResponse(response),
         Abiotic = lastState['abiotic'][WallscopeID];
 
@@ -210,11 +214,13 @@ var TellJs = {
         console.log("TellJs.SubscribeToEventsChannel was called from Unity!!");
 
         // nutella.net.subscribe( 'state-update', function(response) {}
-        nutella.net.subscribe('scope_ping', function(response) {
-            var cleaned = sanitizeResponse(response);
-            console.log('scope_ping', cleaned);
-            Unity.Scope_Ping(cleaned['value'])
+        nutella.net.subscribe('scope_ping', function(response, from) {
+            console.log("01: Javascript got the Scope_Ping:", response)
+            // var cleaned = sanitizeResponse(response);
+            console.log('scope_ping', response);
+            Unity.Scope_Ping(response)
         })
+        console.log("Just subscribed to scope_ping");
 
         nutella.net.subscribe('thermostat', function(response) {
             var cleaned = sanitizeResponse(response);
