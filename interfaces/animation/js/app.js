@@ -210,8 +210,13 @@ var TellJs = {
         console.log("TellJs.SubscribeToEventsChannel was called from Unity!!");
 
         // nutella.net.subscribe( 'state-update', function(response) {}
-        nutella.net.subscribe('thermostat', function(response) {
+        nutella.net.subscribe('scope_ping', function(response) {
+            var cleaned = sanitizeResponse(response);
+            console.log('scope_ping', cleaned);
+            Unity.(cleaned['value'])
+        })
 
+        nutella.net.subscribe('thermostat', function(response) {
             var cleaned = sanitizeResponse(response);
             console.log('channel-thermostat', cleaned);
             Unity.SetThermostatText(cleaned['value'])
@@ -263,6 +268,12 @@ var TellJs = {
  #     unity3d.getUnity().SendMessage("GameObject", "MethodName", param)
  #=============================================================================*/
 var Unity = {
+
+    Scope_Ping: function(message) {
+        console.log("Javascript got the Scope_Ping:", message)
+        unity3d.getUnity().SendMessage("Habitat_Events", "Scope_Ping", message)
+    }
+
 
     // param packaged is a string containing the critter ID and count
     // this function is c: function(species multiple times for each entry in the species record
