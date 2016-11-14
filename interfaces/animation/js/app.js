@@ -228,7 +228,7 @@ var TellJs = {
         nutella.net.subscribe('thermostat', function(response) {
             var cleaned = sanitizeResponse(response);
             console.log('channel-thermostat', cleaned);
-            Unity.SetThermostatText(cleaned['value'])
+            Unity.SetThermostatText(cleaned['value']);
         })
 
         nutella.net.subscribe('wall', function(response) {
@@ -236,28 +236,28 @@ var TellJs = {
 
             var cleaned = sanitizeResponse(response);
             if (cleaned['ecosystem'] === WallscopeID)
-                Unity.SetDryWall(cleaned['side'], cleaned['direction'])
+                Unity.SetDryWall(cleaned['side'], cleaned['direction']);
         })
 
         nutella.net.subscribe('seed', function(response) {
             console.log('channel-seed', response);
             var cleaned = sanitizeResponse(response);
             if (cleaned['ecosystem'] === WallscopeID)
-                Unity.CallCropSeeder(cleaned['species'])
+                Unity.CallCropSeeder(cleaned['species']);
         })
 
         nutella.net.subscribe('herbicide', function(response) {
             console.log('channel-herbicide', response);
             var cleaned = sanitizeResponse(response);
             if (cleaned['ecosystem'] === WallscopeID)
-                Unity.CallCropDuster(cleaned['species'])
+                Unity.CallCropDuster(cleaned['species']);
         })
 
         nutella.net.subscribe('colonize', function(response) {
             console.log('channel-colonize', response);
             var cleaned = sanitizeResponse(response);
             if (cleaned['ecosystem'] === WallscopeID)
-                Unity.PlaceColony(cleaned['species'])
+                Unity.PlaceColony(cleaned['species']);
         })
 
         nutella.net.subscribe('trap', function(response) {
@@ -281,7 +281,7 @@ var Unity = {
     Scope_Ping: function(message) {
         console.log("Javascript got the Scope_Ping:", message)
         unity3d.getUnity().SendMessage("Habitat_Events", "Scope_Ping", message)
-    }
+    },
 
 
     // param packaged is a string containing the critter ID and count
