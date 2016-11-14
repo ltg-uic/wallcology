@@ -213,7 +213,7 @@ var TellJs = {
         nutella.net.subscribe('scope_ping', function(response) {
             var cleaned = sanitizeResponse(response);
             console.log('scope_ping', cleaned);
-            Unity.(cleaned['value'])
+            Unity.Scope_Ping(cleaned['value'])
         })
 
         nutella.net.subscribe('thermostat', function(response) {
