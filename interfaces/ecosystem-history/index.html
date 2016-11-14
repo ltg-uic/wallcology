@@ -190,10 +190,10 @@
 
 // limit starting date. very hacky
 
-		if (sm == 11 && sd < 9) {
-			sd = 9;
-			document.getElementById('startDay').selectedIndex = 8;
-		}
+		// if (sm == 11 && sd < 9) {
+		// 	sd = 9;
+		// 	document.getElementById('startDay').selectedIndex = 8;
+		// }
 
 
 		// var sy = document.getElementById('startYear').value;
@@ -289,7 +289,7 @@
 					for (var k=0; k<bioticActions[i].length; k++) {
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
-						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset)-5, HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
+						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset)-10, HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
 						      var action = bioticActions[i][k].action;
 						      if (action == 'herbicide' || action == 'trap') color='red'; else color='SpringGreen';
 						      ctx.fillStyle = color;
@@ -316,8 +316,8 @@
 					      	ctx.strokeStyle = 'white';
 						 };
 					} else {
-						var tod = 75/howManyDays * .45;
-						if (sm != 11 || sd != 9 || j>tod){
+						var tod = 75/howManyDays * .4;
+						if (true || sm != 11 || sd != 9 || j>tod){
 							ctx.moveTo(xOffset + j*xUnit, HEIGHT - yOffset);
 							ctx.lineTo(xOffset + j*xUnit, HEIGHT - (yOffset + fudge(yUnit*response.biotic[j][i])));
 						}
