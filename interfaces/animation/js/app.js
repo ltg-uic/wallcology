@@ -199,7 +199,7 @@ function UpdatePopulations(Biotic) {
 var TellJs = {
 
     ActivateWallScope: function() { // Allows Unity to tell us its ready
-        console.log("TellJs.ActivateWallScope:  Unity is READY!! WOOOOOO");
+        console.log("TellJs.ActivateWallScope:  Unity is READY!! FUUUUUCCKKKK YOOOOUUUUU");
 
         // Make an Immediate request for the last state. This will let us update
         // the wallscope to its previous state should we suffer a crash.
@@ -217,12 +217,12 @@ var TellJs = {
             console.log("message" + message);
         });
 
-        nutella.net.subscribe('scope_ping', function(response, from) {
-            console.log("01: Javascript got the Scope_Ping:", response)
-            // var cleaned = sanitizeResponse(response);
-            console.log('scope_ping', response);
-            Unity.Scope_Ping(response)
-        })
+        // nutella.net.subscribe('scope_ping', function(response, from) {
+        //     console.log("01: Javascript got the Scope_Ping:", response)
+        //     // var cleaned = sanitizeResponse(response);
+        //     console.log('scope_ping', response);
+        //     Unity.Scope_Ping(response)
+        // })
         console.log("Just subscribed to scope_ping");
 
         nutella.net.subscribe('thermostat', function(response) {
