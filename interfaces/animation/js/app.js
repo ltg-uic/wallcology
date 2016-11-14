@@ -213,7 +213,10 @@ var TellJs = {
     SubscribeToEventsChannel: function() {
         console.log("TellJs.SubscribeToEventsChannel was called from Unity!!");
 
-        // nutella.net.subscribe( 'state-update', function(response) {}
+        nutella.net.subscribe('scope_ping', function (message, from) {
+            console.log("message" + message);
+        });
+
         nutella.net.subscribe('scope_ping', function(response, from) {
             console.log("01: Javascript got the Scope_Ping:", response)
             // var cleaned = sanitizeResponse(response);
