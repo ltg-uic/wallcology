@@ -1,10 +1,10 @@
 //WALLCOLOGY FOOD WEB
 function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = true;
+    var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161114-2140";
+    var versionID = "20161114-2240";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -29,14 +29,14 @@ function FoodWeb(){
     //setup objects
     var version;
     var species = [
-        {name:"species_00", width:50, height:50}, {name:"species_01", width:50, height:50}, 
-        {name:"species_02", width:50, height:50}, {name:"species_03", width:50, height:50},
-        {name:"species_04", width:50, height:50}, {name:"species_05", width:50, height:50}, 
-        {name:"species_06", width:50, height:50}, {name:"species_07", width:50, height:50},
-        {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
-        {name:"species_10", width:50, height:50}]; 
+        {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
+        {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
+        {name:"species_04", width:40, height:40}, {name:"species_05", width:40, height:40}, 
+        {name:"species_06", width:40, height:40}, {name:"species_07", width:40, height:40},
+        {name:"species_08", width:40, height:40}, {name:"species_09", width:40, height:40}, 
+        {name:"species_10", width:40, height:40}]; 
     var fakeSpecies;    //fake species created for adding arrows, so that lines have a target
-    var speciesSize = 50;
+    var speciesSize = 40;
     var speciesMargin = 30;
     var speciesSpacing = 8;
     var palette;
