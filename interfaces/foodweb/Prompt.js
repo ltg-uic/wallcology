@@ -154,15 +154,6 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		}
 		*/
 	}
-	
-	this.setConnectionPrompt = function(){
-
-		if ( this.level ){
-			this.message = promptsList[ this.level-1 ].connection;	
-		} else {
-			this.message = "Error";
-		}
-	}
 	this.draw = function() {
 		this.ctx.shadowBlur=0;
 		this.ctx.shadowOffsetX = 0;
@@ -171,8 +162,9 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		this.ctx.textAlign = "center";//"left";
 		this.ctx.textBaseline = "top";
 		this.ctx.fillStyle = textColour;
-		//wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
-		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 16 );
+		this.ctx.fillText(this.message, this.x, this.y);
+		// wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
+		// drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 16 );
 	}
 }
 Prompt.prototype = new EventDispatcher();

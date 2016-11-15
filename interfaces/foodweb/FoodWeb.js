@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161020-1210";
+    var versionID = "20161114-2240";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -28,16 +28,15 @@ function FoodWeb(){
 
     //setup objects
     var version;
-    // var iconsUrl = "http://ltg.cs.uic.edu/WC/icons/"
     var species = [
-        {name:"species_00", width:50, height:50}, {name:"species_01", width:50, height:50}, 
-        {name:"species_02", width:50, height:50}, {name:"species_03", width:50, height:50},
-        {name:"species_04", width:50, height:50}, {name:"species_05", width:50, height:50}, 
-        {name:"species_06", width:50, height:50}, {name:"species_07", width:50, height:50},
-        {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
-        {name:"species_10", width:50, height:50}]; 
+        {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
+        {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
+        {name:"species_04", width:40, height:40}, {name:"species_05", width:40, height:40}, 
+        {name:"species_06", width:40, height:40}, {name:"species_07", width:40, height:40},
+        {name:"species_08", width:40, height:40}, {name:"species_09", width:40, height:40}, 
+        {name:"species_10", width:40, height:40}]; 
     var fakeSpecies;    //fake species created for adding arrows, so that lines have a target
-    var speciesSize = 50;
+    var speciesSize = 40;
     var speciesMargin = 30;
     var speciesSpacing = 8;
     var palette;
@@ -103,13 +102,11 @@ function FoodWeb(){
         textboxColour = "#56687d";
         shadowColour = "#253240";
         lineColour = "#39b54a";
-        //paletteColour = "#2b394a";
     } else {
         backgroundColour = "#FFFFFF";
         textboxColour = "#FFFFFF";
         shadowColour = "#BFBFBF";
         lineColour = "#22B573";
-        //paletteColour = "#2b394a";
     }
     //resize canvas
     onResizeWindow("init");
@@ -174,6 +171,7 @@ function FoodWeb(){
         ctx = canvas.getContext("2d");
 
         //allow for top wallcology buttons and left margin if mode is not set to "fullscreen"
+        //console.log("fullscreen: "+fullscreen+", canvasWidth: "+canvasWidth+", canvasHeight: "+canvasHeight);
         if ( fullscreen ){
             canvas.width = canvasWidth;
             canvas.height = canvasHeight;
@@ -905,7 +903,8 @@ function FoodWeb(){
                 break;
             default:
                 team = Number(g)+1;
-                label = "";
+                // label = "";
+                label = "Team "+ team;
         }
         return label;
     }
