@@ -169,7 +169,7 @@ function UpdatePopulations(Biotic) {
 
         // Vegetation
         if ( [ 4,5,9,10].includes(species) ) {
-            count = (rawPopulation / 100.0);
+            count = (rawPopulation / 100.0);  // As long as it is not Zero
             Unity.SetVegetationLevel(species, count);
         }
         //Critters
@@ -199,7 +199,7 @@ function UpdatePopulations(Biotic) {
 var TellJs = {
 
     ActivateWallScope: function() { // Allows Unity to tell us its ready
-        console.log("TellJs.ActivateWallScope:  Unity is READY!! FUUUUUCCKKKK YOOOOUUUUU");
+        console.log("TellJs.ActivateWallScope:  Unity is READY!!");
 
         // Make an Immediate request for the last state. This will let us update
         // the wallscope to its previous state should we suffer a crash.
@@ -212,18 +212,6 @@ var TellJs = {
 
     SubscribeToEventsChannel: function() {
         console.log("TellJs.SubscribeToEventsChannel was called from Unity!!");
-
-        nutella.net.subscribe('scope_ping', function (message, from) {
-            console.log("message" + message);
-        });
-
-        // nutella.net.subscribe('scope_ping', function(response, from) {
-        //     console.log("01: Javascript got the Scope_Ping:", response)
-        //     // var cleaned = sanitizeResponse(response);
-        //     console.log('scope_ping', response);
-        //     Unity.Scope_Ping(response)
-        // })
-        console.log("Just subscribed to scope_ping");
 
         nutella.net.subscribe('thermostat', function(response) {
             var cleaned = sanitizeResponse(response);
@@ -295,9 +283,9 @@ var Unity = {
     SetVegetationLevel: function(species, count) {
         var name = '';
         switch(species) {
-            case 4: name = 'V1_amount'; break
+            case 9: name = 'V1_amount'; break
             case 5: name = 'V2_amount'; break
-            case 9: name = 'V3_amount'; break
+            case 4: name = 'V3_amount'; break
             case 10: name = 'V4_amount'; break
         }
         var packaged = name + " " + count.toString();
