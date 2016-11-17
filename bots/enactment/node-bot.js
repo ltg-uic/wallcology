@@ -16,10 +16,11 @@ var COLONIZER_EFFECT = 2.0;
 var TRAP_EFFECT = 0.5;
 var SEED_EFFECT = 2;
 var HERBICIDE_EFFECT = .1;
-var RESOURCE_EXTINCTION_THRESHHOLD = 0.01;
-var ANIMAL_POPULATION_MAXIMUM = 10000;
-var ANIMAL_EXTINCTION_THRESHHOLD = .05;
-var COLONIZE_MINUMUM = .5;
+var RESOURCE_EXTINCTION_THRESHHOLD = 3;
+var ANIMAL_POPULATION_MAXIMUM = 10;
+var ANIMAL_EXTINCTION_THRESHHOLD = .3;
+var COLONIZE_MINUMUM = 2;
+var RESOURCE_MINIMUM = 20;
 
 // the "ot" table specifies the fraction of total habitat that is
 // lost due to occlusion by drywall. so ot.brick[0].left = .25 means
@@ -94,12 +95,12 @@ nutella.net.subscribe('start_simulation', function(interval, from) {
                 });
                 nutella.net.subscribe('wall', function(message, from) { console.log(message);
                     a[message['ecosystem']][message['side']]=message['direction'];
-                    if ([message['direction']] == 'in') { console.log('point 2');
+                    if (message['direction'] == 'in') { console.log('point 2');
                         a[message['ecosystem']]['wood']-=ot['wood'][message['ecosystem']][message['side']];
                         a[message['ecosystem']]['brick']-=ot['brick'][message['ecosystem']][message['side']]; 
                         nutella.net.publish('state_update',{abiotic:a,biotic:b});
                     }
-                    else if ([message['direction']] == 'out') {
+                    else if (message['direction'] == 'out') {
                         a[message['ecosystem']]['wood']+=ot['wood'][message['ecosystem']][message['side']];
                         a[message['ecosystem']]['brick']+=ot['brick'][message['ecosystem']][message['side']];
                         nutella.net.publish('state_update',{abiotic:a,biotic:b});
@@ -111,7 +112,8 @@ nutella.net.subscribe('start_simulation', function(interval, from) {
 
                 nutella.net.subscribe('colonize', function(message, from) {
                     b[message['ecosystem']][message['species']]*=COLONIZER_EFFECT;
-                    if (b[message['ecosystem']][message['species']] == 0) b[message['ecosystem']][message['species']] = COLONIZE_MINUMUM;
+                    if  (b[message['ecosystem']][message['species']] < COLONIZE_MINIMUM) 
+                        b[message['ecosystem']][message['species']] = COLONIZE_MINIMUM; 
                     if (b[message['ecosystem']][message['species']] > ANIMAL_POPULATION_MAXIMUM) b[message['ecosystem']][message['species']] = ANIMAL_POPULATION_MAXIMUM; 
                     nutella.net.publish('state_update',{abiotic:a,biotic:b});
                 });
@@ -124,6 +126,8 @@ nutella.net.subscribe('start_simulation', function(interval, from) {
 
                 nutella.net.subscribe('seed', function(message, from) {
                     b[message['ecosystem']][message['species']]*=SEED_EFFECT;
+                    if  (b[message['ecosystem']][message['species']] < RESOURCE_MINIMUM) 
+                        b[message['ecosystem']][message['species']] = RESOURCE_MINIMUM; 
                     if  (b[message['ecosystem']][message['species']] > 1.0) b[message['ecosystem']][message['species']] = 1.0; 
                     nutella.net.publish('state_update',{abiotic:a,biotic:b});
                });
@@ -153,14 +157,14 @@ function crank () {
     if (RUNNING){
         for (var i=0; i<N_ECOSYSTEMS; i++) {
 
-            // adjust temperatures as needed
+            // // adjust temperatures as needed
 
-            if (a[i]['temperature']+TEMPERATURE_DELTA < a[i]['thermostat']) a[i]['temperature'] += TEMPERATURE_DELTA;
-                else if (a[i]['temperature']-TEMPERATURE_DELTA > a[i]['thermostat']) a[i]['temperature'] -= TEMPERATURE_DELTA;
-            if (a[i]['humidity']+HUMIDITY_DELTA < a[i]['humidistat']) a[i]['humidity'] += HUMIDITY_DELTA;
-                else if (a[i]['humidity']-HUMIDITY_DELTA > a[i]['humidistat']) a[i]['humidity'] -= HUMIDITY_DELTA;
+            // if (a[i]['temperature']+TEMPERATURE_DELTA < a[i]['thermostat']) a[i]['temperature'] += TEMPERATURE_DELTA;
+            //     else if (a[i]['temperature']-TEMPERATURE_DELTA > a[i]['thermostat']) a[i]['temperature'] -= TEMPERATURE_DELTA;
+            // if (a[i]['humidity']+HUMIDITY_DELTA < a[i]['humidistat']) a[i]['humidity'] += HUMIDITY_DELTA;
+            //     else if (a[i]['humidity']-HUMIDITY_DELTA > a[i]['humidistat']) a[i]['humidity'] -= HUMIDITY_DELTA;
 
-            // run the simulation cycle for ecosystem i
+            // // run the simulation cycle for ecosystem i
 
             b[i] = cycleSimulation(m,a[i],b[i]);
         }
