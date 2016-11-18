@@ -63,6 +63,7 @@ nutella.net.handle_requests('running', function(request) {
 
 nutella.net.request('read_population_model','populationModel', function(response){
     m = response;
+        console.log('gets started');
     nutella.net.request('last_state',{}, function(reply){
 
         // unpack the last state
@@ -71,7 +72,6 @@ nutella.net.request('read_population_model','populationModel', function(response
         b = reply['biotic'];
         setInterval(crank, 60*60*1000);
 
-        console.log('gets started');
 
         // subscribe to abiotic controls
 
