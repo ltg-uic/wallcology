@@ -19,7 +19,7 @@ var HERBICIDE_EFFECT = .1;
 var RESOURCE_EXTINCTION_THRESHHOLD = 1;
 var ANIMAL_POPULATION_MAXIMUM = 10;
 var ANIMAL_EXTINCTION_THRESHHOLD = .1;
-var COLONIZE_MINUMUM = 2;
+var COLONIZE_MINIMUM = 2;
 var RESOURCE_MINIMUM = 20;
 
 // the "ot" table specifies the fraction of total habitat that is
