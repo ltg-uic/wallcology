@@ -33,7 +33,7 @@
 	
 	// var activityList = ["naturalist","abiotic experimentalist","biotic experimentalist","modeler","threat analyst","applied ecologist"];
 
-	nutella.net.request('running',{},function(RUNNING){ 
+	nutella.net.request('running',{},function(RUNNING){ alert(RUNNING);
 		if (RUNNING) {
 			document.getElementById('start').disabled = true;
 			document.getElementById('stop').disabled = false;
