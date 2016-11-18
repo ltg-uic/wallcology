@@ -53,7 +53,7 @@ var m = {}; // model (constant)
 var a = []; // abiotic states (temperature, humidity, drywall, thermostat, humidistat, wood, brick)
 var b = []; // biotic states (populations)
 
-var RUNNING;
+var RUNNING=false;
 
 
 
