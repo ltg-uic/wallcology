@@ -129,12 +129,13 @@ nutella.net.request('read_population_model','populationModel', function(response
         });
 
         nutella.net.subscribe('stop_simulation', function(message, from) {
-            RUNNING = false;
+            RUNNING = false; console.log('stop simulation');
         });
 
         nutella.net.subscribe('start_simulation', function(interval, from) {
             delayBetweenSteps = interval;
             RUNNING = true;
+            console.log('start simulation'); 
         });
 
     });
