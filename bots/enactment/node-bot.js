@@ -71,7 +71,7 @@ nutella.net.request('read_population_model','populationModel', function(response
         b = reply['biotic'];
         setInterval(crank, 60*60*1000);
 
-
+        console.log('gets started');
 
         // subscribe to abiotic controls
 
@@ -133,9 +133,9 @@ nutella.net.request('read_population_model','populationModel', function(response
         });
 
         nutella.net.subscribe('start_simulation', function(interval, from) {
+            console.log('start simulation'); 
             delayBetweenSteps = interval;
             RUNNING = true;
-            console.log('start simulation'); 
         });
 
     });
