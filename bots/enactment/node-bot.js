@@ -56,7 +56,9 @@ var b = []; // biotic states (populations)
 var RUNNING=false;
 
 
-
+nutella.net.handle_requests('running', function(request) {
+    return RUNNING;
+});
 
 
 nutella.net.request('read_population_model','populationModel', function(response){
@@ -67,15 +69,9 @@ nutella.net.request('read_population_model','populationModel', function(response
 
         a = reply['abiotic'];
         b = reply['biotic'];
-        RUNNING = true;
-        crank();
-        RUNNING = false;
         setInterval(crank, 60*60*1000);
 
 
-        nutella.net.handle_requests('running', function(request) {
-            return RUNNING;
-        });
 
         // subscribe to abiotic controls
 
