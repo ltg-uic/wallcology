@@ -61,10 +61,11 @@ nutella.net.handle_requests('running', function(request) {
 });
 
 
-nutella.net.request('read_population_model','populationModel', function(response){
+nutella.net.request('read_population_model','populationModel', function(response, from){
     m = response;
         console.log('gets started');
-    nutella.net.request('last_state',{}, function(reply){
+    nutella.net.request('last_state',{}, function(reply, from){
+        console.log('gets last state');
 
         // unpack the last state
 
