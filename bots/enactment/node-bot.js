@@ -122,7 +122,7 @@ nutella.net.request('read_population_model','populationModel', function(response
             b[message['ecosystem']][message['species']]*=SEED_EFFECT;
             if  (b[message['ecosystem']][message['species']] < RESOURCE_MINIMUM) 
                 b[message['ecosystem']][message['species']] = RESOURCE_MINIMUM; 
-            if  (b[message['ecosystem']][message['species']] > 1.0) b[message['ecosystem']][message['species']] = 1.0; 
+            if  (b[message['ecosystem']][message['species']] > 100) b[message['ecosystem']][message['species']] = 100; 
             nutella.net.publish('state_update',{abiotic:a,biotic:b});
        });
 
