@@ -137,6 +137,7 @@ nutella.net.request('read_population_model','populationModel', function(response
             console.log('start simulation'); 
             delayBetweenSteps = interval;
             RUNNING = true;
+            crank();
         });
 
     });
