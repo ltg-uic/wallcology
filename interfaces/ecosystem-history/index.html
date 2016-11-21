@@ -144,7 +144,7 @@
 	updateGraphs();
 
 	nutella.net.subscribe('state_update', function(message, from) {
-		location.reload();
+		updateGraphs();
 	});
 
 	setInterval(ping, 5*60*1000); //ping every five minutes
@@ -166,7 +166,7 @@
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
-			for (var i=1; i<message.length; i++) { alert('got here');
+			for (var i=0; i<message.length; i++) { 
 				if (message[i].species >0) {
 					var last = bioticActions[message[i].species].length;
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
@@ -174,7 +174,7 @@
 			}
 			abioticActions = []; // array of biotic actions, one for each species
 			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
-				for (var i=1; i<message.length; i++) {
+				for (var i=0; i<message.length; i++) {
 					abioticActions.push(message[i]);
 				}
 				query();
@@ -287,8 +287,8 @@
 
 				// draw the dots reflecting biotic actions
 
-				if (i!=11) {if (i==0) alert ('a. ' + bioticActions[i].length);
-					for (var k=0; k<bioticActions[i].length; k++) {if (i==0) alert (bioticActions[i].length);
+				if (i!=11) {
+					for (var k=0; k<bioticActions[i].length; k++) {
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
 						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset)-5, HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
