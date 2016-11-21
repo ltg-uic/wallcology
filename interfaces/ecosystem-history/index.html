@@ -170,7 +170,8 @@
 			for (var i=0; i<message.length; i++) { 
 				console.log('i ' + i);
 				console.log('message[i].species ' + message[i].species);
-				if (!(message[i].species === null) && message[i].species != '' && message[i].species >= 0) {
+				if (message[i].species === null) || message[i].species != '') message[i].species = 0;
+				if (message[i].species >= 0) {
 					var last = bioticActions[message[i].species].length;
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
 				}
