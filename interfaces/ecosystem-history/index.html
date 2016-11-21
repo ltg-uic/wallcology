@@ -144,7 +144,7 @@
 	updateGraphs();
 
 	nutella.net.subscribe('state_update', function(message, from) {
-		updateGraphs();
+		location.reload();
 	});
 
 	setInterval(ping, 5*60*1000); //ping every five minutes
@@ -166,7 +166,7 @@
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
-			for (var i=1; i<message.length; i++) {
+			for (var i=1; i<message.length; i++) { alert('got here');
 				if (message[i].species >0) {
 					var last = bioticActions[message[i].species].length;
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
