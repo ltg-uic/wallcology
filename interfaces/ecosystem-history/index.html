@@ -285,8 +285,10 @@
 					ctx.stroke();
 				}
 
-				if (i!=11) {
-					for (var k=0; k<bioticActions[i].length; k++) {
+				// draw the dots reflecting biotic actions
+
+				if (i!=11) {if (i==0) alert ('a. ' + bioticActions[i].length);
+					for (var k=0; k<bioticActions[i].length; k++) {if (i==0) alert (bioticActions[i].length);
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
 						      ctx.arc(xOffset+(bioticActions[i][k].timestamp-lower)/(upper-lower)*(WIDTH - 2*xOffset)-5, HEIGHT-yOffset, 3, 0, 2 * Math.PI, false);
