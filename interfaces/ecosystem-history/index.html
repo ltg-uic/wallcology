@@ -167,10 +167,8 @@
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
 			for (var i=0; i<message.length; i++) { 
-				if (message[i].species >0) {
-					var last = bioticActions[message[i].species].length;
-					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
-				}
+				var last = bioticActions[message[i].species].length;
+				bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
 			}
 			abioticActions = []; // array of biotic actions, one for each species
 			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
