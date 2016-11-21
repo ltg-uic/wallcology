@@ -172,6 +172,7 @@
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
 				}
 			}
+			alert ('got here');
 			abioticActions = []; // array of biotic actions, one for each species
 			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
 				for (var i=0; i<message.length; i++) {
@@ -287,7 +288,7 @@
 
 				// draw the dots reflecting biotic actions
 
-				if (i!=11) { if (ecosystem==0) alert (bioticActions[i].length);
+				if (i!=11) { 
 					for (var k=0; k<bioticActions[i].length; k++) {
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
