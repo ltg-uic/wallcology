@@ -52,7 +52,7 @@
 	}
 
 	function startSimulation() {
-		var i = document.getElementById('interval').value;
+		var i = 10 * 1000;
 		if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
 		if (i<1) {alert('Interval must be a positive integer'); return;}
 		nutella.net.publish('start_simulation',i);
