@@ -12,15 +12,16 @@ nutella.setResourceId('my_resource_id');
 var N_ECOSYSTEMS = 5;
 var TEMPERATURE_DELTA;
 var HUMIDITY_DELTA;
-var COLONIZER_EFFECT = 4.0;
+var COLONIZER_EFFECT = 5.0;
 var TRAP_EFFECT = 0.2;
-var SEED_EFFECT = 3;
-var HERBICIDE_EFFECT = .1;
+var SEED_EFFECT = 5;
+var HERBICIDE_EFFECT = .2;
 var RESOURCE_EXTINCTION_THRESHHOLD = 1;
 var ANIMAL_POPULATION_MAXIMUM = 10;
 var ANIMAL_EXTINCTION_THRESHHOLD = .1;
 var COLONIZE_MINIMUM = 2;
 var RESOURCE_MINIMUM = 20;
+var RESOURCE_MAXIMUM = 100;
 
 // the "ot" table specifies the fraction of total habitat that is
 // lost due to occlusion by drywall. so ot.brick[0].left = .25 means
@@ -60,10 +61,11 @@ nutella.net.handle_requests('running', function(request) {
     return RUNNING;
 });
 
-
-nutella.net.request('read_population_model','populationModel', function(response, from){
+console.log('got at least here'); setTimeout(all,5000);
+function all() {
+    nutella.net.request('read_population_model',{}, function(response, from){
+    console.log('gets started');
     m = response;
-        console.log('gets started');
     nutella.net.request('last_state',{}, function(reply, from){
         console.log('gets last state');
 
@@ -143,6 +145,7 @@ nutella.net.request('read_population_model','populationModel', function(response
     });
 
 });
+};
 
 
 
@@ -224,7 +227,7 @@ function cycleSimulation(Model,Environment,Populations) {
         for (var k = 0; k < M('community','herbivores').length; k++) 
                 sum2 += ((M('a',i,k) * P('herbivores',k)) / (1 + M('q',k) * P('herbivores',k)));
         exponent = (M('K',i) - sum1)/(1 + M('K',i)) - sum2;
-        nP('resources',i,P('resources',i) * Math.exp(exponent));
+        nP('resources',i,P('resources',i) * Math.exp(exponent/2));
     }
 
 //  do the herbivores
@@ -237,7 +240,7 @@ function cycleSimulation(Model,Environment,Populations) {
                 sum2 += (M('m',i,k) * P('predators',k)) / (1 + M('s',k) * P('predators',k));
         exponent = M('b',i) * sum1 - M('d',i) - sum2;
         var next_index = M('community', 'resources',i);
-        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/2));
+        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/5));
     }
 
 //  do the predators

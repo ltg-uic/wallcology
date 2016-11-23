@@ -46,8 +46,7 @@ function cycleSimulation(Model,Environment,Populations) {
         for (var k = 0; k < M('community','herbivores').length; k++) 
                 sum2 += ((M('a',i,k) * P('herbivores',k)) / (1 + M('q',k) * P('herbivores',k)));
         exponent = (M('K',i) - sum1)/(1 + M('K',i)) - sum2;
-        nP('resources',i,P('resources',i) * Math.exp(exponent));
-        console.log (P('resources',i) * Math.exp(exponent));
+        nP('resources',i,P('resources',i) * Math.exp(exponent/2));
     }
 
 //  do the herbivores
@@ -60,7 +59,7 @@ function cycleSimulation(Model,Environment,Populations) {
                 sum2 += (M('m',i,k) * P('predators',k)) / (1 + M('s',k) * P('predators',k));
         exponent = M('b',i) * sum1 - M('d',i) - sum2;
         var next_index = M('community', 'resources',i);
-        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/2));
+        nP('herbivores',i,P('herbivores',i) * Math.exp(exponent/5));
     }
 
 //  do the predators

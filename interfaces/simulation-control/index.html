@@ -33,7 +33,7 @@
 	
 	// var activityList = ["naturalist","abiotic experimentalist","biotic experimentalist","modeler","threat analyst","applied ecologist"];
 
-	nutella.net.request('running',{},function(RUNNING){
+	nutella.net.request('running',{},function(RUNNING){ 
 		if (RUNNING) {
 			document.getElementById('start').disabled = true;
 			document.getElementById('stop').disabled = false;
@@ -52,9 +52,9 @@
 	}
 
 	function startSimulation() {
-		var i = 10 * 1000;
-		if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
-		if (i<1) {alert('Interval must be a positive integer'); return;}
+		var i = 2400;
+		// if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
+		// if (i<1) {alert('Interval must be a positive integer'); return;}
 		nutella.net.publish('start_simulation',i);
 		document.getElementById('start').disabled = true;
 		document.getElementById('stop').disabled = false;
