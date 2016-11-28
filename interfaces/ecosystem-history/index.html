@@ -9,6 +9,19 @@
 	<!-- Your CSS here -->
 </head>
 <body>
+	<script src="nutella_lib.js" type="text/javascript"></script>
+	<script src="Chart.min.js"></script>
+	<script>
+	var query_parameters = NUTELLA.parseURLParameters();
+	var ecosystem = query_parameters.INSTANCE;
+	if (ecosystem === undefined) ecosystem = 0;
+	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+	var thisSize = 1;
+	var thisBUS;
+	if (query_parameters.hasOwnProperty('SIZE')) thisSize = query_parameters.SIZE;
+	if (thisSize == 10) thisSize=14;
+	if (query_parameters.hasOwnProperty('BUS')) thisBUS = query_parameters.BUS;
+	</script>
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
 	<!-- Your markup here -->
@@ -58,8 +71,8 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'>
-&nbspCompare<input hidden type=checkbox id='hack' onClick='query();'><br><br>
+	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="inform();">Size</button>
+<input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
 	<table style="border-spacing:0px;padding:0;">
@@ -80,21 +93,25 @@
 			 var myHt = Math.floor((parent.IW-261)/30); 
 			 if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
 			 var myIconHt = Math.floor(myHt*0.8);
+			 myHt=thisSize*myHt;
 
-				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
-				document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
-
+			
+			document.write('<tr ');
+			if (thisSize != 1) document.write('hidden');
+			document.write('><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
+			document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
+			
 
 			for (i=0; i<11; i++) {
-				document.write('<tr><td><img src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
+				document.write('<tr ');
+				if (thisSize != 1 && thisBUS != i) document.write('hidden');
+				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
 		</script>
 	</table>
 
 	<!-- Scripts -->
-	<script src="nutella_lib.js" type="text/javascript"></script>
-	<script src="Chart.min.js"></script>
 
 	<!-- Your scripts here -->
 <!-- 	<canvas id="myChart" width="900" height="50"></canvas>
@@ -130,13 +147,9 @@
 
 
 	// Parse the query parameters
-	var query_parameters = NUTELLA.parseURLParameters();
-	var ecosystem = query_parameters.INSTANCE;
-	if (ecosystem === undefined) ecosystem = 0;
 	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
 
 	// Get an instance of nutella.
-	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
 	var bioticActions = [];
 	var abioticActions = [];
@@ -148,6 +161,15 @@
 	});
 
 	setInterval(ping, 5*60*1000); //ping every five minutes
+
+	function resizeMe(b){
+		if (thisSize == 1) location.href = location.href + "&SIZE=10&BUS=" + b;
+		if (thisSize != 1) location.href = location.href + "&SIZE=1";
+	}
+
+	function inform(){
+		alert("Click on species for enlarged view");
+	}
 
 	function ping () {
 		nutella.net.publish('ping');
@@ -166,15 +188,20 @@
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
-			for (var i=1; i<message.length; i++) {
-				if (message[i].species >0) {
+			console.log('message.length ' + message.length);
+			for (var i=0; i<message.length; i++) { 
+				console.log('i ' + i);
+				console.log('message[i].species ' + message[i].species);
+				if ((message[i].species === null) || (message[i].species == '')) message[i].species = 0;
+				if (message[i].species >= 0) {
 					var last = bioticActions[message[i].species].length;
 					bioticActions[message[i].species][last] = {timestamp: message[i].timestamp, action:message[i].action};
 				}
 			}
+
 			abioticActions = []; // array of biotic actions, one for each species
 			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
-				for (var i=1; i<message.length; i++) {
+				for (var i=0; i<message.length; i++) {
 					abioticActions.push(message[i]);
 				}
 				query();
@@ -239,7 +266,7 @@
 
 		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
 			var c = response.biotic.length;
-			var normalizedMax = [5,2,5,2,100,100,5,5,2,100,100,1];
+			var normalizedMax = [10,5,10,5,100,100,10,10,5,100,100,1];
 			var max=[];
 			var min = 0;
 			var WIDTH = 900;
@@ -285,7 +312,9 @@
 					ctx.stroke();
 				}
 
-				if (i!=11) {
+				// draw the dots reflecting biotic actions
+
+				if (i!=11) { 
 					for (var k=0; k<bioticActions[i].length; k++) {
 						if (bioticActions[i][k].timestamp >= lower && bioticActions[i][k].timestamp <= upper) {
 						      ctx.beginPath();
@@ -337,7 +366,8 @@
 // }
 
 function fudge (x) {
-	return (((gaussian()*.06)+1)*x);
+//	return (((gaussian()*.06)+1)*x);
+return (x);
 
 }
 

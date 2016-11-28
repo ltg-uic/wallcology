@@ -17,8 +17,11 @@ history.load(function(){
     reset_history();
   };
 
-  nutella.net.handle_requests('last_state',function(message, from) {
-    var last_state_index = history['states'].length-1;
+  nutella.net.handle_requests('last_state',function(message, from) {console.log(message);
+    var last_state_index = history['states'].length-1; 
+    // console.log(last_state_index);
+    // console.log(history['states'][last_state_index]['abiotic']);
+    // console.log(history['states'][last_state_index]['biotic']);
     return ({abiotic: history['states'][last_state_index]['abiotic'], biotic: history['states'][last_state_index]['biotic']});
   });
 

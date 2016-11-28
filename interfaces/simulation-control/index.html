@@ -13,10 +13,10 @@
 
 	<!-- Your markup here -->
 	<H2>Simulation control</H2>
-	<button id="start" onclick="startSimulation();" DISABLED>Start simulation</button>
+	<button id="start" onclick="startSimulation();" DISABLED>Restart simulation</button>
 	<button id="stop" onclick="stopSimulation();" DISABLED>Stop simulation</button>
-	<button id="reset" onclick="resetSimulation();" DISABLED>Reset history</button>
-	&nbsp&nbspInterval (seconds): <input type=text id="interval" value="3600" >
+	<button hidden id="reset" onclick="resetSimulation();" DISABLED></button>
+	<input hidden type=text id="interval" value="3600" >
 
 	
 	<!-- Scripts -->
@@ -52,9 +52,9 @@
 	}
 
 	function startSimulation() {
-		var i = document.getElementById('interval').value;
-		if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
-		if (i<1) {alert('Interval must be a positive integer'); return;}
+		var i = 2400;
+		// if (isNaN(i)) {alert('Interval must be a positive integer'); return;}
+		// if (i<1) {alert('Interval must be a positive integer'); return;}
 		nutella.net.publish('start_simulation',i);
 		document.getElementById('start').disabled = true;
 		document.getElementById('stop').disabled = false;

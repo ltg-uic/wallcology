@@ -9,7 +9,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 var model = nutella.persist.getMongoObjectStore('model');
-model.load(function(){
+model.load(function(){ 
     if (!model.hasOwnProperty('data')){
         model['data'] = JSON.parse('{ \
         "community" : { \
@@ -135,30 +135,30 @@ model.load(function(){
             10 \
         ], \
         "minimumPopulation" : [  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000,  \
-            0.0010000000000000 \
+            0.1,  \
+            0.1,  \
+            0.1,  \
+            0.1,  \
+            1,  \
+            1,  \
+            0.1,  \
+            0.1,  \
+            0.1,  \
+            1,  \
+            1 \
         ], \
         "maximumPopulation" : [  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000,  \
-            10000 \
+            10,  \
+            10,  \
+            10,  \
+            10,  \
+            100,  \
+            100,  \
+            10,  \
+            10,  \
+            10,  \
+            100,  \
+            100 \
         ], \
         "r" : [  \
             ".25",  \
@@ -168,7 +168,7 @@ model.load(function(){
         ], \
         "K" : [  \
             "w",  \
-            "w+b",  \
+            "(w+b)",  \
             "b",  \
             "b" \
         ], \
@@ -284,7 +284,9 @@ model.load(function(){
     }
 
     nutella.net.handle_requests('read_population_model', function(message, from) {
-        return(model.data);
+        console.log('got asked for model');
+        var x = model.data;
+        return(x);
     });
     nutella.net.handle_requests('write_population_model', function(message, from) {
         model.data['r']=message['r']; 
@@ -319,7 +321,6 @@ model.load(function(){
         };
         model.save();
     });
-
 });
 
 
