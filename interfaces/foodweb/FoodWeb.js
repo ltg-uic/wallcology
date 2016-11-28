@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161114-2240";
+    var versionID = "20161117-1630";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -896,10 +896,10 @@ function FoodWeb(){
         var team; 
         switch (g){
             case -1:
-                label = "Master Food Web";
+                label = "Master Population Interaction Web";
                 break;
             case "null":
-                label = "";
+                label = "";//"Master Population Interaction Web";
                 break;
             default:
                 team = Number(g)+1;
