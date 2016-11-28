@@ -18,8 +18,9 @@
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 	var thisSize = 1;
 	var thisBUS;
-	if (query_parameters.hasOwnProperty('SIZE')) thisSize=query_parameters.SIZE;
-	if (query_parameters.hasOwnProperty('BUS')) thisBUS=query_parameters.BUS;
+	if (query_parameters.hasOwnProperty('SIZE')) thisSize = query_parameters.SIZE;
+	if (thisSize == 10) thisSize=14;
+	if (query_parameters.hasOwnProperty('BUS')) thisBUS = query_parameters.BUS;
 	</script>
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
@@ -70,7 +71,7 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="resizeMe(1);">Size</button>
+	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="inform();">Size</button>
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
@@ -96,14 +97,14 @@
 
 			
 			document.write('<tr ');
-			if (thisSize == 10) document.write('hidden');
+			if (thisSize != 1) document.write('hidden');
 			document.write('><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
 			document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
 			
 
 			for (i=0; i<11; i++) {
 				document.write('<tr ');
-				if (thisSize == 10 && thisBUS != i) document.write('hidden');
+				if (thisSize != 1 && thisBUS != i) document.write('hidden');
 				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
@@ -163,7 +164,11 @@
 
 	function resizeMe(b){
 		if (thisSize == 1) location.href = location.href + "&SIZE=10&BUS=" + b;
-		if (thisSize == 10) location.href = location.href + "&SIZE=1";
+		if (thisSize != 1) location.href = location.href + "&SIZE=1";
+	}
+
+	function inform(){
+		alert("Click on species for enlarged view");
 	}
 
 	function ping () {
