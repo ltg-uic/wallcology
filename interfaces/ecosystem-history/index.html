@@ -17,7 +17,9 @@
 	if (ecosystem === undefined) ecosystem = 0;
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 	var thisSize = 1;
+	var thisBUS;
 	if (query_parameters.hasOwnProperty('SIZE')) thisSize=query_parameters.SIZE;
+	if (query_parameters.hasOwnProperty('BUS')) thisBUS=query_parameters.BUS;
 	</script>
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
 
@@ -68,7 +70,7 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="resizeMe();">Size</button>
+	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="resizeMe(1);">Size</button>
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
@@ -92,12 +94,17 @@
 			 var myIconHt = Math.floor(myHt*0.8);
 			 myHt=thisSize*myHt;
 
-				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
-				document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
-
+			
+			document.write('<tr ');
+			if (thisSize == 10) document.write('hidden');
+			document.write('><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
+			document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
+			
 
 			for (i=0; i<11; i++) {
-				document.write('<tr><td><img src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
+				document.write('<tr ');
+				if (thisSize == 10 && thisBUS != i) document.write('hidden');
+				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
 		</script>
@@ -154,9 +161,9 @@
 
 	setInterval(ping, 5*60*1000); //ping every five minutes
 
-	function resizeMe(){
-		if (thisSize == 1) location.href += "&SIZE=10";
-		if (thisSize == 10) location.href += "&SIZE=1";
+	function resizeMe(b){
+		if (thisSize == 1) location.href = location.href + "&SIZE=10&BUS=" + b;
+		if (thisSize == 10) location.href = location.href + "&SIZE=1";
 	}
 
 	function ping () {
