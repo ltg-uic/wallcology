@@ -89,8 +89,8 @@
 
 			 var myHt = Math.floor((parent.IW-261)/30); 
 			 if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
-			 myHt=thisSize*myHt;
 			 var myIconHt = Math.floor(myHt*0.8);
+			 myHt=thisSize*myHt;
 
 				document.write('<tr><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
 				document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
