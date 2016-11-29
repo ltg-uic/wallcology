@@ -160,6 +160,16 @@ function State_Update_Handler(response) {
     Unity.SetTemperatureText(Abiotic['temperature']);
 }
 
+// k4 = .35 + (t4/100) *.65
+
+// [12:55]
+// k10 = t10/100
+
+// [12:56]
+// k9 = .20 + (t9/100) * .80
+
+// [12:58]
+// k = kyle’s transformed value, t = the raw value tom sends you
 
 function UpdatePopulations(Biotic) {
     // Send messages to Unity
@@ -169,8 +179,21 @@ function UpdatePopulations(Biotic) {
 
         // Vegetation
         if ( [ 4,5,9,10].includes(species) ) {
-            count = (rawPopulation / 100.0);  // As long as it is not Zero
-            Unity.SetVegetationLevel(species, count);
+
+            var newLevel = rawPopulation;
+            if(rawPopulation === 0)
+                newLevel = 0;
+            else {
+                if (species === 10 )
+                    newLevel = (rawPopulation / 100.0)
+                else if (species === 9)
+                    newLevel = 0.20 + (rawPopulation / 100.0) * 0.80
+                else //if (species === 4 || species === 5)
+                    newLevel = 0.35 + (rawPopulation / 100.0) * 0.65
+            }
+            // newLevel = (rawPopulation > 35.0)?
+            // count = (rawPopulation / 100.0);  // As long as it is not Zero
+            Unity.SetVegetationLevel(species, newLevel);
         }
         //Critters
         else {
