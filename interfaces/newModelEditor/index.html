@@ -203,7 +203,9 @@ function clr() {
 }
 
 function df(){
-	for (var i=0; i<11; i++) document.getElementById('init.' + i).value = 1;
+	for (var i=0; i<11; i++) {
+		if (i==4 || i==5 || i==9 || i==10) document.getElementById('init.' + i).value = 20; else document.getElementById('init.' + i).value = 2;
+	}
 }
 
 function prepCycles(){
