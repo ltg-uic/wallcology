@@ -33,7 +33,7 @@ function cycleSimulation(Model,Environment,Populations) {
     function nP(trophicLevel,index,value) {
         var ti = M('community',trophicLevel,index);
         next_population[ti] = value;
-        if (value < M('minimumPopulation',ti)) next_population[ti] = 0;
+        if (value < M('minimumPopulation',ti)/10) next_population[ti] = 0;
 //        if (value > M('maximumPopulation',ti)) next_population[ti] = M('maximumPopulation',ti);
     }
 
