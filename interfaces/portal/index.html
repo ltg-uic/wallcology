@@ -98,6 +98,7 @@ ul.tab li a:focus, .active {
 	});
 
 
+
 	var type = '';
 
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
@@ -106,10 +107,10 @@ ul.tab li a:focus, .active {
 
 
 	nutella.net.request('get_current_run',{},function(message,from){ 
-		if (message == query_parameters.run_id) {
+		if (message == query_parameters.run_id) { alert('1');
 
-			nutella.net.request('roster',{},function(logins, from) { 
-				nutella.net.request('get_species_names',{}, function(message, from){ 
+			nutella.net.request('roster',{},function(logins, from) { alert('2');
+				nutella.net.request('get_species_names',{}, function(message, from){ alert('3');
 					window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 					document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
 					document.write('<TABLE class="center" cellpadding="10">');
