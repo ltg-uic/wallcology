@@ -4,7 +4,7 @@ function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
     var fullscreen = false;
     var app = "modeler";
-    var background = "dark";
+    var background = "light";
     var versionID = "20160921-1000";
     var query_parameters;
     var nutella;
