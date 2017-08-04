@@ -88,7 +88,7 @@ ul.tab li a:focus, .active {
 	
 	// Get an instance of nutella
 
-	alert('0');
+	
 
 	var query_parameters = NUTELLA.parseURLParameters();
 
@@ -109,10 +109,10 @@ ul.tab li a:focus, .active {
 
 
 	nutella.net.request('get_current_run',{},function(message,from){ 
-		if (message == query_parameters.run_id) { alert('1');
+		if (message == query_parameters.run_id) { 
 
-			nutella.net.request('roster',{},function(logins, from) { alert('2');
-				nutella.net.request('get_species_names',{}, function(message, from){ alert('3');
+			nutella.net.request('roster',{},function(logins, from) { 
+				nutella.net.request('get_species_names',{}, function(message, from){ 
 					window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 					document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
 					document.write('<TABLE class="center" cellpadding="10">');
