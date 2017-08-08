@@ -43,6 +43,10 @@ nutella.app.net.handle_requests_on_run('guest','get_current_run', lambda do |req
                                                 reply = currentRun ['class']
                                                 reply
                                                end)
+nutella.app.net.handle_requests_on_run('filetest','get_current_run', lambda do |request, from|
+                                                reply = currentRun ['class']
+                                                reply
+                                               end)
 
 
 nutella.app.net.subscribe_to_run('default','set_current_run', lambda do |request, from|
@@ -62,6 +66,9 @@ nutella.app.net.subscribe_to_run('6BM','set_current_run', lambda do |request, fr
                                                end)
 
 nutella.app.net.subscribe_to_run('guest','set_current_run', lambda do |request, from|
+                                                currentRun ['class'] = request
+                                               end)
+nutella.app.net.subscribe_to_run('filetest','set_current_run', lambda do |request, from|
                                                 currentRun ['class'] = request
                                                end)
 
