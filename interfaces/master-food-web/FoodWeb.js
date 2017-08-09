@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170808-1430";
+    var versionID = "20170809-1200";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -27,7 +27,7 @@ function FoodWeb(){
     var canY = 0;
 
     //setup objects
-    var version;
+    // var version;
     var species = [
         {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
         {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
@@ -77,8 +77,8 @@ function FoodWeb(){
     
     var saveBtn;
     //var viewOnlyBtn;
-    var savedVersionsNum;   //number of saved versions retrieved from nutella
-    var viewOnly = false;
+    // var savedVersionsNum;   //number of saved versions retrieved from nutella
+    // var viewOnly = false;
     //var input;
     
     //load nutella
@@ -88,15 +88,36 @@ function FoodWeb(){
 
         //subscribe to new claims
         nutella.net.subscribe('new_claim', function(message, from){
+            console.log("new claim: "+message.source+", "+message.destination+", "+message.relationship);
             fwClaims.push( message );
             var d = getDrawing();
             currentDrawing = d.drawing;
+            clearFoodWeb();
             retrieveDrawing(  currentDrawing, fwClaims );
+            setTimeout( draw, 500 );
         });
 
         //subscribe to replaced claims
         nutella.net.subscribe('replace_claim', function(message, from){
-            replaceClaim( message );
+            //replaceClaim( message );
+            console.log("replace claim: "+message.source+", "+message.destination+", "+message.relationship); 
+            var newClaim = message;
+            var claimsIndex;
+            for( var i=0; i<fwClaims.length; i++ ){
+                var testClaim = fwClaims[i];
+                if ( newClaim.instance == testClaim.instance && newClaim.source == testClaim.source && newClaim.destination == testClaim.destination ){
+                    //testClaim = oldClaim
+                    claimsIndex = i;    
+                }
+            }
+            console.log("claimsIndex: "+claimsIndex); 
+            fwClaims.splice( claimsIndex, 1 );
+            fwClaims.push( newClaim );
+            var d = getDrawing();
+            currentDrawing = d.drawing;
+            clearFoodWeb();
+            retrieveDrawing( currentDrawing, fwClaims );
+            setTimeout( draw, 500 );
         });
 
         // portal = query_parameters.TYPE;
@@ -163,7 +184,7 @@ function FoodWeb(){
     //prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
     //prompt.setText( label );
     //displayList.addChild(prompt);
-    setupVersions();
+    //setupVersions();
 
     // Setup modal
     // Get the modal
@@ -181,9 +202,16 @@ function FoodWeb(){
 
     //get latest saved drawing
     if ( mode == "deploy"){
-        nutella.net.request('get_mfw_and_claims', function(message,from){
+        nutella.net.request('get_mfw_and_claims', {}, function(message,from){
+            //console.log("1 message.claims: " + message.claims.length + ", message.mfw: "+isEmpty(message.mfw) );
             fwClaims = message.claims;
-            retrieveDrawing( message.mfw.drawing, message.claims ); 
+            if ( message.mfw.hasOwnProperty('drawing') ){
+                currentDrawing = message.mfw.drawing;
+            } else {
+                currentDrawing = {};
+            }
+            console.log("message.claims: " + message.claims.length + ", message.mfw.isEmpty: "+isEmpty(message.mfw)+", message.mfw.hasOwnProperty: "+message.mfw.hasOwnProperty('drawing') );
+            retrieveDrawing( currentDrawing, fwClaims ); 
             setupEventListeners();
             setTimeout( draw, 1000 );
         });
@@ -303,9 +331,9 @@ function FoodWeb(){
                 trophicBox2.width = preScaledWidth;
                 trophicBox2.y = trophicBox2.height;
             }
-            if( version ){
-                version.updateCanvasSize( preScaledWidth, preScaledHeight);
-            }
+            // if( version ){
+            //     version.updateCanvasSize( preScaledWidth, preScaledHeight);
+            // }
             for (var i=0; i<dialog.length; i++){
                 var d = dialog[i];
                 d.setCanvasWidthHeight( preScaledWidth, preScaledHeight );
@@ -359,6 +387,7 @@ function FoodWeb(){
             displayList.addChild( b );
         }
     }
+    /*
     //get nubmer of saved version from server
     function setupVersions(){
         if ( mode == "deploy"){
@@ -373,6 +402,7 @@ function FoodWeb(){
             version.changeVersion();
         }
     }
+    */
     //Set up toolbar buttons
     function setupButtons(){
         var btnHeight = 48;
@@ -392,30 +422,31 @@ function FoodWeb(){
         //withdraws first claim in the list for testing
         withdrawnClaims.push( openedLine.claims[0] );
     }
+    /*
     function onWithdrawClaim(e){
         if( mode == "deploy" ){
             nutella.net.publish('withdraw_claim', claim);            
         }
         //and other things that need to be done
-    }
+    }*/
     //handles modal close
     function handleModalClose(e){
         //console.log("close modal: span.onclick");
         modal.style.display = "none";
-
         //find withdrawn claim from list of claims and remove it
         if( withdrawnClaims.length > 0 ){
             for( var i = 0; i<withdrawnClaims.length; i++ ){
                 var wc = withdrawnClaims[i];
                 withdrawClaim( wc );
-
                 if( mode == "deploy" ){
                     nutella.net.publish('withdraw_claim', wc );
                 }                
             }
             var d = getDrawing();
             currentDrawing = d.drawing;
+            clearFoodWeb();
             retrieveDrawing(  currentDrawing, fwClaims );
+            setTimeout(draw, 500);
         }
         openedLine = {};
         withdrawnClaims = [];
@@ -518,7 +549,7 @@ function FoodWeb(){
             }
         //}
     }
-    
+    /*
     //direction = "first", "back", "next", or "last"
     function handleVersionChange( direction ){
         //console.log("handleVersionChange: "+direction);
@@ -541,9 +572,9 @@ function FoodWeb(){
         if ( newVersion == (version.saved + 1) ){
             viewOnly = false;
             //console.log("remove viewOnlyBtn: " + containsObject( viewOnlyBtn, displayList.objectList ));
-            /*if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
-                displayList.removeChild( viewOnlyBtn );   
-            }*/
+            // if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
+            //     displayList.removeChild( viewOnlyBtn );   
+            // }
             clearFoodWeb();
             retrieveDrawing( currentDrawing, [
             { instance: 1, source: 3, destination: 0, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }, 
@@ -557,9 +588,9 @@ function FoodWeb(){
             ] );
             data.save("FOODWEB_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         } else {
-            /*if ( !containsObject( viewOnlyBtn, displayList.objectList )){
-                displayList.addChild( viewOnlyBtn );
-            }*/
+            // if ( !containsObject( viewOnlyBtn, displayList.objectList )){
+            //     displayList.addChild( viewOnlyBtn );
+            // }
             //need to save current state before retrieveDrawing
             if( !viewOnly ){
                 var d = getDrawing();
@@ -596,7 +627,7 @@ function FoodWeb(){
             viewOnly = true;
             data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         }
-    }
+    }*/
     
     function handleRedraw(e){
         draw();   
@@ -759,7 +790,7 @@ function FoodWeb(){
         //detectHit 
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
-        
+        /*
         //check to see if version buttons are clicked
         if( detectHit( mx, my, version) ){
             if( detectHit( mx, my, version.nextBtn ) && version.nextBtn.active ){
@@ -780,7 +811,7 @@ function FoodWeb(){
                 version.changeVersion( mx, my, version.firstBtn.name );
             }
         }
-        
+        */
         // clear all the dragging flags
         dragok = false;
         for (var i = 0; i < obj.length; i++) {
@@ -1016,6 +1047,8 @@ function FoodWeb(){
 
     //function returns a set of links based on claims objects retrieved
     function getLinks( c ){
+        //claim.relationship == link.type
+        console.log("claims.length: "+c.length);
         var allClaims = c;
         var links = [];
         var flag = false;   //for checking if link exists for relationship in claim already
@@ -1025,13 +1058,13 @@ function FoodWeb(){
             for ( var j=0; j<links.length; j++ ){
                 var link = links[j];
                 if ( claim.source == link.source && claim.destination == link.destination ){
-                    if( claim.type == link.type ){
+                    if( claim.relationship == link.type ){
                         //a match between two species increase votes
                         link.votes += 1;
-                        //console.log("+votes: "+claim.name );
+                        console.log("+votes: "+claim.source+", "+claim.destination+", "+claim.relationship+", "+link.votes );
                     } else {
                         link.status = "inconflict";
-                        //console.log("conflict: "+claim.name );
+                        console.log("conflict: "+claim.source+", "+claim.destination+", "+claim.relationship+", "+link.status );
                     }
                     link.claims.push( claim );
                     flag = true;
@@ -1043,44 +1076,46 @@ function FoodWeb(){
                     flag = true;
                 } 
             }
+            //console.log("i: "+i+", flag: "+flag);
             if (!flag){
                 //no relationship apriori
                 var sourceName = getSpeciesNameByIndex( claim.source );
                 var destinationName = getSpeciesNameByIndex( claim.destination ); 
-                //console.log("new line: "+sourceName+"-"+destinationName );
-                var newlink = { name: sourceName+"-"+destinationName, source: claim.source, destination: claim.destination, type: claim.type, status: "inprogress", confirmed: false, votes: 1, claims: [claim] };
+                console.log("new line: "+sourceName+"-"+destinationName );
+                var newlink = { name: sourceName+"-"+destinationName, source: claim.source, destination: claim.destination, type: claim.relationship, status: "inprogress", confirmed: false, votes: 1, claims: [claim] };
                 links.push( newlink );
             }
             flag = false;
         }
+        console.log("links: "+links.length);
         return links;
     }
     //checks position of objects, if line is being drawn, o.active = true 
-    function checkPosition(o){
+    function repositionLineObject( o ){
         var xPos = o.x;
         var yPos = o.y;
         var newX = xPos;
-        var newY = yPos; 
-        //check to see if object is active or not
-        if ( o.active ){
-            //check to see if object is still in the palette and is active
-            if ( xPos <= o.px ){
-                newX = getRandomInt( paletteWidth + o.width, preScaledWidth - o.width );
-                //if vegetation limit to bottom trophic strata
-                if( o.name == "species_04" || o.name == "species_05" || o.name == "species_09" || o.name == "species_10" ){
-                    newY = getRandomInt( (trophicBox2.y + trophicBox2.height + o.height), preScaledHeight - o.height );
-                } else {
-                    //not vegetation, limit to middle trophic level
-                    newY = getRandomInt( trophicBox2.y + o.height, trophicBox2.y+trophicBox2.height-o.height );                
-                }
-            } else {}
-            o.x = newX;
-            o.y = newY;
+        var newY = yPos;        
+        //in palette --> randomize pos
+        if ( o.x == o.px && o.y == o.py ){
+            //console.log("random: obj.name: "+o.name+", obj.x: "+o.x+", obj.y: "+o.y);
+            newX = getRandomInt( paletteWidth + o.width, preScaledWidth - o.width );
+            //if vegetation limit to bottom trophic strata
+            if( o.name == "species_04" || o.name == "species_05" || o.name == "species_09" || o.name == "species_10" ){
+                newY = getRandomInt( (trophicBox2.y + trophicBox2.height + o.height), preScaledHeight - o.height );
+            } else {
+                //not vegetation, limit to middle trophic level
+                newY = getRandomInt( trophicBox2.y + o.height, trophicBox2.y+trophicBox2.height-o.height );                
+            }
+        //not in palette --> keep original pos
         } else {
-            //set pos back to palette
-            o.x = o.px;
-            o.y = o.py;
+            //console.log("drawing: obj.name: "+o.name+", obj.x: "+o.x+", obj.y: "+o.y);
+            newX = xPos;
+            newY = yPos;
         }
+        o.x = newX;
+        o.y = newY;
+        //console.log("final: obj.name: "+o.name+", obj.x: "+o.x+", obj.y: "+o.y);
     }
     /**
      * Returns a random integer between min (inclusive) and max (inclusive)
@@ -1126,8 +1161,8 @@ function FoodWeb(){
     }
     function saveFoodWeb(){
         //handle versions
-        savedVersionsNum += 1;
-        version.saveVersion( savedVersionsNum );
+        // savedVersionsNum += 1;
+        // version.saveVersion( savedVersionsNum );
         //save drawing 
         var d = getDrawing();
         //var dataURL = canvas.toDataURL();
@@ -1252,21 +1287,20 @@ function FoodWeb(){
         } else {
             groupBadges = [];
         }
+
         //update xy positions from existing drawing
         for(var i=0; i<nodes.length; i++){
             var n = nodes[i];
-            //var node = { name: o.name, x: o.x, y: o.y, active: o.active };
             for (var k=0; k<obj.length; k++){
                 var o = obj[k];
                 if( n.name == o.name ){
                     o.x = n.x;
                     o.y = n.y;
-                    //initally, set all object.active = false, when there is a line drawn, set it back to true
-                    //o.active = n.active;
                     o.active = false;
                 }
             }
         }
+
         for(var j=0; j<links.length; j++){
             var l = links[j];
             //var link = { name: c.name, source: c.obj1.name, destination: c.obj2.name, type: c.type, votes: c.votes };
@@ -1287,11 +1321,11 @@ function FoodWeb(){
                 if ( o.name == connectSourceName ){
                     o.active = true;
                     obj1 = o;
-                    //if obj is active, has a connection, and on the palette, move it to a random location in the work area
-                    //checkPosition(o);
+                    repositionLineObject(o);
                 } else if ( o.name == connectDestinationName ){
                     o.active = true;
                     obj2 = o; 
+                    repositionLineObject(o);
                 }
             }
             var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, connectStatus, connectConfirmed, data, shadowColour, backgroundColour, lineColours, votes, claims );
@@ -1300,6 +1334,7 @@ function FoodWeb(){
             connections.push( line );
             displayList.addChild( line );
         }
+
         for(var n=0; n<groupBadges.length; n++){
             var gb = groupBadges[n];
             //var node = { name: o.name, x: o.x, y: o.y, active: o.active };
@@ -1311,11 +1346,16 @@ function FoodWeb(){
                 }
             }
         }
-        //if object is not part of a line, send it back to the palette
-        for (var p=0; p<obj.length; p++){
-            var o = obj[p];
-            checkPosition(o);
+        //if object not part of a line and is in the work area, send it back to the palette
+        for (var q=0; q<obj.length; q++){
+            var o = obj[q];
+            if( !o.active && o.x != o.px && o.y != o.py ){
+                console.log(o.name+", active: "+o.active+", not in palette");
+                o.x = o.px;
+                o.y = o.py;
+            }
         }
+        console.log("connections.length: "+connections.length);
     }
     function draw() {
         //clear canvas
@@ -1360,7 +1400,7 @@ function FoodWeb(){
         */
         if ( preScaledHeight != 0 && preScaledWidth != 0 ){
             //console.log("version: " + version);
-            version.draw();
+            //version.draw();
             displayList.draw();
         }
     }
