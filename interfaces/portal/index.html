@@ -106,13 +106,13 @@ ul.tab li a:focus, .active {
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
 	var tempNames = ['Ecologist','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
-
-
 	nutella.net.request('get_current_run',{},function(message,from){ 
 		if (message == query_parameters.run_id) { 
 
 			nutella.net.request('roster',{},function(logins, from) { 
 				nutella.net.request('get_species_names',{}, function(message, from){ 
+
+
 					window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">');
 					document.write('<H2>' + query_parameters.app_id + ' ' + query_parameters.run_id + ' : portals </H2>');
 					document.write('<TABLE class="center" cellpadding="10">');
