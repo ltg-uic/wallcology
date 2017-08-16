@@ -6,7 +6,8 @@
 .color-primary-4 { color: #550000 }
 
 
-html { width:100% ;
+html { 
+    /*width:100% ;*/
     height:100% ;
     overflow:hidden ;
     background-color: rgb(60,81,105);
@@ -17,7 +18,8 @@ html { width:100% ;
 
 textarea { font-size: 80%; }
 
-td { font-size: 100%; color: white; }
+td { font-size: 100%; color: white;    
+  vertical-align:middle;}
 
 button {
     color: black; /* button font color */
@@ -34,7 +36,11 @@ button:disabled {
 
 select {
     -webkit-appearance: none;
-    font-size:100%;
+    padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    font-size:180%;
 }
 
 option {
@@ -43,11 +49,12 @@ option {
 }
 
 table {
-    margin-left: 0;
-    margin-right: 0;
+    border: 10px solid transparent;
+    margin-left: 5;
+    margin-right: 5;
     margin-top: 0;
     margin-bottom: 0;
-    padding: 0;
+    padding: 5;
 }
 
 table.center {
@@ -102,8 +109,8 @@ body {font-family: "Lato", sans-serif;
     padding-top: 20px; /* Location of the box */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
+    width: 90%; /* Full width */
+    height: 90%; /* Full height */
     overflow: auto; /* Enable scroll if needed */
     background-color: rgb(0,0,0); /* Fallback color */
     background-color: rgba(0,0,0,0.9); /* Black w/ opacity */
@@ -146,7 +153,7 @@ body {font-family: "Lato", sans-serif;
 
 .close:hover,
 .close:focus {
-    color: #000;
+    color: #FFF;
     text-decoration: none;
     cursor: pointer;
 }
