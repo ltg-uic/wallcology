@@ -2,7 +2,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
     //tempConnection, obj1, obj2, ctx, 1, connectType, status, confirmed, data, shadowColour, backgroundColour, lineColour, thickness, claims
     this.datalog = d;
     this.name = n;
-    this.type = t;      //eats, competeswith, doesnoteat, doesnotcompetewith
+    this.type = t;      //eats, competes with, does not eat, does not compete with
     this.status = s;    //inprogress, inconflict
     this.confirmed = f; //true, false
     this.ctx = c;
@@ -47,7 +47,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         this.colour = this.colours[0];
     }
     //make line red if it's a counter claim and there's only one claim
-    if( (this.type == "doesnoteat" || this.type == "doesnotcompetewith") && (this.claims.length == 1) ){
+    if( (this.type == "does not eat" || this.type == "does not compete with") && (this.claims.length == 1) ){
         //override line colour to red
         this.colour = this.colours[1];
     }
@@ -530,7 +530,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         //if mouse over connections and "remove arrow" tool is active, set alpha tp 50%
         this.ctx.globalAlpha = this.alpha;
         //drawDoubleArrow(this.ctx,p1,p2,this.sourceBtn,this.destinationBtn);
-        if (this.type == "competeswith" || this.type == "doesnotcompetewith"){
+        if (this.type == "competes with" || this.type == "does not compete with"){
             //draw line
             drawLine(this.ctx,p1,p2);
         } else {
