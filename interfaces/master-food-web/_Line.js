@@ -22,7 +22,6 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
     this.votes = v;
     this.thickness;
     this.lastHit;
-    var arrowRatio = 1;   //for making arrow heads bigger
     //hit object for detecting any mouse clicks in the proximity of the line
     var hit = getHitObject(this.obj1,this.obj2);
     this.x = hit.x;
@@ -34,50 +33,44 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
     var timeout;
     var lastTap = 0;
 
-    //this.EVENT_RELATIONSHIP = "relationship";
     this.EVENT_REDRAW = "redraw";
     this.EVENT_OPENDIALOG = "openDialog";
-    //this.EVENT_CONFIRM = "confirm";
-    
-    if ( this.status == "inconflict" ){
-        this.colour = this.colours[1];
-    } else if ( this.confirmed ) {
-        this.colour = this.colours[2];
-    } else {
-        this.colour = this.colours[0];
-    }
-    //make line red if it's a counter claim and there's only one claim
-    if( (this.type == "doesnoteat" || this.type == "doesnotcompetewith") && (this.claims.length == 1) ){
-        //override line colour to red
-        this.colour = this.colours[1];
-    }
-    //console.log("this.colour: "+this.colour);
-    
-    //translate number of votes to how thick the line is
-    switch (this.votes){
-        case 1:
-            this.thickness = 2;
-            arrowRatio = 1;
-            break;
-        case 2:
-            this.thickness = 4;
-            arrowRatio = 1;
-            break;
-        case 3: 
-            this.thickness = 6;
-            arrowRatio = 1;
-            break;
-        case 4: 
-            this.thickness = 8;
-            arrowRatio = 1.2;
-            break;
-        default:
-            this.thickness = 10;
-            arrowRatio = 1.5;
-    }
-    //console.log("this.votes: "+this.votes+", this.thickness: "+this.thickness);
+
+    init();
 
     //PRIVATE METHODS
+    function init(){
+        if ( this.status == "inconflict" ){
+            this.colour = this.colours[1];
+        } else if ( this.confirmed ) {
+            this.colour = this.colours[2];
+        } else {
+            this.colour = this.colours[0];
+        }
+        //make line red if it's a counter claim and there's only one claim
+        if( (this.type == "doesnoteat" || this.type == "doesnotcompetewith") && (this.claims.length == 1) ){
+            //override line colour to red
+            this.colour = this.colours[1];
+        }
+        //console.log("this.colour: "+this.colour);
+        
+        //translate number of votes to how thick the line is
+        switch (this.votes){
+            case 1:
+                this.thickness = 2;
+                break;
+            case 2:
+                this.thickness = 5;
+                break;
+            case 3: 
+                this.thickness = 8;
+                break;
+            default:
+                this.thickness = 10;
+        }
+        //console.log("this.votes: "+this.votes+", this.thickness: "+this.thickness);
+    }
+
     //larger hit area that encompasses the line and the objects
     function getHitObject(o1,o2){
         var x;
@@ -206,8 +199,8 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         ctx.translate(x,y);
         ctx.rotate(radians);
         ctx.moveTo(0,0);
-        ctx.lineTo(5*arrowRatio,20);
-        ctx.lineTo(-5*arrowRatio,20);
+        ctx.lineTo(5,20);
+        ctx.lineTo(-5,20);
         ctx.closePath();
         ctx.restore();
         ctx.fill();
@@ -228,6 +221,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
     }
     function drawSingleArrow(ctx,p1,p2){
         //determine new p2 point so arrowhead won't overlap
+        //var p3 = getPoint(p2,p1,19.3649)
         var p3 = getPoint(p2,p1,19.3649)
         // draw the line
         ctx.shadowBlur=4;
@@ -237,13 +231,28 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         ctx.strokeStyle = this.colour;
         ctx.beginPath();
         ctx.moveTo(p1.x,p1.y);
+        //ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y);   //sx and sy = x,y of control point
+        //ctx.lineTo(p2.x,p2.y);
         ctx.lineTo(p3.x,p3.y);
         ctx.stroke();
+
+        //var ang = findAngle(control.x, control.y, p2.x, p2.y);
+        //var a = getAngle(p1,p2);
+        //drawCurvedArrowhead(p2.x, p2.y, ang, 20, 10, ctx);
+        //drawArrowhead(ctx,p2.x,p2.y,ang);
         
         // draw the ending arrowhead for straight line
         var endRadians=Math.atan((p2.y-p1.y)/(p2.x-p1.x));
         endRadians+=((p2.x>p1.x)?90:-90)*Math.PI/180;
         drawArrowhead(ctx,p2.x,p2.y,endRadians);
+        
+        /*
+        //p1: moving obj, p2: closest obj
+        // draw the ending arrowhead for curved line
+        var endRadians=Math.atan((p2.y-control.y)/(p2.x-control.x));
+        endRadians+=((p2.x>control.x)?90:-90)*Math.PI/180;
+        drawArrowhead(ctx,p2.x,p2.y,endRadians);
+        */
     }
     function findPerpendicularPoint(p1,p2,l,r,o){
         var lineID = l;
@@ -331,8 +340,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         ctx.globalAlpha = 0.2;
         ctx.fill();
         ctx.globalAlpha = 1;
-    }
-    /*
+    }/*
     //DO NOT NEED THIS FUNCTION
     //draw parallel lines on either side of original line created by p1 and p2
     function drawDoubleArrow(ctx,p1,p2,sb,db){  //sb = sourceBtn, db = destinationBtn
@@ -390,8 +398,7 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
         db.updateXY( plusXY.x-sb.width/2, plusXY.y-sb.height/2 );
         sb.draw();
         db.draw();
-    }
-    */
+    }*/
     /*
     function openDialog(mouseX,mouseY,o){
         //console.log("this: "+o);

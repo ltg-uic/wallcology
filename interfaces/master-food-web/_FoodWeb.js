@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170815-2100";
+    var versionID = "20170815-2000";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -34,21 +34,28 @@ function FoodWeb(){
         {name:"species_04", width:50, height:50}, {name:"species_05", width:50, height:50}, 
         {name:"species_06", width:50, height:50}, {name:"species_07", width:50, height:50},
         {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
-        {name:"species_10", width:50, height:50}];
+        {name:"species_10", width:50, height:50}]; 
+/*    var species = [
+        {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
+        {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
+        {name:"species_04", width:40, height:40}, {name:"species_05", width:40, height:40}, 
+        {name:"species_06", width:40, height:40}, {name:"species_07", width:40, height:40},
+        {name:"species_08", width:40, height:40}, {name:"species_09", width:40, height:40}, 
+        {name:"species_10", width:40, height:40}]; 
 
+*/    //var fakeSpecies;            //fake species created for adding arrows, so that lines have a target
     var speciesSize = 50; //40;
     var speciesMargin = 30;
-    var speciesSpacing = 8;
+    var speciesSpacing = 4;//8;
     var palette;
     var paletteWidth = 80;//70;
     var paletteColour;
     
-    var toolbar;                //not drawn, need it to position version buttons, won't need it now
+    var toolbar;                //not drawn, need it to position version buttons
     var toolbarWidth = 80;      
     var toolbarColour;          // = "#344559";
     var toolbarSpacing = 20;
-    var saveBtn;
-
+    
     var backgroundColour;
     var shadowColour;   
     var textboxColour;
@@ -75,12 +82,8 @@ function FoodWeb(){
     var obj = [];
     var placeholderObj = [];    //greyed out version of species in the palette
     var connections = [];
-
-    //modal variables
-    var openedLine;         //saves line object that has been clicked
-    var openedClaimIndex;   //saves index of claim being viewed
-    var modal, modalText, modalCloseBtn, modalWithdrawBtn, modalNextBtn;
-
+    
+    var saveBtn;
     //var viewOnlyBtn;
     // var savedVersionsNum;   //number of saved versions retrieved from nutella
     // var viewOnly = false;
@@ -126,8 +129,20 @@ function FoodWeb(){
             retrieveDrawing( currentDrawing, fwClaims );
             setTimeout( draw, 500 );
         });
+
+        // portal = query_parameters.TYPE;
+        // instance = query_parameters.INSTANCE;
+
+        /*if( query_parameters.TYPE == "teacher"//"group"//1"4){
+            group = -1;
+        } else {
+            group = query_parameters.INSTANCE //integer;  14051405105
+            
+        }*/
+
     } else {
-        // do nothing
+        // query_parameters = { INSTANCE: "null" };
+        // group = "null";
     }
     //load font
     WebFont.load({
@@ -176,25 +191,23 @@ function FoodWeb(){
     obj = setupSpecies( species );
     setupButtons();
     setupBadges();
-    setupModal();
     //label = getLabel( group );
     //prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
     //prompt.setText( label );
     //displayList.addChild(prompt);
     //setupVersions();
+
     // Setup modal
     // Get the modal
-/*    var openedLine;    //saves line object that has been clicked
+    var openedLine;    //saves line object that has been clicked
     var modal = document.getElementById('modal-layer');
     var modalText = document.getElementsByClassName('modal-p')[0];
     // Get the <span> element that closes the modal
     var modalCloseBtn = document.getElementsByClassName("close")[0];
     var modalWithdrawBtn = document.getElementById('withdraw');
-    var modalNextBtn = document.getElementById('next');
     // When the user clicks on <span> (x), close the modal
     modalCloseBtn.addEventListener('click', handleModalClose, false);
     modalWithdrawBtn.addEventListener('click', handleWithdrawBtn, false);
-    modalNextBtn.addEventListener('click', handleNextBtn, false);*/
 
     data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight); //+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
 
@@ -307,7 +320,15 @@ function FoodWeb(){
             // update the context for the new canvas scale
             ctx.scale( scaleFactor, scaleFactor );
         }
-
+        /*
+        //move modal div
+        //var modalY = preScaledHeight/2 - 40 + "px";
+        var modalX = preScaledWidth/2 - 300/2;  //modal.width/2;
+        var modalY = preScaledHeight/2; //- 100/2; //modal.height/2;
+        //modal.style.top = modalY;
+        document.getElementById("modal-layer").style.left = modalX;
+        document.getElementById("modal-layer").style.top = modalY;
+        */
         if ( init != "init" ){
             if ( prompt ){
                 prompt.x = preScaledWidth/2;
@@ -334,13 +355,6 @@ function FoodWeb(){
                 var btnY = preScaledHeight - btnHeight - 10;
                 saveBtn.x = btnX;
                 saveBtn.y = btnY;
-            }
-            if ( modal ){
-                var modal1 = document.getElementsByClassName('modal')[0];
-                var modal2 = document.getElementsByClassName('modal')[1];
-
-                modal1.style.height = preScaledHeight+'px';
-                modal2.style.height = preScaledHeight+'px';
             }
             // if( version ){
             //     version.updateCanvasSize( preScaledWidth, preScaledHeight);
@@ -398,36 +412,6 @@ function FoodWeb(){
             displayList.addChild( b );
         }
     }
-    //initialize modal dialog 
-    function setupModal(){
-        modal = document.getElementById('modal-layer');
-        modalText = document.getElementsByClassName('modal-p')[0];
-        // Get the <span> element that closes the modal
-        modalCloseBtn = document.getElementsByClassName("close")[0];
-        modalWithdrawBtn = document.getElementById('withdraw');
-        modalNextBtn = document.getElementById('next');
-        // When the user clicks on <span> (x), close the modal
-        modalCloseBtn.addEventListener('click', handleModalClose, false);
-        modalWithdrawBtn.addEventListener('click', handleWithdrawBtn, false);
-        modalNextBtn.addEventListener('click', handleNextBtn, false);
-
-        //var modalHeight = preScaledHeight;
-
-        modal1 = document.getElementsByClassName('modal')[0];
-        modal2 = document.getElementsByClassName('modal')[1];
-
-        modal1.style.height = preScaledHeight+'px';
-        modal2.style.height = preScaledHeight+'px';
-
-        /*var xPos = (preScaledWidth - 500)/2;
-        var yPos = parseInt(preScaledHeight*0.15);
-        var modalBox = document.getElementById('modal-content');
-        
-        modalBox.style.position = "absolute";
-        modalBox.style.left = xPos+'px';
-        modalBox.style.top = yPos+'px';
-        console.log("modal x: "+xPos+", y: "+yPos);*/
-    }
     /*
     //get nubmer of saved version from server
     function setupVersions(){
@@ -466,9 +450,16 @@ function FoodWeb(){
     //EVENTLISTENERS
     function handleWithdrawBtn(e){
         console.log("handleWithdrawBtn: " + openedLine.claims.length );
-        withdrawnClaims.push( openedLine.claims[openedClaimIndex] );
-        //indicate taht it's been added
+        //withdraws first claim in the list for testing
+        withdrawnClaims.push( openedLine.claims[0] );
     }
+    /*
+    function onWithdrawClaim(e){
+        if( mode == "deploy" ){
+            nutella.net.publish('withdraw_claim', claim);            
+        }
+        //and other things that need to be done
+    }*/
     //handles modal close
     function handleModalClose(e){
         //console.log("close modal: span.onclick");
@@ -489,26 +480,82 @@ function FoodWeb(){
             setTimeout(draw, 500);
         }
         openedLine = {};
-        openedClaimIndex = 0;
         withdrawnClaims = [];
     }
     //handle modal open
     function handleModalOpen(e){
         //check to see if openedLine is empty - to run this function only once per click, otherwise, each line object will invoke
         if( isEmpty(openedLine) ){
-            openedLine = e.target; //line clinked
-            openedClaimIndex = 0;
-            updateModalContent( openedLine );
+            var lineClicked = e.target; //line clinked
+            var flag = false;
+
+            for ( var i=0; i < connections.length; i++ ){
+                var c = connections[i];
+                if ( c.name == lineClicked.name ){
+                    for ( var j=0; j<dialog.length; j++ ){
+                        var d = dialog[j];
+                        if ( d.name == lineClicked.name ){
+                            //it already exists
+                            flag = true;
+                        }
+                    }            
+                    
+                }
+            }
+            if (!flag){
+                console.log("claims array length: "+lineClicked.claims.length+", e.target: "+lineClicked.name );
+                openedLine = lineClicked;
+                modalText.innerHTML = "Number of claims: "+lineClicked.claims.length; 
+                modal.style.display = "block";
+            }
         }
     }
-    //handles "view next claim" in opened modal
-    function handleNextBtn(e){
-        console.log("handleNextBtn");
-        openedClaimIndex += 1;
-        if ( openedClaimIndex == openedLine.claims.length ){
-            openedClaimIndex = 0;
+
+    //handles canvas DialogBox
+    function onDialogClose(e){
+        //console.log("onDialogClose");
+        for(var i=0; i<dialog.length; i++){
+            var d = dialog[i];
+            displayList.removeChild( d );
+            //d.removeEventListener(mc.EVENT_REDRAW, handleRedraw);
+            //d.removeEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+            d.removeEventListener(d.EVENT_CLOSE, onDialogClose);
+            d = {};
+            dialog.splice(i, 1);
         }
-        updateModalContent( openedLine );
+        //prompt.setText("When you are ready, click \u2192 to continue.");
+        draw();
+    }
+    //Opens canvas DialogBox
+    function openDialog(e){
+        var lineClicked = e.target; //line clinked
+        var flag = false;
+
+        for ( var i=0; i < connections.length; i++ ){
+            var c = connections[i];
+            if ( c.name == lineClicked.name ){
+                for ( var j=0; j<dialog.length; j++ ){
+                    var d = dialog[j];
+                    if ( d.name == lineClicked.name ){
+                        //it already exists
+                        flag = true;
+                    }
+                }            
+                
+            }
+        }
+        if (!flag){
+            console.log("openDialog array length: "+dialog.length+", e.target: "+lineClicked.name );
+            var db = new DialogBox( lineClicked.name, preScaledHeight, preScaledWidth, ctx, dialogColour );
+            db.addEventListener(db.EVENT_CLOSE, onDialogClose);
+            displayList.addChild(db);
+            dialog.push(db);
+        }
+        //data.save("MC_START","level ;"+level.num+" ;object ;"+species.name+" ;direction ;"+direction);
+        //mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
+        //mc.addEventListener(mc.EVENT_CLICKED, onMultipleChoiceClick);
+        
+        draw();
     }
     function onMouseLeave(e){
         //console.log("onMouseLeave: startX: "+e.clientX+", startY: "+e.clientY);
@@ -918,56 +965,6 @@ function FoodWeb(){
             }
         }
         return activeSpeciesList;
-    }
-    function updateModalContent( lineClicked ){
-        console.log("claims array length: "+lineClicked.claims.length+", e.target: "+lineClicked.name );
-        if ( lineClicked.claims.length < 2 ){
-            //hide next button
-            modalNextBtn.style.display = 'none';
-        } else {
-            //show next button
-            modalNextBtn.style.display = 'inline-block';
-        }
-        //modalText.innerHTML = "Claim " + (openedClaimIndex+1) + " of " + openedLine.claims.length; 
-        modal.style.display = "block";
-
-        document.getElementById('image1').src = validateImage( openedLine.claims[openedClaimIndex].figure1 );
-        document.getElementById('image2').src = validateImage( openedLine.claims[openedClaimIndex].figure2 );
-        document.getElementById('image3').src = validateImage( openedLine.claims[openedClaimIndex].figure3 );
-        document.getElementById('species0').src = openedLine.obj1.name+".png";
-        document.getElementById('species1').src = openedLine.obj2.name+".png";
-        document.getElementById('relationship-p').innerHTML = getRelationshipText( openedLine.claims[openedClaimIndex].relationship );
-        document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;
-        document.getElementById('author-p').innerHTML = "Group "+(parseInt(openedLine.claims[openedClaimIndex].instance)+1);//+"'s claim:";
-        document.getElementById('number-p').innerHTML = (openedClaimIndex+1) + " of " + openedLine.claims.length;
-        //number-p
-    }
-    function validateImage( url ){
-        var imgUrl;
-        if( url == "" ){
-            imgUrl = "qmark.png";
-        } else {
-            imgUrl = url;
-        }
-        return imgUrl;
-    }
-    //parses relationship type to readable text
-    function getRelationshipText( relationship ){
-        var rText;
-        switch ( relationship ){
-            case "doesnoteat":
-                rText = "does not eat";
-                break;
-            case "competeswith":
-                rText = "competes with";
-                break; 
-            case "doesnotcompetewith":
-                rText = "does not compete with";
-                break;
-            default:
-                rText = relationship;
-        }
-        return rText;
     }
     //finds claim, replaces it, and redraws canvas
     function replaceClaim( newClaim ){
@@ -1405,6 +1402,7 @@ function FoodWeb(){
         ctx.fillRect(trophicBox1.x, trophicBox1.y, trophicBox1.width, trophicBox1.height);
         ctx.fillStyle = trophicBox2Colour;
         ctx.fillRect(trophicBox2.x, trophicBox2.y, trophicBox2.width, trophicBox2.height);
+
         /*//showPos
         ctx.font = "24pt Helvetica";
         ctx.shadowBlur=0;
