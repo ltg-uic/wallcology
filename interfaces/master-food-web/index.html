@@ -39,7 +39,6 @@
     td {
         padding: 15px;
         text-align: center;
-        /*vertical-align: middle;*/
     }
     td p{
         display: inline;
@@ -47,7 +46,6 @@
     .modal {
         display: none;  /*Hidden by default */
         position: absolute;
-        /*padding-top: 100px;*/ /* Location of the box */
         left: 0;
         top: 0;
         width: 100%; /* Full width */
@@ -63,7 +61,8 @@
     .content {
         position: relative; 
         left: -50%;
-        /*top: -15%;*/
+        max-height: 700px;
+        overflow: scroll;
         /*border: dotted red 1px;*/
         /*transform: translate(0, -50%);*/
     }
@@ -84,11 +83,12 @@
         transition-duration: 0.4s;
         background-color: #999999;  /* #2b394a; Toolbar colour */
         border: none;
-        color: white;
+        color: #263238; /*white;*/
         padding: 6px 20px;
         text-align: center;
         text-decoration: none;
         font-size: 16px;
+        font-weight: bold;
         margin: 10px 0px 0px 4px;
     }
     .button:hover,
@@ -96,16 +96,19 @@
         background-color: #666666;
         text-decoration: none;
         cursor: pointer;
+        color: white;
     }
     .close {
         -webkit-appearance: none;
         -webkit-border-radius: 0;    
-        /*background-color: #3D5168;*//* #2b394a; /* Toolbar colour */
         display: inline-block;
-        margin: 0;
+        position: absolute;
+        top: 4px;
+        right: 20px;
+/*      margin: 0;
         padding: 0 0 0 10px;
         float: right;
-        border: none;
+*/      border: none;
         text-align: center;
         text-decoration: none;
         font-size: 28px;
@@ -116,6 +119,9 @@
         color: #333333; /* black; */
         text-decoration: none;
         cursor: pointer;
+    }
+    #removeClaim {
+        display: none;
     }
     #img01 {
         max-width: 1000px;
@@ -129,7 +135,8 @@
         margin: 0;
     }
     #author-p {
-        margin: 0 10;
+        margin: 0 0 4px 0;
+        padding: 0;
         font-weight: bold;
     }
     #relationship-p {
@@ -137,20 +144,15 @@
         font-weight: bold;
         font-size: 20px;
     }
-    /*#image-container {
-        top: 30%;
-    }*/
-    #modal-container {
-        top: 15%;
+    #image-close {
+        position: absolute;
+        top: 0px;
+        right: 10px;
     }
     #modal-content {
         background-color: #3D5168;
         border: none;
-        /* margin: 15% auto;   15% from the top and centered */
         padding: 20px;
-        max-height: 700px;
-        overflow: scroll;
-        /*width:  520px;*/      /* 80%; Could be more or less, depending on screen size */
     }
     #image1, #image2, #image3 {
         cursor: pointer;
@@ -227,7 +229,8 @@
             </table>
             <div>
                 <button class="button" id="withdraw">Withdraw Claim</button>
-                <button class="button" id="next">View Next Claim</button>
+                <img id="removeClaim" src="remove.png" height=24 width=24 style="vertical-align:middle"/>
+                <button class="button" id="next">Next Claim</button>
                 <p id="number-p"></p>    
             </div>
         </div>
@@ -237,7 +240,7 @@
     <div id="image-layer" class="modal">
         <div id="image-container" class="container">
             <div id="image-content" class="content">
-                <span class="close">&times;</span>
+                <span id="image-close" class="close">&times;</span>
                 <img src="" id="img01">
             </div>
         </div>
@@ -260,25 +263,16 @@
             var modalImg = document.getElementById("img01");
             modalImg.src = originalImage.src;
 
-            var browserH = parent.document.body.clientHeight;            
-            var padTop = ((browserH-originalImage.naturalHeight)<0 ) ? 0 : Math.floor((browserH - originalImage.naturalHeight) / 2 );
-            //console.log( "image ratio: "+padTop);
-            document.getElementById('image-container').style.top = padTop + "px";
-
-            /*var originalImage = document.getElementById(id); 
-            var blownUpImage = document.getElementById("img01");
-            console.log("full width: "+originalImage.naturalWidth+", height: "+originalImage.naturalHeight);
-            blownUpImage.style.height="auto";
-            if (originalImage.naturalWidth > originalImage.naturalHeight) {
-                blownUpImage.style.width="100%"; 
+            var browserH = parent.document.body.clientHeight - 30;
+            var imgH;
+            //1000 is max image width
+            if ( originalImage.naturalWidth > 1000 ){
+                imgH = Math.floor(1000 * originalImage.naturalHeight / originalImage.naturalWidth);
             } else {
-                var ratio = Math.floor((originalImage.naturalWidth / originalImage.naturalHeight) * 100);
-                blownUpImage.style.width= ratio + "%";
-                console.log("ratio: "+ ratio);
+                imgH = originalImage.naturalHeight;
             }
-            blownUpImage.src = originalImage.src;;
-            document.getElementById('image-layer').style.display = "block";*/
-            //document.getElementById('modal-content').style.display = "none";
+            var padTop = ((browserH-imgH)<0 ) ? 0 : Math.floor((browserH-imgH) / 2 );
+            document.getElementById('image-container').style.top = padTop + "px";
         }
 
     </script>
