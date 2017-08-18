@@ -41,6 +41,16 @@ select {
     padding-right: 10px;
     padding-bottom: 5px;
     font-size:180%;
+    background-color: DarkCyan;
+    color:white;
+    border:none;
+    text-align: center;
+
+}
+
+select:active, select:hover {
+    outline: none | important;
+  outline-color: DarkCyan;
 }
 
 option {

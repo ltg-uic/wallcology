@@ -49,10 +49,10 @@
 			// type = 1; competes with, does not compete with
 			$('#relationship').empty();
 			if (type == 0) {
-				$('#relationship').append('<option>eats</option>');
+				$('#relationship').append('<option>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspeats</option>');
 				$('#relationship').append('<option>does not eat</option>');
 			} else {
-				$('#relationship').append('<option>competes with</option>');
+				$('#relationship').append('<option>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspcompetes with</option>');
 				$('#relationship').append('<option>does not compete with</option>');
 			}
 		}
@@ -114,6 +114,18 @@
 				};
 			// console.log(claim);
 			nutella.net.publish('save_claim',claim);
+			alert("Your claim has been added to the master food web");
+			// zap the form
+			species0 = -1; species1 = -1;
+			document.getElementById('species0').src="qmark.png";
+			document.getElementById('species1').src="qmark.png";
+			document.getElementById('image1').src="qmark.png";
+			document.getElementById('image2').src="qmark.png";
+			document.getElementById('image3').src="qmark.png";
+			document.getElementById('text2').value = "Prompt";
+			$('#relationship').empty();
+				$('#relationship').append('<option>relationship</option>');
+
 		}
 
 		function blowup(id) {
