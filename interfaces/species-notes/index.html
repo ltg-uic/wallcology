@@ -49,10 +49,10 @@
 			// type = 1; competes with, does not compete with
 			$('#relationship').empty();
 			if (type == 0) {
-				$('#relationship').append('<option>&nbsp&nbsp&nbsp&nbsp&nbsp&nbspeats</option>');
+				$('#relationship').append('<option>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;eats</option>');
 				$('#relationship').append('<option>does not eat</option>');
 			} else {
-				$('#relationship').append('<option>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbspcompetes with</option>');
+				$('#relationship').append('<option>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;competes with</option>');
 				$('#relationship').append('<option>does not compete with</option>');
 			}
 		}
@@ -105,7 +105,7 @@
 			var claim = {
 					instance: instance, 
 					source: species0, 
-					relationship: text, 
+					relationship: text.trim(), 
 					destination: species1,
 					reasoning: document.getElementById('text2').value,
 					figure1: document.getElementById('image1').src,
