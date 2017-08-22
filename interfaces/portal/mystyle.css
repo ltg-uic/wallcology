@@ -53,14 +53,37 @@ option {
 }
 
 
-button {
-	color: black; /* button font color */
+/*button {
+	color: black; 
     font-size:100%;
         background-color: lightgray;
         border-radius: 10px;
         font-size: 80%;
+}*/
+button {
+    display: inline-block;
+    -webkit-appearance: none;
+    -webkit-border-radius: 4;
+    border-radius: 4px;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    background-color: #999999;  
+    border: none;
+    color: #263238; /*white;*/
+    padding: 6px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 0.75em;
+    font-weight: bold;
+    margin: 10px 0px 0px 4px;
 }
-
+button:hover,
+button:focus {
+    background-color: #666666;
+    text-decoration: none;
+    cursor: pointer;
+    color: white;
+}
 ul.tab {
     list-style-type: none;
     margin: 0;

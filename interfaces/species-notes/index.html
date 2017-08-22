@@ -6,9 +6,70 @@
   	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
   	<script src="http://code.jquery.com/ui/1.10.4/jquery-ui.min.js"></script>
   	<script src="nutella_lib.js" type="text/javascript"></script>
+  	<script src="webfont.js"></script>
   	<link rel="stylesheet" type="text/css" href="mystyle.css">
-	<script type="text/javascript">
+  	<style>
+  		table {
+  			font-family: 'Roboto', sans-serif;
+  			padding: 0;
+  		}
+  		tr {
+	        background-color: DarkCyan;
+	        font-size: 16px;
+	    }
+	    td {
+	        padding: 15px;
+	        text-align: center;
+	    }
+	    .button {
+	        display: inline-block;
+	        -webkit-appearance: none;
+	        -webkit-border-radius: 4;
+	        border-radius: 4px;
+	        -webkit-transition-duration: 0.4s; /* Safari */
+	        transition-duration: 0.4s;
+	        background-color: #999999;  /* #2b394a; Toolbar colour */
+	        border: none;
+	        color: #263238; /*white;*/
+	        padding: 6px 20px;
+	        text-align: center;
+	        text-decoration: none;
+	        font-size: 16px;
+	        font-weight: bold;
+	        margin: 10px 0px 0px 4px;
+	    }
+	    .button:hover,
+	    .button:focus {
+	        background-color: #666666;
+	        text-decoration: none;
+	        cursor: pointer;
+	        color: white;
+	    }
+  		.caption-p {
+	        font-size: 14px;
+	        font-weight: bold;
+	    }
+	    .table-title {
+	        font-size: 20px;
+	        font-weight: bold;
+	    }
+	    .modal2-content {
+	        background-color: white;
+	    }
+	    #image-close {
+	    	position: absolute;
+	        top: 0px;
+	        right: 10px;
+	        color: #999999;
+	    }
+	    #relationship {
+	    	margin: 0px 20px 0px 20px;
+	        font-weight: bold;
+	        font-size: 20px;
+	    }
 
+  	</style>
+	<script type="text/javascript">
 
 	    var species0 = -1;
 	    var species1 = -1;
@@ -22,9 +83,6 @@
 		if (instance === undefined) instance = 0;
 
 	  	$( function() {
-
-
-
 			// $('body').on('click','img',function(){alert('it works');})
 			$("#species0").bind("click", function() { 
 				build_species_menu(0,0);
@@ -172,13 +230,10 @@
 	</script>
 </head>
 <body>
-
-
-
 	<div id="claim">
 		<table>
 			<tr style="background-color:DarkCyan;">
-				<td align=center style="font-size:150%;">Claim</td>
+				<td align=center class="table-title">Claim</td>
 				<td style="text-align:center;" colspan=3>
 					<img src="qmark.png" id="species0" height=80 width=80 style="vertical-align:middle">
 		    		<select id="relationship"><option>relationship</option></select>
@@ -186,39 +241,37 @@
 		    	</td>
 		    </tr>
 		    <tr style="background-color:DarkCyan;">
-				<td align=center style="font-size:150%;">Evidence</td>
+				<td align=center class="table-title">Evidence</td>
 				<td align=center >
-			    	<img onClick="blowup(this.id);" id="image1" src="qmark.png" height=100 width=100 /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button onClick="document.getElementById('abc1').click()">Figure 1</button>
+			    	<img onClick="blowup(this.id);" id="image1" src="qmark.png" height=100 width=100 /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button class="button" onClick="document.getElementById('abc1').click()">Figure 1</button>
 		    	</td>
 				<td align=center >
-			    	<img onClick="blowup(this.id);" id="image2" src="qmark.png" height=100 width=100 /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button onClick="document.getElementById('abc2').click()">Figure 2</button>
+			    	<img onClick="blowup(this.id);" id="image2" src="qmark.png" height=100 width=100 /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button class="button" onClick="document.getElementById('abc2').click()">Figure 2</button>
 		    	</td>
 				<td align=center >
-			    	<img onClick="blowup(this.id);" id="image3" src="qmark.png" height=100 width=100 /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button onClick="document.getElementById('abc3').click()">Figure 3</button>
+			    	<img onClick="blowup(this.id);" id="image3" src="qmark.png" height=100 width=100 /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button class="button" onClick="document.getElementById('abc3').click()">Figure 3</button>
 		    	</td>
 		    </tr>
 		    <tr style="background-color:DarkCyan;">
-		    	<td align=center style="font-size:150%;">Reasoning</td>
+		    	<td align=center class="table-title">Reasoning</td>
 		    	<td colspan=3>
 		    		<textarea id="text2" rows=20 cols=50>Prompt</textarea><br>
 		    	</td>
 		    </tr>
 		    <tr>
 		    	<td colspan=4 align=right>
-		    		<button onclick="send_it();">Submit claim</button>
+		    		<button class="button" onclick="send_it();">Submit Claim</button>
 		    	</td>
 		    </tr>
 		</table>
 	</div>
-
 		<div id="species_selector" class="modal">
  			<div class="modal-content" id="species_list">				
  			</div>
  		</div>
-
 		<div id="yourModal" class="modal2">
 			<div class="modal2-content" align="center">
-				<span class="close" onclick="document.getElementById('yourModal').style.display='none';">×</span>
+				<span class="close" id="image-close" onclick="document.getElementById('yourModal').style.display='none';">×</span>
 				<img src="" id="img01" >
 			</div>
 		</div>

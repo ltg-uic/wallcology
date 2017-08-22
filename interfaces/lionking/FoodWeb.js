@@ -1,11 +1,11 @@
 //LION KING
 function FoodWeb(){
     //Nutella 
-    var mode = "deploy"; //"develop" or "deploy"
+    var mode = "develop"; //"develop" or "deploy"
     var fullscreen = false;
     var background = "dark"; //light or dark
     var app = "lion king";
-    this.versionID = "20160915-1124"
+    this.versionID = "20170822-0945"
     
     var query_parameters;
     var nutella
@@ -32,8 +32,6 @@ function FoodWeb(){
     var oldHeight;
     var oldWidth2;
     var oldHeight2;
-
-    onResizeWindow("init");
     //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
     //console.log("canvas.height: "+canvas.height+", canvas.width: "+canvas.width);    
     //console.log("cW: "+cW +", cH: "+cH);
@@ -46,9 +44,9 @@ function FoodWeb(){
     var canY = 0;
 
     //Setup display list
-    var offsetX = canvas.offsetLeft;
-    var offsetY = canvas.offsetTop;
-    var displayList = new DisplayList(canvas);
+    var offsetX;
+    var offsetY;
+    var displayList;
     var prompt;
 
     //setup palette and work areas
@@ -59,34 +57,38 @@ function FoodWeb(){
 
     var pbpadding = 0;
     var pbwidth = 150;
-    var pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
-    var pickerHit = {x:0,y:0, width:pbpadding+pickerbox.width, height:canvas.height};
-    var activeHit = {
-        x:pickerbox.x+pickerbox.width, 
-        y:0,
-        width:canvas.width-pickerbox.width-pickerbox.x,
-        height:canvas.height};
+    var pickerbox;
+    var pickerHit;
+    var activeHit;
 
     //setup objects
     var speciesNames = []; //= ["lion", "zebra"];
     var speciesSize = 100;
     var speciesMargin = 25;
     var speciesSpacing = 50;
+/*    var levels = [
+        [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}], 
+        // [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}],
+        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"leopard", height:100, width:100, up: true, down: true}],
+        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"grass", height:100, width:100, up: true, down: true},{name:"tree", height:100, width:125, up: true, down: true}]//,
+        //[{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"leopard", height:100, width:100, up: true, down: true},{name:"giraffe", height:100, width:100, up: true, down: true},{name:"grass", height:100, width:100, up: true, down: true},{name:"tree", height:100, width:125, up: true, down: true}]
+        ];*/
     var levels = [
         [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}], 
-        [{name:"lion", height:100, width:100, up: true, down: false},{name:"zebra", height:100, width:64, up: false, down: false}],
         [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"leopard", height:100, width:100, up: true, down: true}],
-        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"grass", height:100, width:100, up: true, down: true},{name:"tree", height:100, width:125, up: true, down: true}]];
+        [{name:"lion", height:100, width:100, up: true, down: true},{name:"zebra", height:100, width:64, up: true, down: true},{name:"grass", height:100, width:100, up: true, down: true},{name:"tree", height:100, width:125, up: true, down: true}]
+        ];
 
-    var level = new Level(1, ctx, oldHeight);
+    var level;;
     var obj = [];
     var connections = [];
     var graphs = [];
     var plusButtons = [];
     var minusButtons = [];
     var multipleChoice = [];
-    var data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+    var data;
 
+    onResizeWindow("init");
     loadColours( background );
     initDataCollection();
     setupSpecies();
@@ -113,8 +115,8 @@ function FoodWeb(){
     }
     function loadColours( background ){
         if ( background == "dark" ){
-            backgroundColour = "#455260";
-            shadowColour = "#38414A";
+            backgroundColour = "#3d5168";
+            shadowColour = "#253240";
         } else {
             backgroundColour = "#FFFFFF";
             shadowColour = "#BFBFBF";
@@ -187,10 +189,22 @@ function FoodWeb(){
         var tempArr = [];
         var t = type;
         for (var i = 0; i < obj.length; i++) {
-            var tempBtn = new ActionButton(ctx, obj[i].name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
-            tempBtn.index = i;
-            tempArr.push( tempBtn );
-            displayList.addChild(tempBtn);
+            var o = obj[i];
+            if( type == "plus"){
+                if( o.up ){
+                    var tempBtn = new ActionButton(ctx, obj[i].name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
+                    tempBtn.index = i;
+                    tempArr.push( tempBtn );
+                    displayList.addChild(tempBtn);
+                }
+            } else if (type == "minus"){
+                if( o.down ){
+                    var tempBtn = new ActionButton(ctx, obj[i].name, t, buttonColour, shadowColour, backgroundColour, obj[i].width, obj[i].height );    
+                    tempBtn.index = i;
+                    tempArr.push( tempBtn );
+                    displayList.addChild(tempBtn);
+                }
+            }
         }
         return tempArr;
     }
@@ -212,8 +226,18 @@ function FoodWeb(){
     }
     //EVENTLISTENERS
     function onResizeWindow( i ){
-        cW = window.innerWidth;
-        cH = window.innerHeight;
+
+        // cW = window.innerWidth;
+        // cH = window.innerHeight;
+
+        cW = (parent.document.body.clientWidth == 0)? 980 : parent.document.body.clientWidth;
+        cH = (parent.document.body.clientHeight == 0)? 680 : parent.document.body.clientHeight;
+
+        //allow for top wallcology buttons and left margin if mode is set to "deploy"
+        if ( mode == "deploy" || !fullscreen ){
+            cW -= 20;
+            cH -= 30;
+        }
         //console.log("window.innerHeight: "+cH+", window.innerWidth: "+cW);
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
@@ -222,20 +246,10 @@ function FoodWeb(){
         canvas = document.getElementById("ui-layer");
         ctx = canvas.getContext("2d");
 
-        //allow for top wallcology buttons and left margin if mode is set to "deploy"
-        if ( fullscreen ){
-            canvas.width = cW;
-            canvas.height = cH
-            gcanvas.width = cW;
-            gcanvas.height = cH
-        } else if ( !fullscreen ){
-            var distFromTop = 58;
-            var distFromLeft = 40;
-            canvas.width = cW-distFromLeft;
-            canvas.height = cH-distFromTop;
-            gcanvas.width = cW-distFromLeft;
-            gcanvas.height = cH-distFromTop;
-        }
+        canvas.width = cW;
+        canvas.height = cH
+        gcanvas.width = cW;
+        gcanvas.height = cH
 
         //Scaling a canvas with a backing store multipler
         scaleFactor = backingScale(ctx);  
@@ -260,7 +274,20 @@ function FoodWeb(){
             gctx.scale( scaleFactor, scaleFactor );
         }
         //console.log("oldWidth: "+oldWidth+", oldHeight: "+oldHeight);
-        if ( i != "init" ){
+        if ( i == "init" ){
+            offsetX = canvas.offsetLeft;
+            offsetY = canvas.offsetTop;
+            displayList = new DisplayList(canvas);
+            pickerbox = {x:pbpadding,y:pbpadding,width:pbwidth, height:canvas.height-pbpadding*2};
+            pickerHit = {x:0,y:0, width:pbpadding+pickerbox.width, height:canvas.height};
+            activeHit = {
+                x:pickerbox.x+pickerbox.width, 
+                y:0,
+                width:canvas.width-pickerbox.width-pickerbox.x,
+                height:canvas.height};
+            level = new Level(1, ctx, oldHeight);
+            data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+        } else {
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];
                 g.x = oldWidth2 - g.width;
@@ -274,11 +301,9 @@ function FoodWeb(){
                 mc.setCanvasWidthHeight( oldWidth, oldHeight );
             }
             level.updateCanvasHeight( oldHeight );
-            setTimeout(draw, 500);
             data.save("ORIENTATION","window.innerWidth; "+oldWidth+"; window.innerHeight; "+oldHeight);
-        } else {
-            return;
         }
+        setTimeout(draw, 500);
     }
     function onLevelClick(direction){
         var oldlevel = level.num;
@@ -783,7 +808,7 @@ function FoodWeb(){
             //console.log("graphs["+o+"] running: "+ graphsRunning );
             if( graphsRunning ){
                 //write a message to let users know that graphs are running
-                prompt.setText("Populations are in flux. Wait until they are stabilized to continue manipulation.")
+                prompt.setText("Populations are in flux. Wait until they are stabilized to start a new manipulation.")
                 return;
             }
         }
@@ -957,6 +982,9 @@ function FoodWeb(){
         //clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ctx.fillStyle = backgroundColour;
+        ctx.shadowBlur=0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
         ctx.fillRect(pickerbox.x, 0, canvas.width-pickerbox.width, canvas.height);
         //clear area so graphs will show through
         ctx.clearRect(oldWidth2-400,0,400,graphs.length*80);
@@ -987,7 +1015,7 @@ function FoodWeb(){
         ctx.fillStyle = paletteColour; //"#DBDADA";
         ctx.shadowBlur=0;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 0
+        ctx.shadowOffsetY = 0;
         ctx.fillRect(pickerbox.x,pickerbox.y,pickerbox.width,pickerbox.height);
         // Draw level badge
         ctx.globalAlpha = 1;

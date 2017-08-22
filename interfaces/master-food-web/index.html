@@ -116,7 +116,7 @@
     }
     .close:hover,
     .close:focus {
-        color: #333333; /* black; */
+        /* color: #999999; black; */
         text-decoration: none;
         cursor: pointer;
     }
@@ -144,15 +144,22 @@
         font-weight: bold;
         font-size: 20px;
     }
+    #reasoning-p {
+        white-space: pre-wrap;
+    }
     #image-close {
         position: absolute;
         top: 0px;
         right: 10px;
+        color: #999999;
     }
     #modal-content {
         background-color: #3D5168;
         border: none;
         padding: 20px;
+    }
+    #image-content {
+        background-color: white;
     }
     #image1, #image2, #image3 {
         cursor: pointer;
@@ -164,21 +171,21 @@
 <script src="nutella_lib.js" type="text/javascript"></script>
 <script src="webfont.js"></script>
 <script src="EventDispatcher.js"></script>
-<script src="Annotation.js"></script>
+<script src="Species.js"></script>
+<!-- <script src="Annotation.js"></script> -->
 <script src="Badge.js"></script>
 <script src="DataLog.js"></script>
-<script src="DialogBox.js"></script>
+<!-- <script src="DialogBox.js"></script> -->
 <script src="DisplayList.js"></script>
 <script src="GenericButton.js"></script>
-<script src="Help.js"></script>
-<script src="ImageButton.js"></script>
+<!-- <script src="Help.js"></script> -->
+<!-- <script src="ImageButton.js"></script> -->
 <script src="ImageTextButton.js"></script>
 <script src="Line.js"></script>
 <script src="Prompt.js"></script>
-<script src="Species.js"></script>
 <script src="Timestamp.js"></script>
-<script src="ToggleButton.js"></script>
-<script src="Version.js"></script>
+<!-- <script src="ToggleButton.js"></script> -->
+<!-- <script src="Version.js"></script> -->
 <script src="FoodWeb.js"></script>
 <script type="text/javascript">
     window.addEventListener("load", eventWindowLoaded, false);	

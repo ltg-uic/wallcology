@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170818-1330";
+    var versionID = "20170821-2100";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -988,7 +988,10 @@ function FoodWeb(){
         document.getElementById('species0').src = openedLine.obj1.name+".png";
         document.getElementById('species1').src = openedLine.obj2.name+".png";
         document.getElementById('relationship-p').innerHTML = getRelationshipText( openedLine.claims[openedClaimIndex].relationship );
-        document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;
+        
+        //var reasoningText = openedLine.claims[openedClaimIndex].reasoning;
+        //console.log("reasoning: "+reasoningText);
+        document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;//reasoningText.replace("\n\n", "<br />");
         document.getElementById('author-p').innerHTML = "Group "+(parseInt(openedLine.claims[openedClaimIndex].instance)+1);//+"'s claim:";
         document.getElementById('number-p').innerHTML = (openedClaimIndex+1) + " of " + openedLine.claims.length;
         //number-p
@@ -1148,7 +1151,7 @@ function FoodWeb(){
     //function returns a set of links based on claims objects retrieved
     function getLinks( c ){
         //claim.relationship == link.type
-        console.log("claims.length: "+c.length);
+        //console.log("claims.length: "+c.length);
         var allClaims = c;
         var links = [];
         var flag = false;   //for checking if link exists for relationship in claim already
