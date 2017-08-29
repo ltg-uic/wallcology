@@ -22,56 +22,16 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.y = hit.y;
     this.height = hit.height;
     this.width = hit.width;
-    //for recording double clicks and taps
+
+    /*//for recording double clicks and taps
     var timeout;
     var lastTap = 0;
-
+*/
     this.EVENT_RELATIONSHIP = "relationship";
     this.EVENT_REDRAW = "redraw";
 
-/*    switch (this.type){
-        case "eatenby":
-            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            break;
-        case "competition":
-            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            break;
-        case "eats":
-            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            break;
-        case "mutualism":
-            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        case "eatsOrMutualism":
-            this.sourceBtn = new ToggleButton("source", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        case "eatenbyOrCompetition":
-            this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        case "eatenbyOrMutualism":
-            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        case "eatsOrCompetition":
-            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        case this.type == "unknown":
-            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);            
-            break;
-        default:
-            this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-            this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-    }*/
-
     //PRIVATE METHODS
+    //larger hit area that encompasses the line and the objects
     function getHitObject(o1,o2){
         var x;
         var y;
@@ -117,29 +77,6 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         var hit = pnpoly( 4, vx, vy, mouseX, mouseY );
         return hit;
     }
-/*    function getLineType(source, destination){
-        var type = "";
-        if ( source == "minus" && destination == "plus" ){
-            type = "eatenby";
-        } else if ( source == "plus" && destination == "plus" ){
-            type = "mutualism";
-        } else if ( source == "plus" && destination == "minus" ){
-            type = "eats";
-        } else if ( source == "minus" && destination == "minus" ){
-            type = "competition";
-        } else if ( source == "plus" && destination == "question" ){
-            type = "eatsOrMutualism";
-        } else if ( source == "minus" && destination == "question" ){
-            type = "eatenbyOrCompetition";
-        } else if ( source == "question" && destination == "plus" ){
-            type = "eatenbyOrMutualism";
-        } else if ( source == "question" && destination == "minus" ){
-            type = "eatsOrCompetition";
-        } else if ( source == "question" && destination == "question" ){
-            type = "unknown";
-        } 
-        return type;
-    }*/
     /*function hitTest(mouseX, mouseY, to){
         if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
                     && (mouseX >= to.x) && (mouseX <=
@@ -430,9 +367,9 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     }
     //PUBLIC METHODS
     this.onMouseUp = function (mouseX,mouseY,e,o) {
-        var currentTime = new Date().getTime();
-        var tapLength = currentTime - lastTap;
-        clearTimeout(timeout);
+        //var currentTime = new Date().getTime();
+        //var tapLength = currentTime - lastTap;
+        //clearTimeout(timeout);
 
         var p1 = {x:this.x1,y:this.y1};
         var p2 = {x:this.x2,y:this.y2}; 
@@ -440,7 +377,13 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         var isHitTrue = hitTest(mouseX, mouseY, hitArea);
         //console.log("onMouseUp, x: "+mouseX+", y: "+mouseY+", hitArea: "+hitArea.line1.p1.x+", "+hitArea.line1.p1.y+", "+hitArea.line1.p2.x+", "+hitArea.line1.p2.y+", isHitTrue: "+isHitTrue);
 
-        if( isHitTrue ){
+        if (isHitTrue){
+            console.log("toggle relationship");
+            toggleRelationship(o);
+            //this.dispatch(this.EVENT_OPENDIALOG)
+        }
+
+        /*if( isHitTrue ){
             if (tapLength < 500 && tapLength > 0) {
                 console.log("Double tap");
                 toggleRelationship(o);
@@ -457,20 +400,6 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
                 }, 500);
             }
             lastTap = currentTime;
-        }
-
-        /*var hit = "";
-        if( hitTest(mouseX, mouseY, this.sourceBtn) ){
-            this.sourceBtn.onMouseUp(mouseX, mouseY);
-            hit = "source";
-        } else if( hitTest(mouseX, mouseY, this.destinationBtn) ){
-            this.destinationBtn.onMouseUp(mouseX, mouseY);
-            hit = "destination";
-        }
-        this.type = getLineType( this.sourceBtn.symbol, this.destinationBtn.symbol );
-        this.lastHit = hit;
-        if ( hit == "source" || hit == "destination" ){
-            this.datalog.save("FOODWEB_RELATIONSHIP","source ;"+this.obj1.name+" ;destination ;"+this.obj2.name+" ;line type ;"+this.type+" ;clicked ;"+this.lastHit+" ;ss ;"+this.sourceBtn.symbol+" ;ds ;"+this.destinationBtn.symbol);
         }*/
     }
     this.updateAlpha = function( v ){

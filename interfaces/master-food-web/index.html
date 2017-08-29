@@ -61,8 +61,8 @@
     .content {
         position: relative; 
         left: -50%;
-        max-height: 700px;
-        overflow: scroll;
+        /*max-height: 700px;
+        overflow: scroll;*/
         /*border: dotted red 1px;*/
         /*transform: translate(0, -50%);*/
     }
@@ -137,6 +137,7 @@
     #author-p {
         margin: 0 0 4px 0;
         padding: 0;
+        font-size: 20px;
         font-weight: bold;
     }
     #relationship-p {
@@ -146,6 +147,10 @@
     }
     #reasoning-p {
         white-space: pre-wrap;
+    }
+    #reasoning-div{
+        max-height: 300px;
+        overflow: scroll;
     }
     #image-close {
         position: absolute;
@@ -159,7 +164,9 @@
         padding: 20px;
     }
     #image-content {
-        background-color: white;
+        /*background-color: white;*/
+        max-height: 700px;
+        overflow: scroll;
     }
     #image1, #image2, #image3 {
         cursor: pointer;
@@ -230,7 +237,9 @@
                 <tr>
                     <td class="table-title">Reasoning</td>
                     <td colspan=3 style="text-align:left">
-                        <p id="reasoning-p">Some text in the Modal..</p>
+                        <div id="reasoning-div">
+                            <p id="reasoning-p">Some text in the Modal..</p>
+                        </div>
                     </td>
                 </tr>
             </table>

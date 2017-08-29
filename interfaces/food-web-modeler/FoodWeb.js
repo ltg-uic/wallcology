@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "foodwebmodeler";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170809-1600";
+    var versionID = "20170828-2100";
     var query_parameters;
     var nutella;
     var portal;
@@ -32,19 +32,20 @@ function FoodWeb(){
 
     //setup objects
     var version;
+
     var species = [
-        {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
-        {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
-        {name:"species_04", width:40, height:40}, {name:"species_05", width:40, height:40}, 
-        {name:"species_06", width:40, height:40}, {name:"species_07", width:40, height:40},
-        {name:"species_08", width:40, height:40}, {name:"species_09", width:40, height:40}, 
-        {name:"species_10", width:40, height:40}]; 
+        {name:"species_00", width:50, height:50}, {name:"species_01", width:50, height:50}, 
+        {name:"species_02", width:50, height:50}, {name:"species_03", width:50, height:50},
+        {name:"species_04", width:50, height:50}, {name:"species_05", width:50, height:50}, 
+        {name:"species_06", width:50, height:50}, {name:"species_07", width:50, height:50},
+        {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
+        {name:"species_10", width:50, height:50}]; 
     var fakeSpecies;    //fake species created for adding arrows, so that lines have a target
-    var speciesSize = 40;
+    var speciesSize = 50;
     var speciesMargin = 30;
-    var speciesSpacing = 8;
+    var speciesSpacing = 4; //8;
     var palette;
-    var paletteWidth = 70;
+    var paletteWidth = 80;
     var paletteColour = "#2b394a";
     var buttonColour = "#FF5722";
     
@@ -80,7 +81,8 @@ function FoodWeb(){
     //for manipulating population levels
     var plusButtons = [];   //increase population
     var minusButtons = [];  //decrease population
-
+    var clickedBtn;
+    var graphComplete;
     var graphs = [];
     var multipleChoice = [];
     var annotations = [];
@@ -121,14 +123,14 @@ function FoodWeb(){
     });
     //load colours
     if ( background == "dark" ){
-        backgroundColour = "#263238";   //"#303030";   //"#3d5168";
+        backgroundColour = "#3d5168";//"#263238"; original colour   //"#303030";   //"#3d5168";
         textboxColour = "#56687d";
         shadowColour = "#212121";       //"#253240";
         lineColour = "#39b54a";
         lineColours = ["#39b54a", "#FF5722", "#42A5F5"];    //green, red-orange, blue, yellow
         paletteColour = "#1f292e";      //"#2b394a";   //"#212121";      //"#2b394a";
         toolbarColour = "#212121";      //"#344559";
-        dialogColour = "#00BCD4";
+        dialogColour = "#008b8b";//"#00BCD4";   //"#4DD0E1"; //"#26C6DA";//"#00BCD4";
         trophicBox1Colour = "#455A64";  //"#616161";
         trophicBox2Colour = "#37474F";  //"#424242";
     } else {
@@ -205,8 +207,15 @@ function FoodWeb(){
         //formElement.addEventListener('click', handleSubmitText, false);
     }
     function onResizeWindow( init ){
-        canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
-        canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
+        // canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
+        // canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
+        canvasWidth = (parent.document.body.clientWidth == 0)? 980 : parent.document.body.clientWidth;
+        canvasHeight = (parent.document.body.clientHeight == 0)? 680 : parent.document.body.clientHeight;
+
+        if (mode == "deploy" ){
+            canvasWidth -= 20;
+            canvasHeight -= 30;
+        }
         //Canvas for graphs
         gcanvas = document.getElementById("graphs-layer");
         gctx = gcanvas.getContext("2d");
@@ -250,9 +259,6 @@ function FoodWeb(){
             gctx.scale( scaleFactor, scaleFactor );
 
         }
-        //move annotate div
-        //var annotateY = preScaledHeight - 40 + "px";
-        //document.getElementById("annotate-layer").style.top = annotateY;
         if ( init != "init" ){
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];
@@ -270,23 +276,12 @@ function FoodWeb(){
             if ( palette ){
                 palette.height = preScaledHeight;
             }
-            /*
-            if ( addArrowBtn ){
-                var btnX = preScaledWidth-toolbarWidth+11;
-                addArrowBtn.x = btnX;
-                removeArrowBtn.x = btnX;
+            if ( saveBtn ){
+                var btnX = (paletteWidth - btnWidth)/2;
+                var btnY = preScaledHeight - btnHeight - 10;
                 saveBtn.x = btnX;
-                trashBtn.x = btnX;
-                helpBtn.x = btnX;
-                viewOnlyBtn.x = preScaledWidth-toolbarWidth-viewOnlyBtn.width-10;
+                saveBtn.y = btnY;
             }
-            */
-            // if( version ){
-            //     version.updateCanvasSize( preScaledWidth, preScaledHeight);
-            // }
-            // if( helpText ){
-            //     helpText.updateCanvasSize( preScaledWidth, preScaledHeight );
-            // }
             data.save("MODELER_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
         setTimeout(draw, 500);
@@ -383,6 +378,14 @@ function FoodWeb(){
     }
 */
     //EVENTLISTENERS
+    function handleGraphComplete(e){
+        if( !graphComplete ){
+            clickedBtn.stopAnimate();
+            clickedBtn.draw();
+            console.log("graph complete: "+e.target.name );
+        }
+        graphComplete = true;
+    }
     function onMCcontinueClick(e){
         for(var i=0; i<multipleChoice.length; i++){
             var mc = multipleChoice[i];
@@ -815,117 +818,25 @@ function FoodWeb(){
                 for (var j = 0; j < plusButtons.length; j++) {
                     if( detectHit(mx,my,plusButtons[j])){
                         handlePopulationChange( obj[j], j, "plus" );
+                        clickedBtn = plusButtons[j];
+                        plusButtons[j].startAnimate();
+                        graphComplete = false;
                         //setupPopulationChange(obj[j], j, "plus");
                     }
                 }
                 for (var k = 0; k < minusButtons.length; k++) {
                     if( detectHit(mx,my,minusButtons[k])){
                         handlePopulationChange( obj[k], k, "minus" );
+                        clickedBtn = minusButtons[k];
+                        minusButtons[k].startAnimate();
+                        graphComplete = false;
                         //setupPopulationChange(obj[k], k, "minus");
                     }
                 }
             }
         }
+        //var tempConnections = [];
 
-        //if addArrow button is active, add source/destination objects to the array
-        //flag checks if user clicked on species
-        /*
-        if ( addArrowBtn.active && !viewOnly ){
-            var flag = false;
-            for (var j = 0; j < obj.length; j++) {
-                var o = obj[j];
-                //only add source/destination species if it is active (i.e. in work area)
-                if( detectHit( mx, my, o ) && o.active ){
-                    newConnectionObjs.push(o);
-                    flag = true;
-                    //console.log( "addArrowBtn.active, newConnectionObjs.length: " + newConnectionObjs.length );
-                }
-            }
-            //if add arrow is on and user did not click on a species, reset source object and button
-            if ( !flag ){
-                for( var m=0; m<potentialConnections.length;m++){
-                    var c = potentialConnections[m];
-                    displayList.removeChild( c );
-                }
-                potentialConnections = [];
-                newConnectionObjs = [];
-                //toggle add button "off"
-                //addArrowBtn.active = false;
-                //addArrowBtn.drawButton();   
-            }
-        }
-        */
-        var tempConnections = [];
-        //var trashConnections = false;
-        //if removeArrow button is active, remove line if mouse/touch is over line 
-        /*
-        if ( removeArrowBtn.active && !viewOnly ){
-            //console.log("remove line clicked: "+canX+", "+canY);
-            for( var k=0; k<connections.length; k++){
-                var c = connections[k];
-                if ( detectHit( mx, my, c ) ){
-                    tempConnections.push( {connection: c, index:k});
-                    trashConnections = true;
-                }
-            }
-        }
-        if ( trashConnections && !viewOnly ){       
-            if( tempConnections.length < 2 ){
-                //remove connection
-                data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tempConnections[0].connection.name+" ;type ;"+tempConnections[0].connection.type);
-                displayList.removeChild( tempConnections[0].connection );
-                connections.splice( tempConnections[0].index, 1 );
-                removeArrowBtn.drawButton();
-            } else {
-                var dist;
-                for ( var i = 0; i< tempConnections.length; i++ ){
-                    var tc = tempConnections[i];
-                    dist = getDistance( {x:mx, y:my}, {x:tc.connection.x+tc.connection.width/2, y:tc.connection.y+tc.connection.height/2} );
-                    if ( dist < 30 ){
-                        data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tc.connection.name+" ;type ;"+tc.connection.type);
-                        displayList.removeChild( tempConnections[i].connection );
-                        removeItem( connections, tempConnections[i].connection );
-                        //removeItem( connections, t );
-                        //connections.splice( tempConnections[i].index, 1 );
-                        removeArrowBtn.drawButton();
-                    }
-                    //console.log("tempConnections["+i+"]: "+tc.connection.name+", dist: "+dist );
-                }
-            }
-        }
-        tempConnections = [];
-        removeArrowBtn.active = false;
-
-        var tempAnnotation;
-        var tempIndex;
-        var trashAnnotation = false;
-        for (var l = 0; l < annotations.length; l++) {
-            var a = annotations[l];
-            if( a.isDragging ){
-                data.save("FOODWEB_ANNOTATION_MOVE","content ;"+a.name+" ; x;"+a.x+" ;y ;"+a.y+" ; height;"+a.height+" ;width ;"+a.width);
-                if( detectHit( newx, newy, trashBtn )){
-                    tempAnnotation = a;
-                    tempIndex = l;
-                    trashAnnotation = true;
-                    //console.log("delete this annotation");
-                }
-            }
-            a.isDragging = false;
-        }
-        //remove annotation if user moves it to trash button
-        if ( trashAnnotation && !viewOnly ){
-            displayList.removeChild( tempAnnotation );
-            annotations.splice( tempIndex, 1 );
-            data.save("FOODWEB_ANNOTATION_REMOVED","content ;"+tempAnnotation.name+";number of annotations ;"+annotations.length);
-        }
-        trashBtn.active = true;
-
-        //if save button is active, upon mouse click, change it back to inactive
-        if ( saveBtn.active && !viewOnly ){
-            saveBtn.active = false;
-        }
-        */
-        //evalNewConnection();
         evalConnection();        
         evalGraphs();
         resetObjPos();
@@ -1016,7 +927,6 @@ function FoodWeb(){
         }
         return arr;
     }
-    
     //if species is moved from active to palette, find all of the connections connected to it and remove it/them
     function removeConnectionBySpecies( sp ){
         var tempArr = []
@@ -1080,52 +990,6 @@ function FoodWeb(){
             }
         }
     }
-    /*
-    function evalNewConnection(){
-        if( addArrowBtn.active ){
-            if( newConnectionObjs.length >= 2 ){
-                var obj1 = newConnectionObjs[0];
-                var obj2 = newConnectionObjs[1];
-                //if the new objects are the same, return
-                if ( obj1.name == obj2.name ){
-                    newConnectionObjs = [];
-                    displayList.removeChild( potentialConnections[0] );
-                    potentialConnections = [];
-                    newConnectionObjs[0] = obj1;
-                    return;
-                }
-                //if the new objects already have a connection, return
-                for ( var i = 0; i<connections.length; i++ ){
-                    var c = connections[i];
-                    if((c.obj1.name == obj1.name && c.obj2.name == obj2.name) || (c.obj1.name == obj2.name && c.obj2.name == obj1.name)){
-                        console.log("connection already exists");
-                        displayList.removeChild( potentialConnections[0] );
-                        newConnectionObjs = [];
-                        potentialConnections = [];
-                        return;
-                    }
-                }
-                //setup new connection
-                var tempConnection = obj1.name+"-"+obj2.name;
-                var connectType = "eatenby"
-                var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
-                connections.push( line );
-                displayList.addChild( line );
-                data.save("FOODWEB_CONNECTION_ADDED","add arrow tool ;source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
-
-                //turn add arrow buttn off and reset array
-                for(var j=0;j<potentialConnections.length; j++){
-                    displayList.removeChild( potentialConnections[j] );
-                    potentialConnections.splice(j, 1);
-                }
-                potentialConnections = [];
-                newConnectionObjs = [];
-                addArrowBtn.active = false;
-                addArrowBtn.drawButton();
-            }
-        }
-    }
-    */
     function setupMovingConnections( o ){
         //console.log("moving: " + o.name);
         var movingObj = o;
@@ -1235,6 +1099,7 @@ function FoodWeb(){
                     var graph = new BarGraph(gctx, s, preScaledWidth, background );
                     var data = new GraphData();
                     graph.curArr = data.baseline;
+                    graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
                     graphs.push(graph);
                 }
             } else {
@@ -1249,6 +1114,9 @@ function FoodWeb(){
                 }
             }
         }
+        setTimeout( drawGraphs, 1000 );   
+    }
+    function drawGraphs(){
         //clear canvas
         gctx.clearRect(0, 0, gcanvas.width, gcanvas.height);
         //draw graphs
@@ -1256,6 +1124,8 @@ function FoodWeb(){
             graphs[m].drawBarGraph(m);
         }
     }
+/*    //NOT BEING USED
+
     function setupPopulationChange(  species, num, type  ){
         var direction = type; //"plus" or "minus"
         var newdata = new GraphData();
@@ -1278,9 +1148,9 @@ function FoodWeb(){
         //if there's only one species, then change population
         if ( activeObjNum == 1 ){
             if ( type == "plus" ){
-                prompt.setText("What happens to the population of the other shapes if the "+ species.name + " population increases? Drag another shape into the work area.");
+                //prompt.setText("What happens to the population of the other shapes if the "+ species.name + " population increases? Drag another shape into the work area.");
             } else if ( type == "minus" ){
-                prompt.setText("What happens to the population of the other shapes if the " + species.name + " population decreases? Drag another shape into the work area.");
+                //prompt.setText("What happens to the population of the other shapes if the " + species.name + " population decreases? Drag another shape into the work area.");
             }
             for(var k=0; k<graphs.length; k++){
                 var graph = graphs[k];
@@ -1317,6 +1187,7 @@ function FoodWeb(){
                     namesArr.push({name: graph.name, height: graph.iconHeight, width: graph.iconWidth})
                 }
             }
+
             //clear mc first
             for ( var i = 0; i<multipleChoice.length; i++){
                 var mc = multipleChoice[i];                
@@ -1330,6 +1201,7 @@ function FoodWeb(){
 
             //setup multple choice and prompts
             data.save("MODELER_MC_START","object ;"+species.name+" ;direction ;"+direction);
+
             var mc = new MultipleChoice( namesArr, preScaledHeight, preScaledWidth, ctx, species, num, direction, buttonColour, headingText, promptText );
             mc.addEventListener(mc.EVENT_REDRAW, handleRedraw);
             mc.addEventListener(mc.EVENT_CLICKED, onMCrunClick);
@@ -1339,14 +1211,17 @@ function FoodWeb(){
         }
         //set delay to draw 1/2 second from now to load multiple choice items
         setTimeout(draw, 500);
-    }
+    }*/
+    //starts graphs running, turn button blue
     function handlePopulationChange( object, num, type ){
         var direction = type; //"plus" or "minus"
         var data1 = new GraphData();
 
         if( direction == "plus"){
+            console.log(object.name + " population goes up");
             prompt.setText(object.name + " population goes up");    
         } else {
+            console.log(object.name + " population goes down");
             prompt.setText(object.name + " population goes down");
         }
 
@@ -1365,7 +1240,7 @@ function FoodWeb(){
                 //find out relationship between object and graph target, should return
                 //"goes up", "goes down", or "same"
                 var r = getRelationship( object.name , graph.name, direction );
-                //console.log("r: "+ r);
+                console.log( graph.name+": "+ r );
                 var data2 = new GraphData();
                 var dataset;
                 switch (r){
@@ -1448,7 +1323,7 @@ function FoodWeb(){
         } 
         return result;
     }
-        //returns "goes up", "goes down", or "same" or 1, -1, 0
+    //returns "goes up", "goes down", or "same" or 1, -1, 0
     //direction: "plus" or "minus"
     function getRelationship( name1, name2, direction ){
         //var r = [];
@@ -1750,11 +1625,11 @@ function FoodWeb(){
         ctx.shadowBlur=0;
         ctx.shadowOffsetX = 0;
         ctx.shadowOffsetY = 0;
-        ctx.fillStyle = trophicBox1Colour;
+        /*ctx.fillStyle = trophicBox1Colour;
         ctx.fillRect(trophicBox1.x, trophicBox1.y, trophicBox1.width, trophicBox1.height);
         ctx.fillStyle = trophicBox2Colour;
         ctx.fillRect(trophicBox2.x, trophicBox2.y, trophicBox2.width, trophicBox2.height);
-        
+        */
         //clear area so graphs will show through; graph width = 400
         ctx.clearRect(preScaledWidth-400,0,400,graphs.length*80);
         

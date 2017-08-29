@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170821-2100";
+    var versionID = "20170828-2145";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -65,6 +65,7 @@ function FoodWeb(){
     var dialog = [];    
     var groupNames = ["1", "2", "3", "4", "5"]; //for displaying on badges
     var badges = [];
+    var badgeColours;
 
     var data;
     var currentDrawing;
@@ -147,6 +148,7 @@ function FoodWeb(){
         dialogColour = "#00BCD4";
         trophicBox1Colour = "#455A64";  //"#616161";
         trophicBox2Colour = "#37474F";  //"#424242";
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"];
     } else {    
         //light
         backgroundColour = "#CFD8DC";   //"#BDBDBD";
@@ -159,6 +161,7 @@ function FoodWeb(){
         dialogColour = "#00BCD4";
         trophicBox1Colour = "#FAFAFA";  //"#FAFAFA";
         trophicBox2Colour = "#ECEFF1";  //"#EEEEEE";
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"];
     }
     //resize canvas
     onResizeWindow("init");
@@ -389,7 +392,6 @@ function FoodWeb(){
         var badgeH = 30;
         var badgeX = 100;
         var badgeY = 30;
-        var badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"];
         for(var i=0; i<groupNames.length; i++){
             var n = groupNames[i];
             //n, x, y, w, h, c, colour, textcolour, font, yo
@@ -490,9 +492,7 @@ function FoodWeb(){
         
         //toggleWithdrawClaim();
     }
-    function updateWithdrawClaim(){
-        
-
+    function updateWithdrawClaim(){      
         var index = -1;
         for ( var i=0; i<withdrawnClaims.length; i++ ){
             //console.log( "withdrawnClaims[i].instance: "+withdrawnClaims[i].instance+", openedLine.claims[openedClaimIndex].instance: "+openedLine.claims[openedClaimIndex].instance);
@@ -992,10 +992,14 @@ function FoodWeb(){
         //var reasoningText = openedLine.claims[openedClaimIndex].reasoning;
         //console.log("reasoning: "+reasoningText);
         document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;//reasoningText.replace("\n\n", "<br />");
-        document.getElementById('author-p').innerHTML = "Group "+(parseInt(openedLine.claims[openedClaimIndex].instance)+1);//+"'s claim:";
         document.getElementById('number-p').innerHTML = (openedClaimIndex+1) + " of " + openedLine.claims.length;
-        //number-p
         
+        var authorP = document.getElementById('author-p');
+        var groupInstance = parseInt(openedLine.claims[openedClaimIndex].instance);
+        authorP.innerHTML = "Group "+( groupInstance + 1);
+        authorP.style.color = badgeColours[groupInstance];//"Red";
+        
+        //number-p        
         //clientHeight includes padding
         //offsetHeight includes padding, scrollBar and borders.
         //console.log( "modal offset height: "+document.getElementById('modal-container').offsetHeight+", client: "+document.getElementById('modal-container').clientHeight );
