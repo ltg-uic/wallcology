@@ -49,7 +49,7 @@ select {
 }
 
 select:active, select:hover {
-    outline: none | important;
+  outline: none | important;
   outline-color: DarkCyan;
 }
 
