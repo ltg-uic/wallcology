@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170815-2100";
+    var versionID = "20170821-2100";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -412,21 +412,18 @@ function FoodWeb(){
         modalNextBtn.addEventListener('click', handleNextBtn, false);
 
         //var modalHeight = preScaledHeight;
-
         modal1 = document.getElementsByClassName('modal')[0];
         modal2 = document.getElementsByClassName('modal')[1];
 
         modal1.style.height = preScaledHeight+'px';
         modal2.style.height = preScaledHeight+'px';
 
-        /*var xPos = (preScaledWidth - 500)/2;
-        var yPos = parseInt(preScaledHeight*0.15);
-        var modalBox = document.getElementById('modal-content');
-        
-        modalBox.style.position = "absolute";
-        modalBox.style.left = xPos+'px';
-        modalBox.style.top = yPos+'px';
-        console.log("modal x: "+xPos+", y: "+yPos);*/
+        var content1 = document.getElementsByClassName('content')[0];
+        var content2 = document.getElementsByClassName('content')[1];
+        content1.style.maxHeight = preScaledHeight + 'px';
+        content2.style.maxHeight = preScaledHeight + 'px';
+
+        //console.log( "max height: "+document.getElementsByClassName('content')[0].style.maxHeight )
     }
     /*
     //get nubmer of saved version from server
@@ -465,9 +462,61 @@ function FoodWeb(){
 
     //EVENTLISTENERS
     function handleWithdrawBtn(e){
-        console.log("handleWithdrawBtn: " + openedLine.claims.length );
-        withdrawnClaims.push( openedLine.claims[openedClaimIndex] );
-        //indicate taht it's been added
+        //console.log("handleWithdrawBtn: " + openedLine.claims.length );
+        //console.log("withdrawnClaims.length: "+withdrawnClaims.length);
+        //check if already withdrawn
+
+
+        var index = -1;
+        for ( var i=0; i<withdrawnClaims.length; i++ ){
+            //console.log( "withdrawnClaims[i].instance: "+withdrawnClaims[i].instance+", openedLine.claims[openedClaimIndex].instance: "+openedLine.claims[openedClaimIndex].instance);
+            if( withdrawnClaims[i].instance == openedLine.claims[openedClaimIndex].instance ){
+                index = i;
+            }
+        }
+        if( index > -1 ){
+            //console.log("already withdrawn");
+            //already withdrawn
+            withdrawnClaims.splice( index, 1 );
+            document.getElementById('withdraw').innerHTML = "Withdraw Claim";
+            document.getElementById('removeClaim').style.display = 'none';
+        } else {
+            //console.log("withdraw");
+            withdrawnClaims.push( openedLine.claims[openedClaimIndex] );
+            //indicate that it's been added    
+            document.getElementById('withdraw').innerHTML = "Cancel Withdraw";
+            document.getElementById('removeClaim').style.display = 'inline-block';
+        }
+        
+        //toggleWithdrawClaim();
+    }
+    function updateWithdrawClaim(){
+        
+
+        var index = -1;
+        for ( var i=0; i<withdrawnClaims.length; i++ ){
+            //console.log( "withdrawnClaims[i].instance: "+withdrawnClaims[i].instance+", openedLine.claims[openedClaimIndex].instance: "+openedLine.claims[openedClaimIndex].instance);
+            if( withdrawnClaims[i].instance == openedLine.claims[openedClaimIndex].instance ){
+                index = i;
+            }
+        }
+        if( index > -1 ){
+            //console.log("already withdrawn");
+            //already withdrawn
+            //document.getElementById('checkmark').style.display = 'inline-block';
+            document.getElementById('withdraw').innerHTML = "Cancel Withdraw";
+            document.getElementById('removeClaim').style.display = 'inline-block';
+            
+            //withdrawnClaims.splice( index, 1 );
+            
+        } else {
+            //console.log("withdraw");
+            //withdrawnClaims.push( openedLine.claims[openedClaimIndex] );
+            //indicate taht it's been added    
+            //document.getElementById('checkmark').style.display = 'none';
+            document.getElementById('withdraw').innerHTML = "Withdraw Claim";
+            document.getElementById('removeClaim').style.display = 'none';
+        }
     }
     //handles modal close
     function handleModalClose(e){
@@ -499,6 +548,7 @@ function FoodWeb(){
             openedLine = e.target; //line clinked
             openedClaimIndex = 0;
             updateModalContent( openedLine );
+            updateWithdrawClaim();
         }
     }
     //handles "view next claim" in opened modal
@@ -509,6 +559,7 @@ function FoodWeb(){
             openedClaimIndex = 0;
         }
         updateModalContent( openedLine );
+        updateWithdrawClaim();
     }
     function onMouseLeave(e){
         //console.log("onMouseLeave: startX: "+e.clientX+", startY: "+e.clientY);
@@ -920,7 +971,7 @@ function FoodWeb(){
         return activeSpeciesList;
     }
     function updateModalContent( lineClicked ){
-        console.log("claims array length: "+lineClicked.claims.length+", e.target: "+lineClicked.name );
+        //console.log("claims array length: "+lineClicked.claims.length+", e.target: "+lineClicked.name );
         if ( lineClicked.claims.length < 2 ){
             //hide next button
             modalNextBtn.style.display = 'none';
@@ -937,11 +988,29 @@ function FoodWeb(){
         document.getElementById('species0').src = openedLine.obj1.name+".png";
         document.getElementById('species1').src = openedLine.obj2.name+".png";
         document.getElementById('relationship-p').innerHTML = getRelationshipText( openedLine.claims[openedClaimIndex].relationship );
-        document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;
+        
+        //var reasoningText = openedLine.claims[openedClaimIndex].reasoning;
+        //console.log("reasoning: "+reasoningText);
+        document.getElementById('reasoning-p').innerHTML = openedLine.claims[openedClaimIndex].reasoning;//reasoningText.replace("\n\n", "<br />");
         document.getElementById('author-p').innerHTML = "Group "+(parseInt(openedLine.claims[openedClaimIndex].instance)+1);//+"'s claim:";
         document.getElementById('number-p').innerHTML = (openedClaimIndex+1) + " of " + openedLine.claims.length;
         //number-p
+        
+        //clientHeight includes padding
+        //offsetHeight includes padding, scrollBar and borders.
+        //console.log( "modal offset height: "+document.getElementById('modal-container').offsetHeight+", client: "+document.getElementById('modal-container').clientHeight );
+        var modalH = document.getElementById('modal-container').offsetHeight;
+        var padTop = ((preScaledHeight-modalH)<0 ) ? 0 : Math.floor((preScaledHeight - modalH) / 2 );
+        //console.log( "modalH: " + modalH + ", padTop: "+ padTop );
+        document.getElementById('modal-container').style.top = padTop + "px";
     }
+    /*function repositionModal(){
+        //var padTop = ((preScaledHeight-originalImage.naturalHeight)<0 ) ? 0 : Math.floor((browserH - originalImage.naturalHeight) / 2 );
+        //document.getElementById('image-container').style.top = padTop + "px";
+        console.log( "modal height: "+document.getElementById('modal-container').height );
+
+
+    }*/
     function validateImage( url ){
         var imgUrl;
         if( url == "" ){
@@ -1082,7 +1151,7 @@ function FoodWeb(){
     //function returns a set of links based on claims objects retrieved
     function getLinks( c ){
         //claim.relationship == link.type
-        console.log("claims.length: "+c.length);
+        //console.log("claims.length: "+c.length);
         var allClaims = c;
         var links = [];
         var flag = false;   //for checking if link exists for relationship in claim already
@@ -1121,7 +1190,7 @@ function FoodWeb(){
             }
             flag = false;
         }
-        console.log("links: "+links.length);
+        //console.log("links: "+links.length);
         return links;
     }
     //checks position of objects, if line is being drawn, o.active = true 
@@ -1389,7 +1458,7 @@ function FoodWeb(){
                 o.y = o.py;
             }
         }
-        console.log("connections.length: "+connections.length);
+        //console.log("connections.length: "+connections.length);
     }
     function draw() {
         //clear canvas

@@ -3,8 +3,8 @@ function MultipleChoice(n, cH, cW, c, sp, num, type, colour, heading, text){
 	var downFile = "graphdecrease.png";
 	var sameFile = "graphsame.png";
 	var backgroundColor = "#FFFFFF";
-	var accentColour = "#00BCD4";
-	var accentColourDark = "#0097A7";
+	var accentColour = "#008b8b"; //dark cyan //"#00BCD4";
+	var accentColourDark = "#008b8b";//"#0097A7";
 	var headingText = heading;
 	var lineHeight = 18;
 	var styleMarker = '§';
