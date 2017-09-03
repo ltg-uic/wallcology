@@ -9,7 +9,7 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 
 
 var model = nutella.persist.getMongoObjectStore('model');
-model.load(function(){  
+model.load(function(){  console.log('got here');
     if (!model.hasOwnProperty('data')){
         model['data'] = JSON.parse('{ \
         "community" : { \
