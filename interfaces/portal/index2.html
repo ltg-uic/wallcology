@@ -21,6 +21,7 @@
 
 	var instance;
 	var type;
+	var species_names = [];
 
 	var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
 	
@@ -56,6 +57,9 @@
 	} else { // lightCast tabbed page based on login
 		instance = query_parameters.INSTANCE;
 		type = query_parameters.TYPE;
+	  nutella.net.request('get_species_names',{},function(sname){	
+		for (var i=0; i<11; i++) species_names[i]=sname[i];
+
 		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room;
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) {
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
@@ -66,6 +70,7 @@
 				});
 			});
 		});
+	  });
 	};
 	// 
 
@@ -203,19 +208,19 @@
 	}
 
 	function userLog(extension){
-		var SEPARATOR = "^,^";
-		var log = "portal"  + SEPARATOR;
-		log += currentRun + SEPARATOR;
-		log += currentRoom + SEPARATOR;
-		log += currentActivity + SEPARATOR;
-		log += currentTreatment + SEPARATOR;
-		log += currentChannel + SEPARATOR;
-		log += query_parameters.TYPE + SEPARATOR;
-		log += query_parameters.INSTANCE + SEPARATOR;
-		log += extension + SEPARATOR;
-		var xl = [];
-		xl[0] = log;
-		nutella.net.publish('add_to_user_log',xl);
+		// var SEPARATOR = "^,^";
+		// var log = "portal"  + SEPARATOR;
+		// log += currentRun + SEPARATOR;
+		// log += currentRoom + SEPARATOR;
+		// log += currentActivity + SEPARATOR;
+		// log += currentTreatment + SEPARATOR;
+		// log += currentChannel + SEPARATOR;
+		// log += query_parameters.TYPE + SEPARATOR;
+		// log += query_parameters.INSTANCE + SEPARATOR;
+		// log += extension + SEPARATOR;
+		// var xl = [];
+		// xl[0] = log;
+		// nutella.net.publish('add_to_user_log',xl);
 	}
 
 

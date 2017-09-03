@@ -12,7 +12,6 @@
 	<script src="nutella_lib.js" type="text/javascript"></script>
 	<script src="Chart.min.js"></script>
 	<script>
-	var species_names = [];
 	var query_parameters = NUTELLA.parseURLParameters();
 	var ecosystem = query_parameters.INSTANCE;
 	if (ecosystem === undefined) ecosystem = 0;
@@ -20,7 +19,7 @@
 	var thisSize = 1;
 	var thisBUS;
 	if (query_parameters.hasOwnProperty('SIZE')) thisSize = query_parameters.SIZE;
-	if (thisSize == 10) thisSize=10;
+	if (thisSize == 10) thisSize=14;
 	if (query_parameters.hasOwnProperty('BUS')) thisBUS = query_parameters.BUS;
 	</script>
 	<script> window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); </script>
@@ -106,7 +105,7 @@
 			for (i=0; i<11; i++) {
 				document.write('<tr ');
 				if (thisSize != 1 && thisBUS != i) document.write('hidden');
-				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '">&nbsp;<span style="vertical-align:middle;">' + top.species_names[i] + '</span></td>');
+				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
 		</script>
@@ -136,25 +135,16 @@
 	var abioticDisplay = 0;
 	var abioticOptions = ['temperature','brick','wood'];
 
-	if (query_parameters.SM === undefined) {
+	var d = new Date();
+	var month = d.getMonth();
+	var day = d.getDate();
 
-		var d = new Date();
-		var month = d.getMonth();
-		var day = d.getDate();
+	document.getElementById('startMonth').selectedIndex = month;
+	document.getElementById('startDay').selectedIndex = day-1;
+	document.getElementById('endMonth').selectedIndex = month;
+	document.getElementById('endDay').selectedIndex = day-1;
 
-		document.getElementById('startMonth').selectedIndex = month;
-		document.getElementById('startDay').selectedIndex = day-1;
-		document.getElementById('endMonth').selectedIndex = month;
-		document.getElementById('endDay').selectedIndex = day-1;
 
-	} else {
-
-		document.getElementById('startMonth').selectedIndex = query_parameters.SM;
-		document.getElementById('startDay').selectedIndex = query_parameters.SD;
-		document.getElementById('endMonth').selectedIndex = query_parameters.EM;
-		document.getElementById('endDay').selectedIndex = query_parameters.ED;
-
-	}
 
 	// Parse the query parameters
 	document.getElementById('ecosystem').value = Number(ecosystem) + 1;
@@ -173,14 +163,8 @@
 	setInterval(ping, 5*60*1000); //ping every five minutes
 
 	function resizeMe(b){
-
-		var timespan = '&SM=' + document.getElementById('startMonth').selectedIndex;
-		timespan += '&SD=' + document.getElementById('startDay').selectedIndex;
-		timespan += '&EM=' + document.getElementById('endMonth').selectedIndex;
-		timespan += '&ED=' + document.getElementById('endDay').selectedIndex;
-
-		if (thisSize == 1) location.href = location.href + timespan + "&SIZE=7&BUS=" + b;
-		if (thisSize != 1) location.href = location.href + timespan + "&SIZE=1";
+		if (thisSize == 1) location.href = location.href + "&SIZE=10&BUS=" + b;
+		if (thisSize != 1) location.href = location.href + "&SIZE=1";
 	}
 
 	function inform(){
@@ -233,18 +217,18 @@
 
 // limit starting date. very hacky
 
-		// if (sm == 11 && sd < 10 & query_parameters.run_id=='6MT') {
-		// 	sd = 10;
-		// 	document.getElementById('startDay').selectedIndex = 9;
-		// }
+		if (sm == 11 && sd < 10 & query_parameters.run_id=='6MT') {
+			sd = 10;
+			document.getElementById('startDay').selectedIndex = 9;
+		}
 
 
 		// var sy = document.getElementById('startYear').value;
-		var sy = 2017;
+		var sy = (sm > 7) ? 2016 : 2017;
 		var em = document.getElementById('endMonth').selectedIndex+1;
 		var ed = document.getElementById('endDay').selectedIndex+1;
 		// var ey = document.getElementById('endYear').value;
-		var ey = 2017;
+		var ey = (em > 7) ? 2016 : 2017;
 
 		var lower = Date.parse(sm + '/' + sd + '/' + sy);
 		var upper = Date.parse(em + '/' + ed + '/' + ey) + (24 * 60 * 60 * 1000);
@@ -276,6 +260,7 @@
 		// for(var i=0; i<y.length; i++){
 		// 	y[i].value=document.getElementById('startYear').value;
 		// }
+
 
 
 
