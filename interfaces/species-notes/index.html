@@ -95,8 +95,9 @@
 			// type = 0: all species. type = 1: vegetation only. type = 2: critters only
 			$('#species_list').empty();
 		 	for (var i=0; i<species[type].length; i++){
+		 		if (index == 0 && species1 == species[type][i]) continue;
 		 		var src = (species[type][i]<10) ? "species_0" + species[type][i] + ".png" : "species_10.png";
-		 		var stuff = '<img height=80 width=80 src="' + src + '" onclick="action(' + index + ',' + species[type][i] + ');">'; 
+		 		var stuff = '<img height=60 width=60 src="' + src + '" onclick="action(' + index + ',' + species[type][i] + ');">&nbsp;<span style="color:black;">' + top.species_names[i] + '</span></br>'; 
 				if (index != 1 || species[type][i] != species0) $('#species_list').append(stuff);
 		 	}
 			document.getElementById('species_selector').style.display = 'block';
