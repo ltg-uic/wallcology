@@ -56,7 +56,7 @@
 
 	} else { // lightCast tabbed page based on login
 		instance = query_parameters.INSTANCE;
-		type = query_parameters.TYPE;
+		type = query_parameters.TYPE; alert(type);
 	  nutella.net.request('get_species_names',{},function(sname){	
 		for (var i=0; i<11; i++) species_names[i]=sname[i];
 
