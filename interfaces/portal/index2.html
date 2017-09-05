@@ -140,24 +140,24 @@
 
 		var s;
 		var channel_lineup = [];
-		for (var i=0; i<channelList.length; i++) {
+		for (var i=0; i<channelList.length; i++) { alert('a');
 			s = 'http://';
 			s += window.location.host + '/';
 			s += query_parameters.app_id + '/';
 			s += query_parameters.run_id + '/';
 			s += 'runs/';
 			s += channelList[i] + '/';
-			s += 'index.html' + '?';
+			s += 'index.html' + '?'; alert('b');
 			s += 'broker=' + query_parameters.broker + '&';
 			s += 'app_id=' + query_parameters.app_id + '&';
 			s += 'run_id=' + query_parameters.run_id + '&';
 			s += 'CLASS=' + currentRun + '&';
-			s += 'ROOM=' + currentRoom + '&';
+			s += 'ROOM=' + currentRoom + '&'; alert('c');
 			s += 'ACTIVITY=' + currentActivity + '&';
 			// s += 'TREATMENT=' + currentTreatment + '&';		 
 			s += 'CHANNEL=' + channelList[i] + '&';		 
 			s += 'TYPE=' + type + '&';
-			s += 'INSTANCE=' + instance;
+			s += 'INSTANCE=' + instance; alert('d');
 
 			channel_lineup[i] = {name: channelList[i], URL: s};
 		};
