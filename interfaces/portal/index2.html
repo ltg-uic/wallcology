@@ -64,7 +64,7 @@
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) {
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
-						console.log (channel_lineup);
+						console.log ('7');
 						construct_user_interface(channel_lineup,prettyNames); 	
 
 						if ((channel_lineup.length != 0) && (type=='ecosystem' || type == 'speciesPlace' | type == 'pervasive')) document.getElementById('button0').click();
