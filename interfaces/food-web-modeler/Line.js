@@ -350,6 +350,19 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         sb.draw();
         db.draw();
     }
+    function drawLine(ctx,p1,p2){
+        // draw the line
+        ctx.shadowBlur=4;
+        ctx.shadowColor= this.shadowColour;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        ctx.strokeStyle = this.colour;
+        ctx.beginPath();
+        ctx.moveTo(p1.x,p1.y);
+        //ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y);   //sx and sy = x,y of control point
+        ctx.lineTo(p2.x,p2.y);
+        ctx.stroke();
+    }
     //change "eats" to "iseatenby" and vice versa
     function toggleRelationship(o){
         var oldR = o.type;
@@ -357,6 +370,8 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         if( oldR == "eats" ){
             newR = "eatenby";
         } else if ( oldR == "eatenby") {
+            newR = "competition";
+        } else if ( oldR == "competition"){
             newR = "eats";
         } else {
             newR = oldR;
@@ -466,6 +481,8 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
             drawSingleArrow(this.ctx,p2,p1);
         } else if ( this.type == "eatenby" ){
             drawSingleArrow(this.ctx,p1,p2);
+        } else if ( this.type == "competition" ){
+            drawLine(this.ctx,p1,p2);
         }
             
         this.ctx.globalAlpha = 1;   

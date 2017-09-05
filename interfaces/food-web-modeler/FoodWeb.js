@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "foodwebmodeler";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170828-2100";
+    var versionID = "20170905-1430";
     var query_parameters;
     var nutella;
     var portal;
@@ -82,7 +82,7 @@ function FoodWeb(){
     var plusButtons = [];   //increase population
     var minusButtons = [];  //decrease population
     var clickedBtn;
-    var graphComplete;
+    var graphComplete = true;
     var graphs = [];
     var multipleChoice = [];
     var annotations = [];
@@ -166,7 +166,7 @@ function FoodWeb(){
     prompt = new Prompt(ctx, paletteWidth+20, 20, preScaledWidth, preScaledHeight, 1, background);
     //prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
     prompt.setText( "" );
-    //displayList.addChild(prompt);
+    displayList.addChild(prompt);
     //helpText = new Help(ctx, preScaledWidth, preScaledHeight, toolbarWidth, background);
     //input = document.getElementById("textBox");
     //input.style.backgroundColor = textboxColour;
@@ -383,6 +383,7 @@ function FoodWeb(){
             clickedBtn.stopAnimate();
             clickedBtn.draw();
             console.log("graph complete: "+e.target.name );
+            prompt.setText("");
         }
         graphComplete = true;
     }
@@ -817,20 +818,28 @@ function FoodWeb(){
             if ( multipleChoice.length < 1 ){
                 for (var j = 0; j < plusButtons.length; j++) {
                     if( detectHit(mx,my,plusButtons[j])){
-                        handlePopulationChange( obj[j], j, "plus" );
-                        clickedBtn = plusButtons[j];
-                        plusButtons[j].startAnimate();
-                        graphComplete = false;
-                        //setupPopulationChange(obj[j], j, "plus");
+                        if ( graphComplete == true ){
+                            handlePopulationChange( obj[j], j, "plus" );
+                            clickedBtn = plusButtons[j];
+                            plusButtons[j].startAnimate();
+                            graphComplete = false;
+                            //setupPopulationChange(obj[j], j, "plus");
+                        } else {
+                            prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
+                        }
                     }
                 }
                 for (var k = 0; k < minusButtons.length; k++) {
                     if( detectHit(mx,my,minusButtons[k])){
-                        handlePopulationChange( obj[k], k, "minus" );
-                        clickedBtn = minusButtons[k];
-                        minusButtons[k].startAnimate();
-                        graphComplete = false;
-                        //setupPopulationChange(obj[k], k, "minus");
+                        if ( graphComplete == true ){
+                            handlePopulationChange( obj[k], k, "minus" );
+                            clickedBtn = minusButtons[k];
+                            minusButtons[k].startAnimate();
+                            graphComplete = false;
+                            //setupPopulationChange(obj[k], k, "minus");
+                        } else {
+                            prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
+                        }
                     }
                 }
             }
@@ -1219,10 +1228,10 @@ function FoodWeb(){
 
         if( direction == "plus"){
             console.log(object.name + " population goes up");
-            prompt.setText(object.name + " population goes up");    
+            //prompt.setText(object.name + " population goes up");    
         } else {
             console.log(object.name + " population goes down");
-            prompt.setText(object.name + " population goes down");
+            //prompt.setText(object.name + " population goes down");
         }
 
         //loops through all the graphs being displayed
