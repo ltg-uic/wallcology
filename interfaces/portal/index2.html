@@ -61,7 +61,7 @@
 		for (var i=0; i<11; i++) species_names[i]=sname[i];
 
 		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room;
-			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) {
+			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) { console.log(channelList);
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
 						construct_user_interface(channel_lineup,prettyNames); 	
@@ -130,7 +130,7 @@
 		location.href = s;
 	}
 
-	function buildLineup (channelList, instance) { alert('call');
+	function buildLineup (channelList, instance) { 
 		// if (query_parameters.run_id == "6BM") currentTreatment = "object";
 		// if (query_parameters.run_id == "6MT") currentTreatment = "push";
 		// if (query_parameters.run_id == "6ADF") currentTreatment = "place";
@@ -140,24 +140,24 @@
 
 		var s;
 		var channel_lineup = [];
-		for (var i=0; i<channelList.length; i++) { alert('a');
+		for (var i=0; i<channelList.length; i++) { 
 			s = 'http://';
 			s += window.location.host + '/';
 			s += query_parameters.app_id + '/';
 			s += query_parameters.run_id + '/';
 			s += 'runs/';
 			s += channelList[i] + '/';
-			s += 'index.html' + '?'; alert('b');
+			s += 'index.html' + '?'; 
 			s += 'broker=' + query_parameters.broker + '&';
 			s += 'app_id=' + query_parameters.app_id + '&';
 			s += 'run_id=' + query_parameters.run_id + '&';
 			s += 'CLASS=' + currentRun + '&';
-			s += 'ROOM=' + currentRoom + '&'; alert('c');
+			s += 'ROOM=' + currentRoom + '&'; 
 			s += 'ACTIVITY=' + currentActivity + '&';
 			// s += 'TREATMENT=' + currentTreatment + '&';		 
 			s += 'CHANNEL=' + channelList[i] + '&';		 
 			s += 'TYPE=' + type + '&';
-			s += 'INSTANCE=' + instance; alert('d');
+			s += 'INSTANCE=' + instance; 
 
 			channel_lineup[i] = {name: channelList[i], URL: s};
 		};
