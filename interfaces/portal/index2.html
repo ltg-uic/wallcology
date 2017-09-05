@@ -26,7 +26,7 @@
 	var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
 	
 	// Get an instance of nutella
-	alert('3');
+	
 
 	var query_parameters = NUTELLA.parseURLParameters();
 
@@ -57,7 +57,7 @@
 	} else { // lightCast tabbed page based on login
 		instance = query_parameters.INSTANCE;
 		type = query_parameters.TYPE;
-	  nutella.net.request('get_species_names',{},function(sname){	
+	  nutella.net.request('get_species_names',{},function(sname){	alert('4');
 		for (var i=0; i<11; i++) species_names[i]=sname[i];
 
 		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room;
