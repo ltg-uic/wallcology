@@ -40,7 +40,7 @@
 	var IW = screen.width;
 	var IH = screen.height;
 
-
+alert('a');
 	nutella.net.subscribe('activity_update', function(message, from){ 
 		location.reload(true);
 	})
@@ -60,7 +60,7 @@
 	  nutella.net.request('get_species_names',{},function(sname){	
 		for (var i=0; i<11; i++) species_names[i]=sname[i];
 
-		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room; console.log(message);
+		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room; 
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) { console.log(channelList);
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
