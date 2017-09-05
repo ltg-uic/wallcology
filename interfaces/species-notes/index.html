@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html>
 <head>
@@ -22,11 +21,11 @@
 	        text-align: center;
 	    }
 	    select:focus {
-	    	outline: none;
-	    }
-	    option:focus {
-	    	outline: none;
-	    }
+			outline: none;
+		}
+		option:focus {
+			outline: none;
+		}
 	    .button {
 	        display: inline-block;
 	        -webkit-appearance: none;
@@ -73,10 +72,8 @@
 	        font-weight: bold;
 	        font-size: 20px;
 	    }
-
   	</style>
 	<script type="text/javascript">
-
 	    var species0 = -1;
 	    var species1 = -1;
 		var species = [];
@@ -87,15 +84,12 @@
 		var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 		var instance = query_parameters.INSTANCE;
 		if (instance === undefined) instance = 0;
-
 	  	$( function() {
 			// $('body').on('click','img',function(){alert('it works');})
 			$("#species0").bind("click", function() { 
 				build_species_menu(0,0);
 			});
-
 		});
-
 		function build_species_menu(index,type) { 
 			// index = 0: first (source) species. index = 1: second (destination) species
 			// type = 0: all species. type = 1: vegetation only. type = 2: critters only
@@ -108,7 +102,6 @@
 		 	}
 			document.getElementById('species_selector').style.display = 'block';
 		};
-
 		function build_relationship_menu(type) {
 			// type = 0: eats, does not eat
 			// type = 1; competes with, does not compete with
@@ -121,14 +114,12 @@
 				$('#relationship').append('<option>does not compete with</option>');
 			}
 		}
-
 		function veggie (index) {
 			if (index == 4 || index == 5 || index == 9 || index == 10)
 				return true;
 			else
 				return false;
 		};
-
 		function action (index,species) {
 			if (index == 0) {
 				species0 = species; 
@@ -153,20 +144,16 @@
 			} else {
 				species1 = species;
 				document.getElementById('species1').src = (species<10) ? "species_0" + species + ".png" : "species_10.png";
-
 			};
 			document.getElementById('species_selector').style.display = 'none';
 		}
-
 		function send_it() {
 			var e = document.getElementById("relationship");
 			var value = e.options[e.selectedIndex].value;
 			var text = e.options[e.selectedIndex].text;
-
 			if (species0 == -1 || species1 == -1) { alert ('Please select both species'); return; };
 			if (document.getElementById('text2').value == "Prompt") { alert ('Please describe your reasoning'); return; };
 			if (text == "relationship") { alert ('Please select the relationship between species'); return; };
-
 			var claim = {
 					instance: instance, 
 					source: species0, 
@@ -190,9 +177,7 @@
 			document.getElementById('text2').value = "Prompt";
 			$('#relationship').empty();
 				$('#relationship').append('<option>relationship</option>');
-
 		}
-
 		function blowup(id) {
 			var originalImage = document.getElementById(id); 
 			var blownUpImage = document.getElementById("img01");
@@ -206,7 +191,6 @@
 			blownUpImage.src = originalImage.src;;
 		    document.getElementById('yourModal').style.display = "block";
 		}
-
 		var loadFile1 = function(event) {
 			// userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
 			var output = document.getElementById('image1');
@@ -215,7 +199,6 @@
 			document.getElementById("image1").src=url; imageURL=url;
 			}); 
 		};
-
 		var loadFile2 = function(event) {
 			// userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,2]);
 			var output = document.getElementById('image2');
@@ -224,7 +207,6 @@
 				document.getElementById("image2").src=url; imageURL=url;
 			}); 
 		};
-
 		var loadFile3 = function(event) {
 			// userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,3]);
 			var output = document.getElementById('image3');
@@ -233,7 +215,6 @@
 				document.getElementById("image3").src=url; imageURL=url;
 			}); 
 		};
-
 	</script>
 </head>
 <body>
@@ -292,16 +273,13 @@
 	    		<select id="relationship"><option>relationship</option></select>
 	    		<img src="qmark.png" id="species1" height=50 width=50>
 		</div>
-
 	    <div id="divX"  style="color:black;">
 			<table width=100%>
 				<tr>
 	    			<td valign=top align=center>
 	    				<a id="reasoning" style="color:white;font-size:110%;">Evidence</a><br>
 				    	<img onClick="blowup(this.id);" id="image1" src="qmark.png" height=100 width=100 /><br><input hidden id="abc1" type="file" accept="image/*" onchange="loadFile1(event)"><button onClick="document.getElementById('abc1').click()">Figure 1</button><br>
-
 				    	<img onClick="blowup(this.id);" id="image2" src="qmark.png" height=100 width=100 /><br><input hidden id="abc2" type="file" accept="image/*" onchange="loadFile2(event)"><button onClick="document.getElementById('abc2').click()">Figure 2</button><br>
-
 				    	<img onClick="blowup(this.id);" id="image3" src="qmark.png" height=100 width=100 /><br><input hidden id="abc3" type="file" accept="image/*" onchange="loadFile3(event)"><button onClick="document.getElementById('abc3').click()">Figure 3</button><br>
 	    			</td>
 					<td valign=top>
@@ -321,10 +299,8 @@
 <!-- 	    <div style="text-align:right;font-size:100%;" class="modal-footer"><br>
 	    	<button onClick="cancel();" >Cancel</button><button id="saveButton" onClick="save();">Save</button>
 	      	      <br><br>
-
 	    </div>
 	  </div>
-
 	</div>
  -->
 
@@ -333,7 +309,6 @@
 
 </body>
 <script>
-
 // 		// Parse the query parameters
 // 			var speciesNames = [];
 // 			var tempClaim;
@@ -345,49 +320,30 @@
 // 			var experiments = [];
 // 			var reflectivePartner;
 // 			var reflectiveClaim;
-
-
 // 			var ecosystem = query_parameters.INSTANCE;
 // 			if (ecosystem === undefined) ecosystem = 0;
 // 			var group = ecosystem;
-
 // 			var treatment = query_parameters.TREATMENT; 
 // 			var room = query_parameters.ROOM;
-
 // 			document.write('<canvas id="canvasID" width=1000 height=800 style="pointer-events:none; position:absolute; top:0; left:0; z-index:1;"></canvas></body>');
 // 			var context = document.getElementById('canvasID').getContext("2d"); 
-
 // 			function speciesImageURL (index) {
 // 				var pad = (index<10) ? '0' : '';
 // 				return "https://ltg.cs.uic.edu/WC/icons/species_" + pad + index + ".png";
 // 			}
-
-
 // 			document.write('<img src="thumbsup.png" style="opacity:1.0;" id="thumbsup" height=40 width=40 HIDDEN>');
 // 			document.write('<img src="thumbsdown.png" style="opacity:1.0;" id="thumbsdown" height=40 width=40 HIDDEN>');
 // 			document.write('<img src="qmark.png" style="opacity:0.5;" id="unsure" height=40 width=40 HIDDEN>');
-
-
-
 // 			document.write('<table  valign=top align=left><tr><td style="background-color:#273548;" align=center valign=top>');
 // 			document.write('<a style="font-size:150%;color:#FFFF66;"> </a>');
 // 			speciesSelector('species',-1,'vertical',.65);
 // 			document.write("</td>");
 // 			document.write("<td width=5></td>");
-
 // 			// Habitat selectors: where it lives
-
-
-
-
 // 			document.write("<td valign=top><div>");
-
 // 			document.write("<table cellpadding=6 >");
-
 // 			document.write('<tr><td colspan=4>');
 // 			document.write('<a id="speciesName" style="font-size:175%;color:white;">&nbsp</a><a style="font-size:175%;color:white;">: group ' + Number(1+Number(group)) + ' claims</a></td>');
-
-
 // 			document.write('</tr><tr><td colspan=2>');
 // 			document.write('<a style="font-size:150%;color:#FFFF66;"> Habitats </a><br>');
 // 			document.write('<a style="font-size:125%;"> <i>Materials</i> </a> <br>');
@@ -397,9 +353,7 @@
 // 			document.write('</td><td style="font-size:100%;" align=center>Inhabits</td><td width=10></td><td>');
 // 			materialsSelector(.65);
 // 			document.write('</td></tr>');
-
 // 			document.write('<tr height=1></tr>');
-
 // 			document.write('<tr><td colspan=2>');
 // 			document.write('<a style="font-size:125%;"> <i>Temperatures</i> </a> <br>');
 // 			document.write("</td></tr><tr><td align=center>");
@@ -408,46 +362,31 @@
 // 			document.write('</td><td style="font-size:100%;" align=center>Survives in</td><td></td><td>');
 // 			temperatureSelector(.65);
 // 			document.write('</td></tr>');
-
 // 			document.write('<tr height=1></tr>');
-
-
 // 			document.write('<tr><td colspan=4><a style="font-size:150%;color:#FFFF66;"> Relationships with other species </a><br></td></tr>');
 // 			document.write('<tr height=1></tr>');
-
-
 // 			document.write('<tr><td align=center>');
 // 			pad = (selected<10) ? '0' : '';
 // 			document.write('<img id="m3" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
 // 			document.write('</td><td style="font-size:100%;" align=center>Eats</td><td></td><td>');
 // 			speciesSelector('eats',-1,'horizontal',.65);
 // 			document.write('</td></tr>');
-
 // 			document.write('<tr height=1></tr>');
-
-
 // 			document.write('<tr><td align=center>');
 // 			pad = (selected<10) ? '0' : '';
 // 			document.write('<img id="m4" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
 // 			document.write('</td><td style="font-size:100%;" align=center>Eaten by</td><td></td><td>');
 // 			speciesSelector('eatenBy',-1,'horizontal',.65);
 // 			document.write('</td></tr>');
-
 // 			document.write('<tr height=1></tr>');
-
-
 // 			document.write('<tr><td align=center>');
 // 			pad = (selected<10) ? '0' : '';
 // 			document.write('<img id="m5" src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + selected + '.png" ' + 'width=50 ' + ' height=50>');
 // 			document.write('</td><td style="font-size:100%;" align=center>&nbsp&nbspCompetes with</td><td></td><td>');
 // 			speciesSelector('competesWith',-1,'horizontal',.65);
 // 			document.write('</td></tr>');
-
-
 // 			if (treatment == "push") document.write('<tr height=1></tr><tr><td colspan=4 style="font-size:120%;" align=right><button onClick="sync();" id="contribute">Contribute</button></td></tr>');
-
 // 			document.write('</table></td></tr></table><br>');
-
 // 			document.close();
 // 			var accounts = []; 
 // 	nutella.net.request('mostRecentAccounts',query_parameters.INSTANCE,function(a,from){
@@ -468,10 +407,7 @@
 // //				alert(document.getElementById("c0").offsetLeft + ' ' + document.getElementById("c0").offsetTop);
 // //					setTimeout(correct2,1000);
 // 				});
-
 // 			});
-
-
 // 	});	
 // 			var corrections = 0;
 // 			function correct2(){select('species0');}
@@ -481,24 +417,18 @@
 // 				if (document.getElementById("c0").offsetLeft <= 1 && document.getElementById("c0").offsetTop <= 1) setTimeout(correct,100); 
 // 				else redrawClaimsCanvas();					
 // 			}
-
 // 			var modal = document.getElementById('myModal'); 
-
 // 			// Get the button that opens the modal
 // 			// var btn = document.getElementById("myBtn");
-
 // 			// Get the <span> element that closes the modal
 // //			var span = document.getElementsByClassName("close")[0];
-
 // 			// When the user clicks the button, open the modal
 // 			// btn.onclick = function() {
 // 			//     modal.style.display = "block";
 // 			// }
-
 // 			// When the user clicks on <span> (x), close the modal
 // 	// 		span.onclick = function() {
 // 	// 		    modal.style.display = "none"; 
-
 // 	// 			accounts[selected].claims[selectedClaim].observations =	document.getElementById('text1').value;
 // 	// 			accounts[selected].claims[selectedClaim].reasoning = document.getElementById('text2').value;
 // 	// //			accounts[selected].claims[selectedClaim].experiment = document.getElementById('experiment').value;
@@ -507,11 +437,8 @@
 // 	// 			accounts[selected].claims[selectedClaim].images[2] = document.getElementById('image3').src;
 // 	// 		    drawAllClaimsOnCanvas(); 
 // 	// 		    saveClaims();
-
 // 	// 		}
-
 // 			var modal2 = document.getElementById('yourModal');
-
 // 			// Get the image and insert it inside the modal - use its "alt" text as a caption
 // 			// var img = document.getElementById('newImage');
 // 			// var modalImg = document.getElementById("img01");
@@ -522,34 +449,24 @@
 // // 			};
 // 			// Get the <span> element that closes the modal
 // 			var span = document.getElementsByClassName("close")[0];
-
 // 			// When the user clicks on <span> (x), close the modal
 // 			span.onclick = function() {
 // 			    modal2.style.display = "none";
 // 			}
-
-
-
-
 // 			function cancel() {
 // 			    modal.style.display = "none"; 
 // 			    drawAllClaimsOnCanvas(); 
 // 			}
-
 // 			function sync() {
-
 // 				userLog('species-notes',['Synchronized claims',group, selected]);			
 // 				document.getElementById('contribute').innerHTML = "Loading...";
 // 				document.getElementById('contribute').disabled = true;
-
 // 				nutella.net.request('sync',{species:selected, group:query_parameters.INSTANCE}, function (message, from){ 
 // 					document.getElementById('contribute').innerHTML = "Contribute";
 // 					document.getElementById('contribute').disabled = false;
 // 					alert ("Contribution received!");
 // 					});
 // 			}
-
-
 // 			function save() {
 	
 // 			    var d = new Date();
@@ -566,13 +483,11 @@
 // 				accounts[selected][selectedClaim].images[3] = document.getElementById('image4').src;
 // 				accounts[selected][selectedClaim].images[4] = document.getElementById('image5').src;
 // 				accounts[selected][selectedClaim].images[5] = document.getElementById('image6').src;
-
 // 				var dob = (accounts[selected][selectedClaim].observations != oldObservations);
 // 				var dre = (accounts[selected][selectedClaim].reasoning != oldReasoning);
 // 				var dex = (accounts[selected][selectedClaim].experiment != oldExperiment);
 // 				var dcl = (accounts[selected][selectedClaim].claim != oldClaim);
 // 				userLog('species-notes',['Saved support',group, selected, selectedClaim,dob,dre,dex,dcl]);			
-
 				
 // 				d = new Date();
 // 				var before = d.getTime(); 
@@ -595,7 +510,6 @@
 // 						}; 
 // 						accounts[reflectivePartner][reflectiveClaim] = accounts[selected][selectedClaim];
 // 						nutella.net.request('updateAccount',{species:reflectivePartner,group:query_parameters.INSTANCE,claim:reflectiveClaim,account:accounts[reflectivePartner][reflectiveClaim]}, function (message, from){
-
 // 								e = new Date();
 // 								document.getElementById('saveButton').innerHTML = "Save";
 // 								document.getElementById('saveButton').disabled = false;
@@ -617,14 +531,10 @@
 // 					// should add reflective claims here
 // 				});
 // 			}
-
 // 			// function delay(){
 // 			// 		modal.style.display = "none"; 
 // 			// 	    drawAllClaimsOnCanvas();
 // 			// } 
-
-
-
 // 	  var loadFile4 = function(event) {
 // 	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,1]);
 // 	    var output = document.getElementById('image4');
@@ -633,7 +543,6 @@
 // 			document.getElementById("image4").src=url; imageURL=url;
 // 		}); 
 // 	  };
-
 // 	  var loadFile5 = function(event) {
 // 	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,2]);
 // 	    var output = document.getElementById('image5');
@@ -642,7 +551,6 @@
 // 			document.getElementById("image5").src=url; imageURL=url;
 // 		}); 
 // 	  };
-
 // 	  var loadFile6 = function(event) {
 // 	  	userLog('species-notes',['Selected photo upload',group, selected,selectedClaim,3]);
 // 	    var output = document.getElementById('image6');
@@ -651,8 +559,6 @@
 // 			document.getElementById("image6").src=url; imageURL=url;
 // 		}); 
 // 	  };
-
-
 // 		    function setClaim(type){ 
 // 		    	tempClaim = type; 
 // 		    	document.getElementById('action1').style.opacity=0.3; 
@@ -662,9 +568,6 @@
 // 				if (tempClaim == 'refute') document.getElementById('action2').style.opacity=1.0;
 // 				if (tempClaim == 'unsure') document.getElementById('action3').style.opacity=1.0;
 // 			}
-
-
-
 // 		    function chooseClaim(type){ 
 // 		    	accounts[selected][selectedClaim].claim = type; 
 // 		    	document.getElementById('action1').style.opacity=0.3; 
@@ -674,10 +577,8 @@
 // 				if (accounts[selected][selectedClaim].claim == 'refute') document.getElementById('action2').style.opacity=1.0;
 // 				if (accounts[selected][selectedClaim].claim == 'unsure') document.getElementById('action3').style.opacity=1.0;
 // 			}
-
 			
 // 			function materialsSelector(size){
-
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/env_wood.png" id="c0" onClick="select(this.id);" ');
 // 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/env_brick.png" id="c1" onClick="select(this.id);" ');
@@ -687,11 +588,8 @@
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/drywall.png" id="c3" onClick="select(this.id);" ');
 // 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 // 				document.write('<br>');
-
 // 			}
-
 // 			function temperatureSelector(size){
-
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/low.png" id="c4" onClick="select(this.id);" ');
 // 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '>&nbsp ');
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/medium.png" id="c5" onClick="select(this.id);" ');
@@ -699,10 +597,7 @@
 // 				document.write('<img src="https://ltg.cs.uic.edu/WC/icons/high.png" id="c6" onClick="select(this.id);" ');
 // 				document.write('width=' + (Math.round(s*size)) + ' height=' + (Math.round(s*size)) + '> ');
 // 				document.write('<br>');
-
 // 			}
-
-
 // 			function speciesSelector(idRoot,exception,direction,size) {
 // 				document.write('<div style="display:inline;" id="' + idRoot + '">');
 // 				if (direction == 'horizontal') document.write('&nbsp&nbsp'); //HTML kludge
@@ -729,13 +624,11 @@
 // 				document.write('</div>');		
 // 				// if (direction == 'horizontal') document.write('');
 // 			};
-
 // 			// document.getElementById('img0').style.opacity="0.2";
 // var oldObservations = "";
 // var oldReasoning = "";
 // var oldExperiment = "";
 // var oldClaim = ""
-
 // 			function select(id){ 
 				
 // 				switch (id.substr(0,1)) { 
@@ -773,13 +666,11 @@
 // 								if (accounts[selected][selectedClaim].experiment == ''){
 // 									document.getElementById('experimentsList').selectedIndex=0;
 // 								} else {
-
 // 									var st = accounts[selected][selectedClaim].experiment;
 // 									var idx = st.indexOf('\n');
 // 										st = st.substr(idx+1);
 // 										idx = st.indexOf('\n');
 // 										st = st.substr(0,idx); 
-
 // 									for (var i=0; i<experiments.length;i++){
 // 										if (document.getElementById('experimentsList').options[i+1].value == st) {
 // 											document.getElementById('experimentsList').selectedIndex=i+1;
@@ -790,9 +681,6 @@
 // 								oldReasoning = accounts[selected][selectedClaim].reasoning;
 // 								oldExperiment = accounts[selected][selectedClaim].experiment;
 // 								oldClaim = accounts[selected][selectedClaim].claim;
-
-
-
 // 								// document.getElementById('image1').src = message.claims[i].obsImages[0];
 // 								// document.getElementById('image2').src = message.claims[i].obsImages[1];
 // 								// document.getElementById('image3').src = message.claims[i].obsImages[2];
@@ -804,7 +692,6 @@
 // 								document.getElementById(id).style.opacity = 1.0;
 // 								selected = Number(id.substr(7)); 
 // 								userLog('species-notes',['Selected species',group, selected]);
-
 // 								document.getElementById('speciesName').innerHTML = speciesNames[selected];
 // 								for(var j=1; j<6; j++){ 
 // 									var pad = (selected<10) ? '0' : '';
@@ -812,37 +699,23 @@
 // 								}
 // 								clearCanvasOfAllClaims();
 // 								drawAllClaimsOnCanvas();
-
 // 				}
-
 // 			}
-
-
 // 				// }
 // 			// }
-
 // 			function selectAll(idRoot) {
 // 				for (i=0; i<11; i++) document.getElementById(idRoot + i).style.opacity="1.0";						
 // 			}
-
 // 			function deselectAll(idRoot) {
 // 				for (i=0; i<11; i++) document.getElementById(idRoot + i).style.opacity="0.55";			
 // 			}
-
-
-
 // 		function redrawClaimsCanvas(){
 // 			clearCanvasOfAllClaims();
 // 			drawAllClaimsOnCanvas();
 // 		}
-
-
 // 		function clearCanvasOfAllClaims() { 
 // 			context.clearRect(0,0,1000,800);
 // 		}
-
-
-
 // 		function drawAllClaimsOnCanvas() { 
 // 			for (var i=0; i<40; i++) {
 // 				var id = 'c' + i;
@@ -863,9 +736,6 @@
 // 				}
 // 			}
 // 		}
-
-
-
 // 		// function loadClaims() {
 // 		// 	nutella.net.request('mostRecentClaims',query_parameters.INSTANCE,function(message,from){
 // 		// 		for (var i=0; i<40; i++){
@@ -878,14 +748,10 @@
 // 		// 		// for (var i=0; i<40; i++) claims[i] = message.claims[i].claim;
 // 		// 	});
 // 		// }
-
-
-
 // 		function speciesImageURL (index) {
 // 			var pad = (index<10) ? '0' : '';
 // 			return "https://ltg.cs.uic.edu/WC/icons/species_" + pad + index + ".png";
 // 		}
-
 // 	// this is the function that everybody else will use to write to the user log
 // 		function userLog(channel, extension){
 // 			var SEPARATOR = "^,^";
@@ -906,7 +772,6 @@
 // 			xl[0] = log;
 // 			nutella.net.publish('add_to_user_log',xl);
 // 		}
-
 // 		function loadExperiment(){
 // 			var s = document.getElementById('experimentsList').selectedIndex;
 // 			if (s == 0) {
@@ -933,8 +798,6 @@
 // 				document.getElementById('image6').src = experiments[s-1].figures[2];
 // 			}
 // 		}
-
-
 	</script>
 				
 </body>
