@@ -64,7 +64,6 @@
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) {
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
-						console.log ('7');
 						construct_user_interface(channel_lineup,prettyNames); 	
 
 						if ((channel_lineup.length != 0) && (type=='ecosystem' || type == 'speciesPlace' | type == 'pervasive')) document.getElementById('button0').click();
@@ -132,12 +131,12 @@
 	}
 
 	function buildLineup (channelList, instance) {
-		if (query_parameters.run_id == "6BM") currentTreatment = "object";
-		if (query_parameters.run_id == "6MT") currentTreatment = "push";
-		if (query_parameters.run_id == "6ADF") currentTreatment = "place";
-		if (query_parameters.run_id == "default") currentTreatment = "push";
-		if (query_parameters.run_id == "guest") currentTreatment = "push";
-		if (currentRoom == "312") currentTreatment = "push";
+		// if (query_parameters.run_id == "6BM") currentTreatment = "object";
+		// if (query_parameters.run_id == "6MT") currentTreatment = "push";
+		// if (query_parameters.run_id == "6ADF") currentTreatment = "place";
+		// if (query_parameters.run_id == "default") currentTreatment = "push";
+		// if (query_parameters.run_id == "guest") currentTreatment = "push";
+		// if (currentRoom == "312") currentTreatment = "push";
 
 		var s;
 		var channel_lineup = [];
@@ -155,7 +154,7 @@
 			s += 'CLASS=' + currentRun + '&';
 			s += 'ROOM=' + currentRoom + '&';
 			s += 'ACTIVITY=' + currentActivity + '&';
-			s += 'TREATMENT=' + currentTreatment + '&';		 
+			// s += 'TREATMENT=' + currentTreatment + '&';		 
 			s += 'CHANNEL=' + channelList[i] + '&';		 
 			s += 'TYPE=' + type + '&';
 			s += 'INSTANCE=' + instance;
