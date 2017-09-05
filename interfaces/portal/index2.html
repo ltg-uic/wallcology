@@ -62,7 +62,7 @@
 
 		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room;
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) {
-				nutella.net.request('channel_names',{}, function (prettyNames, from){alert('5');
+				nutella.net.request('channel_names',{}, function (prettyNames, from){console.log(prettyNames);
 						var channel_lineup = buildLineup (channelList, instance); 
 						construct_user_interface(channel_lineup,prettyNames); 	
 
