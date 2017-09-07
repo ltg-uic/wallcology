@@ -72,7 +72,7 @@
 		</script>
 	</select>
 	&nbsp&nbsp
-	<input type=checkbox id='normalize' onClick='query();'> &nbspCompare&nbsp&nbsp&nbsp <button id="sizeButton" onClick="inform();">Size</button>
+	<input hidden type=checkbox id='normalize' onClick='query();'>  
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
 
@@ -96,6 +96,7 @@
 			 var myIconHt = Math.floor(myHt*0.8);
 			 myHt=thisSize*myHt;
 
+// var pingcount=0;
 			
 			document.write('<tr ');
 			if (thisSize != 1) document.write('hidden');
@@ -170,7 +171,9 @@
 		updateGraphs();
 	});
 
-	setInterval(ping, 5*60*1000); //ping every five minutes
+	nutella.net.subscribe('ping',function(message,from){console.log('received ping ' + message)});
+
+	// setInterval(ping, 60*1000); //ping every five minutes
 
 	function resizeMe(b){
 
@@ -187,9 +190,9 @@
 		alert("Click on species for enlarged view");
 	}
 
-	function ping () {
-		nutella.net.publish('ping');
-	}
+	// function ping () {
+	// 	nutella.net.publish('ping',pingcount++);
+	// }
 	//gather all the manipulations on this ecosystem into two arrays
 
 	function toggleAbiotic() {
@@ -204,10 +207,10 @@
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
-			console.log('message.length ' + message.length);
+			// console.log('message.length ' + message.length);
 			for (var i=0; i<message.length; i++) { 
-				console.log('i ' + i);
-				console.log('message[i].species ' + message[i].species);
+				// console.log('i ' + i);
+				// console.log('message[i].species ' + message[i].species);
 				if ((message[i].species === null) || (message[i].species == '')) message[i].species = 0;
 				if (message[i].species >= 0) {
 					var last = bioticActions[message[i].species].length;

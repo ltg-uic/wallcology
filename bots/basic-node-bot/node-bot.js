@@ -8,43 +8,14 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 nutella.setResourceId('my_resource_id');
 
 
-console.log("Hi, I'm a basic node bot and your code should go here!");
+console.log("Keep alive bot. Pings every minute. Interfaces must subscribe.");
 
-
-
-// Some examples to give you ideas...
-// You can do things such as:
-
-
-
-// 1. Subscribing to a channel
-nutella.net.subscribe('demo_channel', function(message, from) {
-    // Your code to handle messages received on this channel goes here
-});
-
-
+var pingcount = 0;
 // 2. Publish a message to a channel
-nutella.net.publish('demo_channel', 'demo_message');
+setInterval(ping, 60*1000); //ping every minute
 
-	
-// 2a. The cool thing is that the message can be any object
-nutella.net.publish('demo_channel', {a: 'proper', key: 'value'});
+function ping () {
+ nutella.net.publish('ping',pingcount++);
+}
 
-
-// 3. Make asynchronous requests on a certain channel
-nutella.net.request( 'demo_channel', 'my_request', function(response){
-    // Your code to handle the response to this request goes here
-});
-
-
-// 4. Handle requests from other components
-nutella.net.handle_requests( 'demo_channel', function(message, from) {
-    // Your code to handle each request here
-    // Anything this function returns (String, Integer, Object...) is going to be sent as the response
-    var response = 'a simple string'
-    // response = 12345
-    // response = {}
-    // response = {my:'json'}
-    return response;
-});
 

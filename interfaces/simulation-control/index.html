@@ -32,6 +32,7 @@
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 	
 	// var activityList = ["naturalist","abiotic experimentalist","biotic experimentalist","modeler","threat analyst","applied ecologist"];
+nutella.net.subscribe('ping',function(message,from){});
 
 	nutella.net.request('running',{},function(RUNNING){ 
 		if (RUNNING) {
