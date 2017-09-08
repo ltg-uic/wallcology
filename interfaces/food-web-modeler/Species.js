@@ -1,4 +1,4 @@
-function Species ( n, x, y, h, w, c, sc){
+function Species ( n, x, y, h, w, c, sc, l){
 	
     // var url = u;
     this.file = n + ".png";
@@ -9,7 +9,9 @@ function Species ( n, x, y, h, w, c, sc){
     var image = loadImage( this.file );
     //var placeholder = loadImage( placeholderFile );
 
-    this.name = n;
+
+    this.name = n;  //unique name for identifying object
+    this.nickname = l;
     this.x = x;   //where image is placed at, dynamic
     this.y = y;
     this.px = x;  //location in palette

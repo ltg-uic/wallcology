@@ -176,7 +176,7 @@ function FoodWeb(){
     if ( mode == "deploy"){
         nutella.net.request('get_fw', {portal: portal, instance: instance}, function(message,from){
             //message = drawing
-            console.log("get fw: "+message);
+            //console.log("get fw: "+message);
             retrieveDrawing( message ); 
             setupEventListeners();
             setTimeout( draw, 2000 );
@@ -289,13 +289,18 @@ function FoodWeb(){
         var tempArr = [];
         var tempY = speciesMargin;
         for(var i=0; i<speciesArr.length; i++){
+            //test species nickname retrieval
+            //console.log( top.species_names[i] );
+            var nickname = top.species_names[i];
             var sp = speciesArr[i];
-            var tempObj = new Species( sp.name, 
+            var tempObj = new Species( sp.name,
                 (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour );
+                sp.height, sp.width, ctx, shadowColour, nickname );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
-            tempY += speciesSize+speciesSpacing;        
+            tempY += speciesSize+speciesSpacing;
+            //test nickname
+            //console.log(i+": "+nickname);
         }
         return tempArr;
     }
@@ -817,34 +822,33 @@ function FoodWeb(){
             if ( multipleChoice.length < 1 ){
                 for (var j = 0; j < plusButtons.length; j++) {
                     if( detectHit(mx,my,plusButtons[j])){
-                        if ( graphComplete == true ){
+                        //if ( graphComplete == true ){
                             handlePopulationChange( obj[j], j, "plus" );
                             clickedBtn = plusButtons[j];
                             plusButtons[j].startAnimate();
                             graphComplete = false;
                             //setupPopulationChange(obj[j], j, "plus");
-                        } else {
-                            prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
-                        }
+                        //} /*else {
+                        //    prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
+                        //}*/
                     }
                 }
                 for (var k = 0; k < minusButtons.length; k++) {
                     if( detectHit(mx,my,minusButtons[k])){
-                        if ( graphComplete == true ){
+                        //if ( graphComplete == true ){
                             handlePopulationChange( obj[k], k, "minus" );
-                            clickedBtn = minusButtons[k];
-                            minusButtons[k].startAnimate();
-                            graphComplete = false;
+                            // clickedBtn = minusButtons[k];
+                            // minusButtons[k].startAnimate();
+                            // graphComplete = false;
                             //setupPopulationChange(obj[k], k, "minus");
-                        } else {
-                            prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
-                        }
+                        //} /*else {
+                            //prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
+                        //}*/
                     }
                 }
             }
         }
         //var tempConnections = [];
-
         evalConnection();        
         evalGraphs();
         resetObjPos();
@@ -954,15 +958,16 @@ function FoodWeb(){
             removeItem( connections, t );
         }
         //RESET BUTTONS
-        for ( var k=0; k<obj.length; k++){
+
+/*        for ( var k=0; k<obj.length; k++){
             if ( obj[k].name == sp.name ){
                 console.log("name matched: stop graph");
                 plusButtons[k].stopAnimate();
-                minusButtons[k].stopAnimate();
+                //minusButtons[k].stopAnimate();
                 prompt.setText("");   
-                graphComplete = true;         
+                //graphComplete = true;         
             }
-        }
+        }*/
     }
     function evalConnection(){
         for ( var i=0; i<movingConnections.length; i++){
@@ -1117,8 +1122,7 @@ function FoodWeb(){
                     var graph = new BarGraph(gctx, s, preScaledWidth, background );
                     var data = new GraphData();
                     graph.curArr = data.baseline;
-                    //test event
-                    //graph.addEventListener( "mouseup", handleGraphComplete );
+                    //event does not work on AWS server
                     //graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
                     graphs.push(graph);
                 }
@@ -1237,24 +1241,36 @@ function FoodWeb(){
         var direction = type; //"plus" or "minus"
         var data1 = new GraphData();
 
-        if( direction == "plus"){
-            console.log(object.name + " population goes up");
-            //prompt.setText(object.name + " population goes up");    
+        /*if( direction == "plus"){
+            //console.log(object.name + " population goes up");
+            prompt.setText(object.nickname + " population goes up");    
         } else {
-            console.log(object.name + " population goes down");
-            //prompt.setText(object.name + " population goes down");
-        }
+            //console.log(object.name + " population goes down");
+            prompt.setText(object.nickname + " population goes down");
+        }*/
 
         //loops through all the graphs being displayed
         for(var i=0; i<graphs.length; i++){
+
             var graph = graphs[i];
+
+            //check to see if the graphs are running
+            console.log("graphs["+i+"].getRunning: "+graph.getRunning() );
+            var isAlreadyRunning = graph.getRunning();
+            if ( isAlreadyRunning ){
+                prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
+                return;
+            }
             //replace data for object clicked's graph
             var id = i;
             if( graph.name == object.name ){   
                 if ( type == "plus" ){
+                    graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
                     graph.replace( data1.increase, id );
+                    prompt.setText(object.nickname + " population goes up");   
                 } else if ( type == "minus" ){
                     graph.replace( data1.decrease, id );
+                    prompt.setText(object.nickname + " population goes down");
                 }
             } else {
                 //find out relationship between object and graph target, should return
