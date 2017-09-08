@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170828-2145";
+    var versionID = "20170907-2030";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -93,7 +93,7 @@ function FoodWeb(){
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-
+        nutella.net.subscribe('ping',function(message,from){});
         //subscribe to new claims
         nutella.net.subscribe('new_claim', function(message, from){
             console.log("new claim: "+message.source+", "+message.destination+", "+message.relationship);

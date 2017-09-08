@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "foodwebmodeler";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170905-1430";
+    var versionID = "20170907-2030";
     var query_parameters;
     var nutella;
     var portal;
@@ -100,10 +100,9 @@ function FoodWeb(){
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-
+        nutella.net.subscribe('ping',function(message,from){});
         portal = query_parameters.TYPE;
         instance = query_parameters.INSTANCE;
-
         /*if( query_parameters.TYPE == "teacher"){
             group = -1;
         } else {
@@ -953,6 +952,16 @@ function FoodWeb(){
             data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
             displayList.removeChild( t );
             removeItem( connections, t );
+        }
+        //RESET BUTTONS
+        for ( var k=0; k<obj.length; k++){
+            if ( obj[k].name == sp.name ){
+                console.log("name matched: stop graph");
+                plusButtons[k].stopAnimate();
+                minusButtons[k].stopAnimate();
+                prompt.setText("");   
+                graphComplete = true;         
+            }
         }
     }
     function evalConnection(){
