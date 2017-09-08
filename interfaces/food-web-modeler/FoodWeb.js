@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "foodwebmodeler";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170907-2030";
+    var versionID = "20170907-2045";
     var query_parameters;
     var nutella;
     var portal;
@@ -179,12 +179,12 @@ function FoodWeb(){
             console.log("get fw: "+message);
             retrieveDrawing( message ); 
             setupEventListeners();
-            setTimeout( draw, 1000 );
+            setTimeout( draw, 2000 );
         });
     } else {
         retrieveDrawing( {} );
         setupEventListeners();
-        setTimeout( draw, 1000 );
+        setTimeout( draw, 2000 );
     }
 
     //SETUP
@@ -1117,7 +1117,9 @@ function FoodWeb(){
                     var graph = new BarGraph(gctx, s, preScaledWidth, background );
                     var data = new GraphData();
                     graph.curArr = data.baseline;
-                    graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
+                    //test event
+                    //graph.addEventListener( "mouseup", handleGraphComplete );
+                    //graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
                     graphs.push(graph);
                 }
             } else {
