@@ -1265,7 +1265,7 @@ function FoodWeb(){
             var id = i;
             if( graph.name == object.name ){   
                 if ( type == "plus" ){
-                    graph.addEventListener( graph.EVENT_COMPLETE, handleGraphComplete );
+                    graph.addEventListener( BarGraph.EVENT_COMPLETE, handleGraphComplete );
                     graph.replace( data1.increase, id );
                     prompt.setText(object.nickname + " population goes up");   
                 } else if ( type == "minus" ){
