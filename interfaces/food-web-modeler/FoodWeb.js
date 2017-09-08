@@ -81,7 +81,9 @@ function FoodWeb(){
     //for manipulating population levels
     var plusButtons = [];   //increase population
     var minusButtons = [];  //decrease population
-    var clickedBtn;
+    
+    this.clickedBtn;
+
     var graphComplete = true;
     var graphs = [];
     var multipleChoice = [];
@@ -382,7 +384,7 @@ function FoodWeb(){
     }
 */
     //EVENTLISTENERS
-    function handleGraphComplete(e){
+    function handleGraphComplete(){
         if( !graphComplete ){
             clickedBtn.stopAnimate();
             clickedBtn.draw();
@@ -824,9 +826,9 @@ function FoodWeb(){
                     if( detectHit(mx,my,plusButtons[j])){
                         //if ( graphComplete == true ){
                             handlePopulationChange( obj[j], j, "plus" );
-                            clickedBtn = plusButtons[j];
+                            this.clickedBtn = plusButtons[j];
                             plusButtons[j].startAnimate();
-                            graphComplete = false;
+                            //graphComplete = false;
                             //setupPopulationChange(obj[j], j, "plus");
                         //} /*else {
                         //    prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
@@ -837,8 +839,8 @@ function FoodWeb(){
                     if( detectHit(mx,my,minusButtons[k])){
                         //if ( graphComplete == true ){
                             handlePopulationChange( obj[k], k, "minus" );
-                            // clickedBtn = minusButtons[k];
-                            // minusButtons[k].startAnimate();
+                            this.clickedBtn = minusButtons[k];
+                            minusButtons[k].startAnimate();
                             // graphComplete = false;
                             //setupPopulationChange(obj[k], k, "minus");
                         //} /*else {
@@ -1251,27 +1253,33 @@ function FoodWeb(){
 
         //loops through all the graphs being displayed
         for(var i=0; i<graphs.length; i++){
-
             var graph = graphs[i];
 
             //check to see if the graphs are running
             console.log("graphs["+i+"].getRunning: "+graph.getRunning() );
             var isAlreadyRunning = graph.getRunning();
             if ( isAlreadyRunning ){
+                for (var i=0; i<plusButtons.length; i++ ){
+                    plusButtons[i].stopAnimate();
+                    minusButtons[i].stopAnimate();
+                }
                 prompt.setText("Please wait until populations have stabilized before starting a new manipulation.");
                 return;
             }
+            
             //replace data for object clicked's graph
             var id = i;
             if( graph.name == object.name ){   
                 if ( type == "plus" ){
-                    graph.addEventListener( BarGraph.EVENT_COMPLETE, handleGraphComplete );
+                    //graph.addEventListener( BarGraph.EVENT_COMPLETE, handleGraphComplete );
                     graph.replace( data1.increase, id );
-                    prompt.setText(object.nickname + " population goes up");   
+                    prompt.setText(object.nickname + "'s population goes up");   
                 } else if ( type == "minus" ){
                     graph.replace( data1.decrease, id );
-                    prompt.setText(object.nickname + " population goes down");
+                    //prompt.setText(object.nickname + " population goes down");
                 }
+                //console.log("clickedBtn: "+clickedBtn);
+                //clickedBtn.startAnimate();
             } else {
                 //find out relationship between object and graph target, should return
                 //"goes up", "goes down", or "same"
@@ -1296,6 +1304,16 @@ function FoodWeb(){
                 data.save("MODELER_GRAPH","object ;"+object.name+" ;direction ;"+type+" ;graph ;"+graph.name+" ;result ;"+r);
             }
         }
+        setTimeout( function() { 
+                    //clickedBtn.stopAnimate();
+                    for (var i=0; i<plusButtons.length; i++ ){
+                        plusButtons[i].stopAnimate();
+                        minusButtons[i].stopAnimate();
+                    }
+                    prompt.setText("");
+                    draw();
+                    //console.log("12 seconds have passed. "+ plusButtons[0]) 
+                }, 12000 );
     }
     //returns 1, -1, or 0
     function getMultiplier( object, connection, direction ){
