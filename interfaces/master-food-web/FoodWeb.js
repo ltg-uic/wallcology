@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170914-2030";
+    var versionID = "20170914-2300";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -360,9 +360,10 @@ function FoodWeb(){
         var tempY = speciesMargin;
         for(var i=0; i<speciesArr.length; i++){
             var sp = speciesArr[i];
+            var nickname = top.species_names[i];
             var tempObj = new Species( sp.name, 
                 (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour );
+                sp.height, sp.width, ctx, shadowColour, nickname );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
             tempY += speciesSize+speciesSpacing;        
@@ -723,7 +724,7 @@ function FoodWeb(){
             var newy = y;        
             canX = newx; //- canvas.offsetLeft;
             canY = newy; //- canvas.offsetTop;
-            
+
             if (dragok) {
                 // get the current mouse position
                 var mx = canX;
@@ -773,6 +774,22 @@ function FoodWeb(){
                     }
                 }
                 draw();
+            } else {
+                //tooltip
+                for (var a = 0; a < obj.length; a++) {
+                    var b = obj[a];
+                    var mx = canX;
+                    var my = canY;
+
+                    if (mx > b.x && mx < b.x + b.width && my > b.y && my < b.y + b.height) {
+                        // if yes, set that obj isHover=true
+                        b.isHover = true;
+                        draw();
+                    } else {
+                        b.isHover = false;
+                        draw();
+                    }
+                }
             }
         //}
     }
@@ -891,6 +908,7 @@ function FoodWeb(){
                 //data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             o.isDragging = false;
+            o.isHover = false;
         }
         for (var j = 0; j < badges.length; j++) {
             var b = badges[j];
