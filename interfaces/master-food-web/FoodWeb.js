@@ -908,7 +908,7 @@ function FoodWeb(){
                 //data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             o.isDragging = false;
-            o.isHover = false;
+            //o.isHover = false;
         }
         for (var j = 0; j < badges.length; j++) {
             var b = badges[j];
