@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170907-2030";
+    var versionID = "20170914-2030";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -274,7 +274,6 @@ function FoodWeb(){
         // console.log("window height: "+parent.document.body.clientHeight+", width: "+parent.document.body.clientWidth);
         // canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
         // canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
-
         canvasWidth = (parent.document.body.clientWidth == 0)? 980 : parent.document.body.clientWidth;
         canvasHeight = (parent.document.body.clientHeight == 0)? 680 : parent.document.body.clientHeight;
 
@@ -467,8 +466,6 @@ function FoodWeb(){
         //console.log("handleWithdrawBtn: " + openedLine.claims.length );
         //console.log("withdrawnClaims.length: "+withdrawnClaims.length);
         //check if already withdrawn
-
-
         var index = -1;
         for ( var i=0; i<withdrawnClaims.length; i++ ){
             //console.log( "withdrawnClaims[i].instance: "+withdrawnClaims[i].instance+", openedLine.claims[openedClaimIndex].instance: "+openedLine.claims[openedClaimIndex].instance);
@@ -489,7 +486,6 @@ function FoodWeb(){
             document.getElementById('withdraw').innerHTML = "Cancel Withdraw";
             document.getElementById('removeClaim').style.display = 'inline-block';
         }
-        
         //toggleWithdrawClaim();
     }
     function updateWithdrawClaim(){      
@@ -998,7 +994,6 @@ function FoodWeb(){
         var groupInstance = parseInt(openedLine.claims[openedClaimIndex].instance);
         authorP.innerHTML = "Group "+( groupInstance + 1);
         authorP.style.color = badgeColours[groupInstance];//"Red";
-        
         //number-p        
         //clientHeight includes padding
         //offsetHeight includes padding, scrollBar and borders.
