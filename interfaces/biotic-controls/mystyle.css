@@ -114,7 +114,7 @@ ul.tab li {float: left;}
 /* Style the links inside the list items */
 ul.tab li a {
     display: inline;
-    color: White; /* menu item font color */
+    color: white; /* menu item font color */
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
@@ -138,9 +138,37 @@ ul.tab li a:focus, .active {
     padding: 6px 12px;
     border: 0px solid #ccc;
     border-top: none;
-    color: White;
+    color: white;
 }
 
 .critter {
     padding-bottom: 2px;
+}
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+/* Tooltip text */
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 120px;
+    /*background-color: black;*/
+    color: #fff;
+    text-align: center;
+    padding: 0;
+    font-size: 0.6em;
+    font-weight: bold;
+    /*border-radius: 6px;*/
+ 
+    /* Position the tooltip text - see examples below! */
+    position: absolute;
+    z-index: 1;
+    bottom: -10%;
+    left: 50%;
+    margin-left: -60px;
+}
+
+/* Show the tooltip text when you mouse over the tooltip container */
+.tooltip:hover .tooltiptext {
+    visibility: visible;
 }

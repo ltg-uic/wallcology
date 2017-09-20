@@ -31,13 +31,13 @@
 		for (var i=0; i<11; i++) {
 			var pad = (i<10) ? '0' : '';
 			// pad species name to match icon numbering scheme
-			document.write('<img src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + i + '.png" ');
+			document.write('<div class="tooltip"><img src="https://ltg.cs.uic.edu/WC/icons/species_' + pad + i + '.png" ');
 			// when you click on a species icon, it becomes selected
 			document.write('onClick="select(' + i + ');" ');
 			// set up the size
 			document.write('width=' + s + ' height=' + s + ' ');
 			// and give the item an id
-			document.write('class="critter" id="img' + i + '"><br>');
+			document.write('class="critter" id="img' + i + '"><span class="tooltiptext">'+top.species_names[i]+'</span></div><br>');
 			document.getElementById('img' + i).style.opacity="0.35";
 		};
 		document.write("</td>");
