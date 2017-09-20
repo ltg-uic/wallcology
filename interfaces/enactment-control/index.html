@@ -24,7 +24,7 @@
 		nutella.net.request('get_current_run',{},function(currentClass,from){ 
 			nutella.net.request('currentActivityAndRoom',{},function(m, from){ 
 				window.document.write('<link rel="stylesheet" type="text/css" href="mystyle.css">'); 
-				document.write('<div style="font-size:150%"><br>Activity &nbsp<select id="activity" onChange="activityChange();">');
+				document.write('<div style="font-size:120%"><br>Activity &nbsp<select id="activity" onChange="activityChange();">');
 				for (var i=0; i<message.length; i++){
 					document.write('<option value="',message[i].name,'">',message[i].name,'</option>');
 				};

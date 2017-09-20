@@ -404,6 +404,8 @@ function Line(n,o1,o2,c,l,t,s,f,d,sc,bg,lc,v,cl){
             o.colour = o.colours[2];
         } else if ( o.status == "inconflict" ){
             o.colour = o.colours[1];
+        } else if ( (o.type == "does not eat" || o.type == "does not compete with") && (o.claims.length == 1) ){
+            o.colour = o.colours[1];
         } else {
             o.colour = o.colours[0];
         }

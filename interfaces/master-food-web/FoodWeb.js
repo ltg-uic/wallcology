@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170828-2145";
+    var versionID = "20170914-2300";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -93,7 +93,7 @@ function FoodWeb(){
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-
+        nutella.net.subscribe('ping',function(message,from){});
         //subscribe to new claims
         nutella.net.subscribe('new_claim', function(message, from){
             console.log("new claim: "+message.source+", "+message.destination+", "+message.relationship);
@@ -274,7 +274,6 @@ function FoodWeb(){
         // console.log("window height: "+parent.document.body.clientHeight+", width: "+parent.document.body.clientWidth);
         // canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
         // canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
-
         canvasWidth = (parent.document.body.clientWidth == 0)? 980 : parent.document.body.clientWidth;
         canvasHeight = (parent.document.body.clientHeight == 0)? 680 : parent.document.body.clientHeight;
 
@@ -361,9 +360,10 @@ function FoodWeb(){
         var tempY = speciesMargin;
         for(var i=0; i<speciesArr.length; i++){
             var sp = speciesArr[i];
+            var nickname = top.species_names[i];
             var tempObj = new Species( sp.name, 
                 (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour );
+                sp.height, sp.width, ctx, shadowColour, nickname );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
             tempY += speciesSize+speciesSpacing;        
@@ -467,8 +467,6 @@ function FoodWeb(){
         //console.log("handleWithdrawBtn: " + openedLine.claims.length );
         //console.log("withdrawnClaims.length: "+withdrawnClaims.length);
         //check if already withdrawn
-
-
         var index = -1;
         for ( var i=0; i<withdrawnClaims.length; i++ ){
             //console.log( "withdrawnClaims[i].instance: "+withdrawnClaims[i].instance+", openedLine.claims[openedClaimIndex].instance: "+openedLine.claims[openedClaimIndex].instance);
@@ -489,7 +487,6 @@ function FoodWeb(){
             document.getElementById('withdraw').innerHTML = "Cancel Withdraw";
             document.getElementById('removeClaim').style.display = 'inline-block';
         }
-        
         //toggleWithdrawClaim();
     }
     function updateWithdrawClaim(){      
@@ -727,7 +724,7 @@ function FoodWeb(){
             var newy = y;        
             canX = newx; //- canvas.offsetLeft;
             canY = newy; //- canvas.offsetTop;
-            
+
             if (dragok) {
                 // get the current mouse position
                 var mx = canX;
@@ -777,6 +774,22 @@ function FoodWeb(){
                     }
                 }
                 draw();
+            } else {
+                //tooltip
+                for (var a = 0; a < obj.length; a++) {
+                    var b = obj[a];
+                    var mx = canX;
+                    var my = canY;
+
+                    if (mx > b.x && mx < b.x + b.width && my > b.y && my < b.y + b.height) {
+                        // if yes, set that obj isHover=true
+                        b.isHover = true;
+                        draw();
+                    } else {
+                        b.isHover = false;
+                        draw();
+                    }
+                }
             }
         //}
     }
@@ -895,6 +908,7 @@ function FoodWeb(){
                 //data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             o.isDragging = false;
+            //o.isHover = false;
         }
         for (var j = 0; j < badges.length; j++) {
             var b = badges[j];
@@ -998,7 +1012,6 @@ function FoodWeb(){
         var groupInstance = parseInt(openedLine.claims[openedClaimIndex].instance);
         authorP.innerHTML = "Group "+( groupInstance + 1);
         authorP.style.color = badgeColours[groupInstance];//"Red";
-        
         //number-p        
         //clientHeight includes padding
         //offsetHeight includes padding, scrollBar and borders.

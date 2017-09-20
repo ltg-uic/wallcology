@@ -6,38 +6,21 @@
 .color-primary-4 { color: #550000 }
 
 
-html { width:100% ;
+html { 
+    width:100% ;
     height:100% ;
-    overflow:auto ;
+    overflow:hidden ;
     background-color: rgb(60,81,105);
-    color:white;
-    
+    color:White;
 }
 
 iframe { width:100% ;
         height:100% ;
         border:none ; 
-        color:white;
-
+        color:White;
  }
 
-td { font-size: 140%; color: white; }
-
-
-select {
-    -webkit-appearance: none;
-    font-size:20px;
-    width:120px;
-    color:white;
-    background-color: rgb(60,81,105);
-}
-
-option {
-    -webkit-appearance: none;
-    font-size:20px;
-    color:white;
-}
-
+td { font-size: 140%; color: White; }
 
 table.center {
     margin-left:auto; 
@@ -45,14 +28,28 @@ table.center {
   }
 
 
-body {font-family: "Lato", sans-serif; width:100% ;
-/*    background-image: url("bg.jpg"); */
-    color: white;
+body {
+    /*font-family: "Lato", sans-serif; width:100% ;*/
+    /*background-image: url("bg.jpg");*/
+    color: White;
+    font-family: 'Roboto', sans-serif;
     font-size: 100%;
+    /*font-weight: bold;*/
+    text-align:center;
     height:100% ;
-    overflow:auto ;
+    overflow:hidden ;
 }
 
+
+select {
+    -webkit-appearance: none;
+    font-size:16px;
+}
+
+option {
+    -webkit-appearance: none;
+    font-size:16px;
+}
 
 
 /*button {
@@ -89,7 +86,7 @@ button:focus {
 ul.tab {
     list-style-type: none;
     margin: 0;
-    padding: 0;
+    padding: 2;
     overflow: hidden;
     border: 0px solid #ccc;
     background-color: DarkCyan; /* tab bar background color */
@@ -101,12 +98,12 @@ ul.tab li {float: left;}
 /* Style the links inside the list items */
 ul.tab li a {
     display: inline;
-    color: white; /* menu item font color */
+    color: White; /* menu item font color */
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
     transition: 0.3s;
-    font-size: 17px;
+    font-size: 100%;
 }
 
 /* Change background color of links on hover */
@@ -125,5 +122,5 @@ ul.tab li a:focus, .active {
     padding: 6px 12px;
     border: 0px solid #ccc;
     border-top: none;
-    color: white;
+    color: White;
 }
