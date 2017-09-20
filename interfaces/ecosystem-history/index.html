@@ -171,7 +171,20 @@
 		updateGraphs();
 	});
 
-	nutella.net.subscribe('ping',function(message,from){console.log('received ping ' + message)});
+	// nutella.net.subscribe('ping',function(message,from){console.log('received ping ' + message)});
+
+	var lastping = (new Date).getTime();
+	setInterval(reconnect, 60*1000);
+
+	nutella.net.subscribe('ping',function(message,from){
+		console.log('received ping' + message);
+		lastping = (new Date).getTime();
+	});
+
+	function reconnect(){
+		var timeNow = (new Date).getTime();
+		if ((timeNow - lastping) > 70*1000) location.reload(true);
+	}
 
 	// setInterval(ping, 60*1000); //ping every five minutes
 
@@ -207,7 +220,7 @@
 		bioticActions = []; // array of biotic actions, one for each species
 		for (var i=0; i<11; i++) bioticActions[i]=[];
 		nutella.net.request('biotic-history',{ecosystem:ecosystem}, function(message, from){
-			// console.log('message.length ' + message.length);
+			console.log('requested biotic history');
 			for (var i=0; i<message.length; i++) { 
 				// console.log('i ' + i);
 				// console.log('message[i].species ' + message[i].species);
@@ -220,6 +233,7 @@
 
 			abioticActions = []; // array of biotic actions, one for each species
 			nutella.net.request('abiotic-history',{ecosystem:ecosystem}, function(message, from){
+			console.log('requested abiotic history');
 				for (var i=0; i<message.length; i++) {
 					abioticActions.push(message[i]);
 				}
@@ -231,6 +245,8 @@
 	// Your code that uses the nutella instance here
 
 	function query(){
+					console.log('entered query function');
+
 		var sm = document.getElementById('startMonth').selectedIndex+1;
 		var sd = document.getElementById('startDay').selectedIndex+1;
 
@@ -283,6 +299,7 @@
 
 
 		nutella.net.request('ecosystem_history', {ecosystem:ecosystem,start:lower,stop:upper}, function(response) {
+			console.log('requested ecosystem history');
 			var c = response.biotic.length;
 			var normalizedMax = [10,5,10,5,100,100,10,10,5,100,100,1];
 			var max=[];
