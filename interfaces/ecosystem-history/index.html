@@ -72,10 +72,9 @@
 			for(i=1;i<=31;i++) document.write('<option value ="' + i + '">' + i + '</option>');
 		</script>
 	</select>
-	&nbsp&nbsp
+	<!-- &nbsp&nbsp -->
 	<input hidden type=checkbox id='normalize' onClick='query();'>  
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
-
 
 	<table style="border-spacing:0px;padding:0;">
 		<script type="text/javascript">
@@ -90,25 +89,25 @@
 				'https://ltg.cs.uic.edu/WC/icons/species_08.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_09.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_10.png',
-			 ];
+			];
 
-			 var myHt = Math.floor((parent.IW-261)/30); 
-			 if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
-			 var myIconHt = Math.floor(myHt*0.8);
-			 myHt=thisSize*myHt;
+			var myHt = Math.floor((parent.IW-261)/30); 
+			if (parent.IW > parent.IH) myHt = 60; else myHt=35; // alert(myHt);
+			var myIconHt = Math.floor(myHt*0.8);
+			myHt=thisSize*myHt;
 
-// var pingcount=0;
+			// var pingcount=0;
 			
 			document.write('<tr ');
 			if (thisSize != 1) document.write('hidden');
 			document.write('><td align=center><img id="abioticImage" src="temperature.png" onclick="toggleAbiotic();" height="' + myIconHt + '" ></td>');
 			document.write('<td><canvas id="abioticCanvas" width="900" height="' + myHt + '"></td></tr>');
-			
 
 			for (i=0; i<11; i++) {
 				document.write('<tr ');
 				if (thisSize != 1 && thisBUS != i) document.write('hidden');
-				document.write('><td><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '">&nbsp;<span style="vertical-align:middle;">' + top.species_names[i] + '</span></td>');
+				/*&nbsp;<span style="vertical-align:middle;">' + top.species_names[i] + '</span>*/
+				document.write('><td><div class="tooltip"><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"><span class="tooltiptext">'+top.species_names[i]+'</span></div></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
 		</script>
@@ -133,7 +132,6 @@
 	//   var height= Math.max(document.documentElement.clientHeight, window.innerHeight || 0)
 	//   alert("Viewport size is " + width + "x" + height);
 	// }
-
 
 	var abioticDisplay = 0;
 	var abioticOptions = ['temperature','brick','wood'];
