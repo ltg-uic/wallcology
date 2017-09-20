@@ -38,13 +38,13 @@
 				document.write('<option value="guest">guest</option>');
 				document.write('<option value="6BM">6BM</option>');
 				document.write('<option value="6MT">6MT</option>');
-				document.write('<option value="6ADF">6ADF</option>');
+				document.write('<option value="6AM">6M</option>');
 				document.write('</select><br>');
 				if (currentClass == 'default') document.getElementById('class').selectedIndex = 0;
 				if (currentClass == 'guest') document.getElementById('class').selectedIndex = 1;
 				if (currentClass == '6BM') document.getElementById('class').selectedIndex = 2;
 				if (currentClass == '6MT') document.getElementById('class').selectedIndex = 3;
-				if (currentClass == '6ADF') document.getElementById('class').selectedIndex = 4;
+				if (currentClass == '6AM') document.getElementById('class').selectedIndex = 4;
 				for (var i=0; i<document.getElementById('activity').options.length; i++) {
 					if (document.getElementById('activity').options[i].value == m.activity) document.getElementById('activity').selectedIndex = i;
 				}
