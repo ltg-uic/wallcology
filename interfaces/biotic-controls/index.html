@@ -38,7 +38,7 @@
 			document.write('width=' + s + ' height=' + s + ' ');
 			// and give the item an id
 			document.write('class="critter" id="img' + i + '"><span class="tooltiptext">'+top.species_names[i]+'</span></div><br>');
-			document.getElementById('img' + i).style.opacity="0.35";
+			document.getElementById('img' + i).style.opacity="0.45";
 		};
 		document.write("</td>");
 		document.write("<td width=100></td>")
@@ -57,7 +57,7 @@
 
 		// document.getElementById('img0').style.opacity="0.2";
 
-		function select(species){ alert(species);
+		function select(species){ 
 			if (!inDelay) {
 				selected = species;
 				deselect();
@@ -78,7 +78,7 @@
 		}
 
 		function deselect() {
-			for (i=0; i<11; i++) document.getElementById('img' + i).style.opacity="0.35";			
+			for (i=0; i<11; i++) document.getElementById('img' + i).style.opacity="0.45";			
 		}
 
 		function enableVegieControls() {
