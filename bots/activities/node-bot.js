@@ -15,7 +15,7 @@ var activity = nutella.persist.getMongoObjectStore('currentActivity');
 
 activity.load(function(){ 
     if (activity.currentActivity == undefined){
-        activity['currentActivity'] = "foodweb";
+        activity['currentActivity'] = "biotic experimentalist"; //hack!
         activity['currentRoom'] = "Dreesh";
         activity.save();
     }
