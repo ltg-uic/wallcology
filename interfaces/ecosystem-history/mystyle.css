@@ -43,7 +43,7 @@ select {
     color: #263238;
     font-weight: bold;
     padding: 4px;
-    background-color: #999999;
+    background-color: #CCCCCC;
     border: none;
 }
 
@@ -66,7 +66,7 @@ button {
     border-radius: 4px;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
-    background-color: #999999;  
+    background-color: #CCCCCC;  
     border: none;
     color: #263238; /*white;*/
     padding: 6px 20px;

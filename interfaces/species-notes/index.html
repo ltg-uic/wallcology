@@ -33,7 +33,7 @@
 	        border-radius: 4px;
 	        -webkit-transition-duration: 0.4s; /* Safari */
 	        transition-duration: 0.4s;
-	        background-color: #999999;  /* #2b394a; Toolbar colour */
+	        background-color: #CCCCCC;  /* #2b394a; Toolbar colour */
 	        border: none;
 	        color: #263238; /*white;*/
 	        padding: 6px 20px;
@@ -117,7 +117,25 @@
 		var query_parameters = NUTELLA.parseURLParameters();
 		var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
-		nutella.net.subscribe('ping',function(message,from){});
+// begin keep alive code
+
+		var lastping = (new Date).getTime();
+		setInterval(reconnect, 60*1000);
+
+		nutella.net.subscribe('ping',function(message,from){
+			console.log('received ping' + message);
+			lastping = (new Date).getTime();
+		});
+
+		function reconnect(){
+			var timeNow = (new Date).getTime();
+			if ((timeNow - lastping) > 70*1000) location.reload(true);
+		}
+
+// end keep alive code 
+
+
+//		nutella.net.subscribe('ping',function(message,from){});
 		
 		var instance = query_parameters.INSTANCE;
 		if (instance === undefined) instance = 0;
