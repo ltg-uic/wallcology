@@ -76,7 +76,36 @@
 	    	background-color: #1f292e;
 	    	border: none;
 	    	padding: 10px;
+	    	width: 200px;
+	    	margin: 100px;
 	    }
+	    .critters {
+	    	padding: 4px
+	    }
+	    /* Tooltip text */
+		.tooltip .tooltiptext {
+		    visibility: hidden;
+		    width: 120px;
+		    /*background-color: black;*/
+		    color: #fff;
+		    text-align: left;
+		    padding: 0;
+		    font-size: 0.9em;
+		    font-weight: bold;
+		    /*border-radius: 6px;*/
+		 
+		    /* Position the tooltip text - see examples below! */
+		    position: relative;
+		    z-index: 1;
+		    bottom: 40%;
+		    left: 20px;
+		    /*margin-left: -60px;*/
+		}
+
+		/* Show the tooltip text when you mouse over the tooltip container */
+		.tooltip:hover .tooltiptext {
+		    visibility: visible;
+		}
   	</style>
 	<script type="text/javascript">
 	    var species0 = -1;
@@ -105,7 +134,7 @@
 		 	for (var i=0; i<species[type].length; i++){
 		 		if (index == 0 && species1 == species[type][i]) continue;
 		 		var src = (species[type][i]<10) ? "species_0" + species[type][i] + ".png" : "species_10.png";
-		 		var stuff = '<img height=50 width=50 style="vertical-align:middle" src="' + src + '" onclick="action(' + index + ',' + species[type][i] + ');">&nbsp;<span style="color:white;">' + top.species_names[species[type][i]] + '</span></br>'; 
+		 		var stuff = '<div class="tooltip"><img class="critters" height=50 width=50 style="vertical-align:middle" src="' + src + '" onclick="action(' + index + ',' + species[type][i] + ');"><span class="tooltiptext">'+top.species_names[i]+'</span></div>'; 
 				if (index != 1 || species[type][i] != species0) $('#species_list').append(stuff);
 		 	}
 			document.getElementById('species_selector').style.display = 'block';

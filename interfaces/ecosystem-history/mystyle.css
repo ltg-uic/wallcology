@@ -135,7 +135,7 @@ ul.tab li a:focus, .active {
     width: 120px;
     /*background-color: black;*/
     color: #fff;
-    text-align: center;
+    text-align: left;
     padding: 0;
     font-size: 0.6em;
     font-weight: bold;
@@ -144,9 +144,8 @@ ul.tab li a:focus, .active {
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
-    bottom: -20%;
-    left: 50%;
-    margin-left: -60px;
+    bottom: 40%;
+    left: 2px;
 }
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
