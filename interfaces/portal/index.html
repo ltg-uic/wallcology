@@ -104,6 +104,8 @@ ul.tab li a:focus, .active {
 
 	var type = '';
 
+	// if (query_parameters.hasOwnProperty('TYPE') && query_parameters.hasOwnProperty('INSTANCE')) {login(query_parameters.TYPE,query_parameters.INSTANCE);}
+
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
 	// var tempNames = ['Team','Student','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
@@ -189,7 +191,7 @@ ul.tab li a:focus, .active {
 		s += 'run_id=' + query_parameters.run_id + '&';
 		s += 'TYPE=' + type + '&';
 		s += 'INSTANCE=' + instance;
-
+alert(s);
 		location.href = s;
 	};
 
