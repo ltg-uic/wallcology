@@ -151,7 +151,7 @@ ul.tab li a:focus, .active {
 /* Tooltip text */
 .tooltip .tooltiptext {
     visibility: hidden;
-    width: 500px;
+    width: 600px;
     /*background-color: black;*/
     color: #fff;
     text-align: left;
@@ -163,7 +163,8 @@ ul.tab li a:focus, .active {
     /* Position the tooltip text - see examples below! */
     position: absolute;
     z-index: 1;
-    bottom: 40%;
+    top: 15px;
+    /*bottom: 45%;*/
     left: 80px;
     /*margin-left: -60px;*/
 }
