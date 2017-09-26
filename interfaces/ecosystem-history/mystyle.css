@@ -43,7 +43,7 @@ select {
     color: #263238;
     font-weight: bold;
     padding: 4px;
-    background-color: #CCCCCC;
+    background-color: #999999;
     border: none;
 }
 
@@ -66,7 +66,7 @@ button {
     border-radius: 4px;
     -webkit-transition-duration: 0.4s; /* Safari */
     transition-duration: 0.4s;
-    background-color: #CCCCCC;  
+    background-color: #999999;  
     border: none;
     color: #263238; /*white;*/
     padding: 6px 20px;
@@ -137,7 +137,7 @@ ul.tab li a:focus, .active {
     color: #fff;
     text-align: left;
     padding: 0;
-    font-size: 0.6em;
+    font-size: 0.7em;
     font-weight: bold;
     /*border-radius: 6px;*/
  
@@ -145,7 +145,7 @@ ul.tab li a:focus, .active {
     position: absolute;
     z-index: 1;
     bottom: 40%;
-    left: 2px;
+    left: 80px;
 }
 /* Show the tooltip text when you mouse over the tooltip container */
 .tooltip:hover .tooltiptext {
