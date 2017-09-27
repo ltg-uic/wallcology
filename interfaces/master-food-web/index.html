@@ -156,7 +156,7 @@
         position: absolute;
         top: 0px;
         right: 10px;
-        color: #999999;
+        color: lightgrey;
     }
     #modal-content {
         background-color: #3D5168;
@@ -281,12 +281,24 @@
 
             var browserH = parent.document.body.clientHeight - 30;
             var imgH;
+            var uploadedImageIsSmall = false;
+
+            //blow up images less than 500px by 75%
+            if( originalImage.naturalWidth < 500 || originalImage.naturalHeight < 500 ){
+                modalImg.style.width = Math.floor(originalImage.naturalWidth * 1.75) + "px";
+                modalImg.style.height = Math.floor(originalImage.naturalHeight * 1.75) + "px";
+                uploadedImageIsSmall = true;
+            }
+
             //1000 is max image width
             if ( originalImage.naturalWidth > 1000 ){
                 imgH = Math.floor(1000 * originalImage.naturalHeight / originalImage.naturalWidth);
+            } else if ( uploadedImageIsSmall ){
+                imgH = Math.floor(originalImage.naturalHeight * 1.75);
             } else {
                 imgH = originalImage.naturalHeight;
             }
+
             var padTop = ((browserH-imgH)<0 ) ? 0 : Math.floor((browserH-imgH) / 2 );
             document.getElementById('image-container').style.top = padTop + "px";
         }

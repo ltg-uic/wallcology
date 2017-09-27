@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170914-2300";
+    var versionID = "20170927-1500";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -44,7 +44,7 @@ function FoodWeb(){
     var paletteColour;
     
     var toolbar;                //not drawn, need it to position version buttons, won't need it now
-    var toolbarWidth = 80;      
+    var toolbarWidth = 0; //80;      
     var toolbarColour;          // = "#344559";
     var toolbarSpacing = 20;
     var saveBtn;
@@ -71,6 +71,7 @@ function FoodWeb(){
     var currentDrawing;
     var fwClaims = []; 
     var withdrawnClaims = [];
+    var saveDelay = 300000; //5 minutes in millisecons
     // var initialized = false;
 
     var obj = [];
@@ -92,8 +93,24 @@ function FoodWeb(){
     //load nutella
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
-        nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
-        nutella.net.subscribe('ping',function(message,from){});
+        nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());    
+        // begin keep alive code
+        var lastping = (new Date).getTime();
+        setInterval(reconnect, 60*1000);
+
+        nutella.net.subscribe('ping',function(message,from){
+            console.log('received ping' + message);
+            lastping = (new Date).getTime();
+        });
+
+        function reconnect(){
+            var timeNow = (new Date).getTime();
+            //save what you've got
+            if ((timeNow - lastping) > 70*1000) location.reload(true);
+        }
+        // end keep alive code
+        
+        //nutella.net.subscribe('ping',function(message,from){});
         //subscribe to new claims
         nutella.net.subscribe('new_claim', function(message, from){
             console.log("new claim: "+message.source+", "+message.destination+", "+message.relationship);
@@ -148,7 +165,7 @@ function FoodWeb(){
         dialogColour = "#00BCD4";
         trophicBox1Colour = "#455A64";  //"#616161";
         trophicBox2Colour = "#37474F";  //"#424242";
-        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"];
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#2E3192"]; //2E3192 for 3F51B5
     } else {    
         //light
         backgroundColour = "#CFD8DC";   //"#BDBDBD";
@@ -161,7 +178,7 @@ function FoodWeb(){
         dialogColour = "#00BCD4";
         trophicBox1Colour = "#FAFAFA";  //"#FAFAFA";
         trophicBox2Colour = "#ECEFF1";  //"#EEEEEE";
-        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"];
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"]; 
     }
     //resize canvas
     onResizeWindow("init");
@@ -174,7 +191,8 @@ function FoodWeb(){
     toolbar = { x:preScaledWidth-toolbarWidth, y:0, width:toolbarWidth, height: preScaledHeight };
     trophicBox1 = { x:0, y:0, width:preScaledWidth, height: Math.round(preScaledHeight/3) };
     trophicBox2 = { x:0, y:trophicBox1.height, width:preScaledWidth, height: Math.round(preScaledHeight/3) };
-    activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x-toolbarWidth, height: preScaledHeight };
+    //activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x-toolbarWidth, height: preScaledHeight };
+    activeArea = { x: palette.x + paletteWidth, y:0, width: preScaledWidth-palette.width-palette.x, height: preScaledHeight };
     placeholderObj = setupPlaceholderSpecies( species );
     obj = setupSpecies( species );
     setupButtons();
@@ -360,7 +378,7 @@ function FoodWeb(){
         var tempY = speciesMargin;
         for(var i=0; i<speciesArr.length; i++){
             var sp = speciesArr[i];
-            var nickname = top.species_names[i];
+            var nickname = top.species_names[i]; //top.species_names[species[type][i]]; 
             var tempObj = new Species( sp.name, 
                 (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
                 sp.height, sp.width, ctx, shadowColour, nickname );
@@ -1227,6 +1245,8 @@ function FoodWeb(){
                 //not vegetation, limit to middle trophic level
                 newY = getRandomInt( trophicBox2.y + o.height, trophicBox2.y+trophicBox2.height-o.height );                
             }
+            //save position after x minutes
+            setInterval( saveFoodWeb, saveDelay );
         //not in palette --> keep original pos
         } else {
             //console.log("drawing: obj.name: "+o.name+", obj.x: "+o.x+", obj.y: "+o.y);
@@ -1280,6 +1300,7 @@ function FoodWeb(){
         return clinks;
     }
     function saveFoodWeb(){
+        console.log("saving master food web");
         //handle versions
         // savedVersionsNum += 1;
         // version.saveVersion( savedVersionsNum );
@@ -1473,6 +1494,8 @@ function FoodWeb(){
                 console.log(o.name+", active: "+o.active+", not in palette");
                 o.x = o.px;
                 o.y = o.py;
+                //save position after X minutes
+                setInterval( saveFoodWeb, saveDelay );
             }
         }
         //console.log("connections.length: "+connections.length);
