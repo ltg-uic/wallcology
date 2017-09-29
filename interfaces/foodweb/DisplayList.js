@@ -42,7 +42,7 @@ function DisplayList() {
 	                && (mouseX >= to.x) && (mouseX <=
 	             to.x+to.width) ) {
 	        	 //console.log("target object: " + to.name);
-	             to.onMouseUp(mouseX,mouseY);
+	             to.onMouseUp(mouseX,mouseY,event,to);
 	        }
 	    }
     }

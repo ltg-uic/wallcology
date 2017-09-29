@@ -1,4 +1,5 @@
 function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
+    //tempConnection, obj1, obj2, ctx, 1, connectType, status, confirmed, data, shadowColour, backgroundColour, lineColour, thickness
     this.datalog = d;
     this.name = n;
     this.type = t;
@@ -15,17 +16,20 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     this.backgroundColour = bg;
     this.colour = lc;
     this.lastHit;
-    //hit object for detecting +, -, ? symbols associated with each line
+    //hit object for detecting any mouse clicks in the proximity of the line
     var hit = getHitObject(this.obj1,this.obj2);
     this.x = hit.x;
     this.y = hit.y;
     this.height = hit.height;
     this.width = hit.width;
+    //for recording double clicks and taps
+    var timeout;
+    var lastTap = 0;
 
     this.EVENT_RELATIONSHIP = "relationship";
     this.EVENT_REDRAW = "redraw";
 
-    switch (this.type){
+/*    switch (this.type){
         case "eatenby":
             this.sourceBtn = new ToggleButton("source", "minus", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "plus", 0, 0, this.ctx, this.backgroundColour, this.colour);
@@ -65,7 +69,7 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         default:
             this.sourceBtn = new ToggleButton("source", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
             this.destinationBtn = new ToggleButton("destination", "question", 0, 0, this.ctx, this.backgroundColour, this.colour);
-    }
+    }*/
 
     //PRIVATE METHODS
     function getHitObject(o1,o2){
@@ -90,7 +94,30 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         }
         return {x:x, y:y, height:h, width:w};
     }
-    function getLineType(source, destination){
+    //function for checking if coordinate is in polygon
+    function pnpoly( nvert, vertx, verty, testx, testy ) {
+        var i, j, c = false;
+        for( i = 0, j = nvert-1; i < nvert; j = i++ ) {
+            if( ( ( verty[i] > testy ) != ( verty[j] > testy ) ) &&
+                ( testx < ( vertx[j] - vertx[i] ) * ( testy - verty[i] ) / ( verty[j] - verty[i] ) + vertx[i] ) ) {
+                    c = !c;
+            }
+        }
+        return c;
+    }
+    //hit test for more specific proximity of line, 10px to each side of the line itself
+    function hitTest(mouseX, mouseY, hitarea){   //to is either source or destination button
+        //console.log("hitTest invoked");
+        //hitarea = {line1:{x,y}, line2:{x,y}};
+        //console.log("mouseX: "+mouseX+", mouseY: "+mouseY+", hitarea: "+hitarea);
+        var vx = [ hitarea.line2.p1.x, hitarea.line2.p2.x, hitarea.line1.p2.x, hitarea.line1.p1.x ];
+        var vy = [ hitarea.line2.p1.y, hitarea.line2.p2.y, hitarea.line1.p2.y, hitarea.line1.p1.y ];
+        //console.log("x1: "+hitarea.line2.p1.x+", x2: "+hitarea.line2.p2.x+", x3: "+hitarea.line1.p2.x+", x4: "+hitarea.line1.p1.x);
+        //console.log("y1: "+hitarea.line2.p1.y+", y2: "+hitarea.line2.p2.y+", y3: "+hitarea.line1.p2.y+", y4: "+hitarea.line1.p1.y);
+        var hit = pnpoly( 4, vx, vy, mouseX, mouseY );
+        return hit;
+    }
+/*    function getLineType(source, destination){
         var type = "";
         if ( source == "minus" && destination == "plus" ){
             type = "eatenby";
@@ -112,8 +139,8 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
             type = "unknown";
         } 
         return type;
-    }
-    function hitTest(mouseX, mouseY, to){
+    }*/
+    /*function hitTest(mouseX, mouseY, to){
         if ( (mouseY >= to.y) && (mouseY <= to.y+to.height)
                     && (mouseX >= to.x) && (mouseX <=
                  to.x+to.width) ) {
@@ -121,6 +148,33 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         } else {
                 return false;
         }
+    }*/
+    function getHitArea(p1,p2){
+        var p3 = getPoint(p1,p2,30);
+        var p4 = getPoint(p2,p1,30);
+        var pp = findParallelPoints(p3,p4); //baked in 10px distance between parallel points
+        var l1 = pp.line1;
+        var l2 = pp.line2;
+        return {line1:l1, line2:l2}
+    }
+    function drawHitArea(ctx,p1,p2){    
+        var p3 = getPoint(p1,p2,30);
+        var p4 = getPoint(p2,p1,30);
+        //var pp = findParallelPoints(p1,p2);
+        var pp = findParallelPoints(p3,p4); //baked in 10px distance between parallel points
+        var line1 = pp.line1;
+        var line2 = pp.line2;
+
+        ctx.beginPath();    //draw line1, "-" line, top
+        ctx.moveTo(line1.p1.x, line1.p1.y);
+        ctx.lineTo(line1.p2.x, line1.p2.y);   //straight line
+        ctx.lineTo(line2.p2.x, line2.p2.y);
+        ctx.lineTo(line2.p1.x, line2.p1.y);
+        ctx.lineTo(line1.p1.x, line1.p1.y);
+        ctx.fillStyle = "#F44336";
+        ctx.globalAlpha = 0.2;
+        ctx.fill();
+        ctx.globalAlpha = 1;
     }
     function getAngle(p1,p2){
         // angle in radians
@@ -359,9 +413,75 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         sb.draw();
         db.draw();
     }
+    function drawLine(ctx,p1,p2){
+        // draw the line
+        ctx.shadowBlur=4;
+        ctx.shadowColor= this.shadowColour;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        ctx.strokeStyle = this.colour;
+        ctx.beginPath();
+        ctx.moveTo(p1.x,p1.y);
+        //ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y);   //sx and sy = x,y of control point
+        ctx.lineTo(p2.x,p2.y);
+        ctx.stroke();
+    }
+    //change "eats" to "iseatenby" and vice versa
+    function toggleRelationship(o){
+        var oldR = o.type;
+        var newR;
+        if( oldR == "eats" ){
+            newR = "eatenby";
+        } else if ( oldR == "eatenby") {
+            newR = "competition";
+        } else if ( oldR == "competition"){
+            newR = "eats";
+        } else {
+            newR = oldR;
+        }
+        //console.log("relationship: "+o1.name+" "+newR+" "+o2.name);
+        o.type = newR;
+        o.dispatch( o.EVENT_REDRAW );
+        //o.draw();
+    }
     //PUBLIC METHODS
-    this.onMouseUp = function (mouseX,mouseY) {
-        var hit = "";
+    this.onMouseUp = function (mouseX,mouseY,e,o) {
+        var currentTime = new Date().getTime();
+        var tapLength = currentTime - lastTap;
+        clearTimeout(timeout);
+
+        var p1 = {x:this.x1,y:this.y1};
+        var p2 = {x:this.x2,y:this.y2}; 
+        var hitArea = getHitArea(p1,p2);
+        var isHitTrue = hitTest(mouseX, mouseY, hitArea);
+        //console.log("onMouseUp, x: "+mouseX+", y: "+mouseY+", hitArea: "+hitArea.line1.p1.x+", "+hitArea.line1.p1.y+", "+hitArea.line1.p2.x+", "+hitArea.line1.p2.y+", isHitTrue: "+isHitTrue);
+
+        if (isHitTrue){
+            //console.log("toggle relationship, e: "+e.target+", o: "+o);
+            toggleRelationship(o);
+            //this.dispatch(this.EVENT_OPENDIALOG)
+        }
+
+        /*if( isHitTrue ){
+            if (tapLength < 500 && tapLength > 0) {
+                console.log("Double tap");
+                toggleRelationship(o);
+                //make line blue
+                e.preventDefault();
+            } else {
+                console.log('Single Tap');
+                timeout = setTimeout( function() {
+                    console.log('Single Tap (timeout)');
+                    //open line dialog
+                    //openDialog(mouseX,mouseY,o);
+                    //o.dispatch(o.EVENT_OPENDIALOG);
+                    clearTimeout(timeout);
+                }, 500);
+            }
+            lastTap = currentTime;
+        }*/
+
+        /*var hit = "";
         if( hitTest(mouseX, mouseY, this.sourceBtn) ){
             this.sourceBtn.onMouseUp(mouseX, mouseY);
             hit = "source";
@@ -373,7 +493,7 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         this.lastHit = hit;
         if ( hit == "source" || hit == "destination" ){
             this.datalog.save("FOODWEB_RELATIONSHIP","source ;"+this.obj1.name+" ;destination ;"+this.obj2.name+" ;line type ;"+this.type+" ;clicked ;"+this.lastHit+" ;ss ;"+this.sourceBtn.symbol+" ;ds ;"+this.destinationBtn.symbol);
-        }
+        }*/
     }
     this.updateAlpha = function( v ){
         this.alpha = v;
@@ -411,8 +531,10 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
     }
     this.draw = function(){
         var p1 = {x:this.x1,y:this.y1};
-        var p2 = {x:this.x2,y:this.y2};
-        
+        var p2 = {x:this.x2,y:this.y2}; 
+
+        //drawHitArea(this.ctx,p1,p2);
+
         /*var hit = getHitObject(this.obj1,this.obj2);
         this.ctx.fillStyle = "#F44336";
         this.ctx.globalAlpha = 0.2;
@@ -420,14 +542,27 @@ function Line(n,o1,o2,c,l,t,d,sc,bg,lc){
         this.ctx.globalAlpha = 1;*/
         
         // arbitrary styling
-        this.ctx.strokeStyle = this.colour;  //"#00E5FF";
+        this.ctx.strokeStyle = this.colour;   //"#00E5FF";
         this.ctx.fillStyle = this.colour;     //"#00E5FF";
         this.ctx.lineWidth = 2;
-        p1 = getPoint(p1,p2,50);
-        p2 = getPoint(p2,p1,50);
+        //p1 = getPoint(p1,p2,50);
+        //p2 = getPoint(p2,p1,50);
+        p1 = getPoint(p1,p2,30); //30 = distance from center
+        p2 = getPoint(p2,p1,30);
         //if mouse over connections and "remove arrow" tool is active, set alpha tp 50%
         this.ctx.globalAlpha = this.alpha;
-        drawDoubleArrow(this.ctx,p1,p2,this.sourceBtn,this.destinationBtn);
+        //drawDoubleArrow(this.ctx,p1,p2,this.sourceBtn,this.destinationBtn);
+        
+        //determine arrow direction based on relationship
+        //console.log(this.obj1.name+" "+this.type+" "+this.obj2.name);
+        if( this.type == "eats" ){
+            drawSingleArrow(this.ctx,p2,p1);
+        } else if ( this.type == "eatenby" ){
+            drawSingleArrow(this.ctx,p1,p2);
+        } else if ( this.type == "competition" ){
+            drawLine(this.ctx,p1,p2);
+        }
+            
         this.ctx.globalAlpha = 1;   
     }   
 }

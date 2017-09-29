@@ -1,10 +1,10 @@
-//WALLCOLOGY FOOD WEB
+//WALLCOLOGY FOOD WEB DRAWING TOOL
 function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20161117-1630";
+    var versionID = "20170929-1130";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -29,18 +29,18 @@ function FoodWeb(){
     //setup objects
     var version;
     var species = [
-        {name:"species_00", width:40, height:40}, {name:"species_01", width:40, height:40}, 
-        {name:"species_02", width:40, height:40}, {name:"species_03", width:40, height:40},
-        {name:"species_04", width:40, height:40}, {name:"species_05", width:40, height:40}, 
-        {name:"species_06", width:40, height:40}, {name:"species_07", width:40, height:40},
-        {name:"species_08", width:40, height:40}, {name:"species_09", width:40, height:40}, 
-        {name:"species_10", width:40, height:40}]; 
+        {name:"species_00", width:50, height:50}, {name:"species_01", width:50, height:50}, 
+        {name:"species_02", width:50, height:50}, {name:"species_03", width:50, height:50},
+        {name:"species_04", width:50, height:50}, {name:"species_05", width:50, height:50}, 
+        {name:"species_06", width:50, height:50}, {name:"species_07", width:50, height:50},
+        {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
+        {name:"species_10", width:50, height:50}]; 
     var fakeSpecies;    //fake species created for adding arrows, so that lines have a target
-    var speciesSize = 40;
+    var speciesSize = 50;
     var speciesMargin = 30;
     var speciesSpacing = 8;
     var palette;
-    var paletteWidth = 70;
+    var paletteWidth = 80;
     var paletteColour = "#2b394a";
     var buttonColour = "#FF5722";
     var toolbar;
@@ -98,15 +98,30 @@ function FoodWeb(){
     });
     //load colours
     if ( background == "dark" ){
-        backgroundColour = "#3d5168";
+        backgroundColour = "#263238";   //"#303030";   //"#3d5168";
         textboxColour = "#56687d";
-        shadowColour = "#253240";
+        shadowColour = "#212121";       //"#253240";
         lineColour = "#39b54a";
-    } else {
-        backgroundColour = "#FFFFFF";
+        lineColours = ["#39b54a", "#FF5722", "#42A5F5"];    //green, red-orange, blue, yellow
+        paletteColour = "#1f292e";      //"#2b394a";   //"#212121";      //"#2b394a";
+        toolbarColour = "#212121";      //"#344559";
+        dialogColour = "#00BCD4";
+        trophicBox1Colour = "#455A64";  //"#616161";
+        trophicBox2Colour = "#37474F";  //"#424242";
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#2E3192"]; //2E3192 for 3F51B5
+    } else {    
+        //light
+        backgroundColour = "#CFD8DC";   //"#BDBDBD";
         textboxColour = "#FFFFFF";
-        shadowColour = "#BFBFBF";
-        lineColour = "#22B573";
+        shadowColour = "#757575";       //"#BFBFBF";
+        lineColour = "#009688";         //"#009245";         //"#22B573";
+        lineColours = ["#009688", "#FF5722", "#2196F3"];
+        paletteColour = "#2b394a";      //#37474F";    //"#424242";      //"#2b394a";
+        toolbarColour = "#344559";
+        dialogColour = "#00BCD4";
+        trophicBox1Colour = "#FAFAFA";  //"#FAFAFA";
+        trophicBox2Colour = "#ECEFF1";  //"#EEEEEE";
+        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#3F51B5"]; 
     }
     //resize canvas
     onResizeWindow("init");
@@ -123,7 +138,8 @@ function FoodWeb(){
     label = getLabel( group );
     prompt = new Prompt(ctx, preScaledWidth/2, 10, preScaledWidth, preScaledHeight, 1, background);
     prompt.setText( label );
-    displayList.addChild(prompt);
+    //remove Team label display for now 9/29/17
+    //displayList.addChild(prompt);
     helpText = new Help(ctx, preScaledWidth, preScaledHeight, toolbarWidth, background);
     input = document.getElementById("textBox");
     input.style.backgroundColor = textboxColour;
@@ -942,6 +958,7 @@ function FoodWeb(){
         for ( var i=0; i<movingConnections.length; i++){
             var movingConnection = movingConnections[i];
             data.save("FOODWEB_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
+            movingConnection.addEventListener( movingConnection.EVENT_REDRAW, redrawCanvas );
             connections.push( movingConnection );
         }
         movingConnections = [];
@@ -1132,6 +1149,17 @@ function FoodWeb(){
         saveBtn.active = false;
         saveBtn.drawButton();
     }
+    function redrawCanvas(e){
+        //see which line called the function and then call draw only once
+        var lineClicked = e.target; //line clinked
+        for ( var i=0; i < connections.length; i++ ){
+            var c = connections[i];
+            if ( c.name == lineClicked.name ){
+                //console.log("redrawCanvas");
+                draw();   
+            }
+        }
+    }
     function getDrawing(){
         var nodes = [];
         var links = [];
@@ -1239,6 +1267,7 @@ function FoodWeb(){
                 }
             }
             var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
+            line.addEventListener( line.EVENT_REDRAW, redrawCanvas );
             connections.push( line );
             displayList.addChild( line );
         }
