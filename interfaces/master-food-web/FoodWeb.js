@@ -165,7 +165,7 @@ function FoodWeb(){
         dialogColour = "#00BCD4";
         trophicBox1Colour = "#455A64";  //"#616161";
         trophicBox2Colour = "#37474F";  //"#424242";
-        badgeColours = ["#E91E63", "#FF9800","#8BC34A","#2196F3", "#2E3192"]; //2E3192 for 3F51B5
+        badgeColours = ["#E91E63", "#FF9800","#FFD600", "#8BC34A","#42A5F5","#2E3192"]; //2E3192 for 3F51B5
     } else {    
         //light
         backgroundColour = "#CFD8DC";   //"#BDBDBD";
