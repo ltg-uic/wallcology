@@ -1,7 +1,9 @@
-function DataLog( n, app, group, mode ){
+function DataLog( n, app, portal, instance, mode ){
 	this.nutella = n;
 	this.app = app;
-	this.group = group;
+	//this.group = group;
+	this.portal = portal;
+	this.instance = instance;
 	this.mode = mode;
 	this.destination;
 	this.sentData = [];
@@ -12,10 +14,10 @@ function DataLog( n, app, group, mode ){
 			this.destination = 'add_to_lionking_log';
 			break;
 		case "modeler":
-			this.destination = 'add_to_modeler_log';
+			this.destination = 'add_to_lionking_log';//'add_to_modeler_log';
 			break;
 		case "foodweb":
-			this.destination = 'add_to_foodweb_log';
+			this.destination = 'add_to_lionking_log';//'add_to_foodweb_log';
 			break;
 		default:
 			this.destination = 'add_to_lionking_log';
@@ -23,11 +25,11 @@ function DataLog( n, app, group, mode ){
 
 	this.save = function(type,message){
 		var t = Timestamp(); 
-		this.unsentData.push( ['Group ;'+ this.group +' ;time ;'+t+' ;' + type +' ;'+ message] );
+		this.unsentData.push( ['Portal ;'+ this.portal +' ;Instance ;'+this.instance+' ;Time ;'+t+' ;' + type +' ;'+ message] );
 		if ( this.mode == "deploy"){
-		    this.nutella.net.publish(this.destination,['Group ;'+ this.group +' ;Time ;'+t+' ;' + type +' ;'+ message]);
+		    this.nutella.net.publish(this.destination,['Portal ;'+ this.portal +' ;Instance ;'+this.instance+' ;Time ;'+t+' ;' + type +' ;'+ message]);
 		} else {            
-			console.log('Group ;'+ this.group +' ;time ;'+t+' ;' + type +' ;'+ message);
+			console.log('Portal ;'+ this.portal +' ;Instance ;'+instance+' ;time ;'+t+' ;' + type +' ;'+ message);
 		}
 	}
 	this.send = function(){

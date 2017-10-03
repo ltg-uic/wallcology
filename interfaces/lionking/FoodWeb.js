@@ -1,17 +1,22 @@
 //LION KING
 function FoodWeb(){
     //Nutella 
-    var mode = "develop"; //"develop" or "deploy"
+    var mode = "deploy"; //"develop" or "deploy"
     var fullscreen = false;
     var background = "dark"; //light or dark
     var app = "lion king";
-    this.versionID = "20170822-0945"
-    
+    this.versionID = "20171002-2030"
+    var portal;
+    var instance;
+
     var query_parameters;
     var nutella
     if ( mode == "deploy"){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+        nutella.net.subscribe('ping',function(message,from){});
+        portal = query_parameters.TYPE;
+        instance = query_parameters.INSTANCE;
     } else {
         query_parameters = { INSTANCE: "null" };
     }
@@ -286,7 +291,8 @@ function FoodWeb(){
                 width:canvas.width-pickerbox.width-pickerbox.x,
                 height:canvas.height};
             level = new Level(1, ctx, oldHeight);
-            data = new DataLog( nutella, app, query_parameters.INSTANCE, mode );
+            data = new DataLog( nutella, app, portal, instance, mode );
+            console.log("portal: "+ portal+", instance: "+instance);
         } else {
             for( var j=0; j<graphs.length; j++ ){
                 var g = graphs[j];

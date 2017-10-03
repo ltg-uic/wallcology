@@ -25,13 +25,13 @@ function DataLog( n, app, portal, instance, mode ){
 			console.log('Portal ;'+ portal + ' ;Instance: ' + instance +' ;Time ;'+t+' ;' + type +' ;'+ message);
 		}
 	}
-	this.saveDrawing = function( drawing, message, imgBase64 ){
+	this.saveDrawing = function( drawing, message){//, imgBase64 ){
 		var t = Timestamp(); 
 		if ( mode == "deploy"){
 		    this.nutella.net.publish('save_fw',{portal: portal, instance: instance, time: t, drawing: drawing});
-		    this.nutella.net.publish(this.destination,['Portal ;'+ portal + ' ;Instance: ' + instance +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 ]);
+		    this.nutella.net.publish(this.destination,['Portal ;'+ portal + ' ;Instance: ' + instance +' ;Time ;'+t+' ;Drawing Saved']);//+' ;FOODWEB_IMAGE ;'+ imgBase64 ]);
 		} else {            
-			console.log('Group ;'+ group +' ;Time ;'+t+' ;FOODWEB_IMAGE ;'+ imgBase64 );
+			console.log('Group ;'+ group +' ;Time ;'+t+' ;FOODWEB_IMAGE SAVED ;');//+ imgBase64 );
 		}
 	}
 }

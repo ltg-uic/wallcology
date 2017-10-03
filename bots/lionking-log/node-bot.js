@@ -8,29 +8,34 @@ var nutella = NUTELLA.init(cliArgs.broker, cliArgs.app_id, cliArgs.run_id, compo
 nutella.setResourceId('my_resource_id');
 
 
-console.log("Lion King log");
-
+console.log("Lion King Log");
 
 var lionLog = nutella.persist.getMongoObjectStore('lionLog');
 
-lionLog.load(function(){ console.log(lionLog.data[3000]);
+lionLog.load(function(){ 
 
-    if (!lionLog.hasOwnProperty('data')){ lionLog.data = []; lionLog.save(); }
+    console.log("Loading");//lionLog.data[3000]
+    //if (!mfw.hasOwnProperty('data')){
+    //    mfw.data = [{}]; mfw.save(); 
+    //};
+    if (!lionLog.hasOwnProperty('data')){ 
+        lionLog.data = []; lionLog.save(); 
+    }
 
     // add to log of user actions incrementally
-
     nutella.net.subscribe('add_to_lionking_log', function(arrayOfLogEntries, from) { 
-        lionLog.data = lionLog.data.concat(arrayOfLogEntries); lionLog.save(); 
+        lionLog.data = lionLog.data.concat(arrayOfLogEntries); 
+        //console.log("arrayOfLogEntries: "+arrayOfLogEntries);
+        lionLog.save();         
+        //console.log("lionLog.data: "+lionLog.data);
     });
 
 
     // but retrieve as a whole 
-
     nutella.net.handle_requests('retrieve_lionking_log', function(message, from){ 
         var response = [];
         for (var i=0; i<lionLog.data.length; i++) 
-            if (lionLog.data[i].indexOf('FOODWEB_IMAGE') == -1) response[i] = lionLog.date[i];
-                else response[i] = '';
+            response[i] = lionLog.data[i];
         return(response);
     })
 });

@@ -1,4 +1,5 @@
-function DataLog( n, app, group, mode ){
+//FOOD WEB DRAWING
+function DataLog( n, app, portal, instance, mode ){
 	this.nutella = n;
 	this.app = app;
 	this.destination;
@@ -20,9 +21,9 @@ function DataLog( n, app, group, mode ){
 	this.save = function(type,message){
 		var t = Timestamp(); 
 		if ( mode == "deploy"){
-		    //this.nutella.net.publish(this.destination,['Group ;'+ group +' ;Time ;'+t+' ;' + type +' ;'+ message]);
+		    this.nutella.net.publish(this.destination,['Portal ;'+ portal +' ;Instance ;'+instance+' ;Time ;'+t+' ;' + type +' ;'+ message]);
 		} else {            
-			console.log('Group ;'+ group +' ;Time ;'+t+' ;' + type +' ;'+ message);
+			console.log('Portal ;'+ portal +' ;Instance ;'+instance+' ;Time ;'+t+' ;' + type +' ;'+ message);
 		}
 	}
 	this.saveDrawing = function( drawing, message, imgBase64 ){

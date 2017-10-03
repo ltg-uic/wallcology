@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170929-1130";
+    var versionID = "20171002-2130";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -145,7 +145,7 @@ function FoodWeb(){
     input.style.backgroundColor = textboxColour;
     setupVersions();
      
-    data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
+    data.save("DRAWING_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);//+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
     //get latest saved drawing
     if ( mode == "deploy"){
         nutella.net.request('get_current_foodweb', group, function(message,from){
@@ -241,7 +241,7 @@ function FoodWeb(){
             if( helpText ){
                 helpText.updateCanvasSize( preScaledWidth, preScaledHeight );
             }
-            data.save("FOODWEB_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
+            data.save("DRAWING_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
         setTimeout(draw, 500);
     }
@@ -430,7 +430,7 @@ function FoodWeb(){
             }
             clearFoodWeb();
             retrieveDrawing( currentDrawing );
-            data.save("FOODWEB_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
+            data.save("DRAWING_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         } else {
             if ( !containsObject( viewOnlyBtn, displayList.objectList )){
                 displayList.addChild( viewOnlyBtn );
@@ -468,7 +468,7 @@ function FoodWeb(){
                 displayList.addChild(a);
                 a.drawAnnotation();
                 annotations.push(a);
-                data.save("FOODWEB_ANNOTATION_ADDED","content ;"+message+";number of annotations ;"+annotations.length);
+                data.save("DRAWING_ANNOTATION_ADDED","content ;"+message+";number of annotations ;"+annotations.length);
             }
         }
     }
@@ -751,7 +751,7 @@ function FoodWeb(){
                     //setActiveProperty( palette, false );
                     //console.log( "detectHit: unknown, name:"+o.name+", from: "+from+", to: "+to+", active: "+o.active );
                 }
-                data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+                data.save("DRAWING_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             o.isDragging = false;
         }
@@ -797,7 +797,7 @@ function FoodWeb(){
         if ( trashConnections && !viewOnly ){       
             if( tempConnections.length < 2 ){
                 //remove connection
-                data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tempConnections[0].connection.name+" ;type ;"+tempConnections[0].connection.type);
+                data.save("DRAWING_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tempConnections[0].connection.name+" ;type ;"+tempConnections[0].connection.type);
                 displayList.removeChild( tempConnections[0].connection );
                 connections.splice( tempConnections[0].index, 1 );
                 removeArrowBtn.drawButton();
@@ -807,7 +807,7 @@ function FoodWeb(){
                     var tc = tempConnections[i];
                     dist = getDistance( {x:mx, y:my}, {x:tc.connection.x+tc.connection.width/2, y:tc.connection.y+tc.connection.height/2} );
                     if ( dist < 30 ){
-                        data.save("FOODWEB_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tc.connection.name+" ;type ;"+tc.connection.type);
+                        data.save("DRAWING_CONNECTION_REMOVED","remove arrow tool ;x ;"+mx+" ;y ;"+my+" ;connection ;"+tc.connection.name+" ;type ;"+tc.connection.type);
                         displayList.removeChild( tempConnections[i].connection );
                         removeItem( connections, tempConnections[i].connection );
                         //removeItem( connections, t );
@@ -827,7 +827,7 @@ function FoodWeb(){
         for (var l = 0; l < annotations.length; l++) {
             var a = annotations[l];
             if( a.isDragging ){
-                data.save("FOODWEB_ANNOTATION_MOVE","content ;"+a.name+" ; x;"+a.x+" ;y ;"+a.y+" ; height;"+a.height+" ;width ;"+a.width);
+                data.save("DRAWING_ANNOTATION_MOVE","content ;"+a.name+" ; x;"+a.x+" ;y ;"+a.y+" ; height;"+a.height+" ;width ;"+a.width);
                 if( detectHit( newx, newy, trashBtn )){
                     tempAnnotation = a;
                     tempIndex = l;
@@ -841,7 +841,7 @@ function FoodWeb(){
         if ( trashAnnotation && !viewOnly ){
             displayList.removeChild( tempAnnotation );
             annotations.splice( tempIndex, 1 );
-            data.save("FOODWEB_ANNOTATION_REMOVED","content ;"+tempAnnotation.name+";number of annotations ;"+annotations.length);
+            data.save("DRAWING_ANNOTATION_REMOVED","content ;"+tempAnnotation.name+";number of annotations ;"+annotations.length);
         }
         trashBtn.active = true;
 
@@ -949,7 +949,7 @@ function FoodWeb(){
         }
         for ( var j=0; j<tempArr.length; j++){
             var t = tempArr[j];
-            data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
+            data.save("DRAWING_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
             displayList.removeChild( t );
             removeItem( connections, t );
         }
@@ -957,7 +957,7 @@ function FoodWeb(){
     function evalConnection(){
         for ( var i=0; i<movingConnections.length; i++){
             var movingConnection = movingConnections[i];
-            data.save("FOODWEB_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
+            data.save("DRAWING_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
             movingConnection.addEventListener( movingConnection.EVENT_REDRAW, redrawCanvas );
             connections.push( movingConnection );
         }
@@ -985,7 +985,7 @@ function FoodWeb(){
                 if(!speciesActive){
                     //one of the objects in a created connection is no longer active
                     //console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
-                    data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
+                    data.save("DRAWING_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
                     for (var m = 0; m < connections.length; m++) {
                         if( connections[m].name == tempConnection ){
                             //remove
@@ -1028,7 +1028,7 @@ function FoodWeb(){
                 var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
                 connections.push( line );
                 displayList.addChild( line );
-                data.save("FOODWEB_CONNECTION_ADDED","add arrow tool ;source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
+                data.save("DRAWING_CONNECTION_ADDED","add arrow tool ;source ;"+obj1.name+" ;destination ;"+obj2.name+" ;connection ;"+connectType);
 
                 //turn add arrow buttn off and reset array
                 for(var j=0;j<potentialConnections.length; j++){
@@ -1143,7 +1143,7 @@ function FoodWeb(){
         //saveBtn.drawSavedButton();
         saveBtn.active = true;
         setTimeout( resetSavedButton, 2000 );
-        data.save("FOODWEB_DRAWING_SAVED","savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+" ;drawing ;"+d.message);
+        data.save("DRAWING_DRAWING_SAVED","savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+" ;drawing ;"+d.message);
     }
     function resetSavedButton(){
         saveBtn.active = false;

@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "foodwebmodeler";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170907-2045";
+    var versionID = "20171002-2130";
     var query_parameters;
     var nutella;
     var portal;
@@ -173,7 +173,7 @@ function FoodWeb(){
     //input.style.backgroundColor = textboxColour;
     //setupVersions();
      
-    data.save("MODELER_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight+"; savedVersionsNum ;");//+savedVersionsNum+"; label ;"+label);
+    data.save("MODELER_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);//+"; savedVersionsNum ;");//+savedVersionsNum+"; label ;"+label);
     //get latest saved drawing
     if ( mode == "deploy"){
         nutella.net.request('get_fw', {portal: portal, instance: instance}, function(message,from){
@@ -955,7 +955,7 @@ function FoodWeb(){
         }
         for ( var j=0; j<tempArr.length; j++){
             var t = tempArr[j];
-            data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
+            data.save("MODELER_CONNECTION_REMOVED","inactive object ;"+sp.name+" ;name ;"+t.name+" ;type ;"+t.type);
             displayList.removeChild( t );
             removeItem( connections, t );
         }
@@ -974,7 +974,7 @@ function FoodWeb(){
     function evalConnection(){
         for ( var i=0; i<movingConnections.length; i++){
             var movingConnection = movingConnections[i];
-            data.save("FOODWEB_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
+            data.save("MODELER_CONNECTION_ADDED","source ;"+movingConnection.obj1.name+" ;destination ;"+movingConnection.obj2.name+" ;name ;"+movingConnection.name+" ;type ;"+movingConnection.type);
             movingConnection.addEventListener( movingConnection.EVENT_REDRAW, redrawCanvas );
             connections.push( movingConnection );
         }
@@ -1002,7 +1002,7 @@ function FoodWeb(){
                 if(!speciesActive){
                     //one of the objects in a created connection is no longer active
                     //console.log("remove connection: "+tempConnection+" b/c "+s1+" is not active.");
-                    data.save("FOODWEB_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
+                    data.save("MODELER_CONNECTION_REMOVED","inactive object ;"+s1+" ;connection ;"+tempConnection);
                     for (var m = 0; m < connections.length; m++) {
                         if( connections[m].name == tempConnection ){
                             //remove
@@ -1521,7 +1521,7 @@ function FoodWeb(){
         saveBtn.drawButton();
         saveBtn.active = true;
         setTimeout( resetSavedButton, 2000 );
-        data.save("FOODWEB_DRAWING_SAVED","drawing ;"+d.message);
+        data.save("MODELER_DRAWING_SAVED","drawing ;"+d.message);
     }
     function resetSavedButton(){
         saveBtn.active = false;
