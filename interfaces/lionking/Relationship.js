@@ -4,7 +4,11 @@ function Relationship(){
 		{name:"zebra-lion", type:"eatenby"},
 		{name:"grass-zebra", type:"eatenby"},
 		{name:"grass-tree", type:"competition"},
-		{name:"zebra-leopard",type:"eatenby"}];
+		{name:"zebra-leopard",type:"eatenby"},
+		{name:"tree-giraffe",type:"eatenby"},
+		{name:"giraffe-leopard",type:"eatenby"},
+		{name:"giraffe-lion",type:"eatenby"}
+		];
 	
 	this.graphs = [
 		{name:"lion", increase:[{name:"zebra", result: "laggeddecrease", connections:["zebra-lion"]}, 

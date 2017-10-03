@@ -37,6 +37,12 @@
 	this.onMouseUp = function (mouseX,mouseY) {
 		this.dispatch(this.EVENT_CLICKED);
 	}
+	this.startAnimate = function(){
+		console.log("startAnimate");
+	}
+	this.stopAnimate = function(){
+		console.log("stopAnimate")
+	}
 	this.draw = function() {
 		if(this.active){
 			this.ctx.beginPath();

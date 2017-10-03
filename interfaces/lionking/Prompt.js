@@ -21,27 +21,33 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		continue1:"What if the §bzebra§r population goes §bup§r? What do you think happens to the §blion§r population?<br>Click the 'up' button above the zebra to make a prediction and find out.",
 		continue2:"Now we’re going to look at populations going §bdown§r.<br>If the §blion§r population goes §bdown§r, what happens to the zebra population?<br>Click the 'down' button below the lion to make a prediction and find out.",
 		continue3:"What happens to the §blion§r population if the §bzebra§r population goes down?<br>Click the 'down' button below the zebra to make a prediction and find out.",
-		continue4:"Do you think the §bone-way§r energy relationship represented in a basic food chain tells the full story about the lion and the zebra’s population relationship?<br>Ecologists use a richer representation to describe §btwo-way§r relationships in an ecosystem. Click \u2192 (on the screen's lower left) to learn about it."
+		continue4:"You've completed the first level! Click \u2192 (on the screen's lower left) to move on."
 		},
-		{level:2,
+		/*{level:2,
 		instruction:"Earlier you created a food chain. Here you'll be creating a §bPopulation Interaction Web§r.<br>Drag the species into the work area to get started.",
 		connection:"In a §bPopulation Interaction Web§r, each relationship is described by a pair of arrows.<br>An arrow with a §b+§r sign means that when one species’ population goes §bup§r, the other goes §bup§r (+: if X goes up \u2192 Y goes up).<br>A §b\u2013§r sign means the opposite. When one species’ population goes §bup§r, the other species’ population goes §bdown§r (–: if X goes up \u2192 Y goes down).<br>Based on this representation, what do you think happens to the §bzebra§r population when the §blion§r population goes §bup§r?<br>Click the 'up' button above the lion to make a prediction and find out.",
 		continue1:"Did you notice that the §b\u2013§r sign on the arrow going from the §blion§r to the §bzebra§r shows their population relationship?<br>This §bopposite§r relationship directly translates to:<br>'When the lion population goes §bup§r, the zebra population goes §bdown§r'<br>What happens when you §bincrease§r the population of §bzebras§r?<br>Click the 'up' button above the zebra to make a prediction and find out.",
 		continue2:"The §b+§r sign on the arrow going from the §bzebra§r to the §blion§r describes the §bsame§r relationship, directly translating to:<br>When the zebra population goes §bup§r, the lion population also goes §bup§r.<br>A pair of +/\u2013 arrows represents a prey/predator or producer/consumer relationship.<br>Now let’s look at populations going §bdown§r.<br>Click the 'down' button below the §blion§r to §bdecrease§r the its population.",
 		continue3:"Since the arrow going from the §blion§r to the §bzebra§r has a §b\u2013§r sign, it means that:<br>‘When the population of lion goes §bup§r, the zebra population goes §bdown§r’<br>With this §bopposite§r relationship, it also means that:<br>‘When the lion population goes §bdown§r, the zebra population goes §bup§r’<br>Now, what do you think happens to the §bzebra§r population when the §blion§r population goes §bdown§r?<br>Click the 'down' button below the zebra to make a prediction and find out.",
 		continue4:"You've now learned the basics about §bPopulation Interaction Webs§r. Next, you will create more complex relationships with three and (later) four species<br>Click \u2192 to continue."
-		},
-		{level:3,
+		},*/
+		{level:2,
 		instruction:"There's a new species.<br>How do they relate to one another? And what does it mean when one species’ population changes?<br>Drag the species into the work area to start.",
-		connection:"§bRemember§r:<br>An arrow with a + sign means that when the population of one species goes up, the other also goes up (+: if X goes §bup§r \u2192 Y goes §bup§r).<br>A \u2013 sign means the opposite. When the population of one species goes up, the population of the other species goes down (\u2013: if X goes §bup§r \u2192 Y goes §bdown§r).<br>Click on the ‘up’ and ‘down’ buttons to make changes and predict the lion, zebra and leopard’s populations.",
-		continue1:"§bHint§r:<br>+: If X goes up \u2192 Y goes up<br>\u2013: If X goes up \u2192 Y goes down",
+		connection:"Click on the ‘up’ and ‘down’ buttons to make changes and predict the species’ populations.",
+		continue1:"",
 		continue2:"Good Job! You’ve changed and predicted all of the species’ populations. Click \u2192 to continue."
 		},
+		{level:3,
+		instruction:"There's four species now: lion, zebra, grass and the acacia tree. Drag the species into the work area to start.",
+		connection:"There a different kind of relationship in this food web. Pay careful attention to the lines to find it.<br>Continue changing and predicting all of the species’ populations in the food web. You’ll be creating many more in the weeks to come.",
+		//continue1:"Level 3 complete, click \u2192 to continue."
+		continue1:"Congratulations, You’re done! Feel free go back and try them again if you like."
+		}/*,		
 		{level:4,
-		instruction:"There's four species now: lion, zebra, grass and acacia tree. Drag the species into the work area to start.",
-		connection:"There a different kind of relationship in this Population Interaction Web. Pay careful attention to the arrow signs to find it.<br>Continue changing and predicting all of the species’ populations to get really familiar with Population Interaction Webs. You’ll be creating many more in the weeks to come.",
-		continue1:"Congratulations! You’ve completed all of the modules. Feel free go back and try them again or move on to the §b‘Food Web Modeler’§r to create your own Population Interaction Webs."
-		}
+		instruction:"There's five species now: lion, zebra, giraffe, grass and the acacia tree. Drag the species into the work area to start.",
+		connection:"",
+		continue1:"Congratulations, You’re done! Feel free go back and try them again if you like."
+		}*/
 	];
 
 	this.level = l;
@@ -195,12 +201,12 @@ function Prompt(context, x, y, cw, ch, l, bg){
 		this.ctx.shadowBlur=0;
 		this.ctx.shadowOffsetX = 0;
 		this.ctx.shadowOffsetY = 0
-		this.ctx.font = "300 12pt 'Roboto'";
+		this.ctx.font = "300 16pt 'Roboto'";
 		this.ctx.textAlign = "left";
 		this.ctx.textBaseline = "top";
 		this.ctx.fillStyle = textColour; "black"; //"#FFFFFF";
 		//wrapText(this.ctx, this.message, this.x, this.y, maxWidth, lineHeight);
-		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 14, this.maxWidth );
+		drawStyledBreakedWrappedText( this.ctx, this.message, this.x, this.y, 'Roboto', 16, this.maxWidth );
 		//this.ctx.fillText(this.message, this.x, this.y);
 	}
 }

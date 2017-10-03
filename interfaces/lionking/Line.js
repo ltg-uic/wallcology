@@ -16,11 +16,11 @@ function Line(n,o1,o2,c,l,t,sc){
     this.width = this.ctx.canvas.width;
     this.shadowColour = sc;
 
-    if ( this.level > 1 ){
+    //if ( this.level > 1 ){
         this.colour = "#22B573";
-    } else {
+/*    } else {
         this.colour = "#2196F3";
-    }
+    }*/
 
     //PRIVATE METHODS
     function getLineType(source, destination){
@@ -116,6 +116,20 @@ function Line(n,o1,o2,c,l,t,sc){
         var smallerY = y1 + smallerYLen;
         var smallerXY = {x: smallerX, y:smallerY};
         return smallerXY;
+    }
+    function drawLine(ctx,p1,p2){
+        // draw the line
+        ctx.shadowBlur=4;
+        ctx.shadowColor= this.shadowColour;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 2;
+        ctx.strokeStyle = this.colour;
+        ctx.beginPath();
+        ctx.moveTo(p1.x,p1.y);
+        //ctx.quadraticCurveTo(control.x, control.y, p2.x, p2.y);   //sx and sy = x,y of control point
+        //ctx.lineTo(p2.x,p2.y);
+        ctx.lineTo(p2.x,p2.y);
+        ctx.stroke();
     }
     function drawArrowhead(ctx,x,y,radians){
         ctx.save();
@@ -317,8 +331,9 @@ function Line(n,o1,o2,c,l,t,sc){
         p1 = getPoint(p1,p2,50);
         p2 = getPoint(p2,p1,50);
 
-        if( this.level != 1 ){
-            drawDoubleArrow(this.ctx,p1,p2,this.type);
+        if( this.type == "competition" ){
+            //drawDoubleArrow(this.ctx,p1,p2,this.type);
+            drawLine(this.ctx,p1,p2);
         } else {
             drawSingleArrow(this.ctx,p1,p2);
         }   

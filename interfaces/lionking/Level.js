@@ -60,13 +60,14 @@ function Level(n,c,cH){
 		this.backBtn.updateXY( backBtnX, backBtnY ); 
 	}
 	this.changeLevel = function(mouseX,mouseY,direction){
+		console.log("Level: "+this.num);
 		if( this.num <= 1 ){
 			this.backBtn.active = false;
 			this.nextBtn.active = true;
-		} else if( this.num > 1 && this.num < 4 ){
+		} else if( this.num > 1 && this.num <= 2 ){
 			this.backBtn.active = true;
 			this.nextBtn.active = true;
-		} else if ( this.num >= 4){
+		} else if ( this.num >= 3){
 			this.backBtn.active = true;
 			this.nextBtn.active = false;
 		}	

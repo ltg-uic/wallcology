@@ -30,6 +30,8 @@ function BarGraph(ctx, ico, cw) {
 	this.animationInterval = 100;
 	this.animationSteps = 10;
 	
+	this.EVENT_COMPLETE = "complete";
+
 	function setRunning(v){
 		running = v;
 	}
@@ -68,6 +70,7 @@ function BarGraph(ctx, ico, cw) {
 	  // If no change was made to any bars then we are done
 	  if (animationComplete) {
 		looping = false;
+		// this.dispatch(this.EVENT_COMPLETE);
 	  } else {
   		// Draw and call loop again
 		draw(that.curArr);
@@ -215,3 +218,5 @@ function BarGraph(ctx, ico, cw) {
 		running = false;
 	}
 }
+// BarGraph.prototype = new EventDispatcher();
+// BarGraph.prototype.constructor = BarGraph;
