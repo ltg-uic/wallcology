@@ -56,12 +56,12 @@ function Help(context, cw, ch, tbw, bg){
 		instruction:"To add an annotation, enter text and click 'Create Annotation', then drag and drop it anywhere in the work area. To delete it, drag and release it over the 'Delete' button.",
 		x: toolbarWidth + padding + 10,
 		y: this.height - 106
-		},
+		}/*,
 		{name:"versions",
 		instruction:"To view saved food webs, click on the \u25C0 button, to see successively<br>older versions. Click on the \u25B6 button to see newer saved versions. The last food web will be your working version. Remember to save it before<br>you leave the program. §bNOTE§r: only the buttons for navigating versions will work in 'View Only' mode.",
 		x: this.width - toolbarWidth - maxWidth - padding + 20,
 		y: this.height - 136
-		}
+		}*/
 	];
 	function drawStyledBreakedWrappedText(context, text, x, y, font, fontSize){
 		var textblock = text.split("<br>");

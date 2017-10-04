@@ -1,12 +1,14 @@
-//WALLCOLOGY FOOD WEB DRAWING TOOL
+//WALLCOLOGY FOOD WEB EDITOR
 function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
     var fullscreen = false;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20171002-2130";
+    var versionID = "20171004-1630";
     var query_parameters;
     var nutella;
+    var portal;
+    var instance;
     var group; //-1, 0, 1, 2, 3, 4, null
     
     //canvas variables
@@ -81,14 +83,37 @@ function FoodWeb(){
     if ( mode == "deploy" ){
         query_parameters = NUTELLA.parseURLParameters();
         nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
+        
+        // begin keep alive code
+        var lastping = (new Date).getTime();
+        setInterval(reconnect, 60*1000);
+
+        nutella.net.subscribe('ping',function(message,from){
+            console.log('received ping' + message);
+            lastping = (new Date).getTime();
+        });
+
+        function reconnect(){
+            var timeNow = (new Date).getTime();
+            //save what you've got
+            if ((timeNow - lastping) > 70*1000) location.reload(true);
+        }
+        // end keep alive code
+        
         if( query_parameters.TYPE == "teacher"){
             group = -1;
         } else {
             group = query_parameters.INSTANCE;    
         }
+
+        portal = query_parameters.TYPE;
+        instance = query_parameters.INSTANCE;
+
     } else {
         query_parameters = { INSTANCE: "null" };
         group = "null";
+        portal = -1;
+        instance = -2;
     }
     //load font
     WebFont.load({
@@ -126,7 +151,8 @@ function FoodWeb(){
     //resize canvas
     onResizeWindow("init");
     //setup datalog
-    data = new DataLog( nutella, app, group, mode );
+    //data = new DataLog( nutella, app, group, mode );
+    data = new DataLog( nutella, app, portal, instance, mode );
     //setup display list items
     displayList = new DisplayList( canvas );
     palette = { x:0, y:0, width:paletteWidth, height: preScaledHeight };
@@ -148,8 +174,8 @@ function FoodWeb(){
     data.save("DRAWING_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);//+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
     //get latest saved drawing
     if ( mode == "deploy"){
-        nutella.net.request('get_current_foodweb', group, function(message,from){
-            retrieveDrawing( message.drawing ); 
+        nutella.net.request('get_fwe', {portal: portal, instance: instance}, function(message,from){
+            retrieveDrawing( message ); 
             setupEventListeners();
             setTimeout( draw, 1000 );
         });
@@ -179,8 +205,13 @@ function FoodWeb(){
         formElement.addEventListener('click', handleSubmitText, false);
     }
     function onResizeWindow( init ){
-        canvasWidth = (window.innerWidth == 0)? 980 : window.innerWidth;
-        canvasHeight = (window.innerHeight == 0)? 680 : window.innerHeight;
+        canvasWidth = (parent.document.body.clientWidth == 0)? 980 : parent.document.body.clientWidth;
+        canvasHeight = (parent.document.body.clientHeight == 0)? 680 : parent.document.body.clientHeight;
+
+        if (mode == "deploy" ){
+            canvasWidth -= 20;
+            canvasHeight -= 30;
+        }
 
         //Canvas for drag and drop
         canvas = document.getElementById("ui-layer");
@@ -308,15 +339,18 @@ function FoodWeb(){
     //get nubmer of saved version from server
     function setupVersions(){
         if ( mode == "deploy"){
-            nutella.net.request('get_num_of_saved_foodwebs', group, function( num, from ){
+            /*nutella.net.request('get_num_of_saved_foodwebs', group, function( num, from ){
                 savedVersionsNum = num;
                 version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
                 version.changeVersion();
-            });
+            });*/
+            savedVersionsNum = 0;
+            /*version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
+            version.changeVersion();*/
         } else {
             savedVersionsNum = 0;
-            version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
-            version.changeVersion();
+            /*version = new Version(ctx, preScaledWidth, preScaledHeight, toolbarWidth, toolbarColour, savedVersionsNum);
+            version.changeVersion();*/
         }
     }
     //EVENTLISTENERS
@@ -404,7 +438,7 @@ function FoodWeb(){
         }
     }
     //direction = "first", "back", "next", or "last"
-    function handleVersionChange( direction ){
+    /*function handleVersionChange( direction ){
         //console.log("handleVersionChange: "+direction);
         saveBtn.active = false;
         saveBtn.drawButton();
@@ -455,7 +489,7 @@ function FoodWeb(){
             viewOnly = true;
             data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
         }
-    }
+    }*/
     function handleSubmitText(e){
         e.preventDefault();
         if( !viewOnly ){
@@ -678,7 +712,7 @@ function FoodWeb(){
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
         //check to see if version buttons are clicked
-        if( detectHit( mx, my, version) ){
+        /*if( detectHit( mx, my, version) ){
             if( detectHit( mx, my, version.nextBtn ) && version.nextBtn.active ){
                 //NEXT
                 handleVersionChange( version.nextBtn.name );
@@ -696,7 +730,7 @@ function FoodWeb(){
                 handleVersionChange( version.firstBtn.name );
                 version.changeVersion( mx, my, version.firstBtn.name );
             }
-        }
+        }*/
         // clear all the dragging flags
         dragok = false;
         for (var i = 0; i < obj.length; i++) {
@@ -1024,7 +1058,7 @@ function FoodWeb(){
                 }
                 //setup new connection
                 var tempConnection = obj1.name+"-"+obj2.name;
-                var connectType = "eatenby"
+                var connectType = "eats"
                 var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
                 connections.push( line );
                 displayList.addChild( line );
@@ -1053,7 +1087,7 @@ function FoodWeb(){
                 return;
             }
             var tempConnection = movingObj.name+"-"+closestObj.name;
-            var connectType = "eatenby"
+            var connectType = "eats"
             var line = new Line( tempConnection, movingObj, closestObj, ctx, 1, connectType, data, shadowColour, backgroundColour, lineColour);
             for( var j=0; j<movingConnections.length;j++){
                 displayList.removeChild( movingConnections[j] );
@@ -1133,8 +1167,8 @@ function FoodWeb(){
     }
     function saveFoodWeb(){
         //handle versions
-        savedVersionsNum += 1;
-        version.saveVersion( savedVersionsNum );
+        //savedVersionsNum += 1;
+        //version.saveVersion( savedVersionsNum );
         //save drawing 
         var d = getDrawing();
         var dataURL = canvas.toDataURL();
@@ -1143,7 +1177,7 @@ function FoodWeb(){
         //saveBtn.drawSavedButton();
         saveBtn.active = true;
         setTimeout( resetSavedButton, 2000 );
-        data.save("DRAWING_DRAWING_SAVED","savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+" ;drawing ;"+d.message);
+        data.save("DRAWING_DRAWING_SAVED"," ;drawing ;"+d.message);
     }
     function resetSavedButton(){
         saveBtn.active = false;
@@ -1214,9 +1248,11 @@ function FoodWeb(){
     }
     //retrieve drawing
     function retrieveDrawing( drawing ){
+        //console.log("food wed editor: retrieveDrawing");
         var nodes;
         var links;
         var comments;
+        console.log( "drawing: " + drawing );
         if ( !drawing ){
             return;
         }
@@ -1238,6 +1274,7 @@ function FoodWeb(){
 
         for(var i=0; i<nodes.length; i++){
             var n = nodes[i];
+            console.log("o name: "+n.name+" , x: "+n.x+" , y: "+n.y+" , active: "+n.active);
             //var node = { name: o.name, x: o.x, y: o.y, active: o.active };
             for (var k=0; k<obj.length; k++){
                 var o = obj[k];
@@ -1314,7 +1351,7 @@ function FoodWeb(){
         ctx.fillRect(toolbar.x, toolbar.y, toolbar.width, toolbar.height);
 
         if ( preScaledHeight != 0 && preScaledWidth != 0 ){
-            version.draw();
+            //version.draw();
             displayList.draw();
         }
     }
