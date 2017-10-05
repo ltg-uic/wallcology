@@ -1,7 +1,7 @@
 //WALLCOLOGY FOOD WEB EDITOR
 function FoodWeb(){
     var mode = "deploy"; //"develop" or "deploy"
-    var fullscreen = false;
+    var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
     var versionID = "20171004-1630";
@@ -280,13 +280,18 @@ function FoodWeb(){
         var tempArr = [];
         var tempY = speciesMargin;
         for(var i=0; i<speciesArr.length; i++){
+            //test species nickname retrieval
+            console.log( top.species_names[i] );
+            var nickname = top.species_names[i];
             var sp = speciesArr[i];
-            var tempObj = new Species( sp.name, 
+            var tempObj = new Species( sp.name,
                 (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour );
+                sp.height, sp.width, ctx, shadowColour, nickname );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
-            tempY += speciesSize+speciesSpacing;        
+            tempY += speciesSize+speciesSpacing;
+            //test nickname
+            //console.log(i+": "+nickname);
         }
         return tempArr;
     }
@@ -578,93 +583,111 @@ function FoodWeb(){
         //     onResizeWindow();
         //     initialized = true;
         // }
-        if ( !viewOnly ){
-            var newx = x;
-            var newy = y;        
-            canX = newx; //- canvas.offsetLeft;
-            canY = newy; //- canvas.offsetTop;
-            
-            if (dragok) {
-                // get the current mouse position
+        //if ( !viewOnly ){
+        var newx = x;
+        var newy = y;        
+        canX = newx; //- canvas.offsetLeft;
+        canY = newy; //- canvas.offsetTop;
+        
+        if (dragok) {
+            // get the current mouse position
+            var mx = canX;
+            var my = canY;
+
+            // calculate the distance the mouse has moved
+            // since the last mousemove
+            var dx = mx - startX;
+            var dy = my - startY;
+
+            // move each rect that isDragging 
+            // by the distance the mouse has moved
+            // since the last mousemove
+            for (var i = 0; i < obj.length; i++) {
+                var r = obj[i];
+                if ( r.isDragging ) {
+                    //test to see if object is within boundary
+                    if( r.x + r.width + dx >= preScaledWidth-toolbarWidth || r.y + r.height + dy >= preScaledHeight || r.y + dy < 0 || r.x + dx < 0 ){
+                        //do nothing
+                        startX = r.x + r.width/2;
+                        startY = r.y + r.height/2;
+                    } else {
+                        r.x += dx;
+                        r.y += dy;
+                        startX = mx;
+                        startY = my;
+                    }
+                    //create function to make temporary lines, only if there are more than 2 active objects
+                    var activeObj = getActiveObj();
+                    if ( activeObj.length >= 1 && !r.active){
+                        setupMovingConnections(r);
+                    }
+                }
+            }
+            for (var j = 0; j < connections.length; j++) {
+                connections[j].updateXY();
+            }
+            var overTrashBtn = false;
+            for ( var k=0; k<annotations.length; k++){
+                var a = annotations[k];
+                if ( a.isDragging ) {
+                    movingAnnoation = a;
+                    if( a.x + a.width + dx >= preScaledWidth || a.y + a.height + dy >= preScaledHeight || a.y + dy < 0 || a.x + dx < paletteWidth ){
+                        //do nothing
+                        startX = a.x + a.width/2;
+                        startY = a.y + a.height/2;
+                    } else {                   
+                        a.x += dx;
+                        a.y += dy;
+                        startX = mx;
+                        startY = my;
+                    }
+                    if( detectHit( mx, my, trashBtn )){
+                        overTrashBtn = true;
+                    }    
+                }
+            }
+            /*// reset the starting mouse position for the next mousemove
+            var maxDragX = preScaledWidth-toolbarWidth;
+            startX = (mx<maxDragX)?mx:maxDragX;
+            // startX = mx;
+            startY = my;*/
+            draw();
+        //}
+        } else {
+            //tooltip
+            for (var a = 0; a < obj.length; a++) {
+                var b = obj[a];
                 var mx = canX;
                 var my = canY;
 
-                // calculate the distance the mouse has moved
-                // since the last mousemove
-                var dx = mx - startX;
-                var dy = my - startY;
-
-                // move each rect that isDragging 
-                // by the distance the mouse has moved
-                // since the last mousemove
-                for (var i = 0; i < obj.length; i++) {
-                    var r = obj[i];
-                    if ( r.isDragging ) {
-                        //test to see if object is within boundary
-                        if( r.x + r.width + dx >= preScaledWidth-toolbarWidth || r.y + r.height + dy >= preScaledHeight || r.y + dy < 0 || r.x + dx < 0 ){
-                            //do nothing
-                            startX = r.x + r.width/2;
-                            startY = r.y + r.height/2;
-                        } else {
-                            r.x += dx;
-                            r.y += dy;
-                            startX = mx;
-                            startY = my;
-                        }
-                        //create function to make temporary lines, only if there are more than 2 active objects
-                        var activeObj = getActiveObj();
-                        if ( activeObj.length >= 1 && !r.active){
-                            setupMovingConnections(r);
-                        }
-                    }
-                }
-                for (var j = 0; j < connections.length; j++) {
-                    connections[j].updateXY();
-                }
-                var overTrashBtn = false;
-                for ( var k=0; k<annotations.length; k++){
-                    var a = annotations[k];
-                    if ( a.isDragging ) {
-                        movingAnnoation = a;
-                        if( a.x + a.width + dx >= preScaledWidth || a.y + a.height + dy >= preScaledHeight || a.y + dy < 0 || a.x + dx < paletteWidth ){
-                            //do nothing
-                            startX = a.x + a.width/2;
-                            startY = a.y + a.height/2;
-                        } else {                   
-                            a.x += dx;
-                            a.y += dy;
-                            startX = mx;
-                            startY = my;
-                        }
-                        if( detectHit( mx, my, trashBtn )){
-                            overTrashBtn = true;
-                        }    
-                    }
-                }
-                /*// reset the starting mouse position for the next mousemove
-                var maxDragX = preScaledWidth-toolbarWidth;
-                startX = (mx<maxDragX)?mx:maxDragX;
-                // startX = mx;
-                startY = my;*/
-                draw();
-            }
-            //set active state of trash button to true if mouse over and dragging annotation, otherwise, set to false
-            if ( overTrashBtn ){
-                trashBtn.active = false;
-                trashBtn.drawButton();
-                movingAnnoation.drawAnnotation();
-            } else {
-                trashBtn.active = true;
-            }
-            if ( addArrowBtn.active ){
-                if( newConnectionObjs.length >= 1 ){
-                    //console.log("source obj: "+newConnectionObjs[0].name+", looking for lines");
-                    showPotentialConnections( x, y );
+                if (mx > b.x && mx < b.x + b.width && my > b.y && my < b.y + b.height) {
+                    // if yes, set that obj isHover=true
+                    b.isHover = true;
+                    draw();
+                } else {
+                    b.isHover = false;
                     draw();
                 }
             }
-            
         }
+
+        //set active state of trash button to true if mouse over and dragging annotation, otherwise, set to false
+        if ( overTrashBtn ){
+            trashBtn.active = false;
+            trashBtn.drawButton();
+            movingAnnoation.drawAnnotation();
+        } else {
+            trashBtn.active = true;
+        }
+        if ( addArrowBtn.active ){
+            if( newConnectionObjs.length >= 1 ){
+                //console.log("source obj: "+newConnectionObjs[0].name+", looking for lines");
+                showPotentialConnections( x, y );
+                draw();
+            }
+        }
+            
+        //}
     }
     function startMove(x,y,isTouch){
         if ( !viewOnly ){
