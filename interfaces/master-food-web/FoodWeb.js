@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20170927-1500";
+    var versionID = "20171005-1100";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -36,16 +36,16 @@ function FoodWeb(){
         {name:"species_08", width:50, height:50}, {name:"species_09", width:50, height:50}, 
         {name:"species_10", width:50, height:50}];
 
-    var speciesSize = 50; //40;
+    var speciesSize = 50;   //40;
     var speciesMargin = 30;
     var speciesSpacing = 8;
     var palette;
-    var paletteWidth = 80;//70;
+    var paletteWidth = 80;  //70;
     var paletteColour;
     
-    var toolbar;                //not drawn, need it to position version buttons, won't need it now
+    var toolbar;          //not drawn, need it to position version buttons, won't need it now
     var toolbarWidth = 0; //80;      
-    var toolbarColour;          // = "#344559";
+    var toolbarColour;    // = "#344559";
     var toolbarSpacing = 20;
     var saveBtn;
 
@@ -535,7 +535,7 @@ function FoodWeb(){
     }
     //handles modal close
     function handleModalClose(e){
-        //console.log("close modal: span.onclick");
+        console.log("close modal: span.onclick");
         modal.style.display = "none";
         //find withdrawn claim from list of claims and remove it
         if( withdrawnClaims.length > 0 ){
@@ -552,14 +552,18 @@ function FoodWeb(){
             retrieveDrawing(  currentDrawing, fwClaims );
             setTimeout(draw, 500);
         }
-        openedLine = {};
-        openedClaimIndex = 0;
-        withdrawnClaims = [];
+        //add a one second delay before allowing another claim to be opened
+        setTimeout( function(){
+            openedLine = {};
+            openedClaimIndex = 0;
+            withdrawnClaims = [];
+        }, 1000);
     }
     //handle modal open
     function handleModalOpen(e){
         //check to see if openedLine is empty - to run this function only once per click, otherwise, each line object will invoke
         if( isEmpty(openedLine) ){
+            console.log("handleModalOpen");
             openedLine = e.target; //line clinked
             openedClaimIndex = 0;
             updateModalContent( openedLine );
@@ -599,86 +603,6 @@ function FoodWeb(){
             }
         //}
     }
-    /*
-    //direction = "first", "back", "next", or "last"
-    function handleVersionChange( direction ){
-        //console.log("handleVersionChange: "+direction);
-        saveBtn.active = false;
-        saveBtn.drawButton();
-        var oldVersion = version.num;
-        var newVersion;
-        var lastVersion = version.saved + 1;
-        if ( direction == "next" ){
-            newVersion = oldVersion + 1;
-        } else if ( direction == "back" ){
-            newVersion = oldVersion - 1;
-        } else if ( direction == "last" ){
-            newVersion = lastVersion;
-        } else if ( direction == "first" ){
-            newVersion = 1;
-        }   
-        version.num = newVersion; 
-
-        if ( newVersion == (version.saved + 1) ){
-            viewOnly = false;
-            //console.log("remove viewOnlyBtn: " + containsObject( viewOnlyBtn, displayList.objectList ));
-            // if ( containsObject( viewOnlyBtn, displayList.objectList ) ){
-            //     displayList.removeChild( viewOnlyBtn );   
-            // }
-            clearFoodWeb();
-            retrieveDrawing( currentDrawing, [
-            { instance: 1, source: 3, destination: 0, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }, 
-            { instance: 2, source: 0, destination: 4, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" },
-            { instance: 2, source: 0, destination: 5, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" },
-            { instance: 3, source: 0, destination: 5, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }, 
-            { instance: 4, source: 0, destination: 10, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }, 
-            { instance: 2, source: 5, destination: 4, type: "competeswith", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }, 
-            { instance: 5, source: 7, destination: 9, type: "eats", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" },
-            { instance: 1, source: 7, destination: 9, type: "doesnoteat", reasoning: "ABC", figure1: "none", figure2: "none", figure3: "none" }
-            ] );
-            data.save("FOODWEB_RETRIEVE_CURRENT","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
-        } else {
-            // if ( !containsObject( viewOnlyBtn, displayList.objectList )){
-            //     displayList.addChild( viewOnlyBtn );
-            // }
-            //need to save current state before retrieveDrawing
-            if( !viewOnly ){
-                var d = getDrawing();
-                currentDrawing = d.drawing;
-            }
-            clearFoodWeb();
-            //retrieve saved versions
-            var index = newVersion-1;
-            if ( mode == "deploy"){ 
-                //earliest = 0, current = n;
-                nutella.net.request('get_saved_foodweb',{group: group, index: index}, function(foodweb,from){
-                   retrieveDrawing( foodweb.drawing ); 
-                   draw();
-                });
-            } else {
-                //placeholder drawing      
-                retrieveDrawing( {time:0, nodes:[
-                    { name: "species_00", x: 415, y:202, active: true }, 
-                    { name: "species_01", x: 247, y:96, active: true }, 
-                    { name: "species_02", x: 341, y:376, active: true }, 
-                    { name: "species_03", x: 10, y:187, active: false }, 
-                    { name: "species_04", x: 338, y:560, active: true }, 
-                    { name: "species_05", x: 635, y:454, active: true }, 
-                    { name: "species_06", x: 10, y:361, active: false }, 
-                    { name: "species_07", x: 10, y:419, active: false }, 
-                    { name: "species_08", x: 10, y:477, active: false }, 
-                    { name: "species_09", x: 10, y:535, active: false }, 
-                    { name: "species_10", x: 10, y:593, active: false }], links:[
-                    { name: "species_00-species_01", source: "species_00", destination:"species_01", type: "eatenby", status: "inprogress", confirmed: true, votes: 2 }, 
-                    { name: "species_02-species_00", source: "species_02", destination:"species_00", type: "eatenby", status: "inprogress", confirmed: false, votes: 2 }, 
-                    { name: "species_04-species_02", source: "species_04", destination:"species_02", type: "eatenby", status: "inprogress", confirmed: false, votes: 2 }, 
-                    { name: "species_05-species_00", source: "species_05", destination:"species_00", type: "eatenby", status: "inprogress", confirmed: false, votes: 5 }]}, []);
-            }
-            viewOnly = true;
-            data.save("FOODWEB_RETRIEVE_SAVED","savedVersionsNum ;"+savedVersionsNum+";version.num ;"+version.num+";version.saved ;"+version.saved+";viewOnly ;"+viewOnly);
-        }
-    }*/
-    
     function handleRedraw(e){
         draw();   
     }
@@ -849,6 +773,7 @@ function FoodWeb(){
             }
         //}
     }
+    //Triggered by onMouseUp
     function endMove(x,y,isTouch){
         var newx = x;
         var newy = y;
@@ -856,28 +781,7 @@ function FoodWeb(){
         //detectHit 
         var mx = parseInt(newx - canvas.offsetLeft);
         var my = parseInt(newy - canvas.offsetTop);
-        /*
-        //check to see if version buttons are clicked
-        if( detectHit( mx, my, version) ){
-            if( detectHit( mx, my, version.nextBtn ) && version.nextBtn.active ){
-                //NEXT
-                handleVersionChange( version.nextBtn.name );
-                version.changeVersion( mx, my, version.nextBtn.name);
-            } else if ( detectHit( mx, my, version.backBtn ) && version.backBtn.active ){
-                //BACK
-                handleVersionChange( version.backBtn.name );
-                version.changeVersion( mx, my, version.backBtn.name );
-            } else if ( detectHit( mx, my, version.lastBtn ) && version.lastBtn.active ){
-                //LAST
-                handleVersionChange( version.lastBtn.name );
-                version.changeVersion( mx, my, version.lastBtn.name );
-            } else if ( detectHit( mx, my, version.firstBtn ) && version.firstBtn.active ){
-                //FIRST
-                handleVersionChange( version.firstBtn.name );
-                version.changeVersion( mx, my, version.firstBtn.name );
-            }
-        }
-        */
+    
         // clear all the dragging flags
         dragok = false;
         for (var i = 0; i < obj.length; i++) {
@@ -1039,13 +943,6 @@ function FoodWeb(){
         //console.log( "modalH: " + modalH + ", padTop: "+ padTop );
         document.getElementById('modal-container').style.top = padTop + "px";
     }
-    /*function repositionModal(){
-        //var padTop = ((preScaledHeight-originalImage.naturalHeight)<0 ) ? 0 : Math.floor((browserH - originalImage.naturalHeight) / 2 );
-        //document.getElementById('image-container').style.top = padTop + "px";
-        console.log( "modal height: "+document.getElementById('modal-container').height );
-
-
-    }*/
     function validateImage( url ){
         var imgUrl;
         if( url == "" ){
@@ -1088,21 +985,7 @@ function FoodWeb(){
         }
         fwClaims.splice( claimsIndex1, 1 );
         fwClaims.push( newClaim );
-        /*//find claim from lines and removes it from line object
-        for ( var j=0; j<connections.length; j++){
-            var l = connections[j];
-            if( l.source == newClaim.source && l.destination == newClaim.destination ){
-                var lc = l.claims;
-                matchedLine = connections[j];
-                for ( var k=0; k<lc.length; k++ ){
-                    if ( lc.instance == newClaim.instance ){
-                        claimsIndex2 = k;
-                    }
-                }
-            }
-        }
-        matchedLine.claims.splice( claimsIndex2, 1 );
-        matchedLine.push( newClaim );*/
+
         var d = getDrawing();
         currentDrawing = d.drawing;
         retrieveDrawing(  currentDrawing, fwClaims );
@@ -1124,42 +1007,7 @@ function FoodWeb(){
             }
         }
         fwClaims.splice( claimsIndex1, 1 );
-        
-        /*//find claim from lines and removes it from line object
-        for ( var j=0; j<connections.length; j++){
-            var l = connections[j];
-            if( l.source == oldClaim.source && l.destination == oldClaim.destination ){
-                var lc = l.claims;
-                matchedLine = connections[j];
-                for ( var k=0; k<lc.length; k++ ){
-                    if ( lc.instance == oldClaim.instance ){
-                        claimsIndex2 = k;
-                    }
-                }
-            }
-        }
-        matchedLine.claims.splice( claimsIndex2, 1 );*/
     }
-    /*
-    //g = group, returns label to be placed at the top of the UI
-    function getLabel( g ){
-        var label;
-        var team; 
-        switch (g){
-            case -1:
-                label = "Community Food Web";
-                break;
-            case "null":
-                label = "";//"Master Population Interaction Web";
-                break;
-            default:
-                team = Number(g)+1;
-                // label = "";
-                label = "Team "+ team;
-        }
-        return label;
-    }
-    */
     
     //usage: removeItem( connections, t );
     function removeItem( arr ) {
@@ -1376,7 +1224,7 @@ function FoodWeb(){
         }
         for(var j=0; j<connections.length; j++){
             var c = connections[j];
-            c.removeEventListener( c.EVENT_OPENDIALOG, handleModalOpen ); //handleModalOpen //openDialog
+            c.removeEventListener( c.EVENT_OPENDIALOG, handleModalOpen ); 
             //c.removeEventListener( c.EVENT_CONFIRM, onConfirmLine );
             displayList.removeChild( c );
         }
@@ -1470,7 +1318,7 @@ function FoodWeb(){
                 }
             }
             var line = new Line( tempConnection, obj1, obj2, ctx, 1, connectType, connectStatus, connectConfirmed, data, shadowColour, backgroundColour, lineColours, votes, claims );
-            line.addEventListener( line.EVENT_OPENDIALOG, handleModalOpen ); //handleModalOpen //openDialog
+            line.addEventListener( line.EVENT_OPENDIALOG, handleModalOpen ); 
             //line.addEventListener( line.EVENT_CONFIRM, onConfirmLine );
             connections.push( line );
             displayList.addChild( line );

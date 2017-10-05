@@ -118,6 +118,13 @@
         text-decoration: none;
         cursor: pointer;
     }
+    .customScroll::-webkit-scrollbar {
+        width: 5px;
+        background-color: darkCyan;
+    }
+    .customScroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2); 
+    }
     #removeClaim {
         display: none;
     }
@@ -152,13 +159,15 @@
         max-height: 300px;
         overflow-y: scroll;
         overflow-x: hidden;
-        background-color: #008b8b;
     }
     #image-close {
         position: absolute;
         top: 0px;
         right: 10px;
         color: lightgrey;
+    }
+    #image-close:hover {
+        color: darkCyan;
     }
     #modal-content {
         background-color: #3D5168;
@@ -239,7 +248,7 @@
                 <tr>
                     <td class="table-title">Reasoning</td>
                     <td colspan=3 style="text-align:left">
-                        <div id="reasoning-div">
+                        <div class="customScroll" id="reasoning-div">
                             <p id="reasoning-p">Some text in the Modal..</p>
                         </div>
                     </td>
@@ -281,30 +290,57 @@
             var modalImg = document.getElementById("img01");
             modalImg.src = originalImage.src;
 
-            var browserH = parent.document.body.clientHeight - 30;
-            var imgH;
-            var uploadedImageIsSmall = false;
+            var browserH = parent.document.body.clientHeight - 42; //30;
 
-            //blow up images less than 500px by 75%
-            if( originalImage.naturalWidth < 500 || originalImage.naturalHeight < 500 ){
-                modalImg.style.width = Math.floor(originalImage.naturalWidth * 1.75) + "px";
-                modalImg.style.height = Math.floor(originalImage.naturalHeight * 1.75) + "px";
-                uploadedImageIsSmall = true;
-            }
+            var tempW;
+            var tempH;
 
-            //1000 is max image width
-            if ( originalImage.naturalWidth > 1000 ){
-                imgH = Math.floor(1000 * originalImage.naturalHeight / originalImage.naturalWidth);
-            } else if ( uploadedImageIsSmall ){
-                imgH = Math.floor(originalImage.naturalHeight * 1.75);
+            //blow up images less than 200px by 200%
+            if ( originalImage.naturalWidth < 200 ){
+                tempW = Math.floor(originalImage.naturalWidth * 2);
+                tempH = Math.floor(originalImage.naturalHeight * 2);
+            //blow up images less than 500px by 175%
+            } else if ( originalImage.naturalWidth < 500 ){
+                // modalImg.style.width = Math.floor(originalImage.naturalWidth * 1.75) + "px";
+                // modalImg.style.height = Math.floor(originalImage.naturalHeight * 1.75) + "px";
+                // uploadedImageIsSmall = true;
+                tempW = Math.floor(originalImage.naturalWidth * 1.75);
+                tempH = Math.floor(originalImage.naturalHeight * 1.75);
             } else {
-                imgH = originalImage.naturalHeight;
+                tempW = originalImage.naturalWidth;
+                tempH = originalImage.naturalHeight;
             }
+                            
+            var dimensions = checkImageSize( tempW, tempH, originalImage.naturalWidth, originalImage.naturalHeight);
 
-            var padTop = ((browserH-imgH)<0 ) ? 0 : Math.floor((browserH-imgH) / 2 );
+            modalImg.style.width = dimensions.w + "px";
+            modalImg.style.height = dimensions.h + "px";
+
+            var padTop = ((browserH-dimensions.h)<0 ) ? 0 : Math.floor((browserH-dimensions.h) / 2 );
+
+            console.log("browserH: "+browserH+", imgH: "+dimensions.h+", imgW: "+dimensions.w+", padTop: "+padTop);
             document.getElementById('image-container').style.top = padTop + "px";
         }
-
+        function checkImageSize( newW, newH, originalW, originalH ){
+            //max-height = 700px
+            //max-width = 1000px
+            var imgH;
+            var imgW;
+            //resize if newH greater than 700
+            if ( newH > 700 ){
+                imgH = 700;
+                imgW = Math.floor(700 * originalW / originalH);
+            } else {
+                imgH = newH;
+                imgW = newW;
+            }
+            //resize if newW > 1000
+            if ( newW > 1000 ){
+                imgH = Math.floor(1000 * originalH / originalW);
+                imgW = 1000;
+            } 
+            return { h: imgH, w: imgW }
+        }
     </script>
 </body>
 </html>

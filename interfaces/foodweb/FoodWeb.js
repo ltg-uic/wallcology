@@ -1274,7 +1274,7 @@ function FoodWeb(){
 
         for(var i=0; i<nodes.length; i++){
             var n = nodes[i];
-            console.log("o name: "+n.name+" , x: "+n.x+" , y: "+n.y+" , active: "+n.active);
+            //console.log("o name: "+n.name+" , x: "+n.x+" , y: "+n.y+" , active: "+n.active);
             //var node = { name: o.name, x: o.x, y: o.y, active: o.active };
             for (var k=0; k<obj.length; k++){
                 var o = obj[k];
