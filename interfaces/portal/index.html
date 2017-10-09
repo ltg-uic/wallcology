@@ -95,7 +95,7 @@ ul.tab li a:focus, .active {
 
 	var nutella = NUTELLA.init(query_parameters.broker, query_parameters.app_id, query_parameters.run_id, NUTELLA.parseComponentId());
 
-	nutella.net.subscribe('set_current_run', function (message,from){
+	nutella.net.subscribe('set_current_run', function (message,from){ 
 		if (message != query_parameters.run_id) {switchRuns(message);
 		}
 	});
@@ -110,10 +110,10 @@ ul.tab li a:focus, .active {
 
 	// var tempNames = ['Team','Student','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
 	var tempNames = ['Student','Teacher','Ecosystem','Public Display', 'Designer', 'Developer','Researcher'];
-	nutella.net.request('get_current_run',{},function(message,from){ 
+	nutella.net.request('get_current_run',{},function(message,from){ console.log('run');
 		if (message == query_parameters.run_id) { 
 
-			nutella.net.request('roster',{},function(logins, from) { 
+			nutella.net.request('roster',{},function(logins, from) { console.log('roster');
 				nutella.net.request('get_species_names',{}, function(message, from){ 
 
 
