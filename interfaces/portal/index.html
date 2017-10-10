@@ -169,7 +169,9 @@ ul.tab li a:focus, .active {
 		s += 'index.html' + '?';
 		s += 'broker=' + query_parameters.broker + '&';
 		s += 'app_id=' + query_parameters.app_id + '&';
-		s += 'run_id=' + newRun;
+		s += 'run_id=' + newRun + '&';
+		s += 'TYPE=' + type;
+
 		location.href = s;
 		
 	};
