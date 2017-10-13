@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20171004-1630";
+    var versionID = "20171013-1030";
     var query_parameters;
     var nutella;
     var portal;
@@ -277,35 +277,71 @@ function FoodWeb(){
         setTimeout(draw, 500);
     }
     function setupSpecies( speciesArr ){
+        //console.log("screen width: "+preScaledWidth+", screen height: "+preScaledHeight+", spacing: "+speciesSpacing);
+        var adjustedMargin = speciesMargin; 
+        var adjustedSpace = speciesSpacing;
+        var adjustedHeight = speciesSize;
+        var adjustedWidth = speciesSize;
+        
+        //adjust height
+        //if height is less than 637
+        //spacing default = 8
+        //height, width default = 50
+        if( preScaledHeight < 637 ){
+            adjustedSpace = 0;
+            adjustedHeight = Math.floor(preScaledHeight / 11); 
+            adjustedWidth = Math.floor(preScaledHeight / 11);
+            adjustedMargin = Math.floor(adjustedHeight/2); //half of speciesSize
+        } 
+        console.log("SPECIES adjustedMargin: "+ adjustedMargin+", adjustedSpace: "+adjustedSpace+", adjustedHeight: "+adjustedHeight);
         var tempArr = [];
-        var tempY = speciesMargin;
+        var tempY = adjustedMargin;
+
         for(var i=0; i<speciesArr.length; i++){
             //test species nickname retrieval
-            console.log( top.species_names[i] );
+            //console.log( top.species_names[i] );
             var nickname = top.species_names[i];
             var sp = speciesArr[i];
             var tempObj = new Species( sp.name,
-                (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour, nickname );
+                (paletteWidth-adjustedWidth)/2, tempY+adjustedSpace-adjustedHeight/2, 
+                adjustedHeight, adjustedWidth, ctx, shadowColour, nickname );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
-            tempY += speciesSize+speciesSpacing;
+            tempY += adjustedHeight+adjustedSpace;
             //test nickname
             //console.log(i+": "+nickname);
         }
         return tempArr;
     }
     function setupPlaceholderSpecies( speciesArr ){
+        //console.log("screen width: "+preScaledWidth+", screen height: "+preScaledHeight+", spacing: "+speciesSpacing);
+        var adjustedMargin = speciesMargin; 
+        var adjustedSpace = speciesSpacing;
+        var adjustedHeight = speciesSize;
+        var adjustedWidth = speciesSize;
+        
+        //adjust height
+        //if height is less than 637
+        //spacing default = 8
+        //height, width default = 50
+        if( preScaledHeight < 637 ){
+            adjustedSpace = 0;
+            adjustedHeight = Math.floor(preScaledHeight / 11); 
+            adjustedWidth = Math.floor(preScaledHeight / 11);
+            adjustedMargin = Math.floor(adjustedHeight/2); //half of speciesSize
+        } 
+        console.log("PLACEHOLDER adjustedMargin: "+ adjustedMargin+", adjustedSpace: "+adjustedSpace+", adjustedHeight: "+adjustedHeight);
         var tempArr = [];
-        var tempY = speciesMargin;
+        var tempY = adjustedMargin;
+
         for(var i=0; i<speciesArr.length; i++){
             var sp = speciesArr[i];
             var tempObj = new Species( sp.name+"_grey", 
-                (paletteWidth-sp.width)/2, tempY+speciesSpacing-sp.height/2, 
-                sp.height, sp.width, ctx, shadowColour );
+                (paletteWidth-adjustedWidth)/2, tempY+adjustedSpace-adjustedHeight/2, 
+                adjustedHeight, adjustedWidth, ctx, shadowColour );
             tempArr.push(tempObj);
             displayList.addChild(tempObj);
-            tempY += speciesSize+speciesSpacing;        
+            tempY += adjustedHeight+adjustedSpace;        
         }
         return tempArr;
     }
