@@ -172,18 +172,21 @@
 
 	// nutella.net.subscribe('ping',function(message,from){console.log('received ping ' + message)});
 
-	var lastping = (new Date).getTime();
-	setInterval(reconnect, 60*1000);
+		var lastping = (new Date).getTime();
+		setInterval(reconnect, 60*1000);
 
-	nutella.net.subscribe('ping',function(message,from){
-		console.log('received ping' + message);
-		lastping = (new Date).getTime();
-	});
+		nutella.net.subscribe('ping',function(message,from){
+			console.log('graphs received ping' + message);
+			lastping = (new Date).getTime();
+		});
 
-	function reconnect(){
-		var timeNow = (new Date).getTime();
-		if ((timeNow - lastping) > 70*1000) location.reload(true);
-	}
+		function reconnect(){
+			var timeNow = (new Date).getTime();
+			if ((timeNow - lastping) > 90*1000) {
+				console.log('reloaded graphs due to timeout');
+				location.reload(true);
+			}
+		}
 
 	// setInterval(ping, 60*1000); //ping every five minutes
 

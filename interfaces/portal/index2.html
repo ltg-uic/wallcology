@@ -38,13 +38,16 @@
 		setInterval(reconnect, 60*1000);
 
 		nutella.net.subscribe('ping',function(message,from){
-			console.log('received ping' + message);
+			console.log('portal received ping' + message);
 			lastping = (new Date).getTime();
 		});
 
 		function reconnect(){
 			var timeNow = (new Date).getTime();
-			if ((timeNow - lastping) > 70*1000) location.reload(true);
+			if ((timeNow - lastping) > 90*1000) {
+				console.log('reloaded portal due to timeout');
+				location.reload(true);
+			}
 		}
 
 // end keep alive code 
