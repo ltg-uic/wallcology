@@ -1,0 +1,347 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width"/>
+<meta name="description" content="Master Food Web Viewer for Wallcology 2017"/>
+<title>Master Food Web Viewer</title>
+<style>
+    html, body {
+        /* background-color: #303030; */
+        width: 100%;
+        height: 100%;
+        margin: 0px;
+        padding: 0;
+        border: 0;
+        overflow: hidden;   /*  Disable scrollbars */
+        display: block;     /* No floating content on sides */
+        font-family: 'Roboto', sans-serif;
+        color: white;
+    }
+    div {
+        position:relative
+    }
+    canvas {
+        margin: 0;
+        padding: 0;
+        position:absolute;
+        left:0px;
+        top:0px;
+    }
+    table {
+        padding: 0;
+    }
+    tr {
+        background-color: DarkCyan;
+        font-size: 16px;
+    }
+    td {
+        padding: 15px;
+        text-align: center;
+    }
+    td p{
+        display: inline;
+    }
+    .modal {
+        display: none;  /*Hidden by default */
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%; /* Full width */
+        height: 100%; /* Full height 1000px; */
+        background-color: rgb(0,0,0); /* Fallback color */
+        background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    .container { 
+        position: absolute; 
+        left: 50%;
+        /*border: dotted white 1px;*/
+    }
+    .content {
+        position: relative; 
+        left: -50%;
+    }
+    .caption-p{
+        font-size: 14px;
+        font-weight: bold;
+    }
+    .table-title {
+        font-size: 20px;
+        font-weight: bold;
+    }
+    .button {
+        display: inline-block;
+        -webkit-appearance: none;
+        -webkit-border-radius: 4;
+        border-radius: 4px;
+        -webkit-transition-duration: 0.4s; /* Safari */
+        transition-duration: 0.4s;
+        background-color: #999999;  /* #2b394a; Toolbar colour */
+        border: none;
+        color: #263238; /*white;*/
+        padding: 6px 20px;
+        text-align: center;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 10px 0px 0px 4px;
+    }
+    .button:hover,
+    .button:focus {
+        background-color: #666666;
+        text-decoration: none;
+        cursor: pointer;
+        color: white;
+    }
+    .close {
+        -webkit-appearance: none;
+        -webkit-border-radius: 0;    
+        display: inline-block;
+        position: absolute;
+        top: 4px;
+        right: 20px;
+        /*      
+        margin: 0;
+        padding: 0 0 0 10px;
+        float: right;
+        */
+        border: none;
+        text-align: center;
+        text-decoration: none;
+        font-size: 28px;
+        color: white;
+    }
+    .close:hover,
+    .close:focus {
+        /* color: #999999; black; */
+        text-decoration: none;
+        cursor: pointer;
+    }
+    .customScroll::-webkit-scrollbar {
+        width: 5px;
+        background-color: darkCyan;
+    }
+    .customScroll::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.2); 
+    }
+    #removeClaim {
+        display: none;
+    }
+    #img01 {
+        max-width: 1000px;
+    }
+    #next {
+        float: right;
+    }
+    #number-p {
+        font-size: 14px;
+        text-align: center;
+        margin: 0;
+    }
+    #author-p {
+        margin: 0 0 4px 0;
+        padding: 0;
+        font-size: 20px;
+        font-weight: bold;
+        /*background-color: #FFFFFF;*/
+        width: 100px;
+    }
+    #relationship-p {
+        margin: 0px 20px 0px 20px;
+        font-weight: bold;
+        font-size: 20px;
+    }
+    #reasoning-p {
+        white-space: pre-wrap;
+    }
+    #reasoning-div{
+        max-height: 300px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+    #image-close {
+        position: absolute;
+        top: 0px;
+        right: 10px;
+        color: lightgrey;
+    }
+    #image-close:hover {
+        color: darkCyan;
+    }
+    #modal-content {
+        background-color: #3D5168;
+        border: none;
+        padding: 20px;
+    }
+    #image-content {
+        /*background-color: white;*/
+        max-height: 700px;
+        overflow: scroll;
+    }
+    #image1, #image2, #image3 {
+        cursor: pointer;
+    }
+    #image-layer { z-index: 3; }
+    #modal-layer { z-index: 2; }
+    #ui-layer { z-index: 1; }
+</style>
+<script src="nutella_lib.js" type="text/javascript"></script>
+<script src="webfont.js"></script>
+<script src="EventDispatcher.js"></script>
+<script src="Species.js"></script>
+<!-- <script src="Annotation.js"></script> -->
+<script src="Badge.js"></script>
+<script src="DataLog.js"></script>
+<!-- <script src="DialogBox.js"></script> -->
+<script src="DisplayList.js"></script>
+<script src="GenericButton.js"></script>
+<!-- <script src="Help.js"></script> -->
+<!-- <script src="ImageButton.js"></script> -->
+<script src="ImageTextButton.js"></script>
+<script src="Line.js"></script>
+<script src="Prompt.js"></script>
+<script src="Timestamp.js"></script>
+<!-- <script src="ToggleButton.js"></script> -->
+<!-- <script src="Version.js"></script> -->
+<script src="FoodWeb.js"></script>
+<script type="text/javascript">
+    window.addEventListener("load", eventWindowLoaded, false);	
+    function eventWindowLoaded () {
+    	FoodWeb();
+    }
+</script>
+</head>
+<body>
+<div class="stage">
+    <canvas id="ui-layer">Your browser does not support the HTML 5 Canvas.</canvas>
+    <div id="modal-layer" class="modal">
+        <!-- Modal content -->
+        <div id="modal-container" class="container">
+        <div id="modal-content" class="content">
+            <span class="close">&times;</span>
+            <p id="author-p"></p>
+            <table>
+                <tr>
+                    <td class="table-title">Claim</td>
+                    <td colspan=3>
+                        <img src="qmark.png" id="species0" height=80 width=80 style="vertical-align:middle">
+                        <p id="relationship-p">relationship</p>
+                        <img src="qmark.png" id="species1" height=80 width=80 style="vertical-align:middle">
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-title">Evidence</td>
+                    <td align=center >
+                        <img onClick="blowup(this.id);" id="image1" src="qmark.png" height=100 width=100 /><br>
+                        <p class="caption-p">Figure 1</p>
+                    </td>
+                    <td align=center >
+                        <img onClick="blowup(this.id);" id="image2" src="qmark.png" height=100 width=100 /><br>
+                        <p class="caption-p">Figure 2</p>
+                    </td>
+                    <td align=center >
+                        <img onClick="blowup(this.id);" id="image3" src="qmark.png" height=100 width=100 /><br>
+                        <p class="caption-p">Figure 3</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="table-title">Reasoning</td>
+                    <td colspan=3 style="text-align:left">
+                        <div class="customScroll" id="reasoning-div">
+                            <p id="reasoning-p">Some text in the Modal..</p>
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <div>
+                <!-- <button class="button" id="withdraw">Withdraw Claim</button>
+                <img id="removeClaim" src="remove.png" height=24 width=24 style="vertical-align:middle"/> -->
+                <button class="button" id="next">Next Claim</button>
+                <br>
+                <p id="number-p"></p>    
+            </div>
+        </div>
+    </div>
+    <!-- For displaying blownup image -->
+    <!-- style="border: dotted white 1px; -->
+    <div id="image-layer" class="modal">
+        <div id="image-container" class="container">
+            <div id="image-content" class="content">
+                <span id="image-close" class="close">&times;</span>
+                <img src="" id="img01">
+            </div>
+        </div>
+    </div>
+    <script>
+        var image = document.getElementById("img01");
+
+        image.onclick = function() { 
+            document.getElementById('image-layer').style.display = "none";
+        }
+        // Get the <span> element that closes the image modal
+        var span = document.getElementsByClassName("close")[1];
+        
+        span.onclick = function() { 
+            document.getElementById('image-layer').style.display = "none";
+        }
+        function blowup(id) {
+            document.getElementById('image-layer').style.display = "block";
+            var originalImage = document.getElementById(id);
+            var modalImg = document.getElementById("img01");
+            modalImg.src = originalImage.src;
+
+            var browserH = parent.document.body.clientHeight - 42; //30;
+
+            var tempW;
+            var tempH;
+
+            //blow up images less than 200px by 200%
+            if ( originalImage.naturalWidth < 200 ){
+                tempW = Math.floor(originalImage.naturalWidth * 2);
+                tempH = Math.floor(originalImage.naturalHeight * 2);
+            //blow up images less than 500px by 175%
+            } else if ( originalImage.naturalWidth < 500 ){
+                // modalImg.style.width = Math.floor(originalImage.naturalWidth * 1.75) + "px";
+                // modalImg.style.height = Math.floor(originalImage.naturalHeight * 1.75) + "px";
+                // uploadedImageIsSmall = true;
+                tempW = Math.floor(originalImage.naturalWidth * 1.75);
+                tempH = Math.floor(originalImage.naturalHeight * 1.75);
+            } else {
+                tempW = originalImage.naturalWidth;
+                tempH = originalImage.naturalHeight;
+            }
+                            
+            var dimensions = checkImageSize( tempW, tempH, originalImage.naturalWidth, originalImage.naturalHeight);
+
+            modalImg.style.width = dimensions.w + "px";
+            modalImg.style.height = dimensions.h + "px";
+
+            var padTop = ((browserH-dimensions.h)<0 ) ? 0 : Math.floor((browserH-dimensions.h) / 2 );
+
+            console.log("browserH: "+browserH+", imgH: "+dimensions.h+", imgW: "+dimensions.w+", padTop: "+padTop);
+            document.getElementById('image-container').style.top = padTop + "px";
+        }
+        function checkImageSize( newW, newH, originalW, originalH ){
+            //max-height = 700px
+            //max-width = 1000px
+            var imgH;
+            var imgW;
+            //resize if newH greater than 700
+            if ( newH > 700 ){
+                imgH = 700;
+                imgW = Math.floor(700 * originalW / originalH);
+            } else {
+                imgH = newH;
+                imgW = newW;
+            }
+            //resize if newW > 1000
+            if ( newW > 1000 ){
+                imgH = Math.floor(1000 * originalH / originalW);
+                imgW = 1000;
+            } 
+            return { h: imgH, w: imgW }
+        }
+    </script>
+</body>
+</html>
