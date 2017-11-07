@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20171107-1100";
+    var versionID = "20171107-1300";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -83,6 +83,8 @@ function FoodWeb(){
     var openedClaimIndex;   //saves index of claim being viewed
     var modal, modalText, modalCloseBtn, modalWithdrawBtn, modalNextBtn;
 
+    var portal;
+    var instance;
     //var viewOnlyBtn;
     // var savedVersionsNum;   //number of saved versions retrieved from nutella
     // var viewOnly = false;
@@ -110,6 +112,9 @@ function FoodWeb(){
         }
         // end keep alive code
         
+        portal = query_parameters.TYPE;
+        instance = query_parameters.INSTANCE;
+
         //nutella.net.subscribe('ping',function(message,from){});
         //subscribe to new claims
         nutella.net.subscribe('new_claim', function(message, from){
@@ -184,7 +189,8 @@ function FoodWeb(){
     onResizeWindow("init");
     
     //setup datalog
-    data = new DataLog( nutella, app, mode );
+    data = new DataLog( nutella, app, portal, instance, mode );
+    console.log("portal: "+ portal+", instance: "+instance);
     //setup display list items
     displayList = new DisplayList( canvas );
     palette = { x:0, y:0, width:paletteWidth, height: preScaledHeight };
@@ -217,7 +223,7 @@ function FoodWeb(){
     modalWithdrawBtn.addEventListener('click', handleWithdrawBtn, false);
     modalNextBtn.addEventListener('click', handleNextBtn, false);*/
 
-    data.save("FOODWEB_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight); //+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
+    data.save("FOODWEBVIEWER_INIT",versionID+"; window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight); //+"; savedVersionsNum ;"+savedVersionsNum+"; label ;"+label);
 
     //get latest saved drawing
     if ( mode == "deploy"){
@@ -369,7 +375,7 @@ function FoodWeb(){
                 var d = dialog[i];
                 d.setCanvasWidthHeight( preScaledWidth, preScaledHeight );
             }
-            data.save("FOODWEB_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
+            data.save("FOODWEBVIEWER_RESIZE","window.innerWidth; "+preScaledWidth+"; window.innerHeight; "+preScaledHeight);
         }
         setTimeout(draw, 500);
     }
@@ -537,6 +543,7 @@ function FoodWeb(){
     function handleModalClose(e){
         console.log("close modal: span.onclick");
         modal.style.display = "none";
+        data.save("FOODWEBVIEWER_CLOSEMODAL","closedLine; "+openedLine.name+"; openedClaimIndex; "+openedClaimIndex);
         //find withdrawn claim from list of claims and remove it
         if( withdrawnClaims.length > 0 ){
             for( var i = 0; i<withdrawnClaims.length; i++ ){
@@ -568,6 +575,7 @@ function FoodWeb(){
             openedClaimIndex = 0;
             updateModalContent( openedLine );
             //updateWithdrawClaim();
+            data.save("FOODWEBVIEWER_OPENMODAL","openedLine; "+openedLine.name+"; openedClaimIndex; "+openedClaimIndex);
         }
     }
     //handles "view next claim" in opened modal
@@ -578,6 +586,7 @@ function FoodWeb(){
             openedClaimIndex = 0;
         }
         updateModalContent( openedLine );
+        data.save("FOODWEBVIEWER_NEXTCLAIM","openedLine; "+openedLine.name+"; openedClaimIndex; "+openedClaimIndex);
         //updateWithdrawClaim();
     }
     function onMouseLeave(e){
@@ -827,7 +836,7 @@ function FoodWeb(){
                         o.active = false;   
                     }
                 }
-                //data.save("FOODWEB_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
+                data.save("FOODWEBVIEWER_SPECIES_MOVE","object ;"+o.name+" ; x;"+o.x+" ;y ;"+o.y+" ;from ;"+from+" ;to ;"+to);
             }
             o.isDragging = false;
             //o.isHover = false;
@@ -835,7 +844,7 @@ function FoodWeb(){
         for (var j = 0; j < badges.length; j++) {
             var b = badges[j];
             if( b.isDragging ){
-                data.save("FOODWEB_BADGE_MOVE","group ;"+b.name+" ;x ;"+b.x+" ;y ;"+b.y);
+                data.save("FOODWEBVIEWER_BADGE_MOVE","group ;"+b.name+" ;x ;"+b.x+" ;y ;"+b.y);
             }
             b.isDragging = false;
         }
@@ -1161,7 +1170,7 @@ function FoodWeb(){
         saveBtn.drawButton();
         saveBtn.active = true;
         setTimeout( resetSavedButton, 2000 );
-        data.save("FOODWEB_DRAWING_SAVED","Drawing ;"+d.message); //"savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+
+        data.save("FOODWEBVIEWER_DRAWING_SAVED","Drawing ;"+d.message); //"savedVersionsNum ;"+savedVersionsNum+" ;version.num ;"+version.num+" ;version.saved ;"+version.saved+
     }*/
     function resetSavedButton(){
         saveBtn.active = false;
