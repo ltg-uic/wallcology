@@ -4,7 +4,7 @@ function FoodWeb(){
     var fullscreen = true;
     var app = "wallcology";
     var background = "dark";   //"light" or "dark"
-    var versionID = "20171005-1100";
+    var versionID = "20171008-1030";
     var query_parameters;
     var nutella;
     var group; //-1, 0, 1, 2, 3, 4, null
@@ -1190,7 +1190,7 @@ function FoodWeb(){
             d = getSpeciesIndexByName( c.obj2.name );
             //console.log("line source: "+s+", destination: "+d);
 
-            var link = { name: c.name, source: s, destination: d, type: c.type, votes: c.votes };
+            var link = { name: c.name, source: s, destination: d, type: c.type, votes: c.votes, confirmed: c.confirmed };
             message += "{ name: '"+c.name+"', source: "+s+", destination: "+d+", type: "+c.type+", votes: "+c.votes+" }, ";
             links.push( link );
             /*
