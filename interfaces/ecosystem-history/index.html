@@ -36,7 +36,7 @@
 	  <option disabled value="April">April</option>
 	  <option disabled value="May">May</option>
 	  <option disabled value="June">June</option>
-	  <option  value="July">July</option>
+	  <option  disabled value="July">July</option>
 	  <option  value="August">August</option>
 	  <option  value="September">September</option>
 	  <option  value="October">October</option>
@@ -261,11 +261,11 @@
 
 
 		// var sy = document.getElementById('startYear').value;
-		var sy = 2017;
+		var sy = 2018;
 		var em = document.getElementById('endMonth').selectedIndex+1;
 		var ed = document.getElementById('endDay').selectedIndex+1;
 		// var ey = document.getElementById('endYear').value;
-		var ey = 2017;
+		var ey = 2018;
 
 		var lower = Date.parse(sm + '/' + sd + '/' + sy);
 		var upper = Date.parse(em + '/' + ed + '/' + ey) + (24 * 60 * 60 * 1000);
