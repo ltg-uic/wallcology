@@ -3,9 +3,6 @@
 // nutella dependencies
 // nutella start
 
-var d = new Date();
-var n = d.getTime();
-
 
 var NUTELLA = require('nutella_lib');
 
@@ -70,51 +67,21 @@ mfw.load(function(){
         // group and individual food web handlers (not archived)
 
         nutella.net.handle_requests('get_claims', function(message,from){
-            var c = [];
-            for (var i=0; i<claims.data.length; i++){
-                if (!claims.data[i].hasOwnProperty('status')) claims.data[i].status = 'active';
-                if (claims.data[i].status == 'active') c.push(claims.data[i]);
-            };
-            claims.save();
-            return c;
+            return claims.data;
         })
 
-
-        // var claim = {instance: document.getElementById('instance').value,
-        //             source: document.getElementById('source').value,
-        //             destination: document.getElementById('destination').value,
-        //             relationship: document.getElementById('relationship').value,
-        //             reasoning: document.getElementById('reasoning').value,
-        //             figure1: document.getElementById('figure1').value,
-        //             figure2: document.getElementById('figure2').value,
-        //             figure3: document.getElementById('figure3').value};
-
-        //              status: active, withdrawn, replaced
-
-
-
-        nutella.net.subscribe('save_claim',function(m,from){
-            var message = m;
-            var d = new Date();
-            message.timestamp = d.getTime();
-            message.status = 'active';
-
-            claims.data.push(message);
-//            claims.save();
-
-            for (var i=0; i<claims.data.length-1; i++){
+        nutella.net.subscribe('save_claim',function(message,from){
+            for (var i=0; i<claims.data.length; i++){
                 if (claims.data[i].instance == message.instance &&
                     claims.data[i].source == message.source &&
-                    claims.data[i].destination == message.destination &&
-                    (!claims.data[i].hasOwnProperty('status') || claims.data[i].status == 'active')) {
-//                        claims.data[i] = message;
-                        claims.data[i].status = 'replaced';
+                    claims.data[i].destination == message.destination) {
+                        claims.data[i] = message;
                         claims.save();
-                        nutella.net.publish('replace_claim',message);
+                        nutella.net.publish('replace_claim',message)
                         return;
                 };
             };
-
+            claims.data.push(message);
             claims.save();
             nutella.net.publish('new_claim',message);
         });
@@ -123,11 +90,8 @@ mfw.load(function(){
             for (var i=0; i<claims.data.length; i++){
                 if (claims.data[i].instance == message.instance &&
                     claims.data[i].source == message.source &&
-                    claims.data[i].destination == message.destination &&
-                    (!claims.data[i].hasOwnProperty('status') || claims.data[i].status == 'active')) {
-                        claims.data[i].status = 'withdrawn';
-                        var d = new Date();
-                        claims.data[i].withdrawalTimestape = d.getTime();
+                    claims.data[i].destination == message.destination) {
+                        claims.data.splice(i,1);
                         claims.save();
                         return;
                 };
@@ -135,13 +99,7 @@ mfw.load(function(){
         });
 
         nutella.net.handle_requests('get_mfw_and_claims',function (message,from) {
-            var c = [];
-            for (var i=0; i<claims.data.length; i++){
-                if (!claims.data[i].hasOwnProperty('status')) claims.data[i].status = 'active';
-                if (claims.data[i].status == 'active') c.push(claims.data[i]);
-            };
-            claims.save();
-            return {mfw: mfw.data[mfw.data.length-1], claims: c};
+            return {mfw: mfw.data[mfw.data.length-1], claims: claims.data};
         });
 
 
