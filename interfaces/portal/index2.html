@@ -26,7 +26,10 @@
 	var channel_lineup=[]; // = [{name: 'Abiotic controls', URL: 'http://localhost:57880/wallcology/default/runs/abiotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Biotic controls', URL: 'http://localhost:57880/wallcology/default/runs/biotic-controls/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'History', URL: 'http://localhost:57880/wallcology/default/runs/ecosystem-history/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Enactment', URL: 'http://localhost:57880/wallcology/default/runs/enactment-control/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'},{name: 'Model Editor', URL: 'http://localhost:57880/wallcology/default/runs/newModelEditor/index.html?broker=127.0.0.1&app_id=wallcology&run_id=default'}];
 	
 	// Get an instance of nutella
-	
+		window.onbeforeunload = function () {
+    		return "Do you really want to close?";
+		};
+
 
 	var query_parameters = NUTELLA.parseURLParameters();
 
@@ -229,7 +232,13 @@
 	    evt.currentTarget.className += " active";
 	}
 
-	function userLog(extension){ console.log ('testing'); console.log(query_parameters.TYPE + ' ' + query_parameters.INSTANCE + ' ' + currentChannel);
+	function userLog(extension){ 
+
+		// var d = new Date();
+		// var timestamp = d.getTime();
+		// console.log ('testing'); console.log(query_parameters.TYPE + ' ' + query_parameters.INSTANCE + ' ' + currentChannel);
+
+
 		// var SEPARATOR = "^,^";
 		// var log = "portal"  + SEPARATOR;
 		// log += currentRun + SEPARATOR;
