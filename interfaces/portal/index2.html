@@ -215,7 +215,7 @@
 
 	function openTab(evt, channelName) { 
 		currentChannel=channelName;
-		userLog('Selected channel');
+		userLog('Selected channel'); 
 	    var i, tabcontent, tablinks;
 	    tabcontent = document.getElementsByClassName("tabcontent"); 
 	    for (i = 0; i < tabcontent.length; i++) {
@@ -229,7 +229,7 @@
 	    evt.currentTarget.className += " active";
 	}
 
-	function userLog(extension){ alert(query_parameters.TYPE + ' ' + query_parameters.INSTANCE);
+	function userLog(extension){ alert(query_parameters.TYPE + ' ' + query_parameters.INSTANCE + ' ' + currentChannel);
 		// var SEPARATOR = "^,^";
 		// var log = "portal"  + SEPARATOR;
 		// log += currentRun + SEPARATOR;
