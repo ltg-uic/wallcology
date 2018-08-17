@@ -235,8 +235,7 @@
 		var logEntry  = extension + S;
 			logEntry += query_parameters.TYPE + S; // portal
 			logEntry += query_parameters.INSTANCE + S; // instance
-			logEntry += currentChannel + S; // resource
-			logEntry += timeStamp; // timestamp
+			logEntry += currentChannel ; // resource 
 			nutella.net.publish('add_to_user_log',[logEntry]);
 	}
 
