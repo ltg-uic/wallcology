@@ -16,12 +16,12 @@ var userlog = nutella.persist.getMongoObjectStore('userlog');
 
 userlog.load(function(){
 
-    if (!userlog.hasOwnProperty('data')){ userlog.data = []; userlog.save(); }
+    if (!userlog.hasOwnProperty('data')){ userlog.data = ''; userlog.save(); }
 
     // add to log of user actions incrementally
 
     nutella.net.subscribe('add_to_user_log', function(s, from) { // add string s to end of log
-        userlog.data = userlog.data.concat(s); userlog.save();
+        userlog.data += s; userlog.save();
     });
 
 
