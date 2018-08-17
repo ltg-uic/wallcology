@@ -20,7 +20,8 @@ userlog.load(function(){
 
     // add to log of user actions incrementally
 
-    nutella.net.subscribe('add_to_user_log', function(arrayOfLogEntries, from) {
+    nutella.net.subscribe('add_to_user_log', function(s, from) { // s is just a string
+        var arrayOfLogEntries = [s];
         var temp = []; var d = new Date(); var str = d.getTime(); // var rs = d.toLocaleString();
         for (var i=0; i<arrayOfLogEntries.length; i++) temp[i] = str + SEPARATOR + arrayOfLogEntries[i];
         userlog.data = userlog.data.concat(temp); userlog.save();
