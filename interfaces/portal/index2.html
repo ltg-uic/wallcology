@@ -231,10 +231,12 @@
 
 	function userLog(extension){ 
 		var S = "^,^";
+		var timeStamp = new Date();
 		var logEntry  = extension + S;
 			logEntry += query_parameters.TYPE + S; // portal
 			logEntry += query_parameters.INSTANCE + S; // instance
-			logEntry += currentChannel + '\n'; // resource
+			logEntry += currentChannel + S; // resource
+			logEntry += timeStamp; // timestamp
 			nutella.net.publish('add_to_user_log',logEntry);
 	}
 
