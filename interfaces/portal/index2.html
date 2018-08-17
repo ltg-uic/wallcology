@@ -82,7 +82,11 @@
 	  nutella.net.request('get_species_names',{},function(sname){	
 		for (var i=0; i<11; i++) species_names[i]=sname[i];
 
-		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ currentActivity = message.activity; currentRoom=message.room; 
+		nutella.net.request('currentActivityAndRoom', {}, function (message, from){ 
+			currentActivity = message.activity;
+			userLogLI();
+
+		 	currentRoom=message.room; 
 			nutella.net.request('channel_list',{activity:message.activity,type:type}, function (channelList, from) { console.log(channelList);
 				nutella.net.request('channel_names',{}, function (prettyNames, from){
 						var channel_lineup = buildLineup (channelList, instance); 
@@ -215,7 +219,7 @@
 
 	function openTab(evt, channelName) { 
 		currentChannel=channelName;
-		userLog('SR'); 
+		userLog(); 
 	    var i, tabcontent, tablinks;
 	    tabcontent = document.getElementsByClassName("tabcontent"); 
 	    for (i = 0; i < tabcontent.length; i++) {
@@ -229,15 +233,25 @@
 	    evt.currentTarget.className += " active";
 	}
 
-	function userLog(extension){ 
+	function userLogSR(){ 
 		var S = "^,^";
-		var logEntry  = extension + S;
+		var logEntry  = 'SR' + S;
 			logEntry += query_parameters.TYPE + S; // portal
 			logEntry += query_parameters.INSTANCE + S; // instance
 			logEntry += currentActivity + S; // instance
 			logEntry += currentChannel ; // resource 
 			nutella.net.publish('add_to_user_log',logEntry);
 	}
+
+	function userLogLI(){ 
+		var S = "^,^";
+		var logEntry  = 'LI' + S;
+			logEntry += query_parameters.TYPE + S; // portal
+			logEntry += query_parameters.INSTANCE + S; // instance
+			logEntry += currentActivity; // resource 
+			nutella.net.publish('add_to_user_log',logEntry);
+	}
+
 
 		// var d = new Date();
 		// var timestamp = d.getTime();
