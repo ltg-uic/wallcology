@@ -12,6 +12,7 @@
 <body>
 	<script src="nutella_lib.js" type="text/javascript"></script>
 	<script src="Chart.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script>
 	var species_names = [];
 	var query_parameters = NUTELLA.parseURLParameters();
@@ -76,7 +77,7 @@
 	<input hidden type=checkbox id='normalize' onClick='query();'>  
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
-	<table style="border-spacing:0px;padding:0;">
+	<table id="graphTable" style="border-spacing:0px;padding:0;">
 		<script type="text/javascript">
 		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_01.png',
@@ -110,15 +111,16 @@
 				document.write('><td><div class="tooltip"><img onClick="resizeMe(' + i + ');" src=' + images[i] + ' height="' + myIconHt + '" width="' + myIconHt + '"><span class="tooltiptext">'+top.species_names[i]+'</span></div></td>');
 				document.write('<td><canvas id="myChart' + i + '" width="900" height="' + myHt + '"></td></tr>');
 			}
+
 		</script>
 	</table>
-
 	<!-- Scripts -->
 
 	<!-- Your scripts here -->
 <!-- 	<canvas id="myChart" width="900" height="50"></canvas>
  -->
 	<script type="text/javascript">
+$("#graphTable").sortable();
 
 	// alert(parent.IW);alert(parent.IH);
 
