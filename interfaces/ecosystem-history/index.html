@@ -77,7 +77,8 @@
 	<input hidden type=checkbox id='normalize' onClick='query();'>  
 <input hidden type=checkbox id='hack' onClick='query();'><br><br>
 
-	<table id="graphTable" style="border-spacing:0px;padding:0;">
+	<table style="border-spacing:0px;padding:0;">
+		<tbody id="graphTable" > 
 		<script type="text/javascript">
 		var images = [ 	'https://ltg.cs.uic.edu/WC/icons/species_00.png',
 				'https://ltg.cs.uic.edu/WC/icons/species_01.png',
@@ -113,14 +114,15 @@
 			}
 
 		</script>
-	</table>
+	</tbody>
+</table>
 	<!-- Scripts -->
 
 	<!-- Your scripts here -->
 <!-- 	<canvas id="myChart" width="900" height="50"></canvas>
  -->
 	<script type="text/javascript">
-function sortIt(){$("#graphTable").sortable();}
+function sortIt(){$("tbody").sortable();}
 
 	// alert(parent.IW);alert(parent.IH);
 
