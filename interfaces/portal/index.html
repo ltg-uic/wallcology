@@ -109,7 +109,7 @@ ul.tab li a:focus, .active {
 	if (query_parameters.hasOwnProperty('TYPE')) type = query_parameters.TYPE;
 
 	// var tempNames = ['Team','Student','Teacher','Ecosystem','Species','Public Display', 'Designer', 'Developer','Researcher'];
-	var tempNames = ['Student','Teacher','Ecosystem','Public Display', 'Designer', 'Developer','Researcher'];
+	var tempNames = ['Group','Teacher','Ecosystem','Public Display', 'Designer', 'Developer','Researcher'];
 	nutella.net.request('get_current_run',{},function(message,from){ console.log('run');
 		if (message == query_parameters.run_id) { 
 
